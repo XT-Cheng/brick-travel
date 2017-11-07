@@ -8,22 +8,30 @@ import { NgReduxModule, NgRedux } from '@angular-redux/store';
 
 // Redux ecosystem stuff.
 import { createLogger } from 'redux-logger';
+import { HttpModule } from '@angular/http';
 
 // The top-level reducers and epics that make up our app's logic.
-import { IAppState } from './models';
-import { rootReducer } from './reducers';
-import { RootEpics } from './epics';
+import { IAppState } from './model';
+import { rootReducer } from './reducer';
+import { RootEpics } from './epic';
+import { CityService } from './city/service';
+import { CityEpic } from './city/epic';
+import { CityAction } from './city/action';
+import { ViewPointService } from './viewPoint/service';
+import { ViewPointEpic } from './viewPoint/epic';
+import { ViewPointAction } from './viewPoint/action';
 
 @NgModule({
-    imports: [NgReduxModule],
-    providers: [RootEpics],
+    imports: [NgReduxModule,HttpModule],
+    providers: [RootEpics,
+                CityService,CityEpic,CityAction,
+                ViewPointService,ViewPointEpic,ViewPointAction],
 })
 export class StoreModule {
-    constructor(public store: NgRedux<IAppState>,
-        rootEpics: RootEpics, ) {
-        store.configureStore(
+    constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics, ) {
+        _store.configureStore(
             rootReducer,
             {cities: null},
-            [createLogger(), ...rootEpics.createEpics()]);
+            [createLogger(), ..._rootEpics.createEpics()]);
     }
 }

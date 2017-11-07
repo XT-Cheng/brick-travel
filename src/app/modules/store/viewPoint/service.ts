@@ -3,10 +3,12 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
-import { ICity } from './model';
+import { IViewPoint, ViewPointCategory } from './model';
+import { normalize } from 'normalizr';
+import { viewPoint } from '../schema';
 
 @Injectable()
-export class CityService {
+export class ViewPointService {
   //#region Private member
   //#endregion
 
@@ -20,21 +22,33 @@ export class CityService {
   //#endregion
 
   //#region Public methods
-  public getCities(page: number, limit: number): Observable<ICity[]> {
-    return this._http.get('assets/data/cities.json')
+  public getViewPoints(): Observable<IViewPoint[]> {
+    return this._http.get('assets/data/viewPoints.json')
     .map(resp => resp.json())
-    .map(records => records.cities.map(this.parse));
+    .map(records => {
+      const data = normalize(records.viewPoints, [ viewPoint ]);
+      //records.viewPoints.map(this.parse);
+      return new Array<IViewPoint>();
+    })
   }
   //#endregion
 
   //#region Private methods
-  private parse(record : any): ICity {
-    return {
-        id: record.id,
-        name: record.name,
-        thumbnail: record.thumbnail
-    };
-  }
+  // private parse(record : any): IViewPoint {
+  //   return {
+  //     name: record.name,
+  //     thumbnail : record.thumbnail,
+  //     rank : record.rank,
+  //     longtitude : record.longtitude,
+  //     latitude : record.latitude,
+  //     address : record.address,
+  //     images : record.images,
+  //     description : record.description,
+  //     tips : record.tips,
+  //     timeNeeded : record.timeNeeded,
+  //     category: record.category
+  //   };
+  // }
   //#endregion
 }
 

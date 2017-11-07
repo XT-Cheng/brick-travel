@@ -1,0 +1,29 @@
+{
+  "cities": [
+    {
+      "id": 1,
+      "name": "黄山",
+      "thumbnail": "assets/img/IMG_4201.jpg"
+    },
+    {
+      "id": 2,
+      "name": "上海",
+      "thumbnail": "assets/img/IMG_4202.jpg"
+    },
+    {
+      "id": 3,
+      "name": "苏州",
+      "thumbnail": "assets/img/IMG_4203.jpg"
+    },
+    {
+      "id": 4,
+      "name": "黄山",
+      "thumbnail": "assets/img/IMG_4201.jpg"
+    },
+    {
+      "id": 5,
+      "name": "上海",
+      "thumbnail": "assets/img/IMG_4202.jpg"
+    }
+  ]
+}

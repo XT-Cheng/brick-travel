@@ -1,3 +1,10 @@
+
+export const CITY_INITIAL_STATE: ICityResult = {
+    items: [],
+    loading: false,
+    error: null,
+  };
+
 export interface ICity {
     id: string;
     name: string;
@@ -7,5 +14,5 @@ export interface ICity {
 export interface ICityResult {
     items: ICity[];
     loading: boolean;
-    error: any;
+    error: Error;
 }

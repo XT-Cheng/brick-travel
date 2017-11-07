@@ -6,29 +6,31 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/startWith';
 
-import { IAppState } from '../../models';
+import { IAppState } from '../model';
 import { CityService } from './service';
-import { CityActions, CityAction } from './actions';
+import { CityAction, CityActionType } from './action';
 
 @Injectable()
-export class CityEpics {
+export class CityEpic {
   constructor(
-    private service: CityService,
-    private actions: CityActions,
+    private _service: CityService,
+    private _action: CityAction,
   ) {}
 
   public createEpic() {
     return createEpicMiddleware(this.createLoadCityEpic());
   }
 
-  private createLoadCityEpic(): Epic<CityAction, IAppState> {
+  private createLoadCityEpic(): Epic<CityActionType, IAppState> {
     return (action$, store) => action$
-      .ofType(CityActions.LOAD_CITIES)
+      .ofType(CityAction.LOAD_CITIES)
       //.filter(action => actionIsForCorrectAnimalType(animalType)(action))
       //.filter(() => animalsNotAlreadyFetched(animalType, store.getState()))
-      .switchMap(() => this.service.getCities()
-        .map(data => this.actions.loadCitySucceeded(data))
-        .catch(response => of(this.actions.loadCityFailed()))
-        .startWith(this.actions.loadCityStarted()));
+      .switchMap(action => this._service.getCities(action.meta.pagination.page,action.meta.pagination.limit)
+        .map(data => this._action.loadCitySucceeded(data))
+        .catch(response => 
+          of(this._action.loadCityFailed(response))
+        )
+        .startWith(this._action.loadCityStarted()));
   }
 }
