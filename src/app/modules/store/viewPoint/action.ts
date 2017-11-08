@@ -1,15 +1,9 @@
 import { Injectable } from "@angular/core";
 
-import { FluxStandardAction } from 'flux-standard-action';
-
-import { IViewPoint } from "./model";
+import { IViewPoint, IViewPointComment } from "./model";
 import { dispatch } from "@angular-redux/store";
-import { IError } from "../model";
 
-// Flux-standard-action gives us stronger typing of our actions.
-type Payload = IViewPoint[] | Error;
-type MetaData = any;
-export type ViewPointActionType = FluxStandardAction<Payload, MetaData>;
+import { GeneralAction } from "../action";
 
 @Injectable()
 export class ViewPointAction {
@@ -18,29 +12,28 @@ export class ViewPointAction {
     static readonly LOAD_VIEWPOINTS_SUCCEEDED = 'LOAD_VIEWPOINTS_SUCCEEDED';
     static readonly LOAD_VIEWPOINTS_FAILED = 'LOAD_VIEWPOINTS_FAILED';
     
-    loadViewPointStarted = (): ViewPointActionType => ({
+    loadViewPointStarted = (): GeneralAction => ({
         type: ViewPointAction.LOAD_VIEWPOINTS_STARTED,
-        meta: null,
+        meta: {progressing: true},
         payload: null,
     })
 
     @dispatch()
-    loadViewPoints = (): ViewPointActionType => ({
+    loadViewPoints = (page: number = 0,limit: number = 50): GeneralAction => ({
         type: ViewPointAction.LOAD_VIEWPOINTS,
-        meta: null,
+        meta: {pagination: {page: page,limit: limit}},
         payload: null,
     });
 
-    loadViewPointSucceeded = (payload: Payload): ViewPointActionType => ({
+    loadViewPointSucceeded = (viewPoints: IViewPoint[],comments: IViewPointComment[]): GeneralAction => ({
         type: ViewPointAction.LOAD_VIEWPOINTS_SUCCEEDED,
-        meta: null,
-        payload,
+        meta: {progressing: false},
+        payload: {entities: {viewPoints: viewPoints,viewPointComments: comments}}
     })
     
-    loadViewPointFailed = (error: Error): ViewPointActionType => ({
+    loadViewPointFailed = (error: Error): GeneralAction => ({
         type: ViewPointAction.LOAD_VIEWPOINTS_FAILED,
-        meta: null,
-        payload: error,
-        error: true,
+        meta: {progressing: false},
+        payload: {error: error}
     })
 }

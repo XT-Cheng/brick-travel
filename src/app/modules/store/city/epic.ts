@@ -8,7 +8,8 @@ import 'rxjs/add/operator/startWith';
 
 import { IAppState } from '../model';
 import { CityService } from './service';
-import { CityAction, CityActionType } from './action';
+import { CityAction } from './action';
+import { GeneralAction } from '../action';
 
 @Injectable()
 export class CityEpic {
@@ -21,13 +22,11 @@ export class CityEpic {
     return createEpicMiddleware(this.createLoadCityEpic());
   }
 
-  private createLoadCityEpic(): Epic<CityActionType, IAppState> {
+  private createLoadCityEpic(): Epic<GeneralAction, IAppState> {
     return (action$, store) => action$
       .ofType(CityAction.LOAD_CITIES)
-      //.filter(action => actionIsForCorrectAnimalType(animalType)(action))
-      //.filter(() => animalsNotAlreadyFetched(animalType, store.getState()))
       .switchMap(action => this._service.getCities(action.meta.pagination.page,action.meta.pagination.limit)
-        .map(data => this._action.loadCitySucceeded(data))
+        .map(data => this._action.loadCitySucceeded(data.cities))
         .catch(response => 
           of(this._action.loadCityFailed(response))
         )

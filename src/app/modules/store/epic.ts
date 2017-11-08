@@ -8,8 +8,7 @@ export class RootEpics {
 
   public createEpics() {
     return [
-      this._cityEpic.createEpic(),
-      this._viewPointEpic.createEpic()
+      this._cityEpic.createEpic(),this._viewPointEpic.createEpic()
     ];
   }
 }

@@ -1,18 +1,23 @@
-import { ICityResult } from "./city/model";
-export interface IMetaInfo {
-  pagination: IPagination;
-}
-
-export interface IPagination {
-  page: number;
-  limit: number;
-}
+import { ICity } from "./city/model";
+import { IViewPoint, IViewPointComment } from "./viewPoint/model";
 
 export interface IError {
   description: string;
   stack?: string;
 }
 
+export interface IProgress {
+  progressing: boolean;
+}
+
+export interface IEntities {
+  cities?: ICity[],
+  viewPoints?: IViewPoint[],
+  viewPointComments?: IViewPointComment[]
+}
+
 export interface IAppState {
-  cities: ICityResult;
+  entities: IEntities,
+  error: IError,
+  progress: IProgress
 }

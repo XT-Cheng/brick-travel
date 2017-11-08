@@ -11,15 +11,15 @@ import { createLogger } from 'redux-logger';
 import { HttpModule } from '@angular/http';
 
 // The top-level reducers and epics that make up our app's logic.
-import { IAppState } from './model';
 import { rootReducer } from './reducer';
 import { RootEpics } from './epic';
 import { CityService } from './city/service';
 import { CityEpic } from './city/epic';
 import { CityAction } from './city/action';
+import { IAppState } from './model';
+import { ViewPointAction } from './viewPoint/action';
 import { ViewPointService } from './viewPoint/service';
 import { ViewPointEpic } from './viewPoint/epic';
-import { ViewPointAction } from './viewPoint/action';
 
 @NgModule({
     imports: [NgReduxModule,HttpModule],
@@ -28,10 +28,10 @@ import { ViewPointAction } from './viewPoint/action';
                 ViewPointService,ViewPointEpic,ViewPointAction],
 })
 export class StoreModule {
-    constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics, ) {
-        _store.configureStore(
+    constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics) {
+        this._store.configureStore(
             rootReducer,
-            {cities: null},
-            [createLogger(), ..._rootEpics.createEpics()]);
+            Object.assign({},{entities: {cities: [],viewPoints: [],viewPointComments: []},error: null,progress: {progressing: false}}),
+            [createLogger(), ...this._rootEpics.createEpics()]);
     }
 }

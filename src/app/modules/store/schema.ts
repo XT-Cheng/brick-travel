@@ -5,3 +5,5 @@ export const comment = new schema.Entity('comments');
 export const viewPoint = new schema.Entity('viewPoints',{
     comments: [ comment ]
 });
+
+export const city = new schema.Entity('cities');

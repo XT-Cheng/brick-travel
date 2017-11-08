@@ -22,33 +22,18 @@ export class ViewPointService {
   //#endregion
 
   //#region Public methods
-  public getViewPoints(): Observable<IViewPoint[]> {
+  public getViewPoints(): Observable<any> {
     return this._http.get('assets/data/viewPoints.json')
     .map(resp => resp.json())
     .map(records => {
       const data = normalize(records.viewPoints, [ viewPoint ]);
-      //records.viewPoints.map(this.parse);
-      return new Array<IViewPoint>();
+      const {viewPoints,comments} = data.entities;
+      return {
+        viewPoints: Object.keys(viewPoints).map(key => viewPoints[key]),
+        viewPointComments: Object.keys(comments).map(key => comments[key])
+      };
     })
   }
-  //#endregion
-
-  //#region Private methods
-  // private parse(record : any): IViewPoint {
-  //   return {
-  //     name: record.name,
-  //     thumbnail : record.thumbnail,
-  //     rank : record.rank,
-  //     longtitude : record.longtitude,
-  //     latitude : record.latitude,
-  //     address : record.address,
-  //     images : record.images,
-  //     description : record.description,
-  //     tips : record.tips,
-  //     timeNeeded : record.timeNeeded,
-  //     category: record.category
-  //   };
-  // }
   //#endregion
 }
 

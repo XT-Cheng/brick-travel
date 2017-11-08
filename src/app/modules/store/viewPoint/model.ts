@@ -7,12 +7,6 @@ export enum ViewPointCategory {
     Lodging
 }
 
-export const VIEWPOINT_INITIAL_STATE: IViewPointResult = {
-    items: [],
-    loading: false,
-    error: null,
-  };
-
 export interface IViewPoint {
     id: string,
     name: string;
@@ -37,10 +31,4 @@ export interface IViewPointComment {
     publishedAt: Date,
     images: string[],
     rate: number
-}
-
-export interface IViewPointResult {
-    items: IViewPoint[];
-    loading: boolean;
-    error: Error;
 }

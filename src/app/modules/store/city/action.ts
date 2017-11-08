@@ -1,15 +1,8 @@
 import { Injectable } from "@angular/core";
 
-import { FluxStandardAction } from 'flux-standard-action';
-
-import { ICity } from "./model";
 import { dispatch } from "@angular-redux/store";
-import { IError, IMetaInfo } from "../model";
-
-// Flux-standard-action gives us stronger typing of our actions.
-type Payload = ICity[] | Error;
-type MetaData = IMetaInfo;
-export type CityActionType = FluxStandardAction<Payload, MetaData>;
+import { GeneralAction, IPayload } from "../action";
+import { ICity } from "./model";
 
 @Injectable()
 export class CityAction {
@@ -18,29 +11,28 @@ export class CityAction {
     static readonly LOAD_CITIES_SUCCEEDED = 'LOAD_CITIES_SUCCEEDED';
     static readonly LOAD_CITIES_FAILED = 'LOAD_CITIES_FAILED';
     
-    loadCityStarted = (): CityActionType => ({
+    loadCityStarted = (): GeneralAction => ({
         type: CityAction.LOAD_CITIES_STARTED,
-        meta: null,
+        meta: {progressing: true},
         payload: null,
     })
 
     @dispatch()
-    loadCities = (page: number = 0,limit: number = 50): CityActionType => ({
+    loadCities = (page: number = 0,limit: number = 50): GeneralAction => ({
         type: CityAction.LOAD_CITIES,
         meta: {pagination: {page: page,limit: limit}},
         payload: null,
     });
 
-    loadCitySucceeded = (payload: Payload): CityActionType => ({
+    loadCitySucceeded = (cities: ICity[]): GeneralAction => ({
         type: CityAction.LOAD_CITIES_SUCCEEDED,
-        meta: null,
-        payload,
+        meta: {progressing: false},
+        payload: {entities: {cities: cities}},
     })
     
-    loadCityFailed = (error: Error): CityActionType => ({
+    loadCityFailed = (error: Error): GeneralAction => ({
         type: CityAction.LOAD_CITIES_FAILED,
-        meta: null,
-        payload: error,
-        error: true,
+        meta: {progressing: false},
+        payload: {error: error}
     })
 }

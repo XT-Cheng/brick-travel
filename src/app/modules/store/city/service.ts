@@ -4,6 +4,8 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import { ICity } from './model';
+import { normalize } from 'normalizr';
+import { city } from '../schema';
 
 @Injectable()
 export class CityService {
@@ -20,10 +22,14 @@ export class CityService {
   //#endregion
 
   //#region Public methods
-  public getCities(page: number, limit: number): Observable<ICity[]> {
+  public getCities(page: number, limit: number): Observable<any> {
     return this._http.get('assets/data/cities.json')
     .map(resp => resp.json())
-    .map(records => records.cities.map(this.parse));
+    .map(records => {
+      const data = normalize(records.cities, [ city ]);
+      const {cities} = data.entities;
+      return {cities: Object.keys(cities).map(key => cities[key])};
+    })
   }
   //#endregion
 
