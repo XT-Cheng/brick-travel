@@ -25,8 +25,8 @@ export class CityEpic {
   private createLoadCityEpic(): Epic<GeneralAction, IAppState> {
     return (action$, store) => action$
       .ofType(CityAction.LOAD_CITIES)
-      .switchMap(action => this._service.getCities(action.meta.pagination.page,action.meta.pagination.limit)
-        .map(data => this._action.loadCitySucceeded(data.cities))
+      .switchMap(action => this._service.getCities(action.meta.pagination)
+        .map(data => this._action.loadCitySucceeded(data.cities,action.meta.pagination))
         .catch(response => 
           of(this._action.loadCityFailed(response))
         )

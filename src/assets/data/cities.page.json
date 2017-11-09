@@ -1,28 +1,28 @@
 {
   "cities": [
     {
-      "id": 1,
-      "name": "City1",
+      "id": 6,
+      "name": "City6",
       "thumbnail": "assets/img/IMG_4201.jpg"
     },
     {
-      "id": 2,
-      "name": "City2",
+      "id": 7,
+      "name": "City7",
       "thumbnail": "assets/img/IMG_4202.jpg"
     },
     {
-      "id": 3,
-      "name": "City3",
+      "id": 8,
+      "name": "City8",
       "thumbnail": "assets/img/IMG_4203.jpg"
     },
     {
-      "id": 4,
-      "name": "City4",
+      "id": 9,
+      "name": "City9",
       "thumbnail": "assets/img/IMG_4201.jpg"
     },
     {
-      "id": 5,
-      "name": "City5",
+      "id": 10,
+      "name": "City10",
       "thumbnail": "assets/img/IMG_4202.jpg"
     }
   ]

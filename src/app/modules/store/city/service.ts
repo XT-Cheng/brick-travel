@@ -6,6 +6,8 @@ import { Observable } from "rxjs/Observable";
 import { ICity } from './model';
 import { normalize } from 'normalizr';
 import { city } from '../schema';
+import { IEntities } from '../model';
+import { IPagination } from '../action';
 
 @Injectable()
 export class CityService {
@@ -22,8 +24,9 @@ export class CityService {
   //#endregion
 
   //#region Public methods
-  public getCities(page: number, limit: number): Observable<any> {
-    return this._http.get('assets/data/cities.json')
+  public getCities(pagination : IPagination): Observable<IEntities> {
+    let jsonFile = (pagination.page == 0)?'assets/data/cities.json':'assets/data/cities.page.json'
+    return this._http.get(jsonFile)
     .map(resp => resp.json())
     .map(records => {
       const data = normalize(records.cities, [ city ]);

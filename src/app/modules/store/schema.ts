@@ -1,9 +1,9 @@
 import { schema } from 'normalizr';
 
-export const comment = new schema.Entity('comments');
+export const viewPointComment = new schema.Entity('viewPointComments');
 
 export const viewPoint = new schema.Entity('viewPoints',{
-    comments: [ comment ]
+    comments: [ viewPointComment ]
 });
 
 export const city = new schema.Entity('cities');

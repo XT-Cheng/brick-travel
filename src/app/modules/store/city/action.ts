@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { dispatch } from "@angular-redux/store";
-import { GeneralAction, IPayload } from "../action";
+import { GeneralAction, IPayload, IPagination } from "../action";
 import { ICity } from "./model";
 
 @Injectable()
@@ -24,9 +24,9 @@ export class CityAction {
         payload: null,
     });
 
-    loadCitySucceeded = (cities: ICity[]): GeneralAction => ({
+    loadCitySucceeded = (cities: ICity[],pagination: IPagination): GeneralAction => ({
         type: CityAction.LOAD_CITIES_SUCCEEDED,
-        meta: {progressing: false},
+        meta: {progressing: false,pagination: pagination},
         payload: {entities: {cities: cities}},
     })
     

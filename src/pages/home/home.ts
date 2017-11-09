@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CityAction } from '../../app/modules/store/city/action';
 import { select, NgRedux } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
@@ -9,7 +9,8 @@ import { IAppState } from '../../app/modules/store/model';
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html'
+  templateUrl: 'home.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,  
 })
 export class HomePage implements AfterViewInit {
   constructor(private _store: NgRedux<IAppState>,private _cityAction : CityAction,private _viewPointAction : ViewPointAction) {
@@ -20,6 +21,12 @@ export class HomePage implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this._cityAction.loadCities();
+    this._viewPointAction.loadViewPoints();
+
+    this.viewPoints$.subscribe(data => console.log(data.length));
+  }
+
+  fetchMore() {
     this._viewPointAction.loadViewPoints();
   }
 }

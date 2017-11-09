@@ -6,6 +6,8 @@ import { Observable } from "rxjs/Observable";
 import { IViewPoint, ViewPointCategory } from './model';
 import { normalize } from 'normalizr';
 import { viewPoint } from '../schema';
+import { IEntities } from '../model';
+import { IPagination } from '../action';
 
 @Injectable()
 export class ViewPointService {
@@ -22,15 +24,15 @@ export class ViewPointService {
   //#endregion
 
   //#region Public methods
-  public getViewPoints(): Observable<any> {
-    return this._http.get('assets/data/viewPoints.json')
-    .map(resp => resp.json())
+  public getViewPoints(pagination : IPagination): Observable<IEntities> {
+    let jsonFile = (pagination.page == 0)?'assets/data/viewPoints.json':'assets/data/viewPoints.page.json'
+    return this._http.get(jsonFile).map(resp => resp.json())
     .map(records => {
       const data = normalize(records.viewPoints, [ viewPoint ]);
-      const {viewPoints,comments} = data.entities;
+      const {viewPoints,viewPointComments} = data.entities;
       return {
         viewPoints: Object.keys(viewPoints).map(key => viewPoints[key]),
-        viewPointComments: Object.keys(comments).map(key => comments[key])
+        viewPointComments: Object.keys(viewPointComments).map(key => viewPointComments[key])
       };
     })
   }
