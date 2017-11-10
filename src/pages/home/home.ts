@@ -4,7 +4,6 @@ import { select, NgRedux } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 import { ICity } from '../../app/modules/store/city/model';
 import { ViewPointAction } from '../../app/modules/store/viewPoint/action';
-import { IViewPoint } from '../../app/modules/store/viewPoint/model';
 import { IAppState } from '../../app/modules/store/model';
 
 @Component({
