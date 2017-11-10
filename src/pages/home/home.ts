@@ -13,20 +13,22 @@ import { IAppState } from '../../app/modules/store/model';
   changeDetection: ChangeDetectionStrategy.OnPush,  
 })
 export class HomePage implements AfterViewInit {
+  data : ICity[];
+
   constructor(private _store: NgRedux<IAppState>,private _cityAction : CityAction,private _viewPointAction : ViewPointAction) {
   }
 
-  @select(['entities','viewPoints'])
-  readonly viewPoints$: Observable<IViewPoint[]>;
+  @select(['entities','cities'])
+  readonly cities$: Observable<ICity[]>;
 
   ngAfterViewInit(): void {
     this._cityAction.loadCities();
-    this._viewPointAction.loadViewPoints();
+    //this._viewPointAction.loadViewPoints();
 
-    this.viewPoints$.subscribe(data => console.log(data.length));
+    this.cities$.subscribe(data => this.data = (<any>data).asMutable({deep: true}));
   }
 
   fetchMore() {
-    this._viewPointAction.loadViewPoints();
+    this._cityAction.loadCities(1,50);
   }
 }

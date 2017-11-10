@@ -7,6 +7,7 @@ import { NgModule } from '@angular/core';
 import { NgReduxModule, NgRedux } from '@angular-redux/store';
 
 // Redux ecosystem stuff.
+import { stateTransformer } from 'redux-seamless-immutable'
 import { createLogger } from 'redux-logger';
 import { HttpModule } from '@angular/http';
 
@@ -32,6 +33,6 @@ export class StoreModule {
         this._store.configureStore(
             rootReducer,
             Object.assign({},{entities: {cities: [],viewPoints: [],viewPointComments: []},error: null,progress: {progressing: false}}),
-            [createLogger(), ...this._rootEpics.createEpics()]);
+            [createLogger({stateTransformer: stateTransformer}), ...this._rootEpics.createEpics()]);
     }
 }

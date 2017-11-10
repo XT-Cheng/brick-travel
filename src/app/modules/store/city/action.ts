@@ -1,38 +1,30 @@
 import { Injectable } from "@angular/core";
 
 import { dispatch } from "@angular-redux/store";
-import { GeneralAction, IPayload, IPagination } from "../action";
-import { ICity } from "./model";
+import { entityActionStarted, EntityActionTypeEnum, EntityTypeEnum, entityAction, entityActionSucceeded, entityActionFailed } from "../action";
 
 @Injectable()
 export class CityAction {
-    static readonly LOAD_CITIES = 'LOAD_CITIES';
-    static readonly LOAD_CITIES_STARTED = 'LOAD_CITIES_STARTED';
-    static readonly LOAD_CITIES_SUCCEEDED = 'LOAD_CITIES_SUCCEEDED';
-    static readonly LOAD_CITIES_FAILED = 'LOAD_CITIES_FAILED';
-    
-    loadCityStarted = (): GeneralAction => ({
-        type: CityAction.LOAD_CITIES_STARTED,
-        meta: {progressing: true},
-        payload: null,
-    })
+
+    //#region load city
+    loadCityStarted = entityActionStarted(EntityActionTypeEnum.LOAD, EntityTypeEnum.CITY);
 
     @dispatch()
-    loadCities = (page: number = 0,limit: number = 50): GeneralAction => ({
-        type: CityAction.LOAD_CITIES,
-        meta: {pagination: {page: page,limit: limit}},
-        payload: null,
-    });
+    loadCities = entityAction(EntityActionTypeEnum.LOAD, EntityTypeEnum.CITY);
 
-    loadCitySucceeded = (cities: ICity[],pagination: IPagination): GeneralAction => ({
-        type: CityAction.LOAD_CITIES_SUCCEEDED,
-        meta: {progressing: false,pagination: pagination},
-        payload: {entities: {cities: cities}},
-    })
-    
-    loadCityFailed = (error: Error): GeneralAction => ({
-        type: CityAction.LOAD_CITIES_FAILED,
-        meta: {progressing: false},
-        payload: {error: error}
-    })
+    loadCitySucceeded = entityActionSucceeded(EntityActionTypeEnum.LOAD, EntityTypeEnum.CITY);
+
+    loadCityFailed = entityActionFailed(EntityActionTypeEnum.LOAD, EntityTypeEnum.CITY)
+    //#endregion
+
+    //#region update city
+    updateCityStarted = entityActionStarted(EntityActionTypeEnum.UPDATE, EntityTypeEnum.CITY);
+
+    @dispatch()
+    updateCities = entityAction(EntityActionTypeEnum.UPDATE, EntityTypeEnum.CITY);
+
+    updateCitySucceeded = entityActionSucceeded(EntityActionTypeEnum.UPDATE, EntityTypeEnum.CITY);
+
+    updateCityFailed = entityActionFailed(EntityActionTypeEnum.UPDATE, EntityTypeEnum.CITY)
+    //#endregion
 }

@@ -9,7 +9,7 @@ import 'rxjs/add/operator/startWith';
 import { IAppState } from '../model';
 import { ViewPointService } from './service';
 import { ViewPointAction } from './action';
-import { GeneralAction } from '../action';
+import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../action';
 
 @Injectable()
 export class ViewPointEpic {
@@ -24,12 +24,11 @@ export class ViewPointEpic {
 
   private createLoadViewPointEpic(): Epic<GeneralAction, IAppState> {
     return (action$, store) => action$
-      .ofType(ViewPointAction.LOAD_VIEWPOINTS)
-      //.filter(action => actionIsForCorrectAnimalType(animalType)(action))
-      //.filter(() => animalsNotAlreadyFetched(animalType, store.getState()))
+      .ofType(EntityActionTypeEnum.LOAD)
+      .filter(action => action.meta.entityType === EntityTypeEnum.VIEWPOINT && !!action.meta.pagination)
       .switchMap(action => {
         return this._service.getViewPoints(action.meta.pagination)
-        .map(data => this._action.loadViewPointSucceeded(data.viewPoints,data.viewPointComments,action.meta.pagination))
+        .map(data => this._action.loadViewPointSucceeded(data))
         .catch(response => 
           of(this._action.loadViewPointFailed(response))
         )

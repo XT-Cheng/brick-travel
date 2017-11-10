@@ -33,13 +33,15 @@
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-observable": "^0.17.0",
+    "redux-seamless-immutable": "^0.3.2",
     "rxjs": "5.4.3",
+    "seamless-immutable": "^7.1.2",
     "sw-toolbox": "3.6.0",
     "zone.js": "0.8.18"
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.0.1",
-    "typescript": "2.3.4"
+    "typescript": "2.6.1"
   },
   "description": "An Ionic project"
 }

@@ -9,7 +9,7 @@ import 'rxjs/add/operator/startWith';
 import { IAppState } from '../model';
 import { CityService } from './service';
 import { CityAction } from './action';
-import { GeneralAction } from '../action';
+import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../action';
 
 @Injectable()
 export class CityEpic {
@@ -24,9 +24,10 @@ export class CityEpic {
 
   private createLoadCityEpic(): Epic<GeneralAction, IAppState> {
     return (action$, store) => action$
-      .ofType(CityAction.LOAD_CITIES)
+    .ofType(EntityActionTypeEnum.LOAD)
+    .filter(action => action.meta.entityType === EntityTypeEnum.CITY && !!action.meta.pagination)
       .switchMap(action => this._service.getCities(action.meta.pagination)
-        .map(data => this._action.loadCitySucceeded(data.cities,action.meta.pagination))
+      .map(data => this._action.loadCitySucceeded(data))
         .catch(response => 
           of(this._action.loadCityFailed(response))
         )
