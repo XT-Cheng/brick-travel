@@ -31,7 +31,8 @@ export enum EntityActionPhaseEnum{
 export enum EntityTypeEnum {
     CITY = "CITY",
     VIEWPOINT = "VIEWPOINT",
-    VIEWPOINTCOMMENT = "VIEWPOINTCOMMENT"
+    VIEWPOINTCOMMENT = "VIEWPOINTCOMMENT",
+    TRAVELAGENDA = "TRAVELAGENDA"
 }
 
 export enum EntityActionTypeEnum  {

@@ -1,10 +1,10 @@
 import { Component, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
-import { CityAction } from '../../app/modules/store/city/action';
-import { select, NgRedux } from '@angular-redux/store';
+import { ViewPointAction } from '../../modules/store/viewPoint/action';
+import { select } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
-import { ICity } from '../../app/modules/store/city/model';
-import { ViewPointAction } from '../../app/modules/store/viewPoint/action';
-import { IAppState } from '../../app/modules/store/model';
+import { IViewPoint } from '../../modules/store/viewPoint/model';
+import { CityAction } from '../../modules/store/city/action';
+import { TravelAgendaAction } from '../../modules/store/travelAgenda/action';
 
 @Component({
   selector: 'page-home',
@@ -12,22 +12,25 @@ import { IAppState } from '../../app/modules/store/model';
   changeDetection: ChangeDetectionStrategy.OnPush,  
 })
 export class HomePage implements AfterViewInit {
-  data : ICity[];
 
-  constructor(private _store: NgRedux<IAppState>,private _cityAction : CityAction,private _viewPointAction : ViewPointAction) {
+  @select(['entities','viewPoints'])
+  private viewPoints$ : Observable<IViewPoint[]>;
+
+  constructor(private _viewPointAction : ViewPointAction,private _cityAction : CityAction,private _travelAgendaAction : TravelAgendaAction) {
   }
-
-  @select(['entities','cities'])
-  readonly cities$: Observable<ICity[]>;
 
   ngAfterViewInit(): void {
-    this._cityAction.loadCities();
+    //this._cityAction.loadCities();
     //this._viewPointAction.loadViewPoints();
-
-    this.cities$.subscribe(data => this.data = (<any>data).asMutable({deep: true}));
+    this._travelAgendaAction.loadTravelAgendas();
+    this.viewPoints$.subscribe(data => {
+      console.log(data);
+    });
   }
 
-  fetchMore() {
-    this._cityAction.loadCities(1,50);
+  fetchMore() :void {
+    this._cityAction.loadCities();
+    //this._viewPointAction.loadViewPoints();
+    //this._travelAgendaAction.loadTravelAgendas();
   }
 }

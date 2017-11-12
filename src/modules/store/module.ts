@@ -17,22 +17,26 @@ import { RootEpics } from './epic';
 import { CityService } from './city/service';
 import { CityEpic } from './city/epic';
 import { CityAction } from './city/action';
-import { IAppState } from './model';
+import { IAppState, INIT_ENTITY_STATE } from './model';
 import { ViewPointAction } from './viewPoint/action';
 import { ViewPointService } from './viewPoint/service';
 import { ViewPointEpic } from './viewPoint/epic';
+import { TravelAgendaService } from './travelAgenda/service';
+import { TravelAgendaEpic } from './travelAgenda/epic';
+import { TravelAgendaAction } from './travelAgenda/action';
 
 @NgModule({
     imports: [NgReduxModule,HttpModule],
     providers: [RootEpics,
                 CityService,CityEpic,CityAction,
-                ViewPointService,ViewPointEpic,ViewPointAction],
+                ViewPointService,ViewPointEpic,ViewPointAction,
+                TravelAgendaService,TravelAgendaEpic,TravelAgendaAction],
 })
 export class StoreModule {
     constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics) {
         this._store.configureStore(
             rootReducer,
-            Object.assign({},{entities: {cities: [],viewPoints: [],viewPointComments: []},error: null,progress: {progressing: false}}),
+            Object.assign({},{entities: INIT_ENTITY_STATE,error: null,progress: {progressing: false}}),
             [createLogger({stateTransformer: stateTransformer}), ...this._rootEpics.createEpics()]);
     }
 }

@@ -3,14 +3,13 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
-import { ICity } from './model';
 import { normalize } from 'normalizr';
-import { city } from '../schema';
-import { IEntities } from '../model';
+import { travelAgenda } from '../schema';
+import { IEntities, shapeData } from '../model';
 import { IPagination } from '../action';
 
 @Injectable()
-export class CityService {
+export class TravelAgendaService {
   //#region Private member
   //#endregion
 
@@ -24,26 +23,18 @@ export class CityService {
   //#endregion
 
   //#region Public methods
-  public getCities(pagination : IPagination): Observable<IEntities> {
-    let jsonFile = (pagination.page == 0)?'assets/data/cities.json':'assets/data/cities.page.json'
+  public getTravelAgenda(pagination : IPagination): Observable<IEntities> {
+    let jsonFile = 'assets/data/travelAgendas.json'
     return this._http.get(jsonFile)
     .map(resp => resp.json())
     .map(records => {
-      const data = normalize(records.cities, [ city ]);
-      const {cities} = data.entities;
-      return {cities: Object.keys(cities).map(key => cities[key])};
+      return shapeData(normalize(records.travelAgendas, [ travelAgenda ]));
     })
   }
   //#endregion
 
   //#region Private methods
-  private parse(record : any): ICity {
-    return {
-        id: record.id,
-        name: record.name,
-        thumbnail: record.thumbnail
-    };
-  }
+
   //#endregion
 }
 

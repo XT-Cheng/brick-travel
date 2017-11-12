@@ -1,27 +1,27 @@
 {
   "cities": [
     {
-      "id": 1,
+      "id": "1",
       "name": "City1",
       "thumbnail": "assets/img/IMG_4201.jpg"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "City2",
       "thumbnail": "assets/img/IMG_4202.jpg"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "City3",
       "thumbnail": "assets/img/IMG_4203.jpg"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "City4",
       "thumbnail": "assets/img/IMG_4201.jpg"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "City5",
       "thumbnail": "assets/img/IMG_4202.jpg"
     }

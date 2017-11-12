@@ -13,16 +13,6 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-list>
-    <ion-card *ngFor="let city of (cities$ | async)">
-      <ion-grid fixed>
-        <ion-row>
-          <ion-col class='text'>
-            <h1>{{city.name}}</h1>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-card>
-  </ion-list>
+<ion-content no-padding>
+  <a-map [viewPoints] = 'viewPoints$ | async'></a-map>
 </ion-content>
