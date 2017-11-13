@@ -17,12 +17,10 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Gene
     switch (action.type) {
       case EntityActionTypeEnum.LOAD: {
         let nextState = Object.assign({}, state);
-        
         Object.keys(action.payload.entities).forEach(key => {
           if (action.payload.entities[key]) {
-            if (!action.payload.entities[key].every(x => state[key].find(y => {
-               return x['id'] === y['id'];
-            })))
+            if (!action.payload.entities[key].every(x => state[key].find(y => x['id'] === y['id']
+            )))
               nextState[key] = unionby(state[key], action.payload.entities[key], 'id')
           }
             

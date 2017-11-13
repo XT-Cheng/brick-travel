@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { IViewPoint } from '../../modules/store/viewPoint/model';
 import { CityAction } from '../../modules/store/city/action';
 import { TravelAgendaAction } from '../../modules/store/travelAgenda/action';
+import { getViewPoints } from '../../modules/store/viewPoint/selector';
 
 @Component({
   selector: 'page-home',
@@ -14,6 +15,7 @@ import { TravelAgendaAction } from '../../modules/store/travelAgenda/action';
 export class HomePage implements AfterViewInit {
 
   @select(['entities','viewPoints'])
+  //@select(getViewPoints)
   private viewPoints$ : Observable<IViewPoint[]>;
 
   constructor(private _viewPointAction : ViewPointAction,private _cityAction : CityAction,private _travelAgendaAction : TravelAgendaAction) {
@@ -21,16 +23,16 @@ export class HomePage implements AfterViewInit {
 
   ngAfterViewInit(): void {
     //this._cityAction.loadCities();
-    //this._viewPointAction.loadViewPoints();
-    this._travelAgendaAction.loadTravelAgendas();
+    this._viewPointAction.loadViewPoints();
+    //this._travelAgendaAction.loadTravelAgendas();
     this.viewPoints$.subscribe(data => {
-      console.log(data);
+      console.log('viewPoints$:' + data);
     });
   }
 
   fetchMore() :void {
-    this._cityAction.loadCities();
+    //this._cityAction.loadCities();
     //this._viewPointAction.loadViewPoints();
-    //this._travelAgendaAction.loadTravelAgendas();
+    this._travelAgendaAction.loadTravelAgendas();
   }
 }
