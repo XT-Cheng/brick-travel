@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import { normalize } from 'normalizr';
 import { travelAgenda } from '../schema';
-import { IEntities, shapeData } from '../model';
+import { IEntities } from '../model';
 import { IPagination } from '../action';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class TravelAgendaService {
     return this._http.get(jsonFile)
     .map(resp => resp.json())
     .map(records => {
-      return shapeData(normalize(records.travelAgendas, [ travelAgenda ]));
+      return normalize(records.travelAgendas, [ travelAgenda ]).entities;
     })
   }
   //#endregion

@@ -20,7 +20,7 @@ export interface IViewPoint {
     category: ViewPointCategory;
     rank: number;
     images : string[];
-    comments: IViewPointComment[];
+    comments: IViewPointComment[] | string[];
 }
 
 export interface IViewPointComment {

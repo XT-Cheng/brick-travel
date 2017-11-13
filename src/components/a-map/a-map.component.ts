@@ -32,13 +32,13 @@ export class AMapComponent implements AfterViewInit {
 
   //#region Public property
   @Input()
-  public set viewPoints(viewPoints: Array<IViewPoint>) {
+  public set viewPoints(viewPoints: Map<string,IViewPoint>) {
     if (this._map === null) return;
 
     //Destroy first
     this.destroyViewPointMarkers();
 
-    for (let viewPoint of viewPoints)
+    for (let [,viewPoint] of viewPoints.entries())
       this.generateViewPointMarker(viewPoint);
   }
   //#endregion Public property

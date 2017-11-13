@@ -1,4 +1,4 @@
-import unionby from 'lodash/unionby'
+import { asMutable,isImmutable } from 'seamless-immutable';
 import { combineReducers } from 'redux-seamless-immutable'
 import { IAppState, IEntities, IError, IProgress, INIT_ENTITY_STATE } from './model';
 import { GeneralAction, EntityActionTypeEnum } from './action';
@@ -16,16 +16,18 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Gene
   if (action.payload && action.payload.entities) {
     switch (action.type) {
       case EntityActionTypeEnum.LOAD: {
-        let nextState = Object.assign({}, state);
+        let nextState = asMutable(state); 
+
         Object.keys(action.payload.entities).forEach(key => {
-          if (action.payload.entities[key]) {
-            if (!action.payload.entities[key].every(x => state[key].find(y => x['id'] === y['id']
-            )))
-              nextState[key] = unionby(state[key], action.payload.entities[key], 'id')
-          }
-            
+          Object.keys(action.payload.entities[key]).forEach(id => {
+            if (!Object.keys(state[key]).find(toFind => id === toFind)){
+              if (isImmutable(nextState[key]))
+                nextState[key] = asMutable(nextState[key]);
+              nextState[key][id] = action.payload.entities[key][id];
+            }
+          });
         });
-  
+
         return nextState;
       }
     }
