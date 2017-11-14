@@ -20,4 +20,13 @@ viewpoint-marker-a {
         font-size: 1.4em;
         top: 5px;
     }
+
+    .trip {
+        display: block;
+        position: absolute;
+        text-align: center;
+        top: 35%;
+        left: 46%;
+        transform: translate(-50%, -50%);
+    }
 }

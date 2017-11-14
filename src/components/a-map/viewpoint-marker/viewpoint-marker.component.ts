@@ -50,11 +50,14 @@ export class ViewPointMarkerComponent {
   //Public method
 
   //Protected method
+  protected getSequenceDisplay() : string {
+    return this._isInTrip?(this._sequence + 1).toString():'';
+  }
+
   protected getOuterClass() {
     return {
       'icon-stack-normal': true,
-      'icon-map2': !this._isInTrip,
-      'icon-map4': this._isInTrip
+      'icon-map2':  true
     }
   }
 
@@ -76,20 +79,17 @@ export class ViewPointMarkerComponent {
   protected getSpanClass() {
     return {
       'iconfont': true,
-      'icon-stack': !this._isInTrip,
-      'icon-stack-trip': this._isInTrip
+      'icon-stack': true
     };
   }
 
   protected getStyle() {
-    if (this._viewPoint === null)
+    if (this._isInTrip)
       return {
-        'color': 'black',
+        'color': 'green',
         'width': `${ViewPointMarkerComponent.WIDTH}px`,
         'height': `${ViewPointMarkerComponent.HEIGHT}px`,
       };
-
-    if (this._isInTrip) return;
     
     let color: string;
     switch (this._viewPoint.category) {
@@ -105,8 +105,8 @@ export class ViewPointMarkerComponent {
 
     return {
       'color': color,
-      'width': '48px',
-      'height': '48px'
+      'width': `${ViewPointMarkerComponent.WIDTH}px`,
+      'height': `${ViewPointMarkerComponent.HEIGHT}px`,
     };
   }
   //Protected method
@@ -135,16 +135,7 @@ export class ViewPointMarkerComponent {
 
   private getInnerClassOfTravelViewPoint() {
     return {
-      'icon-stack-small-trip': true,
-      'icon-shuzi1': this._sequence === 0,
-      'icon-shuzi2': this._sequence === 1,
-      'icon-shuzi3': this._sequence === 2,
-      'icon-shuzi': this._sequence === 3,
-      'icon-shuzi5': this._sequence === 4,
-      'icon-shuzi4': this._sequence === 5,
-      'icon-shuzi7': this._sequence === 6,
-      'icon-shuzi8': this._sequence === 7,
-      'icon-shuzi9': this._sequence === 8,
+      'trip': true
     };
   }
   //Private method
