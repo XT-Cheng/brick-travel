@@ -17,6 +17,8 @@ export class AMapComponent implements AfterViewInit {
 
   private _markers: Map<string, MarkerInfor>;
 
+  private _travelLines: Array<AMap.Polyline>;
+
   //#endregion
 
   //#region Event
@@ -27,6 +29,8 @@ export class AMapComponent implements AfterViewInit {
   constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
     this._markers = new Map<string, MarkerInfor>();
     
+    this._travelLines = new Array<AMap.Polyline>();
+
     this._viewPointMarkerFactory = this._resolver.resolveComponentFactory(ViewPointMarkerComponent);
   }
   //#endregion Constructor
@@ -42,6 +46,11 @@ export class AMapComponent implements AfterViewInit {
     viewPoints.forEach(viewPoint => {
       this.generateViewPointMarker(viewPoint);
     })
+
+    //TODO: remove this
+    if (viewPoints.length >0)
+      this._map.setZoomAndCenter(14,this._markers.get(viewPoints[0].id).marker.getPosition());
+    //TODO
   }
 
   @Input()
@@ -52,6 +61,8 @@ export class AMapComponent implements AfterViewInit {
     this.destroyTravelViewPointMarkers();
 
     this.generateDailyTripMarker(dailyTrip);
+
+    this.generateLines();
   }
   //#endregion Public property
 
@@ -102,7 +113,7 @@ export class AMapComponent implements AfterViewInit {
 
   //#endregion
 
-  //#regoin Generate Marker
+  //#region Generate Marker
   private generateViewPointMarker(viewPoint: IViewPoint) {
     this.generateMarker(viewPoint,false,-1);
   }
@@ -156,6 +167,42 @@ export class AMapComponent implements AfterViewInit {
       viewPoint: viewPoint,
       isInTrip: isInTrip
     });
+  }
+  //#endregion
+
+  //#region Generate line
+  private generateLines() {
+    this._map.remove(this._travelLines);
+    this._travelLines = new Array<AMap.Polyline>();
+
+    let linePoints: Array<AMap.LngLat> = new Array<AMap.LngLat>();
+
+    for (let [,marker] of this._markers.entries()) {
+      if (marker.isInTrip)
+        linePoints.push(marker.marker.getPosition());
+    }
+
+    this._travelLines.push(new AMap.Polyline({
+      path: linePoints,       //设置线覆盖物路径
+      strokeColor: "#008000", //线颜色
+      strokeOpacity: 0.5,       //线透明度
+      strokeWeight: 3,        //线宽
+      strokeStyle: "solid",   //线样式
+      strokeDasharray: [10, 5], //补充线样式
+      map: this._map
+    }));
+  }
+  //#endregion
+
+  private travelViewPointMarkers(): Array<AMap.Marker> {
+    let result: Array<AMap.Marker> =
+      new Array<AMap.Marker>();
+    for (let marker of Array.from(this._markers.values())) {
+      if (marker.markerComponent.instance.isInTrip) {
+        result.push(marker.marker);
+      }
+    }
+    return result;
   }
   //#endregion Private method  
 }
