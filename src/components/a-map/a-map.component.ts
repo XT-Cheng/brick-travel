@@ -2,6 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, ComponentFactory, Comp
 import { ViewPointMarkerComponent } from "./viewpoint-marker/viewpoint-marker.component";
 import { IViewPoint } from "../../modules/store/viewPoint/model";
 import { IDailyTrip, ITravelViewPoint } from "../../modules/store/travelAgenda/model";
+import { InformationWindowComponent } from "./information-window/information-window.component";
 
 @Component({
   selector: 'a-map',
@@ -15,6 +16,8 @@ export class AMapComponent implements AfterViewInit {
 
   private _viewPointMarkerFactory: ComponentFactory<ViewPointMarkerComponent>;
 
+  private _informationWindowFactory: ComponentFactory<InformationWindowComponent>;
+  
   private _markers: Map<string, MarkerInfor>;
 
   private _travelLines: Array<AMap.Polyline>;
@@ -32,6 +35,8 @@ export class AMapComponent implements AfterViewInit {
     this._travelLines = new Array<AMap.Polyline>();
 
     this._viewPointMarkerFactory = this._resolver.resolveComponentFactory(ViewPointMarkerComponent);
+
+    this._informationWindowFactory = this._resolver.resolveComponentFactory(InformationWindowComponent);
   }
   //#endregion Constructor
 
@@ -104,7 +109,11 @@ export class AMapComponent implements AfterViewInit {
   private destroyMarker(viewPoint: IViewPoint) {
     if (this._markers.has(viewPoint.id)) {
       let vpInfor = this._markers.get(viewPoint.id);
+      
       vpInfor.markerComponent.destroy();
+      vpInfor.windowComponent.destroy();
+
+      //TODO: Should remove Information Window from _map?
       this._map.remove(vpInfor.marker);
 
       this._markers.delete(viewPoint.id);
@@ -161,11 +170,39 @@ export class AMapComponent implements AfterViewInit {
     crMarker.instance.sequence = sequence;
     crMarker.instance.detectChanges();
 
+    //Create Window Component
+    let crWindow = this._informationWindowFactory.create(this._injector);
+    let window = new AMap.InfoWindow({
+      isCustom: true,
+      content: (<any>crWindow.hostView).rootNodes[0],
+      closeWhenClickMap: true,
+      offset: new AMap.Pixel(0, -1 * ViewPointMarkerComponent.HEIGHT),
+    });
+    crWindow.instance.viewPoint = viewPoint;
+    crWindow.instance.isInTrip = isInTrip;
+    crWindow.instance.detectChanges();
+
+    AMap.event.addListener(marker, "click", ($event: any) => {
+      let marker = <AMap.Marker>$event.target;
+      let viewPoint = <IViewPoint>marker.getExtData();
+
+      if (this._markers.has(viewPoint.id)) {
+        let window = this._markers.get(viewPoint.id).window;
+        window.open(this._map, marker.getPosition());
+      }
+    });
+
+    // crWindow.instance.windowClickEvent.subscribe((viewPoint: IViewPoint) => {
+    //   this._markers.get(viewPoint.id).window.close();
+    // });
+
     this._markers.set(viewPoint.id, {
       marker: marker,
       markerComponent: crMarker,
       viewPoint: viewPoint,
-      isInTrip: isInTrip
+      isInTrip: isInTrip,
+      window: window,
+      windowComponent: crWindow
     });
   }
   //#endregion
@@ -194,16 +231,6 @@ export class AMapComponent implements AfterViewInit {
   }
   //#endregion
 
-  private travelViewPointMarkers(): Array<AMap.Marker> {
-    let result: Array<AMap.Marker> =
-      new Array<AMap.Marker>();
-    for (let marker of Array.from(this._markers.values())) {
-      if (marker.markerComponent.instance.isInTrip) {
-        result.push(marker.marker);
-      }
-    }
-    return result;
-  }
   //#endregion Private method  
 }
 
@@ -212,6 +239,6 @@ export interface MarkerInfor {
   markerComponent: ComponentRef<ViewPointMarkerComponent>,
   viewPoint: IViewPoint,
   isInTrip: boolean,
-  //window: AMap.InfoWindow;
-  //windowComponent: ComponentRef<InformationWindowComponent>;
+  window: AMap.InfoWindow;
+  windowComponent: ComponentRef<InformationWindowComponent>;
 }

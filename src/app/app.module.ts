@@ -9,12 +9,14 @@ import { HomePage } from '../pages/home/home';
 import { StoreModule } from '../modules/store/module';
 import { AMapComponent } from '../components/a-map/a-map.component';
 import { ViewPointMarkerComponent } from '../components/a-map/viewpoint-marker/viewpoint-marker.component';
+import { InformationWindowComponent } from '../components/a-map/information-window/information-window.component';
 
 @NgModule({
   declarations: [
     App,
     AMapComponent,
     ViewPointMarkerComponent,
+    InformationWindowComponent,
     HomePage
   ],
   imports: [
@@ -26,7 +28,8 @@ import { ViewPointMarkerComponent } from '../components/a-map/viewpoint-marker/v
   entryComponents: [
     App,
     HomePage,
-    ViewPointMarkerComponent
+    ViewPointMarkerComponent,
+    InformationWindowComponent
   ],
   providers: [
     StatusBar,
