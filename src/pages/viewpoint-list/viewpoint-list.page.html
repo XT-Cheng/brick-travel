@@ -1,0 +1,28 @@
+<ion-header #header>
+  <ion-navbar>
+    <ion-buttons end>
+      <button ion-button icon-only [color]='getListButtonColor()' (tap)='listSelected()'>
+        <ion-icon name="list"></ion-icon>
+      </button>
+      <button ion-button icon-only [color] = 'getMapButtonColor()' (tap)='mapSelected()'>
+        <ion-icon name="map"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>景点列表</ion-title>
+  </ion-navbar>
+  <ion-toolbar class='filter'>
+    <ion-buttons style="order: 0;">
+      <button ion-button *ngFor="let category of categories" icon-right [color]='getColor(category)' (click)='clicked($event,category)'>
+        {{category.label}}
+        <ion-icon name="arrow-dropdown"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+  <a-map [ngStyle]="showMap()" (windowClicked)='viewPointClicked($event)' #map></a-map>
+  <viewpoint-list [ngStyle]="showList()" (viewPointClicked)='viewPointClicked($event)' (requestMore)='fetchMore($event)'></viewpoint-list>
+</ion-content>
+
+<ng-container #dropdown></ng-container>

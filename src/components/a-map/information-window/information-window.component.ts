@@ -64,6 +64,10 @@ export class InformationWindowComponent {
     return (this._isInTrip) ? 'remove' : 'add';
   }
 
+  protected getInnerCardStyle() {
+    if (this._isViewMode) return {'max-width' : 'none', 'width': '100%'};
+  }
+
   protected getStyle() {
     return {
       'background-color': (this._isInTrip) ? '#e6e0e0;' : '#ffffff;'

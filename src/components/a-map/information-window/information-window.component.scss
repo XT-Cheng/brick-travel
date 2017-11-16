@@ -1,6 +1,7 @@
 information-window-a {
     display: block;
-
+    max-width: 320px;
+    
     .outer-card {
         margin: 0px;
         width: 100%;
@@ -18,6 +19,10 @@ information-window-a {
 
     .inner-card:active {
         background-color: #f3f0f0 !important;
+    }
+
+    .col-img {
+        flex-basis: 80px;
     }
 
     .title {

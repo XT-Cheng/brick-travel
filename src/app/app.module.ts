@@ -10,6 +10,7 @@ import { StoreModule } from '../modules/store/module';
 import { AMapComponent } from '../components/a-map/a-map.component';
 import { ViewPointMarkerComponent } from '../components/a-map/viewpoint-marker/viewpoint-marker.component';
 import { InformationWindowComponent } from '../components/a-map/information-window/information-window.component';
+import { RateComponent } from '../components/a-map/rate/rate.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { InformationWindowComponent } from '../components/a-map/information-wind
     AMapComponent,
     ViewPointMarkerComponent,
     InformationWindowComponent,
-    HomePage
+    HomePage,
+    RateComponent
   ],
   imports: [
     BrowserModule,

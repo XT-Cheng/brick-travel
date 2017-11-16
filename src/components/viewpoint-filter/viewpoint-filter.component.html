@@ -1,0 +1,16 @@
+<div tappable class='backdrop' (click)='backdropClicked()'>
+</div>
+<ion-grid no-padding #grid>
+  <ion-row align-items-stretch>
+    <ion-col align-self-stretch align-self-center>
+      <button [ngClass]='getClass(category.allCriteria)' ion-button small outline (click)='allCategoryClicked($event,category.allCriteria)'>
+          {{category.allCriteria.name}}
+        </button>
+    </ion-col>
+    <ion-col *ngFor="let criteria of category.criteries" align-self-stretch align-self-center>
+      <button [ngClass]='getClass(criteria)' ion-button small outline (click)='categoryClicked($event,criteria)'>
+          {{criteria.name}}
+        </button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

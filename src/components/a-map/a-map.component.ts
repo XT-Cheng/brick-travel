@@ -64,6 +64,11 @@ export class AMapComponent implements AfterViewInit {
   public set dailyTrip(dailyTrip: IDailyTrip) {
     if (this._map === null) return;
 
+    //Remove all of viewPoint from trip first 
+    for (let [,markerInfor] of this._markers.entries()) {
+      this.updateMarkerInfor(markerInfor,markerInfor.viewPoint,false,-1);
+    }
+
     if (dailyTrip === null) {
       this._map.remove(this._travelLines);
       this._travelLines = new Array<AMap.Polyline>();
@@ -72,10 +77,11 @@ export class AMapComponent implements AfterViewInit {
     }
 
     this.setWindowViewMode(false);
-
+    
     let viewPoints = (<ITravelViewPoint[]>dailyTrip.travelViewPoints).map(tvp => tvp.viewPoint);
 
     let sequence = 0;
+
     viewPoints.forEach(viewPoint => {
       //Find it
       let found = this._markers.get(viewPoint.id);
@@ -152,14 +158,11 @@ export class AMapComponent implements AfterViewInit {
     
     markerInfo.marker.setPosition(new AMap.LngLat(viewPoint.longtitude, viewPoint.latitude));
 
-    markerInfo.markerComponent.instance.viewPoint = viewPoint;
-    markerInfo.markerComponent.instance.isInTrip = isInTrip;
+    markerInfo.markerComponent.instance.viewPoint = markerInfo.windowComponent.instance.viewPoint = viewPoint;
+    markerInfo.markerComponent.instance.isInTrip = markerInfo.windowComponent.instance.isInTrip = isInTrip;
     markerInfo.markerComponent.instance.sequence = sequence;
     markerInfo.markerComponent.instance.detectChanges();
-    
-    markerInfo.windowComponent.instance.viewPoint = viewPoint;
-    markerInfo.windowComponent.instance.isInTrip = isInTrip;
-    markerInfo.markerComponent.instance.detectChanges();
+    markerInfo.windowComponent.instance.detectChanges();
   }
   //#endregion Update MarkerInfo
 

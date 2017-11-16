@@ -1,15 +1,16 @@
 <ion-card #card [ngStyle]='getStyle()' class='outer-card'>
   <ion-grid fixed>
     <ion-row>
-      <ion-col col>
+      <ion-col [ngStyle]='getInnerCardStyle()' col-9>
         <ion-card class='inner-card' [ngStyle]='getStyle(viewPoint)'>
           <ion-grid fixed>
             <ion-row>
-              <ion-col col-5>
-                <img style='height:80px;' [src]="viewPoint.thumbnail" />
+              <ion-col class='col-img' col-5>
+                <img style='height:80px;width:80px;' [src]="viewPoint.thumbnail" />
               </ion-col>
-              <ion-col col>
+              <ion-col col-7>
                 <div class='title'>{{viewPoint.name}}</div>
+                <rate class='fr' [readOnly]='true' [(ngModel)]="viewPoint.rank"></rate>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -20,28 +21,6 @@
           <ion-icon [name]='getIconName()'></ion-icon>
         </button>
       </ion-col>
-      <!-- <ion-col col-9>
-        <ion-card class='inner-card' [ngStyle]='getStyle(viewPoint)' (tap)='windowClicked($event)'>
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col col-5>
-                <img class='inner-image' [src]="viewPoint.thumbnail" />
-              </ion-col>
-              <ion-col class='text'>
-                <div class='text'>
-                  <div class='name'>{{viewPoint.name}}</div>
-                </div>
-                <rate class='fr' [readOnly]='true' [(ngModel)]="viewPoint.rate"></rate>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card>
-      </ion-col>
-      <ion-col col-3 class='tool-col' *ngIf='!isViewMode'>
-        <button ion-button icon-only clear large (click)='addOrRemoveClicked($event)'>
-          <ion-icon [name]= 'getIconName()'></ion-icon>
-        </button>
-      </ion-col> -->
     </ion-row>
   </ion-grid>
 </ion-card>
