@@ -21,7 +21,6 @@ export class AMapComponent implements AfterViewInit {
   private _markers: Map<string, MarkerInfor>;
 
   private _travelLines: Array<AMap.Polyline>;
-
   //#endregion
 
   //#region Event
@@ -65,9 +64,18 @@ export class AMapComponent implements AfterViewInit {
     //Destroy first
     this.destroyTravelViewPointMarkers();
 
+    if (dailyTrip === null) {
+      this._map.remove(this._travelLines);
+      this._travelLines = new Array<AMap.Polyline>();
+      this.setWindowViewMode(true);
+      return;
+    } 
+
     this.generateDailyTripMarker(dailyTrip);
 
     this.generateLines();
+
+    this.setWindowViewMode(false);
   }
   //#endregion Public property
 
@@ -103,12 +111,17 @@ export class AMapComponent implements AfterViewInit {
       if (isInTrip == value.isInTrip) {
         this.destroyMarker(value.viewPoint)
       }
+      
+      if (value.isInTrip)
+        this.generateViewPointMarker(value.viewPoint);
     }
   }
 
   private destroyMarker(viewPoint: IViewPoint) {
     if (this._markers.has(viewPoint.id)) {
       let vpInfor = this._markers.get(viewPoint.id);
+      
+      AMap.event.removeListener(vpInfor.markerClickListener);
       
       vpInfor.markerComponent.destroy();
       vpInfor.windowComponent.destroy();
@@ -182,7 +195,7 @@ export class AMapComponent implements AfterViewInit {
     crWindow.instance.isInTrip = isInTrip;
     crWindow.instance.detectChanges();
 
-    AMap.event.addListener(marker, "click", ($event: any) => {
+    let markerClickListener = AMap.event.addListener(marker, "click", ($event: any) => {
       let marker = <AMap.Marker>$event.target;
       let viewPoint = <IViewPoint>marker.getExtData();
 
@@ -192,17 +205,14 @@ export class AMapComponent implements AfterViewInit {
       }
     });
 
-    // crWindow.instance.windowClickEvent.subscribe((viewPoint: IViewPoint) => {
-    //   this._markers.get(viewPoint.id).window.close();
-    // });
-
     this._markers.set(viewPoint.id, {
       marker: marker,
       markerComponent: crMarker,
       viewPoint: viewPoint,
       isInTrip: isInTrip,
       window: window,
-      windowComponent: crWindow
+      windowComponent: crWindow,
+      markerClickListener: markerClickListener
     });
   }
   //#endregion
@@ -231,12 +241,20 @@ export class AMapComponent implements AfterViewInit {
   }
   //#endregion
 
+  private setWindowViewMode(viewMode : boolean) {
+    this._markers.forEach(vpInfo => {
+      vpInfo.windowComponent.instance.isViewMode = viewMode;
+      vpInfo.windowComponent.instance.detectChanges();
+    })
+  }
+
   //#endregion Private method  
 }
 
 export interface MarkerInfor {
   marker: AMap.Marker,
   markerComponent: ComponentRef<ViewPointMarkerComponent>,
+  markerClickListener : any,
   viewPoint: IViewPoint,
   isInTrip: boolean,
   window: AMap.InfoWindow;

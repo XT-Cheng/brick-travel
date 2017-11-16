@@ -1,32 +1,36 @@
 information-window-a {
-    font-family: "Roboto", "Helvetica Neue", sans-serif;
-    font-size: 1.4rem;
     display: block;
-
-    .inner-card {
-        margin: 0px;
-        width: 100%;
-        box-shadow: none;
-    }
-    
-    .inner-card:active {
-        background-color: #f3f0f0 !important;
-    }
-
-    .tool-col {
-        display: flex;
-    }
-
-    .button {
-        flex: 1;
-        align-self: center;
-        width: 100%;
-        height: 100%;
-    }
 
     .outer-card {
         margin: 0px;
         width: 100%;
+    }
+
+    .grid {
+        padding: 0px;
+    }
+
+    .inner-card {
+        margin: 0px;
+        box-shadow: none;
+        width: 100%;
+    }
+
+    .inner-card:active {
+        background-color: #f3f0f0 !important;
+    }
+
+    .title {
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+
+    .button[icon-only] {
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+        height: 100%;
     }
 
     .arrow-down {
@@ -36,9 +40,5 @@ information-window-a {
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
         border-top: 10px solid rgb(173, 173, 169)
-    }
-
-    .grid {
-        padding: 0px;
     }
 }

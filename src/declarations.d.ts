@@ -40,7 +40,8 @@ declare namespace AMap {
   }
 
   class event {
-    static addListener(mapObject: any, name: string, callback: any): void;
+    static addListener(mapObject: any, name: string, callback: any): any;
+    static removeListener(listener : any) : void;
   }
 
   class Polyline {
