@@ -30,6 +30,7 @@ declare namespace AMap {
     setExtData(viewPoint: any): void;
     getExtData(): any;
     getPosition(): LngLat;
+    setPosition(lnglat : LngLat);
   }
 
   class LngLat {
