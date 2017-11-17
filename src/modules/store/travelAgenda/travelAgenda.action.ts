@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { dispatch } from "@angular-redux/store";
-import { entityActionStarted, EntityActionTypeEnum, EntityTypeEnum, entityAction, entityActionSucceeded, entityActionFailed } from "../action";
+import { entityActionStarted, EntityActionTypeEnum, EntityTypeEnum, entityAction, entityActionSucceeded, entityActionFailed } from "../store.action";
 
 @Injectable()
 export class TravelAgendaAction {

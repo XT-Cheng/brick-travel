@@ -1,7 +1,7 @@
 import { asMutable } from 'seamless-immutable';
 import { NgRedux } from '@angular-redux/store';
-import { IAppState } from '../model';
-import { IViewPoint } from './model';
+import { IAppState } from '../store.model';
+import { IViewPoint } from './viewPoint.model';
 
 export function getViewPoints(store : NgRedux<IAppState> ) {
     return (data : { [id : string] : IViewPoint }) => {

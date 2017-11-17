@@ -1,5 +1,5 @@
 import { FluxStandardAction } from "flux-standard-action";
-import { IEntities } from "./model";
+import { IEntities } from "./store.model";
 
 export interface IMetaInfo {
     pagination: IPagination;
@@ -32,7 +32,8 @@ export enum EntityTypeEnum {
     CITY = "CITY",
     VIEWPOINT = "VIEWPOINT",
     VIEWPOINTCOMMENT = "VIEWPOINTCOMMENT",
-    TRAVELAGENDA = "TRAVELAGENDA"
+    TRAVELAGENDA = "TRAVELAGENDA",
+    FILTERCATEGORY = "FILTERCATEGORY"
 }
 
 export enum EntityActionTypeEnum  {

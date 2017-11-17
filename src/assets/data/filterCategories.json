@@ -1,0 +1,43 @@
+{
+  "filterCategories": [{
+    "name": "类型",
+    "id": "1",
+    "allCriteria": {
+      "id": "1",
+      "name": "全部类型",
+      "criteria": "",
+      "isChecked": true
+    },
+    "criteries":[{
+      "id": "2",
+      "name": "景点",
+      "criteria": "",
+      "isChecked": false
+    },{
+      "id": "3",
+      "name": "美食",
+      "criteria": "",
+      "isChecked": false
+    }]},
+    {
+      "id": "2",
+      "name": "时间消耗",
+      "allCriteria": {
+        "id": "4",
+        "name": "时间消耗",
+        "criteria": "",
+        "isChecked": false
+      },
+      "criteries":[{
+        "id": "5",
+        "name": "1小时以内",
+        "criteria": "",
+        "isChecked": false
+      },{
+        "id": "6",
+        "name": "1-2小时",
+        "criteria": "",
+        "isChecked": true
+      }]}
+  ]
+}

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 
-import { IViewPoint, ViewPointCategory } from "../../../modules/store/viewPoint/model";
+import { IViewPoint, ViewPointCategory } from "../../../modules/store/viewPoint/viewPoint.model";
 
 @Component({
   selector: 'viewpoint-marker-a',

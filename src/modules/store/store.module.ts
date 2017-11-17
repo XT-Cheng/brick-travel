@@ -12,25 +12,29 @@ import { createLogger } from 'redux-logger';
 import { HttpModule } from '@angular/http';
 
 // The top-level reducers and epics that make up our app's logic.
-import { rootReducer } from './reducer';
-import { RootEpics } from './epic';
-import { CityService } from './city/service';
-import { CityEpic } from './city/epic';
-import { CityAction } from './city/action';
-import { IAppState, INIT_ENTITY_STATE } from './model';
-import { ViewPointAction } from './viewPoint/action';
-import { ViewPointService } from './viewPoint/service';
-import { ViewPointEpic } from './viewPoint/epic';
-import { TravelAgendaService } from './travelAgenda/service';
-import { TravelAgendaEpic } from './travelAgenda/epic';
-import { TravelAgendaAction } from './travelAgenda/action';
+import { rootReducer } from './store.reducer';
+import { RootEpics } from './store.epic';
+import { CityService } from './city/city.service';
+import { CityEpic } from './city/city.epic';
+import { CityAction } from './city/city.action';
+import { IAppState, INIT_ENTITY_STATE } from './store.model';
+import { ViewPointAction } from './viewPoint/viewPoint.action';
+import { ViewPointService } from './viewPoint/viewPoint.service';
+import { ViewPointEpic } from './viewPoint/viewPoint.epic';
+import { TravelAgendaService } from './travelAgenda/travelAgenda.service';
+import { TravelAgendaEpic } from './travelAgenda/travelAgenda.epic';
+import { TravelAgendaAction } from './travelAgenda/travelAgenda.action';
+import { FilterCategoryService } from './filterCategory/filterCategory.service';
+import { FilterCategoryEpic } from './filterCategory/filterCategory.epic';
+import { FilterCategoryAction } from './filterCategory/filterCategory.action';
 
 @NgModule({
     imports: [NgReduxModule,HttpModule],
     providers: [RootEpics,
                 CityService,CityEpic,CityAction,
                 ViewPointService,ViewPointEpic,ViewPointAction,
-                TravelAgendaService,TravelAgendaEpic,TravelAgendaAction],
+                TravelAgendaService,TravelAgendaEpic,TravelAgendaAction,
+                FilterCategoryService,FilterCategoryEpic,FilterCategoryAction],
 })
 export class StoreModule {
     constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics) {

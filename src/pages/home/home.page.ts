@@ -1,0 +1,135 @@
+import { Component, AfterViewInit, ChangeDetectionStrategy, ViewChild, ViewContainerRef, ComponentFactory, ComponentFactoryResolver } from '@angular/core';
+import { ViewPointAction } from '../../modules/store/viewPoint/viewPoint.action';
+import { NgRedux } from '@angular-redux/store';
+import { Observable } from 'rxjs/Observable';
+import { IViewPoint } from '../../modules/store/viewPoint/viewPoint.model';
+import { CityAction } from '../../modules/store/city/city.action';
+import { TravelAgendaAction } from '../../modules/store/travelAgenda/travelAgenda.action';
+import { IAppState } from '../../modules/store/store.model';
+import { ITravelAgenda, IDailyTrip } from '../../modules/store/travelAgenda/travelAgenda.model';
+import { getTravelAgendas } from '../../modules/store/travelAgenda/travelAgenda.selector';
+import { getViewPoints } from '../../modules/store/viewPoint/viewPoint.selector';
+import { Subject } from 'rxjs/Subject';
+import { asMutable } from 'seamless-immutable';
+import { ViewPointFilterComponent } from '../../components/viewpoint-filter/viewpoint-filter.component';
+import { FilterCategoryAction } from '../../modules/store/filterCategory/filterCategory.action';
+import { IFilterCategory } from '../../modules/store/filterCategory/filterCategory.model';
+import { getFilterCategories } from '../../modules/store/filterCategory/filterCategory.selector';
+
+@Component({
+  selector: 'page-home',
+  templateUrl: 'home.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HomePage implements AfterViewInit {
+  @ViewChild('dropdown', { read: ViewContainerRef }) private dropdownContainer: ViewContainerRef;
+  //@select(['entities','viewPoints'])
+  //@select(getViewPoints)
+  protected viewPoints$: Observable<Array<IViewPoint>>;
+  protected travelAgendas$: Observable<Array<ITravelAgenda>>;
+  protected filterCategories$: Observable<Array<IFilterCategory>>;
+
+  protected dayTripSelected$: Subject<IDailyTrip> = new Subject<IDailyTrip>();
+
+  //@select(['entities','cities'])
+  //private cities$ : Observable<Map<string,ICity>>
+  private dailyTrips: Array<IDailyTrip> = new Array<IDailyTrip>();
+  private firstDailyTrip: boolean = true;
+
+  private viewpointFilterComponentFactory: ComponentFactory<ViewPointFilterComponent>;
+
+  private currentDropDown: ViewPointFilterComponent;
+
+  constructor(private _resolver: ComponentFactoryResolver, private _store: NgRedux<IAppState>,
+    private _viewPointAction: ViewPointAction, private _cityAction: CityAction,
+    private _travelAgendaAction: TravelAgendaAction, private _filterCategoryAction: FilterCategoryAction) {
+    this.viewpointFilterComponentFactory = this._resolver.resolveComponentFactory(ViewPointFilterComponent);
+
+    this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints']).map(getViewPoints(this._store));
+    this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas']).map(getTravelAgendas(this._store));
+    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
+  }
+
+  ngAfterViewInit(): void {
+    this._cityAction.loadCities();
+    this._viewPointAction.loadViewPoints();
+    this._travelAgendaAction.loadTravelAgendas();
+    this._filterCategoryAction.loadFilterCategories();
+
+    this.viewPoints$.subscribe(data => {
+      console.log('ViewPoint Changed!');
+    })
+    this.travelAgendas$.subscribe(data => {
+      console.log('Agenda Changed!');
+      this.dailyTrips = this.getDailyTrips();
+      // if ( this.dailyTrips.length>0)
+      //   this.dayTripSelected$.next(this.dailyTrips[0]);
+    })
+  }
+
+  fetchMore(): void {
+    //this._cityAction.loadCities(1,50);
+    this._viewPointAction.loadViewPoints(1, 50);
+    //this._travelAgendaAction.loadTravelAgendas();
+  }
+
+  changeDailyTrip(): void {
+    this.dayTripSelected$.next(this.dailyTrips[this.firstDailyTrip ? 1 : 0]);
+    this.firstDailyTrip = !this.firstDailyTrip;
+  }
+
+  clearDailyTrip(): void {
+    this.dayTripSelected$.next(null);
+  }
+
+  getDailyTrips(): Array<IDailyTrip> {
+    let ret = new Array<IDailyTrip>();
+    let viewPoints = asMutable(this._store.getState().entities.viewPoints, { deep: true });
+    let dailyTrips = asMutable(this._store.getState().entities.dailyTrips, { deep: true });
+    let travelViewPoints = asMutable(this._store.getState().entities.travelViewPoints, { deep: true });
+
+    Object.keys(dailyTrips).forEach(key => {
+      let dailyTrip = dailyTrips[key];
+      dailyTrip.travelViewPoints = dailyTrip.travelViewPoints.map(id => travelViewPoints[id]);
+      Object.keys(dailyTrip.travelViewPoints).forEach(key => {
+        let travelViewPoint = dailyTrip.travelViewPoints[key];
+        travelViewPoint.viewPoint = viewPoints[travelViewPoint.viewPoint];
+      });
+      ret.push(dailyTrip);
+    });
+
+    return ret;
+  }
+
+  protected getColor(category) {
+    if (category.allCriteria.isChecked)
+      return "primary";
+    else
+      return "secondary";
+  }
+
+  protected clicked($event, category) {
+    this.closeCurrentDropDown();
+
+    let p = this.dropdownContainer.createComponent(this.viewpointFilterComponentFactory);
+
+    this.currentDropDown = p.instance;
+    this.currentDropDown.category = category;
+    this.currentDropDown.parent = this;
+    // this.currentDropDown.top = this.headerElement.nativeElement.clientHeight;
+    // this.currentDropDown.filterSelected.subscribe((filter) => {
+    //   this.viewPointService.getViewPoints(null, 0, filter);
+    // });
+
+    this.currentDropDown.ngAfterViewInit();
+
+    $event.stopPropagation();
+  }
+
+  protected closeCurrentDropDown() {
+    if (this.currentDropDown != null) {
+      this.dropdownContainer.detach();
+      this.currentDropDown = null;
+    }
+  }
+}

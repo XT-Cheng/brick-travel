@@ -1,6 +1,7 @@
-import { ICity } from "./city/model";
-import { IViewPoint, IViewPointComment } from "./viewPoint/model";
-import { ITravelViewPoint, IDailyTrip, ITravelAgenda } from "./travelAgenda/model";
+import { ICity } from "./city/city.model";
+import { IViewPoint, IViewPointComment } from "./viewPoint/viewPoint.model";
+import { ITravelViewPoint, IDailyTrip, ITravelAgenda } from "./travelAgenda/travelAgenda.model";
+import { IFilterCategory, IFilterCriteria } from "./filterCategory/filterCategory.model";
 
 export const INIT_ENTITY_STATE = {
   cities: {},
@@ -10,6 +11,8 @@ export const INIT_ENTITY_STATE = {
   dailyTrips: {},
   travelAgendas: {},
   users: {},
+  filterCategories: {},
+  filterCriteries: {}
 }
 
 export interface IError {
@@ -29,6 +32,8 @@ export interface IEntities {
   travelViewPoints: { [id : string] : ITravelViewPoint },
   dailyTrips: { [id : string] : IDailyTrip },
   travelAgendas: { [id : string] : ITravelAgenda },
+  filterCategories: {[id : string] : IFilterCategory},
+  filterCriteries: {[id : string] : IFilterCriteria}
 }
 
 export interface IUser {

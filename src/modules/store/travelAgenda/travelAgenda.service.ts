@@ -4,9 +4,9 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import { normalize } from 'normalizr';
-import { travelAgenda } from '../schema';
-import { IEntities } from '../model';
-import { IPagination } from '../action';
+import { travelAgenda } from '../store.schema';
+import { IEntities } from '../store.model';
+import { IPagination } from '../store.action';
 
 @Injectable()
 export class TravelAgendaService {

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, Input } from '@angular/core';
 
-import { IViewPoint } from "../../../modules/store/viewPoint/model";
+import { IViewPoint } from "../../../modules/store/viewPoint/viewPoint.model";
 
 @Component({
   selector: 'information-window-a',

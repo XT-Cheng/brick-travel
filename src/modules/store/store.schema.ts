@@ -22,3 +22,10 @@ export const travelAgenda = new schema.Entity('travelAgendas',{
     user: user,
     dailyTrips: [dailyTrip]
 });
+
+export const filterCriteria = new schema.Entity('filterCriteries');
+
+export const filterCategory = new schema.Entity('filterCategories',{
+    allCriteria: filterCriteria,
+    criteries: [filterCriteria]
+});

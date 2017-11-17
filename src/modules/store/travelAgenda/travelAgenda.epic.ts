@@ -6,10 +6,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/startWith';
 
-import { IAppState } from '../model';
-import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../action';
-import { TravelAgendaService } from './service';
-import { TravelAgendaAction } from './action';
+import { IAppState } from '../store.model';
+import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../store.action';
+import { TravelAgendaService } from './travelAgenda.service';
+import { TravelAgendaAction } from './travelAgenda.action';
 
 @Injectable()
 export class TravelAgendaEpic {
@@ -19,13 +19,13 @@ export class TravelAgendaEpic {
   ) {}
 
   public createEpic() {
-    return createEpicMiddleware(this.createLoadTravelAgendaEpic());
+    return createEpicMiddleware(this.createEpicInternal(EntityTypeEnum.TRAVELAGENDA));
   }
 
-  private createLoadTravelAgendaEpic(): Epic<GeneralAction, IAppState> {
+  private createEpicInternal(entityType : EntityTypeEnum): Epic<GeneralAction, IAppState> {
     return (action$, store) => action$
     .ofType(EntityActionTypeEnum.LOAD)
-    .filter(action => action.meta.entityType === EntityTypeEnum.TRAVELAGENDA && !!action.meta.pagination)
+    .filter(action => action.meta.entityType === entityType && !!action.meta.pagination)
       .switchMap(action => this._service.getTravelAgenda(action.meta.pagination)
       .map(data => this._action.loadTravelAgendaSucceeded(data))
         .catch(response => 

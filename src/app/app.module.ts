@@ -5,12 +5,13 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
 import { App } from './app.component';
-import { HomePage } from '../pages/home/home';
-import { StoreModule } from '../modules/store/module';
+import { HomePage } from '../pages/home/home.page';
+import { StoreModule } from '../modules/store/store.module';
 import { AMapComponent } from '../components/a-map/a-map.component';
 import { ViewPointMarkerComponent } from '../components/a-map/viewpoint-marker/viewpoint-marker.component';
 import { InformationWindowComponent } from '../components/a-map/information-window/information-window.component';
 import { RateComponent } from '../components/a-map/rate/rate.component';
+import { ViewPointFilterComponent } from '../components/viewpoint-filter/viewpoint-filter.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { RateComponent } from '../components/a-map/rate/rate.component';
     ViewPointMarkerComponent,
     InformationWindowComponent,
     HomePage,
-    RateComponent
+    RateComponent,
+    ViewPointFilterComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +33,8 @@ import { RateComponent } from '../components/a-map/rate/rate.component';
     App,
     HomePage,
     ViewPointMarkerComponent,
-    InformationWindowComponent
+    InformationWindowComponent,
+    ViewPointFilterComponent
   ],
   providers: [
     StatusBar,

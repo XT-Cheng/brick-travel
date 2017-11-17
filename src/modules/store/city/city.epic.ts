@@ -6,10 +6,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/startWith';
 
-import { IAppState } from '../model';
-import { CityService } from './service';
-import { CityAction } from './action';
-import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../action';
+import { IAppState } from '../store.model';
+import { CityService } from './city.service';
+import { CityAction } from './city.action';
+import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../store.action';
 
 @Injectable()
 export class CityEpic {
@@ -19,13 +19,13 @@ export class CityEpic {
   ) {}
 
   public createEpic() {
-    return createEpicMiddleware(this.createLoadCityEpic());
+    return createEpicMiddleware(this.createEpicInternal(EntityTypeEnum.CITY));
   }
 
-  private createLoadCityEpic(): Epic<GeneralAction, IAppState> {
+  private createEpicInternal(entityType : EntityTypeEnum ): Epic<GeneralAction, IAppState> {
     return (action$, store) => action$
     .ofType(EntityActionTypeEnum.LOAD)
-    .filter(action => action.meta.entityType === EntityTypeEnum.CITY && !!action.meta.pagination)
+    .filter(action => action.meta.entityType ===  entityType && !!action.meta.pagination)
       .switchMap(action => this._service.getCities(action.meta.pagination)
       .map(data => this._action.loadCitySucceeded(data))
         .catch(response => 

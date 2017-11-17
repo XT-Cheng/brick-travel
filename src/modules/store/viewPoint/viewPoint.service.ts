@@ -4,12 +4,12 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import { normalize } from 'normalizr';
-import { city } from '../schema';
-import { IEntities } from '../model';
-import { IPagination } from '../action';
+import { viewPoint } from '../store.schema';
+import { IEntities } from '../store.model';
+import { IPagination } from '../store.action';
 
 @Injectable()
-export class CityService {
+export class ViewPointService {
   //#region Private member
   //#endregion
 
@@ -23,17 +23,12 @@ export class CityService {
   //#endregion
 
   //#region Public methods
-  public getCities(pagination : IPagination): Observable<IEntities> {
-    let jsonFile = (pagination.page == 0)?'assets/data/cities.json':'assets/data/cities.page.json'
-    return this._http.get(jsonFile)
-    .map(resp => resp.json())
+  public getViewPoints(pagination : IPagination): Observable<IEntities> {
+    let jsonFile = (pagination.page == 0)?'assets/data/viewPoints.json':'assets/data/viewPoints.page.json'
+    return this._http.get(jsonFile).map(resp => resp.json())
     .map(records => {
-      return normalize(records.cities, [ city ]).entities;
+      return normalize(records.viewPoints, [ viewPoint ]).entities;
     })
   }
-  //#endregion
-
-  //#region Private methods
-
   //#endregion
 }

@@ -1,12 +1,12 @@
 import { Component, AfterViewInit, ElementRef, Renderer2, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter } from '@angular/core';
-import { FilterCategory } from "../../data-model/filter-category.model";
-import { FilterCriteria } from "../../data-model/filter-criteria.model";
+import { IFilterCategory } from "../../modules/store/filterCategory/filterCategory.model";
+import { IFilterCriteria } from "../../modules/store/filterCategory/filterCategory.model";
 
 @Component({
   selector: 'viewpoint-filter',
   templateUrl: 'viewpoint-filter.component.html'
 })
-export class ViewpointFilterComponent implements AfterViewInit {
+export class ViewPointFilterComponent implements AfterViewInit {
   //#region Private member
 
   //#endregion
@@ -17,7 +17,7 @@ export class ViewpointFilterComponent implements AfterViewInit {
 
   //#region Public property
   @Input() top: number;
-  @Input() category: FilterCategory;
+  @Input() category: IFilterCategory;
   @Input() parent: any;
   //#endregion
 
@@ -39,7 +39,7 @@ export class ViewpointFilterComponent implements AfterViewInit {
   //#endregion
 
   //#region Protected methods
-  protected getClass(criteria: FilterCriteria) {
+  protected getClass(criteria: IFilterCriteria) {
     return {
       'active': criteria.isChecked,
       'inactive': !criteria.isChecked
@@ -50,7 +50,7 @@ export class ViewpointFilterComponent implements AfterViewInit {
     this.parent.closeCurrentDropDown();
   }
 
-  protected allCategoryClicked(event: any, allCriteria: FilterCriteria) {
+  protected allCategoryClicked(event: any, allCriteria: IFilterCriteria) {
     if (allCriteria.isChecked) {
       this.refresh();
       event.stopPropagation();
@@ -66,7 +66,7 @@ export class ViewpointFilterComponent implements AfterViewInit {
     event.stopPropagation();
   }
 
-  protected categoryClicked(event: any, criteria: FilterCriteria) {
+  protected categoryClicked(event: any, criteria: IFilterCriteria) {
     criteria.isChecked = !criteria.isChecked;
 
     for (let c of this.category.criteries) {

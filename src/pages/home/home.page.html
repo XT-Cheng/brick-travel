@@ -14,6 +14,10 @@
         <button ion-button outline color='secondary' (click)='clearDailyTrip()'>
           Clear DailyTrip
         </button>
+        <button ion-button *ngFor="let category of (filterCategories$ | async)" icon-right [color]='getColor(category)' (click)='clicked($event,category)'>
+          {{category.name}}
+          <ion-icon name="arrow-dropdown"></ion-icon>
+        </button>
       </ion-buttons>
     </ion-toolbar>
   </ion-navbar>
@@ -22,3 +26,5 @@
 <ion-content no-padding>
   <a-map [viewPoints] = 'viewPoints$ | async' [dailyTrip] = 'dayTripSelected$ | async'></a-map>
 </ion-content>
+
+<ng-container #dropdown></ng-container>
