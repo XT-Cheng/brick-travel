@@ -12,6 +12,7 @@ import { ViewPointMarkerComponent } from '../components/a-map/viewpoint-marker/v
 import { InformationWindowComponent } from '../components/a-map/information-window/information-window.component';
 import { RateComponent } from '../components/a-map/rate/rate.component';
 import { ViewPointFilterComponent } from '../components/viewpoint-filter/viewpoint-filter.component';
+import { ViewPointSearchComponent } from '../components/viewpoint-search/viewpoint-search.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { ViewPointFilterComponent } from '../components/viewpoint-filter/viewpoi
     InformationWindowComponent,
     HomePage,
     RateComponent,
-    ViewPointFilterComponent
+    ViewPointFilterComponent,
+    ViewPointSearchComponent
   ],
   imports: [
     BrowserModule,

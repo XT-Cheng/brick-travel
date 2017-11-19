@@ -1,20 +1,30 @@
-import { Component, AfterViewInit, ChangeDetectionStrategy, ViewChild, ViewContainerRef, ComponentFactory, ComponentFactoryResolver } from '@angular/core';
-import { ViewPointAction } from '../../modules/store/viewPoint/viewPoint.action';
 import { NgRedux } from '@angular-redux/store';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ComponentFactory,
+    ComponentFactoryResolver,
+    ViewChild,
+    ViewContainerRef,
+} from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { IViewPoint } from '../../modules/store/viewPoint/viewPoint.model';
-import { CityAction } from '../../modules/store/city/city.action';
-import { TravelAgendaAction } from '../../modules/store/travelAgenda/travelAgenda.action';
-import { IAppState } from '../../modules/store/store.model';
-import { ITravelAgenda, IDailyTrip } from '../../modules/store/travelAgenda/travelAgenda.model';
-import { getTravelAgendas } from '../../modules/store/travelAgenda/travelAgenda.selector';
-import { getViewPoints } from '../../modules/store/viewPoint/viewPoint.selector';
 import { Subject } from 'rxjs/Subject';
 import { asMutable } from 'seamless-immutable';
+
 import { ViewPointFilterComponent } from '../../components/viewpoint-filter/viewpoint-filter.component';
+import { CityAction } from '../../modules/store/city/city.action';
 import { FilterCategoryAction } from '../../modules/store/filterCategory/filterCategory.action';
 import { IFilterCategory } from '../../modules/store/filterCategory/filterCategory.model';
 import { getFilterCategories } from '../../modules/store/filterCategory/filterCategory.selector';
+import { IAppState } from '../../modules/store/store.model';
+import { TravelAgendaAction } from '../../modules/store/travelAgenda/travelAgenda.action';
+import { IDailyTrip, ITravelAgenda } from '../../modules/store/travelAgenda/travelAgenda.model';
+import { getTravelAgendas } from '../../modules/store/travelAgenda/travelAgenda.selector';
+import { ViewPointAction } from '../../modules/store/viewPoint/viewPoint.action';
+import { IViewPoint } from '../../modules/store/viewPoint/viewPoint.model';
+import { getViewPoints } from '../../modules/store/viewPoint/viewPoint.selector';
+import { ViewPointSearchComponent } from '../../components/viewpoint-search/viewpoint-search.component';
 
 @Component({
   selector: 'page-home',
@@ -23,6 +33,8 @@ import { getFilterCategories } from '../../modules/store/filterCategory/filterCa
 })
 export class HomePage implements AfterViewInit {
   @ViewChild('dropdown', { read: ViewContainerRef }) private dropdownContainer: ViewContainerRef;
+  @ViewChild(ViewPointSearchComponent) private searchBar: ViewPointSearchComponent;
+
   //@select(['entities','viewPoints'])
   //@select(getViewPoints)
   protected viewPoints$: Observable<Array<IViewPoint>>;
@@ -40,6 +52,8 @@ export class HomePage implements AfterViewInit {
 
   private currentDropDown: ViewPointFilterComponent;
 
+  private displaySearch : boolean;
+
   constructor(private _resolver: ComponentFactoryResolver, private _store: NgRedux<IAppState>,
     private _viewPointAction: ViewPointAction, private _cityAction: CityAction,
     private _travelAgendaAction: TravelAgendaAction, private _filterCategoryAction: FilterCategoryAction) {
@@ -56,6 +70,8 @@ export class HomePage implements AfterViewInit {
     this._travelAgendaAction.loadTravelAgendas();
     this._filterCategoryAction.loadFilterCategories();
 
+    this.searchBar.isVisible = false;
+    
     this.viewPoints$.subscribe(data => {
       console.log('ViewPoint Changed!');
     })
@@ -67,6 +83,9 @@ export class HomePage implements AfterViewInit {
     })
   }
 
+  toggleSearch() : void {
+    this.searchBar.isVisible = true;
+  }
   fetchMore(): void {
     //this._cityAction.loadCities(1,50);
     this._viewPointAction.loadViewPoints(1, 50);

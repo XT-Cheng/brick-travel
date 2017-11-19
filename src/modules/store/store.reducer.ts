@@ -1,7 +1,8 @@
-import { asMutable,isImmutable } from 'seamless-immutable';
-import { combineReducers } from 'redux-seamless-immutable'
-import { IAppState, IEntities, IError, IProgress, INIT_ENTITY_STATE } from './store.model';
-import { GeneralAction, EntityActionTypeEnum } from './store.action';
+import { combineReducers } from 'redux-seamless-immutable';
+import { asMutable, isImmutable } from 'seamless-immutable';
+
+import { EntityActionTypeEnum, GeneralAction } from './store.action';
+import { IAppState, IEntities, IError, INIT_ENTITY_STATE, IProgress } from './store.model';
 
 // Define the global store shape by combining our application's
 // reducers together into a given structure.

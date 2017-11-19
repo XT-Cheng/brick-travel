@@ -1,0 +1,14 @@
+<ng-template [ngIf]='isVisible' #searchBar>
+  <div tappable class='backdrop' (click)='backdropClicked()'></div>
+  <ion-grid>
+    <ion-row>
+      <ion-searchbar col-9></ion-searchbar>
+      <button col ion-button color='secondary' (click)='dismiss()'>
+        Cancel
+      </button>
+    </ion-row>
+  </ion-grid>
+</ng-template>
+
+<!-- <ng-container *ngTemplateOutlet='searchBar'>
+</ng-container> -->
