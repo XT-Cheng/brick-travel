@@ -33,10 +33,6 @@ export class ViewPointSearchComponent implements AfterViewInit {
   //#endregion
 
   //#region Protected methods
-  protected backdropClicked() {
-    this.isVisible = false;
-  }
-
   protected dismiss() {
     this.isVisible = false;
   }

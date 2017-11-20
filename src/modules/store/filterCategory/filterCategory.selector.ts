@@ -6,7 +6,7 @@ import { IFilterCategory } from './filterCategory.model';
 export function getFilterCategories(store : NgRedux<IAppState> ) {
     return (data : { [id : string] : IFilterCategory }) => {
         let ret = new Array<IFilterCategory>();
-        let criteries = asMutable(store.getState().entities.filterCriteries);
+        let criteries = asMutable(store.getState().entities.filterCriteries,{deep: true});
         let categories = asMutable(data,{deep: true});
         Object.keys(categories).forEach(key => {
             let category = categories[key];

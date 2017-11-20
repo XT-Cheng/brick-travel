@@ -3,40 +3,23 @@
       <ion-title>
           Ionic Blank
         </ion-title>
-    <!-- <ion-toolbar> -->
-    <ion-buttons left>
-      <button ion-button icon-left large color='danger' (click)='toggleSearch()'>
-        <!-- <ion-icon name="search"></ion-icon> -->
-        Search
-      </button>
-      <!-- <button ion-button outline color='secondary' (click)='fetchMore()'>
-                  Fetch More
-                </button>
-                <button ion-button outline color='secondary' (click)='changeDailyTrip()'>
-                  Change DailyTrip
-                </button>
-                <button ion-button outline color='secondary' (click)='clearDailyTrip()'>
-                  Clear DailyTrip
-                </button>
-                <button ion-button *ngFor="let category of (filterCategories$ | async)" icon-right [color]='getColor(category)' (click)='clicked($event,category)'>
-                  {{category.name}}
-                  <ion-icon name="arrow-dropdown"></ion-icon>
-                </button> -->
-    </ion-buttons>
-    <!-- </ion-toolbar> -->
-    
-    <ion-buttons end>
-        <button ion-button icon-left large color='danger' (click)='toggleSearch()'>
-          <!-- <ion-icon name="search"></ion-icon> -->
-          Search
-        </button>
-      </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content no-padding>
   <a-map [viewPoints]='viewPoints$ | async' [dailyTrip]='dayTripSelected$ | async'></a-map>
+  <ion-fab right edge #fab>
+    <button ion-fab mini><ion-icon name="add"></ion-icon></button>
+    <ion-fab-list>
+      <button ion-fab (click)='toggleSearch(fab)'>
+        <ion-icon name="search"></ion-icon>
+      </button>
+      <button ion-fab (click)='toggleFilter(fab)'>
+        <ion-icon name="color-filter"></ion-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab>
 </ion-content>
 
 <viewpoint-search #searchBar></viewpoint-search>
-<ng-container #dropdown></ng-container>
+<viewpoint-filter #filterBar></viewpoint-filter>

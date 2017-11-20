@@ -1,6 +1,11 @@
-import { Component, AfterViewInit, ElementRef, Renderer2, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter } from '@angular/core';
-import { IFilterCategory } from "../../modules/store/filterCategory/filterCategory.model";
-import { IFilterCriteria } from "../../modules/store/filterCategory/filterCategory.model";
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs/Rx';
+
+import { IFilterCategory } from '../../modules/store/filterCategory/filterCategory.model';
+import { IFilterCriteria } from '../../modules/store/filterCategory/filterCategory.model';
+import { getFilterCategories } from '../../modules/store/filterCategory/filterCategory.selector';
+import { IAppState } from '../../modules/store/store.model';
+import { NgRedux } from '@angular-redux/store';
 
 @Component({
   selector: 'viewpoint-filter',
@@ -8,37 +13,46 @@ import { IFilterCriteria } from "../../modules/store/filterCategory/filterCatego
 })
 export class ViewPointFilterComponent implements AfterViewInit {
   //#region Private member
+  
+  //#endregion
 
+  //#region Protected member
+  
+  protected filterCategories$: Observable<Array<IFilterCategory>>;
+  protected _currentCategory : IFilterCategory = null; 
+  
   //#endregion
 
   //#region Private property
-  @ViewChild('grid') private _grid: ElementRef;
+  
+  // @ViewChild('grid') private _grid: ElementRef;
   //#endregion
 
   //#region Public property
-  @Input() top: number;
-  @Input() category: IFilterCategory;
-  @Input() parent: any;
+  @Input() public isVisible: boolean;
   //#endregion
 
   //#region Event
-  @Output() filterSelected: EventEmitter<string> = new EventEmitter<string>();
+  
   //#endregion
 
   //#region Constructor
-  constructor(private cdRef: ChangeDetectorRef, private renderer: Renderer2) {
+  constructor(private _store: NgRedux<IAppState>) {
+    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
-    this.cdRef.detectChanges();
-
-    this.renderer.setStyle(this._grid.nativeElement, 'top', this.top + 'px');
   }
   //#endregion
 
   //#region Protected methods
+  protected dismiss() {
+    this._currentCategory = null;
+    this.isVisible = false;
+  }
+
   protected getClass(criteria: IFilterCriteria) {
     return {
       'active': criteria.isChecked,
@@ -46,20 +60,16 @@ export class ViewPointFilterComponent implements AfterViewInit {
     }
   }
 
-  protected backdropClicked() {
-    this.parent.closeCurrentDropDown();
-  }
-
-  protected allCategoryClicked(event: any, allCriteria: IFilterCriteria) {
-    if (allCriteria.isChecked) {
+  protected allCategoryClicked(event: any) {
+    if (this._currentCategory.allCriteria.isChecked) {
       this.refresh();
       event.stopPropagation();
       return;
     }
 
-    allCriteria.isChecked = !allCriteria.isChecked;
+    this._currentCategory.allCriteria.isChecked = !this._currentCategory.allCriteria.isChecked;
 
-    for (let criteria of this.category.criteries) {
+    for (let criteria of this._currentCategory.criteries) {
       criteria.isChecked = false;
     }
     this.refresh();
@@ -69,18 +79,18 @@ export class ViewPointFilterComponent implements AfterViewInit {
   protected categoryClicked(event: any, criteria: IFilterCriteria) {
     criteria.isChecked = !criteria.isChecked;
 
-    for (let c of this.category.criteries) {
+    for (let c of this._currentCategory.criteries) {
       if (criteria.isChecked != c.isChecked) {
-        this.category.allCriteria.isChecked = false;
+        this._currentCategory.allCriteria.isChecked = false;
         this.refresh();
         event.stopPropagation();
         return;
       }
     }
 
-    this.category.allCriteria.isChecked = true;
+    this._currentCategory.allCriteria.isChecked = true;
 
-    for (let c of this.category.criteries) {
+    for (let c of this._currentCategory.criteries) {
       c.isChecked = false;
     }
 
@@ -88,16 +98,17 @@ export class ViewPointFilterComponent implements AfterViewInit {
     event.stopPropagation();
   }
 
+  protected clicked($event, category) {
+    this._currentCategory = category;
+  }
+
   protected refresh() {
-    if (this.category.allCriteria.isChecked) {
-      this.category.label = this.category.allCriteria.name;
+    if (this._currentCategory.allCriteria.isChecked) {
+      this._currentCategory.label = this._currentCategory.allCriteria.name;
     }
     else {
-      this.category.label = this.category.name;
+      this._currentCategory.label = this._currentCategory.name;
     }
-
-    this.parent.closeCurrentDropDown();
-    this.filterSelected.emit(this.category.filter);
   }
   //#endregion
 }

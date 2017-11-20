@@ -1,3 +1,4 @@
+import { FabContainer } from 'ionic-angular';
 import { NgRedux } from '@angular-redux/store';
 import {
     AfterViewInit,
@@ -34,7 +35,8 @@ import { ViewPointSearchComponent } from '../../components/viewpoint-search/view
 export class HomePage implements AfterViewInit {
   @ViewChild('dropdown', { read: ViewContainerRef }) private dropdownContainer: ViewContainerRef;
   @ViewChild(ViewPointSearchComponent) private searchBar: ViewPointSearchComponent;
-
+  @ViewChild(ViewPointFilterComponent) private filterBar: ViewPointFilterComponent;
+  
   //@select(['entities','viewPoints'])
   //@select(getViewPoints)
   protected viewPoints$: Observable<Array<IViewPoint>>;
@@ -83,9 +85,16 @@ export class HomePage implements AfterViewInit {
     })
   }
 
-  toggleSearch() : void {
+  toggleSearch(fab : FabContainer) : void {
     this.searchBar.isVisible = true;
+    fab.close();
   }
+
+  toggleFilter(fab : FabContainer) : void {
+    this.filterBar.isVisible = true;
+    fab.close();
+  }
+
   fetchMore(): void {
     //this._cityAction.loadCities(1,50);
     this._viewPointAction.loadViewPoints(1, 50);
@@ -118,37 +127,5 @@ export class HomePage implements AfterViewInit {
     });
 
     return ret;
-  }
-
-  protected getColor(category) {
-    if (category.allCriteria.isChecked)
-      return "primary";
-    else
-      return "secondary";
-  }
-
-  protected clicked($event, category) {
-    this.closeCurrentDropDown();
-
-    let p = this.dropdownContainer.createComponent(this.viewpointFilterComponentFactory);
-
-    this.currentDropDown = p.instance;
-    this.currentDropDown.category = category;
-    this.currentDropDown.parent = this;
-    // this.currentDropDown.top = this.headerElement.nativeElement.clientHeight;
-    // this.currentDropDown.filterSelected.subscribe((filter) => {
-    //   this.viewPointService.getViewPoints(null, 0, filter);
-    // });
-
-    this.currentDropDown.ngAfterViewInit();
-
-    $event.stopPropagation();
-  }
-
-  protected closeCurrentDropDown() {
-    if (this.currentDropDown != null) {
-      this.dropdownContainer.detach();
-      this.currentDropDown = null;
-    }
   }
 }

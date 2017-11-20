@@ -35,8 +35,7 @@ import { ViewPointSearchComponent } from '../components/viewpoint-search/viewpoi
     App,
     HomePage,
     ViewPointMarkerComponent,
-    InformationWindowComponent,
-    ViewPointFilterComponent
+    InformationWindowComponent
   ],
   providers: [
     StatusBar,
