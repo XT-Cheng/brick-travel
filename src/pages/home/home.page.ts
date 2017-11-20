@@ -50,8 +50,6 @@ export class HomePage implements AfterViewInit {
   private dailyTrips: Array<IDailyTrip> = new Array<IDailyTrip>();
   private firstDailyTrip: boolean = true;
 
-  private viewpointFilterComponentFactory: ComponentFactory<ViewPointFilterComponent>;
-
   private currentDropDown: ViewPointFilterComponent;
 
   private displaySearch : boolean;
@@ -59,8 +57,7 @@ export class HomePage implements AfterViewInit {
   constructor(private _resolver: ComponentFactoryResolver, private _store: NgRedux<IAppState>,
     private _viewPointAction: ViewPointAction, private _cityAction: CityAction,
     private _travelAgendaAction: TravelAgendaAction, private _filterCategoryAction: FilterCategoryAction) {
-    this.viewpointFilterComponentFactory = this._resolver.resolveComponentFactory(ViewPointFilterComponent);
-
+      
     this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints']).map(getViewPoints(this._store));
     this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas']).map(getTravelAgendas(this._store));
     this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
