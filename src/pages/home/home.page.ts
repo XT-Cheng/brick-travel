@@ -1,19 +1,12 @@
-import { FabContainer } from 'ionic-angular';
 import { NgRedux } from '@angular-redux/store';
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    ComponentFactory,
-    ComponentFactoryResolver,
-    ViewChild,
-    ViewContainerRef,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { FabContainer } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { asMutable } from 'seamless-immutable';
 
 import { ViewPointFilterComponent } from '../../components/viewpoint-filter/viewpoint-filter.component';
+import { ViewPointSearchComponent } from '../../components/viewpoint-search/viewpoint-search.component';
 import { CityAction } from '../../modules/store/city/city.action';
 import { FilterCategoryAction } from '../../modules/store/filterCategory/filterCategory.action';
 import { IFilterCategory } from '../../modules/store/filterCategory/filterCategory.model';
@@ -25,7 +18,6 @@ import { getTravelAgendas } from '../../modules/store/travelAgenda/travelAgenda.
 import { ViewPointAction } from '../../modules/store/viewPoint/viewPoint.action';
 import { IViewPoint } from '../../modules/store/viewPoint/viewPoint.model';
 import { getViewPoints } from '../../modules/store/viewPoint/viewPoint.selector';
-import { ViewPointSearchComponent } from '../../components/viewpoint-search/viewpoint-search.component';
 
 @Component({
   selector: 'page-home',
@@ -33,7 +25,6 @@ import { ViewPointSearchComponent } from '../../components/viewpoint-search/view
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage implements AfterViewInit {
-  @ViewChild('dropdown', { read: ViewContainerRef }) private dropdownContainer: ViewContainerRef;
   @ViewChild(ViewPointSearchComponent) private searchBar: ViewPointSearchComponent;
   @ViewChild(ViewPointFilterComponent) private filterBar: ViewPointFilterComponent;
   
@@ -50,14 +41,10 @@ export class HomePage implements AfterViewInit {
   private dailyTrips: Array<IDailyTrip> = new Array<IDailyTrip>();
   private firstDailyTrip: boolean = true;
 
-  private currentDropDown: ViewPointFilterComponent;
-
-  private displaySearch : boolean;
-
-  constructor(private _resolver: ComponentFactoryResolver, private _store: NgRedux<IAppState>,
+  constructor(private _store: NgRedux<IAppState>,
     private _viewPointAction: ViewPointAction, private _cityAction: CityAction,
     private _travelAgendaAction: TravelAgendaAction, private _filterCategoryAction: FilterCategoryAction) {
-      
+
     this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints']).map(getViewPoints(this._store));
     this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas']).map(getTravelAgendas(this._store));
     this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
