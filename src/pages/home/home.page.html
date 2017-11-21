@@ -11,7 +11,7 @@
   <ion-fab right edge #fab>
     <button ion-fab mini><ion-icon name="add"></ion-icon></button>
     <ion-fab-list>
-      <button ion-fab (click)='toggleSearch(fab)'>
+      <button ion-fab (click)='displaySearchBar(fab)'>
         <ion-icon name="search"></ion-icon>
       </button>
       <button ion-fab (click)='toggleFilter(fab)'>
@@ -21,5 +21,5 @@
   </ion-fab>
 </ion-content>
 
-<viewpoint-search></viewpoint-search>
-<viewpoint-filter #filterBar></viewpoint-filter>
+<viewpoint-search *ngIf='showSearchBar' (backGroundClicked)='dismissSearchBar()' ></viewpoint-search>
+<!-- <viewpoint-filter *ngIf='showFilterBar'></viewpoint-filter> -->

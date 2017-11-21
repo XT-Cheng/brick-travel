@@ -1,8 +1,6 @@
-<ng-template #template [ngIf]='isVisible'>
-  <div tappable class='backdrop' (click)='dismiss()'></div>
+<div tappable class='backdrop' (click)='dismiss()'></div>
   <ion-grid>
     <ion-row>
-      <ion-searchbar #searchBar col-12 [animated]='true' (ionInput)='search($event)' ></ion-searchbar>
+      <ion-searchbar #searchBar col-12 [(ngModel)] = '_searchKey' [animated]='true' (ionInput)='search($event)' ></ion-searchbar>
     </ion-row>
-  </ion-grid>
-</ng-template>
+</ion-grid>

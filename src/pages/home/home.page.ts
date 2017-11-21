@@ -25,8 +25,8 @@ import { IAppState } from '../../modules/store/store.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage implements AfterViewInit {
-  @ViewChild(ViewPointSearchComponent) private searchBar: ViewPointSearchComponent;
-  @ViewChild(ViewPointFilterComponent) private filterBar: ViewPointFilterComponent;
+  // @ViewChild(ViewPointSearchComponent) private searchBar: ViewPointSearchComponent;
+  // @ViewChild(ViewPointFilterComponent) private filterBar: ViewPointFilterComponent;
   
   //@select(['entities','viewPoints'])
   //@select(getViewPoints)
@@ -36,15 +36,18 @@ export class HomePage implements AfterViewInit {
 
   protected dayTripSelected$: Subject<IDailyTrip> = new Subject<IDailyTrip>();
 
+  protected showSearchBar : boolean = false;
+  protected showFilterBar : boolean = false;
+
   //@select(['entities','cities'])
   //private cities$ : Observable<Map<string,ICity>>
   private dailyTrips: Array<IDailyTrip> = new Array<IDailyTrip>();
   private firstDailyTrip: boolean = true;
 
+
   constructor(private _store: NgRedux<IAppState>,
     private _viewPointAction: ViewPointAction, private _cityAction: CityAction,
     private _travelAgendaAction: TravelAgendaAction, private _filterCategoryAction: FilterCategoryAction) {
-
     this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints']).map(getViewPoints(this._store));
     this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas']).map(getTravelAgendas(this._store));
     this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
@@ -55,8 +58,6 @@ export class HomePage implements AfterViewInit {
     this._viewPointAction.loadViewPoints();
     this._travelAgendaAction.loadTravelAgendas();
     this._filterCategoryAction.loadFilterCategories();
-
-    this.searchBar.isVisible = false;
     
     this.viewPoints$.subscribe(data => {
       console.log('ViewPoint Changed!');
@@ -69,13 +70,17 @@ export class HomePage implements AfterViewInit {
     })
   }
 
-  toggleSearch(fab : FabContainer) : void {
-    this.searchBar.isVisible = true;
+  dismissSearchBar() : void {
+    this.showSearchBar = false;
+  }
+  
+  displaySearchBar(fab : FabContainer) : void {
+    this.showSearchBar = true;
     fab.close();
   }
 
   toggleFilter(fab : FabContainer) : void {
-    this.filterBar.isVisible = true;
+    this.showFilterBar = true;
     fab.close();
   }
 

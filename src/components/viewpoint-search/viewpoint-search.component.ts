@@ -1,5 +1,5 @@
 import { Searchbar } from 'ionic-angular';
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'viewpoint-search',
@@ -7,50 +7,49 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular
 })
 export class ViewPointSearchComponent implements AfterViewInit {
   //#region Private member
-  private _isVisible : boolean;
+
+  @ViewChild('searchBar') private _searchBar: Searchbar;
+
+  //#endregion
+
+  //#region Protected member
+
+  protected searchKey: string;
+
   //#endregion
 
   //#region Private property
-  @ViewChild('searchBar') private _searchBar : Searchbar;
-  @ViewChild('template') private _tempalate : ElementRef;
-  
+  @Output() protected backGroundClicked: EventEmitter<void>;
+
   //#endregion
 
   //#region Public property
-  @Input() public set isVisible(isVisible : boolean) {
-    this._isVisible = isVisible;
 
-    // if (this._isVisible)
-    //   this._searchBar.setFocus();
-  }
-
-  public get isVisible() : boolean {
-    return this._isVisible;
-  }
   //#endregion
 
   //#region Event
-  
+
   //#endregion
 
   //#region Constructor
   constructor() {
+    this.backGroundClicked = new EventEmitter();
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
-    console.log(this._searchBar);
+    this._searchBar.setFocus();
   }
   //#endregion
 
   //#region Protected methods
-  protected dismiss() : void {
-    this.isVisible = false;
+  protected dismiss(): void {
+    this.backGroundClicked.emit();
   }
 
-  protected search($event) : void {
-    console.log('Search!!!');
+  protected search($event): void {
+    console.log(this.searchKey);
   }
   //#endregion
 }
