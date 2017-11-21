@@ -1,4 +1,5 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Input, Renderer2 } from '@angular/core';
+import { Searchbar } from 'ionic-angular';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'viewpoint-search',
@@ -6,15 +7,26 @@ import { AfterViewInit, ChangeDetectorRef, Component, Input, Renderer2 } from '@
 })
 export class ViewPointSearchComponent implements AfterViewInit {
   //#region Private member
-
+  private _isVisible : boolean;
   //#endregion
 
   //#region Private property
-
+  @ViewChild('searchBar') private _searchBar : Searchbar;
+  @ViewChild('template') private _tempalate : ElementRef;
+  
   //#endregion
 
   //#region Public property
-  @Input() public isVisible: boolean;
+  @Input() public set isVisible(isVisible : boolean) {
+    this._isVisible = isVisible;
+
+    // if (this._isVisible)
+    //   this._searchBar.setFocus();
+  }
+
+  public get isVisible() : boolean {
+    return this._isVisible;
+  }
   //#endregion
 
   //#region Event
@@ -22,19 +34,23 @@ export class ViewPointSearchComponent implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private cdRef: ChangeDetectorRef, private renderer: Renderer2) {
+  constructor() {
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
-    
+    console.log(this._searchBar);
   }
   //#endregion
 
   //#region Protected methods
-  protected dismiss() {
+  protected dismiss() : void {
     this.isVisible = false;
+  }
+
+  protected search($event) : void {
+    console.log('Search!!!');
   }
   //#endregion
 }

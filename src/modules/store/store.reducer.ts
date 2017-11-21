@@ -1,8 +1,9 @@
+import { FluxStandardAction } from 'flux-standard-action';
 import { combineReducers } from 'redux-seamless-immutable';
-import { asMutable, isImmutable } from 'seamless-immutable';
 
-import { EntityActionTypeEnum, GeneralAction } from './store.action';
-import { IAppState, IEntities, IError, INIT_ENTITY_STATE, IProgress } from './store.model';
+import { entityReducer } from './entity/entity.reducer';
+import { IActionMetaInfo, IActionPayload } from './store.action';
+import { IAppState, IError, IProgress } from './store.model';
 
 // Define the global store shape by combining our application's
 // reducers together into a given structure.
@@ -13,39 +14,16 @@ export const rootReducer =
     error: errorReducer
   });
 
-export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: GeneralAction): IEntities {
-  if (action.payload && action.payload.entities) {
-    switch (action.type) {
-      case EntityActionTypeEnum.LOAD: {
-        let nextState = asMutable(state); 
-
-        Object.keys(action.payload.entities).forEach(key => {
-          Object.keys(action.payload.entities[key]).forEach(id => {
-            if (!Object.keys(state[key]).find(toFind => id === toFind)){
-              if (isImmutable(nextState[key]))
-                nextState[key] = asMutable(nextState[key]);
-              nextState[key][id] = action.payload.entities[key][id];
-            }
-          });
-        });
-
-        return nextState;
-      }
-    }
-  }
-  
-  return state;
-};
-
 export function progressReducer(state: IProgress = { progressing: false },
-  action: GeneralAction): IProgress {
+  action: FluxStandardAction<IActionPayload,IActionMetaInfo>): IProgress {
   if (action.meta)
     return { progressing: !!action.meta.progressing };
 
   return state;
 };
 
-export function errorReducer(state: IError = { description: null }, action: GeneralAction): IError {
+export function errorReducer(state: IError = { description: null },
+  action: FluxStandardAction<IActionPayload,IActionMetaInfo>): IError {
   if (action.error && action.payload.error)
     return {
       description: action.payload.error.message || 'Something bad happened',

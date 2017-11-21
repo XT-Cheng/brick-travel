@@ -7,17 +7,17 @@ import { asMutable } from 'seamless-immutable';
 
 import { ViewPointFilterComponent } from '../../components/viewpoint-filter/viewpoint-filter.component';
 import { ViewPointSearchComponent } from '../../components/viewpoint-search/viewpoint-search.component';
-import { CityAction } from '../../modules/store/city/city.action';
-import { FilterCategoryAction } from '../../modules/store/filterCategory/filterCategory.action';
-import { IFilterCategory } from '../../modules/store/filterCategory/filterCategory.model';
-import { getFilterCategories } from '../../modules/store/filterCategory/filterCategory.selector';
+import { CityAction } from '../../modules/store/entity/city/city.action';
+import { FilterCategoryAction } from '../../modules/store/entity/filterCategory/filterCategory.action';
+import { IFilterCategory } from '../../modules/store/entity/filterCategory/filterCategory.model';
+import { getFilterCategories } from '../../modules/store/entity/filterCategory/filterCategory.selector';
+import { TravelAgendaAction } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
+import { IDailyTrip, ITravelAgenda } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
+import { getTravelAgendas } from '../../modules/store/entity/travelAgenda/travelAgenda.selector';
+import { ViewPointAction } from '../../modules/store/entity/viewPoint/viewPoint.action';
+import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
+import { getViewPoints } from '../../modules/store/entity/viewPoint/viewPoint.selector';
 import { IAppState } from '../../modules/store/store.model';
-import { TravelAgendaAction } from '../../modules/store/travelAgenda/travelAgenda.action';
-import { IDailyTrip, ITravelAgenda } from '../../modules/store/travelAgenda/travelAgenda.model';
-import { getTravelAgendas } from '../../modules/store/travelAgenda/travelAgenda.selector';
-import { ViewPointAction } from '../../modules/store/viewPoint/viewPoint.action';
-import { IViewPoint } from '../../modules/store/viewPoint/viewPoint.model';
-import { getViewPoints } from '../../modules/store/viewPoint/viewPoint.selector';
 
 @Component({
   selector: 'page-home',

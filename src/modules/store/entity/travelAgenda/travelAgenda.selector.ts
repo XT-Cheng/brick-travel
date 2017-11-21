@@ -1,6 +1,6 @@
 import { asMutable } from 'seamless-immutable';
 import { NgRedux } from '@angular-redux/store';
-import { IAppState } from '../store.model';
+import { IAppState } from '../../store.model';
 import { ITravelAgenda } from './travelAgenda.model';
 
 export function getTravelAgendas(store : NgRedux<IAppState> ) {

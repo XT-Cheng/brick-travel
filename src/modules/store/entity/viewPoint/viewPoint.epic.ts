@@ -6,10 +6,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/startWith';
 
-import { IAppState } from '../store.model';
+import { IAppState } from '../../store.model';
 import { ViewPointService } from './viewPoint.service';
 import { ViewPointAction } from './viewPoint.action';
-import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../store.action';
+import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
 
 @Injectable()
 export class ViewPointEpic {
@@ -22,7 +22,7 @@ export class ViewPointEpic {
     return createEpicMiddleware(this.createEpicInternal(EntityTypeEnum.VIEWPOINT));
   }
 
-  private createEpicInternal(entityType : EntityTypeEnum): Epic<GeneralAction, IAppState> {
+  private createEpicInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
     return (action$, store) => action$
       .ofType(EntityActionTypeEnum.LOAD)
       .filter(action => action.meta.entityType === entityType && !!action.meta.pagination)

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { dispatch } from "@angular-redux/store";
 
-import { EntityTypeEnum, EntityActionTypeEnum, entityActionStarted, entityActionFailed, entityAction, entityActionSucceeded } from "../store.action";
+import { EntityTypeEnum, EntityActionTypeEnum, entityActionStarted, entityActionFailed, entityAction, entityActionSucceeded } from "../entity.action";
 
 @Injectable()
 export class ViewPointAction {

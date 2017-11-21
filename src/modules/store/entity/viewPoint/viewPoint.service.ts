@@ -4,12 +4,12 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import { normalize } from 'normalizr';
-import { filterCategory } from '../store.schema';
-import { IEntities } from '../store.model';
-import { IPagination } from '../store.action';
+import { viewPoint } from '../entity.schema';
+import { IEntities } from '../entity.model';
+import { IPagination } from '../entity.action';
 
 @Injectable()
-export class FilterCategoryService {
+export class ViewPointService {
   //#region Private member
   //#endregion
 
@@ -23,11 +23,11 @@ export class FilterCategoryService {
   //#endregion
 
   //#region Public methods
-  public getFilterCategory(pagination : IPagination): Observable<IEntities> {
-    let jsonFile = 'assets/data/filterCategories.json';
+  public getViewPoints(pagination : IPagination): Observable<IEntities> {
+    let jsonFile = (pagination.page == 0)?'assets/data/viewPoints.json':'assets/data/viewPoints.page.json'
     return this._http.get(jsonFile).map(resp => resp.json())
     .map(records => {
-      return normalize(records.filterCategories, [ filterCategory ]).entities;
+      return normalize(records.viewPoints, [ viewPoint ]).entities;
     })
   }
   //#endregion

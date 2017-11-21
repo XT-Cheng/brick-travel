@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { NgRedux } from '@angular-redux/store';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 
-import { IFilterCategory } from '../../modules/store/filterCategory/filterCategory.model';
-import { IFilterCriteria } from '../../modules/store/filterCategory/filterCategory.model';
-import { getFilterCategories } from '../../modules/store/filterCategory/filterCategory.selector';
+import { IFilterCategory } from '../../modules/store/entity/filterCategory/filterCategory.model';
+import { IFilterCriteria } from '../../modules/store/entity/filterCategory/filterCategory.model';
+import { getFilterCategories } from '../../modules/store/entity/filterCategory/filterCategory.selector';
 import { IAppState } from '../../modules/store/store.model';
-import { NgRedux } from '@angular-redux/store';
 
 @Component({
   selector: 'viewpoint-filter',

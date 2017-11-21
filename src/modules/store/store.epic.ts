@@ -1,17 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CityEpic } from './city/city.epic';
-import { ViewPointEpic } from './viewPoint/viewPoint.epic';
-import { TravelAgendaEpic } from './travelAgenda/travelAgenda.epic';
-import { FilterCategoryEpic } from './filterCategory/filterCategory.epic';
+import { EntityEpics } from './entity/entity.epic';
 
 @Injectable()
 export class RootEpics {
-  constructor(private _cityEpic: CityEpic,private _viewPointEpic: ViewPointEpic,
-    private _travelAgendaEpic: TravelAgendaEpic,private _filterCategoryEpic: FilterCategoryEpic) {}
+  constructor(private _entityEpic: EntityEpics) {}
 
   public createEpics() {
-    return [
-      this._cityEpic.createEpic(),this._viewPointEpic.createEpic(),this._travelAgendaEpic.createEpic(),this._filterCategoryEpic.createEpic()
-    ];
+    return [].concat(this._entityEpic.createEpics());
   }
 }

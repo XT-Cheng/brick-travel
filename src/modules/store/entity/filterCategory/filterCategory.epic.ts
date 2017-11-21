@@ -6,10 +6,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/startWith';
 
-import { IAppState } from '../store.model';
+import { IAppState } from '../../store.model';
 import { FilterCategoryService } from './filterCategory.service';
 import { FilterCategoryAction } from './filterCategory.action';
-import { GeneralAction, EntityActionTypeEnum, EntityTypeEnum } from '../store.action';
+import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
 
 @Injectable()
 export class FilterCategoryEpic {
@@ -22,7 +22,7 @@ export class FilterCategoryEpic {
     return createEpicMiddleware(this.createEpicInternal(EntityTypeEnum.FILTERCATEGORY));
   }
 
-  private createEpicInternal(entityType : EntityTypeEnum ): Epic<GeneralAction, IAppState> {
+  private createEpicInternal(entityType : EntityTypeEnum ): Epic<EntityAction, IAppState> {
     return (action$, store) => action$
       .ofType(EntityActionTypeEnum.LOAD)
       .filter(action => action.meta.entityType === entityType && !!action.meta.pagination)

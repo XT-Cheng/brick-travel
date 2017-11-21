@@ -1,8 +1,8 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, ComponentFactory, ComponentFactoryResolver, Injector, ComponentRef, Input } from "@angular/core";
 import { ViewPointMarkerComponent } from "./viewpoint-marker/viewpoint-marker.component";
 import { InformationWindowComponent } from "./information-window/information-window.component";
-import { IViewPoint } from "../../modules/store/viewPoint/viewPoint.model";
-import { IDailyTrip, ITravelViewPoint } from "../../modules/store/travelAgenda/travelAgenda.model";
+import { IViewPoint } from "../../modules/store/entity/viewPoint/viewPoint.model";
+import { IDailyTrip, ITravelViewPoint } from "../../modules/store/entity/travelAgenda/travelAgenda.model";
 
 @Component({
   selector: 'a-map',
