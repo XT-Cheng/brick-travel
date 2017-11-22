@@ -1,20 +1,18 @@
 import { NgRedux } from '@angular-redux/store';
-import { AfterViewInit, ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { asMutable } from 'seamless-immutable';
 
-import { ViewPointFilterComponent } from '../../components/viewpoint-filter/viewpoint-filter.component';
-import { ViewPointSearchComponent } from '../../components/viewpoint-search/viewpoint-search.component';
-import { CityAction } from '../../modules/store/entity/city/city.action';
-import { FilterCategoryAction } from '../../modules/store/entity/filterCategory/filterCategory.action';
+import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
+import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { IFilterCategory } from '../../modules/store/entity/filterCategory/filterCategory.model';
 import { getFilterCategories } from '../../modules/store/entity/filterCategory/filterCategory.selector';
-import { TravelAgendaAction } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
+import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { IDailyTrip, ITravelAgenda } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { getTravelAgendas } from '../../modules/store/entity/travelAgenda/travelAgenda.selector';
-import { ViewPointAction } from '../../modules/store/entity/viewPoint/viewPoint.action';
+import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
 import { getViewPoints } from '../../modules/store/entity/viewPoint/viewPoint.selector';
 import { IAppState } from '../../modules/store/store.model';
@@ -34,6 +32,8 @@ export class HomePage implements AfterViewInit {
   protected travelAgendas$: Observable<Array<ITravelAgenda>>;
   protected filterCategories$: Observable<Array<IFilterCategory>>;
 
+  protected search$ : Observable<string>;
+
   protected dayTripSelected$: Subject<IDailyTrip> = new Subject<IDailyTrip>();
 
   protected showSearchBar : boolean = false;
@@ -46,18 +46,19 @@ export class HomePage implements AfterViewInit {
 
 
   constructor(private _store: NgRedux<IAppState>,
-    private _viewPointAction: ViewPointAction, private _cityAction: CityAction,
-    private _travelAgendaAction: TravelAgendaAction, private _filterCategoryAction: FilterCategoryAction) {
+    private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
+    private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
     this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints']).map(getViewPoints(this._store));
     this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas']).map(getTravelAgendas(this._store));
     this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
+    this.search$ = this._store.select<string>(['ui','viewPoint','searchKey']);
   }
 
   ngAfterViewInit(): void {
-    this._cityAction.loadCities();
-    this._viewPointAction.loadViewPoints();
-    this._travelAgendaAction.loadTravelAgendas();
-    this._filterCategoryAction.loadFilterCategories();
+    this._cityActionUIActionGenerator.loadCities();
+    this._viewPointActionGenerator.loadViewPoints();
+    this._travelAgendaActionUIActionGenerator.loadTravelAgendas();
+    this._filterCategoryActionUIActionGenerator.loadFilterCategories();
     
     this.viewPoints$.subscribe(data => {
       console.log('ViewPoint Changed!');
@@ -67,6 +68,9 @@ export class HomePage implements AfterViewInit {
       this.dailyTrips = this.getDailyTrips();
       // if ( this.dailyTrips.length>0)
       //   this.dayTripSelected$.next(this.dailyTrips[0]);
+    })
+    this.search$.subscribe(searchKey => {
+      console.log(searchKey);
     })
   }
 
@@ -86,7 +90,7 @@ export class HomePage implements AfterViewInit {
 
   fetchMore(): void {
     //this._cityAction.loadCities(1,50);
-    this._viewPointAction.loadViewPoints(1, 50);
+    this._viewPointActionGenerator.loadViewPoints(1, 50);
     //this._travelAgendaAction.loadTravelAgendas();
   }
 

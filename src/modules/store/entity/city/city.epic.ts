@@ -8,14 +8,14 @@ import 'rxjs/add/operator/startWith';
 
 import { IAppState } from '../../store.model';
 import { CityService } from './city.service';
-import { CityAction } from './city.action';
+import { CityActionGenerator } from './city.action';
 import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
 
 @Injectable()
 export class CityEpic {
   constructor(
     private _service: CityService,
-    private _action: CityAction,
+    private _action: CityActionGenerator,
   ) {}
 
   public createEpic() {

@@ -8,14 +8,14 @@ import 'rxjs/add/operator/startWith';
 
 import { IAppState } from '../../store.model';
 import { FilterCategoryService } from './filterCategory.service';
-import { FilterCategoryAction } from './filterCategory.action';
+import { FilterCategoryActionGenerator } from './filterCategory.action';
 import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
 
 @Injectable()
 export class FilterCategoryEpic {
   constructor(
     private _service: FilterCategoryService,
-    private _action: FilterCategoryAction,
+    private _action: FilterCategoryActionGenerator,
   ) {}
 
   public createEpic() {

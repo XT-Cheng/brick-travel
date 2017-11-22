@@ -1,5 +1,9 @@
+import { AfterViewInit, Component, EventEmitter, Output, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Searchbar } from 'ionic-angular';
-import { AfterViewInit, Component, ElementRef, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+
+import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { NgRedux } from '@angular-redux/store';
+import { IAppState } from '../../modules/store/store.model';
 
 @Component({
   selector: 'viewpoint-search',
@@ -32,14 +36,21 @@ export class ViewPointSearchComponent implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor() {
+  constructor(private _cdRef: ChangeDetectorRef,private _uiActionGenerator : UIActionGenerator,private _store: NgRedux<IAppState>,) {
     this.backGroundClicked = new EventEmitter();
+
+    this.searchKey = this._store.getState().ui.viewPoint.searchKey;
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
+    //this._searchBar._value = this._store.getState().ui.viewPoint.searchKey;
     this._searchBar.setFocus();
+    //this._searchBar.inputFocused();
+    this._cdRef.detectChanges();
+   // this.searchKey = this._store.getState().ui.viewPoint.searchKey;
+    //this._searchBar.positionElements();
   }
   //#endregion
 
@@ -49,7 +60,7 @@ export class ViewPointSearchComponent implements AfterViewInit {
   }
 
   protected search($event): void {
-    console.log(this.searchKey);
+    this._uiActionGenerator.searchViewPoint(this.searchKey);
   }
   //#endregion
 }

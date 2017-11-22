@@ -5,7 +5,7 @@ import { dispatch } from "@angular-redux/store";
 import { EntityTypeEnum, EntityActionTypeEnum, entityActionStarted, entityActionFailed, entityAction, entityActionSucceeded } from "../entity.action";
 
 @Injectable()
-export class FilterCategoryAction {
+export class FilterCategoryActionGenerator {
     loadFilterCategoryStarted = entityActionStarted(EntityActionTypeEnum.LOAD,EntityTypeEnum.FILTERCATEGORY);
 
     @dispatch()

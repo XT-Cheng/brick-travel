@@ -5,7 +5,7 @@ import { dispatch } from "@angular-redux/store";
 import { EntityTypeEnum, EntityActionTypeEnum, entityActionStarted, entityActionFailed, entityAction, entityActionSucceeded } from "../entity.action";
 
 @Injectable()
-export class ViewPointAction {
+export class ViewPointActionGenerator {
     loadViewPointStarted = entityActionStarted(EntityActionTypeEnum.LOAD,EntityTypeEnum.VIEWPOINT);
 
     @dispatch()

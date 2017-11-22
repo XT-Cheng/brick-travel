@@ -4,7 +4,7 @@ import { dispatch } from "@angular-redux/store";
 import { entityActionStarted, EntityActionTypeEnum, EntityTypeEnum, entityAction, entityActionSucceeded, entityActionFailed } from "../entity.action";
 
 @Injectable()
-export class CityAction {
+export class CityActionGenerator {
 
     //#region load city
     loadCityStarted = entityActionStarted(EntityActionTypeEnum.LOAD, EntityTypeEnum.CITY);

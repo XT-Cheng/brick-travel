@@ -14,19 +14,19 @@ export interface IUIActionPayload extends IActionPayload {
 export type UIAction = FluxStandardAction<IUIActionPayload, IUIActionMetaInfo>;
 
 export enum UIActionTypeEnum  {
-    SEARCH = "UI:SEARCH",
+    SEARCH_VIEWPOINT = "UI:SEARCH_VIEWPOINT",
 }
 
-export function searchAction(searchKey : string) : UIAction {
+export function searchViewPointAction(searchKey : string) : UIAction {
     return {
-        type: UIActionTypeEnum.SEARCH,
+        type: UIActionTypeEnum.SEARCH_VIEWPOINT,
         meta: null,
         payload: {searchKey: searchKey, error: null}
     };
 }
 
 @Injectable()
-export class ViewPointAction {
+export class UIActionGenerator {
     @dispatch()
-    search = searchAction;
+    searchViewPoint = searchViewPointAction;
 }

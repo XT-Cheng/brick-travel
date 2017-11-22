@@ -9,13 +9,13 @@ import 'rxjs/add/operator/startWith';
 import { IAppState } from '../../store.model';
 import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
 import { TravelAgendaService } from './travelAgenda.service';
-import { TravelAgendaAction } from './travelAgenda.action';
+import { TravelAgendaActionGenerator } from './travelAgenda.action';
 
 @Injectable()
 export class TravelAgendaEpic {
   constructor(
     private _service: TravelAgendaService,
-    private _action: TravelAgendaAction,
+    private _action: TravelAgendaActionGenerator,
   ) {}
 
   public createEpic() {

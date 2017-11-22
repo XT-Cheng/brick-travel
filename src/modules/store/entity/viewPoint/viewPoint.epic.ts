@@ -8,14 +8,14 @@ import 'rxjs/add/operator/startWith';
 
 import { IAppState } from '../../store.model';
 import { ViewPointService } from './viewPoint.service';
-import { ViewPointAction } from './viewPoint.action';
+import { ViewPointActionGenerator } from './viewPoint.action';
 import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
 
 @Injectable()
 export class ViewPointEpic {
   constructor(
     private _service: ViewPointService,
-    private _action: ViewPointAction,
+    private _action: ViewPointActionGenerator,
   ) {}
 
   public createEpic() {
