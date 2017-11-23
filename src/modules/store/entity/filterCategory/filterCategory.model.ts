@@ -8,8 +8,6 @@ export interface IFilterCriteria {
 export interface IFilterCategory {
     id: string
     name: string,
-    label: string,
     criteries: IFilterCriteria[],
-    allCriteria: IFilterCriteria,
     filter: string
 };

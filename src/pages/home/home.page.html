@@ -14,12 +14,12 @@
       <button ion-fab (click)='displaySearchBar(fab)'>
         <ion-icon name="search"></ion-icon>
       </button>
-      <button ion-fab (click)='toggleFilter(fab)'>
+      <button ion-fab (click)='displayFilterBar(fab)'>
         <ion-icon name="color-filter"></ion-icon>
       </button>
     </ion-fab-list>
   </ion-fab>
 </ion-content>
 
-<viewpoint-search *ngIf='showSearchBar' (backGroundClicked)='dismissSearchBar()' ></viewpoint-search>
-<!-- <viewpoint-filter *ngIf='showFilterBar'></viewpoint-filter> -->
+<viewpoint-search *ngIf='showSearchBar' (backGroundClicked$)='dismissSearchBar()' ></viewpoint-search>
+<viewpoint-filter *ngIf='showFilterBar' (backGroundClicked$)='dismissFilterBar()'></viewpoint-filter>

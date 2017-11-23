@@ -1,10 +1,11 @@
-import { asMutable } from 'seamless-immutable';
 import { NgRedux } from '@angular-redux/store';
+import { asMutable } from 'seamless-immutable';
+
 import { IAppState } from '../../store.model';
 import { ITravelAgenda } from './travelAgenda.model';
 
-export function getTravelAgendas(store : NgRedux<IAppState> ) {
-    return (data : { [id : string] : ITravelAgenda }) => {
+export function getTravelAgendas(store : NgRedux<IAppState>) {
+    return (data : { [id : string] : ITravelAgenda }) : Array<ITravelAgenda> => {
         let ret = new Array<ITravelAgenda>();
         let viewPoints = asMutable(store.getState().entities.viewPoints,{deep: true});
         let dailyTrips = asMutable(store.getState().entities.dailyTrips,{deep: true});

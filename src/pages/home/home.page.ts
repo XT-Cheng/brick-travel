@@ -48,9 +48,12 @@ export class HomePage implements AfterViewInit {
   constructor(private _store: NgRedux<IAppState>,
     private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
     private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
-    this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints']).map(getViewPoints(this._store));
-    this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas']).map(getTravelAgendas(this._store));
-    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
+    this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints'])
+        .map(getViewPoints(this._store));
+    this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas'])
+        .map(getTravelAgendas(this._store));
+    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories'])
+        .map(getFilterCategories(this._store));
     this.search$ = this._store.select<string>(['ui','viewPoint','searchKey']);
   }
 
@@ -83,11 +86,15 @@ export class HomePage implements AfterViewInit {
     fab.close();
   }
 
-  toggleFilter(fab : FabContainer) : void {
+  dismissFilterBar() : void {
+    this.showFilterBar = false;
+  }
+  
+  displayFilterBar(fab : FabContainer) : void {
     this.showFilterBar = true;
     fab.close();
   }
-
+  
   fetchMore(): void {
     //this._cityAction.loadCities(1,50);
     this._viewPointActionGenerator.loadViewPoints(1, 50);

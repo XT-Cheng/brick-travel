@@ -1,11 +1,13 @@
 import { NgRedux } from '@angular-redux/store';
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 
 import { IFilterCategory } from '../../modules/store/entity/filterCategory/filterCategory.model';
 import { IFilterCriteria } from '../../modules/store/entity/filterCategory/filterCategory.model';
 import { getFilterCategories } from '../../modules/store/entity/filterCategory/filterCategory.selector';
 import { IAppState } from '../../modules/store/store.model';
+import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { getCurrentFilters } from '../../modules/store/ui/ui.selector';
 
 @Component({
   selector: 'viewpoint-filter',
@@ -13,32 +15,37 @@ import { IAppState } from '../../modules/store/store.model';
 })
 export class ViewPointFilterComponent implements AfterViewInit {
   //#region Private member
-  
+
   //#endregion
 
   //#region Protected member
-  
-  protected filterCategories$: Observable<Array<IFilterCategory>>;
-  protected _currentCategory : IFilterCategory = null; 
-  
+
+  protected currentFilterCategories$: Observable<Array<IFilterCategory>>;
+  protected selectedCategory: IFilterCategory = null;
+
+  //protected selectedCriteries : Array<IFilterCriteria> = new Array<IFilterCriteria>();
+
   //#endregion
 
-  //#region Private property
-  
-  // @ViewChild('grid') private _grid: ElementRef;
+  //#region Protected property
+
+  @Output() protected backGroundClicked$: EventEmitter<void>;
+
   //#endregion
 
   //#region Public property
-  @Input() public isVisible: boolean;
+
   //#endregion
 
   //#region Event
-  
+
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>) {
-    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories']).map(getFilterCategories(this._store));
+  constructor(private _uiActionGenerator: UIActionGenerator, private _store: NgRedux<IAppState>) {
+    this.backGroundClicked$ = new EventEmitter();
+    this.currentFilterCategories$ = this._store.select<string[]>(['ui', 'viewPoint', 'filters'])
+      .map(getCurrentFilters(this._store));
   }
   //#endregion
 
@@ -48,9 +55,8 @@ export class ViewPointFilterComponent implements AfterViewInit {
   //#endregion
 
   //#region Protected methods
-  protected dismiss() {
-    this._currentCategory = null;
-    this.isVisible = false;
+  protected backGroundClicked(): void {
+    this.backGroundClicked$.emit();
   }
 
   protected getClass(criteria: IFilterCriteria) {
@@ -60,55 +66,35 @@ export class ViewPointFilterComponent implements AfterViewInit {
     }
   }
 
-  protected allCategoryClicked(event: any) {
-    if (this._currentCategory.allCriteria.isChecked) {
-      this.refresh();
-      event.stopPropagation();
-      return;
-    }
-
-    this._currentCategory.allCriteria.isChecked = !this._currentCategory.allCriteria.isChecked;
-
-    for (let criteria of this._currentCategory.criteries) {
-      criteria.isChecked = false;
-    }
-    this.refresh();
-    event.stopPropagation();
-  }
-
-  protected categoryClicked(event: any, criteria: IFilterCriteria) {
+  protected criteriaClicked(event: any, criteria: IFilterCriteria) {
     criteria.isChecked = !criteria.isChecked;
-
-    for (let c of this._currentCategory.criteries) {
-      if (criteria.isChecked != c.isChecked) {
-        this._currentCategory.allCriteria.isChecked = false;
-        this.refresh();
-        event.stopPropagation();
-        return;
-      }
-    }
-
-    this._currentCategory.allCriteria.isChecked = true;
-
-    for (let c of this._currentCategory.criteries) {
-      c.isChecked = false;
-    }
 
     this.refresh();
     event.stopPropagation();
   }
 
   protected clicked($event, category) {
-    this._currentCategory = category;
+    this.selectedCategory = category;
   }
 
   protected refresh() {
-    if (this._currentCategory.allCriteria.isChecked) {
-      this._currentCategory.label = this._currentCategory.allCriteria.name;
+    if (!this.selectedCategory.criteries.find(c => !c.isChecked)) {
+      this.selectedCategory.criteries.forEach(c => {
+        c.isChecked = false;
+      })
     }
-    else {
-      this._currentCategory.label = this._currentCategory.name;
-    }
+
+    let checkId : string = null;
+    let unCheckIds : Array<string> = new Array<string>();
+
+    this.selectedCategory.criteries.forEach(c => {
+      if (c.isChecked)
+        checkId = c.id;
+      else
+        unCheckIds.push(c.id);
+    });
+
+    this._uiActionGenerator.selectCriteria(checkId,unCheckIds);
   }
   //#endregion
 }

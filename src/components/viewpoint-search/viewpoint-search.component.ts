@@ -22,8 +22,9 @@ export class ViewPointSearchComponent implements AfterViewInit {
 
   //#endregion
 
-  //#region Private property
-  @Output() protected backGroundClicked: EventEmitter<void>;
+  //#region Protected property
+
+  @Output() protected backGroundClicked$: EventEmitter<void>;
 
   //#endregion
 
@@ -36,8 +37,8 @@ export class ViewPointSearchComponent implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _uiActionGenerator : UIActionGenerator,private _store: NgRedux<IAppState>,) {
-    this.backGroundClicked = new EventEmitter();
+  constructor(private _uiActionGenerator : UIActionGenerator,private _store: NgRedux<IAppState>) {
+    this.backGroundClicked$ = new EventEmitter();
     this.searchKey = this._store.getState().ui.viewPoint.searchKey;
   }
   //#endregion
@@ -51,8 +52,8 @@ export class ViewPointSearchComponent implements AfterViewInit {
   //#endregion
 
   //#region Protected methods
-  protected dismiss(): void {
-    this.backGroundClicked.emit();
+  protected backGroundClicked(): void {
+    this.backGroundClicked$.emit();
   }
 
   protected search($event): void {

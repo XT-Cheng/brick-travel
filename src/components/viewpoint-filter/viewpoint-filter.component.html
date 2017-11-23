@@ -1,24 +1,19 @@
-<!-- <ng-template [ngIf]='isVisible'> -->
-    <div tappable class='backdrop' (click)='dismiss()'>
-    </div>
-    <div class='filter'>
-        <ion-grid no-padding>
-            <ion-row>
-                <button ion-button outline col *ngFor="let category of (filterCategories$ | async)" icon-right (click)='clicked($event,category)'>
-                    {{category.name}}
-                    <ion-icon name="arrow-dropdown"></ion-icon>
-                </button>
-            </ion-row>
-        </ion-grid>
-        <ion-grid no-padding #filterGrid *ngIf='_currentCategory != null'>
-            <ion-row align-items-stretch>
-                <button col [ngClass]='getClass(_currentCategory.allCriteria)' ion-button small outline (click)='allCategoryClicked($event)'>
-                    {{_currentCategory.allCriteria.name}}
-                </button>
-                <button col *ngFor="let criteria of _currentCategory.criteries" [ngClass]='getClass(criteria)' ion-button small outline (click)='categoryClicked($event,criteria)'>
-                    {{criteria.name}}
-                </button>
-            </ion-row>
-        </ion-grid>
-    </div>
-<!-- </ng-template> -->
+<div tappable class='backdrop' (click)='backGroundClicked()'>
+</div>
+<div class='filter'>
+    <ion-grid no-padding>
+        <ion-row>
+            <button ion-button outline col *ngFor="let category of (currentFilterCategories$ | async)" icon-right (click)='clicked($event,category)'>
+                {{category.name}}
+                <ion-icon name="arrow-dropdown"></ion-icon>
+            </button>
+        </ion-row>
+    </ion-grid>
+    <ion-grid no-padding #filterGrid *ngIf='selectedCategory != null'>
+        <ion-row align-items-stretch>
+            <button col *ngFor="let criteria of selectedCategory.criteries" [ngClass]='getClass(criteria)' ion-button small outline (click)='criteriaClicked($event,criteria)'>
+                {{criteria.name}}
+            </button>
+        </ion-row>
+    </ion-grid>
+</div>

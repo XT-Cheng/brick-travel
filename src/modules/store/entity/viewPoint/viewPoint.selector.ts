@@ -1,10 +1,11 @@
 import { asMutable } from 'seamless-immutable';
-import { NgRedux } from '@angular-redux/store';
+
 import { IAppState } from '../../store.model';
 import { IViewPoint } from './viewPoint.model';
+import { NgRedux } from '@angular-redux/store';
 
-export function getViewPoints(store : NgRedux<IAppState> ) {
-    return (data : { [id : string] : IViewPoint }) => {
+export function getViewPoints(store : NgRedux<IAppState>) {
+    return (data : { [id : string] : IViewPoint }) : Array<IViewPoint>=> {
         let ret = new Array<IViewPoint>();
         let comments = asMutable(store.getState().entities.viewPointComments);
         let viewPoints = asMutable(data,{deep: true});
