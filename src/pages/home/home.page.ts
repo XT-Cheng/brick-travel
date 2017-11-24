@@ -16,6 +16,7 @@ import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/v
 import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
 import { getViewPoints } from '../../modules/store/entity/viewPoint/viewPoint.selector';
 import { IAppState } from '../../modules/store/store.model';
+import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 
 @Component({
   selector: 'page-home',
@@ -47,6 +48,7 @@ export class HomePage implements AfterViewInit {
   protected displayMode : DisplayModeEnum;
 
   constructor(private _store: NgRedux<IAppState>,
+    private _uiActionGeneration : UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
     private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
     this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints'])
@@ -57,7 +59,7 @@ export class HomePage implements AfterViewInit {
         .map(getFilterCategories(this._store));
     this.search$ = this._store.select<string>(['ui','viewPoint','searchKey']);
 
-    this.displayMode = DisplayModeEnum.Map;
+    this.displayMode = DisplayModeEnum.Agenda;
   }
 
   ngAfterViewInit(): void {
@@ -71,7 +73,10 @@ export class HomePage implements AfterViewInit {
     })
     this.travelAgendas$.subscribe(data => {
       console.log('Agenda Changed!');
-      this.dailyTrips = this.getDailyTrips();
+      if (data.length>0) {
+        this._uiActionGeneration.selectTravelAgenda("1");
+        this.dailyTrips = this.getDailyTrips();
+      }
       // if ( this.dailyTrips.length>0)
       //   this.dayTripSelected$.next(this.dailyTrips[0]);
     })
@@ -155,5 +160,6 @@ export class HomePage implements AfterViewInit {
 
 export enum DisplayModeEnum {
   Map,
-  List
+  List,
+  Agenda
 }

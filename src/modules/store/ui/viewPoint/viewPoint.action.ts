@@ -1,5 +1,3 @@
-import { dispatch } from '@angular-redux/store';
-import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
 
 import { IUIActionMetaInfo, IUIActionPayload } from '../ui.action';
@@ -43,13 +41,4 @@ export function selectCriteriaAction(selectedCriteriaId: string, unSelectedCrite
             error: null
         }
     };
-}
-
-@Injectable()
-export class UIActionGenerator {
-    @dispatch()
-    searchViewPoint = searchViewPointAction;
-
-    @dispatch()
-    selectCriteria = selectCriteriaAction;
 }

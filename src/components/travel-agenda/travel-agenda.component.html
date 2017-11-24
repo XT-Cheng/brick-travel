@@ -1,9 +1,8 @@
 <ion-grid no-padding>
   <ion-row>
-    <ion-content col-4 no-padding>
-      <ion-list>
+      <ion-list col-12 >
         <div>
-          <ion-item-sliding *ngFor="let dailyTrip of dailyTrips">
+          <ion-item-sliding *ngFor="let dailyTrip of (_selectedTravelAgenda$ | async)?.dailyTrips;index as i">
             <ion-item>
               <h1 class='day'>D{{i}}</h1>
               <i style="align-self: center;" class="icon iconfont icon-liebiao2"></i>
@@ -23,8 +22,5 @@
         </button>
         </ion-item>
       </ion-list>
-    </ion-content>
-    <ion-content col-8 col-8-md no-padding>
-    </ion-content>
   </ion-row>
 </ion-grid>

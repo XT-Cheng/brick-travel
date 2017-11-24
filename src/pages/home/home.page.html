@@ -15,7 +15,8 @@
   <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' [dailyTrip]='dayTripSelected$ | async'></a-map>
   <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='dayTripSelected$ | async'
     [viewMode]='true'></viewpoint-list>
-  <ion-fab right edge #fab>
+  <travel-agenda [ngStyle]='getStyle(displayModeEnum.Agenda)'></travel-agenda>
+    <ion-fab right edge #fab>
     <button ion-fab mini>
       <ion-icon name="add"></ion-icon>
     </button>

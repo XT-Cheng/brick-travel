@@ -5,8 +5,8 @@ import { Observable } from 'rxjs/Rx';
 import { IFilterCategory } from '../../modules/store/entity/filterCategory/filterCategory.model';
 import { IFilterCriteria } from '../../modules/store/entity/filterCategory/filterCategory.model';
 import { IAppState } from '../../modules/store/store.model';
-import { UIActionGenerator } from '../../modules/store/ui/viewPoint/viewPoint.action';
 import { getCurrentFilters } from '../../modules/store/ui/viewPoint/viewPoint.selector';
+import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 
 @Component({
   selector: 'viewpoint-filter',

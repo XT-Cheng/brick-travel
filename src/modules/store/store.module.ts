@@ -20,7 +20,7 @@ import { ViewPointService } from './entity/viewPoint/viewPoint.service';
 import { RootEpics } from './store.epic';
 import { IAppState } from './store.model';
 import { rootReducer } from './store.reducer';
-import { UIActionGenerator } from './ui/viewPoint/viewPoint.action';
+import { UIActionGenerator } from './ui/ui.action';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
