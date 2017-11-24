@@ -1,3 +1,35 @@
 travel-agenda {
-    
+    ion-item .label {
+        display: flex;
+        justify-content: space-between;
+        margin: 13px 0 13px 0;
+    }
+
+    ion-label .button {
+        margin: 0 auto;
+    }
+
+    ion-item h1 {
+        flex: 1;
+        text-align: center;
+    }
+
+    ion-item i {
+        align-self: center;
+        padding: 0 6px 0 6px;
+    }
+
+    ion-item-options .button:last-child {
+        padding-right: 0px;
+    }
+
+    .arrow-right {
+        align-self: center;
+        padding: 0 6px 0 6px;
+        width: 0;
+        height: 0;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-left: 7px solid rgb(173, 173, 169)
+    }
 }
