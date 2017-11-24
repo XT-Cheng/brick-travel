@@ -1,6 +1,6 @@
 <div tappable class='backdrop' (click)='backGroundClicked()'></div>
   <ion-grid>
     <ion-row>
-      <ion-searchbar #searchBar col-12 [(ngModel)] = 'searchKey' [animated]='true' (ionInput)='search($event)' ></ion-searchbar>
+      <ion-searchbar #searchBar col-12 [ngModel] = 'searchKey$ | async' [animated]='true' (ionInput)='search($event)' ></ion-searchbar>
     </ion-row>
 </ion-grid>

@@ -2,4 +2,14 @@ page-home {
     ion-title {
         text-align: center;
     }
+
+    button.map {
+        border-color: #488aff;
+        color: #488aff;
+    }
+
+    button.list {
+        border-color: #6d6a6a;
+        color: #6d6a6a;
+    }
 }

@@ -1,7 +1,7 @@
 import { NgRedux } from '@angular-redux/store';
 import { asMutable } from 'seamless-immutable';
 
-import { IFilterCriteria, IFilterCategory } from '../entity/filterCategory/filterCategory.model';
+import { IFilterCategory } from '../entity/filterCategory/filterCategory.model';
 import { IAppState } from '../store.model';
 
 export function getCurrentFilters(store : NgRedux<IAppState>) {

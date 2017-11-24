@@ -14,7 +14,6 @@ export function uiReducer(state: IUIState = INIT_UI_STATE, action: UIAction): IU
     case UIActionTypeEnum.SELECT_CRITERIA: {
       let nextState = <IUIState>asMutable(state, { deep: true });
       let select = action.payload.selectCriteria;
-      let filters = nextState.viewPoint.filters;
 
       nextState.viewPoint.filters = nextState.viewPoint.filters
         .filter(id => !select.unSelectedCriteriaIds.find(removed => removed === id));

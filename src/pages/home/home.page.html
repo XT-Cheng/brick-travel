@@ -1,15 +1,24 @@
 <ion-header>
   <ion-navbar>
-      <ion-title>
-          Ionic Blank
-        </ion-title>
+    <ion-title>
+      Ionic Blank
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="royal" [ngClass]='getSwitchButtonClass()' (click)='switchDisplayMode()'>
+            <ion-icon name="map"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content no-padding>
-  <a-map [viewPoints]='viewPoints$ | async' [dailyTrip]='dayTripSelected$ | async'></a-map>
+  <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' [dailyTrip]='dayTripSelected$ | async'></a-map>
+  <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='dayTripSelected$ | async'
+    [viewMode]='true'></viewpoint-list>
   <ion-fab right edge #fab>
-    <button ion-fab mini><ion-icon name="add"></ion-icon></button>
+    <button ion-fab mini>
+      <ion-icon name="add"></ion-icon>
+    </button>
     <ion-fab-list>
       <button ion-fab (click)='displaySearchBar(fab)'>
         <ion-icon name="search"></ion-icon>
@@ -21,5 +30,5 @@
   </ion-fab>
 </ion-content>
 
-<viewpoint-search *ngIf='showSearchBar' (backGroundClicked$)='dismissSearchBar()' ></viewpoint-search>
+<viewpoint-search *ngIf='showSearchBar' (backGroundClicked$)='dismissSearchBar()'></viewpoint-search>
 <viewpoint-filter *ngIf='showFilterBar' (backGroundClicked$)='dismissFilterBar()'></viewpoint-filter>

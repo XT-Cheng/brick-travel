@@ -38,12 +38,13 @@ export class HomePage implements AfterViewInit {
 
   protected showSearchBar : boolean = false;
   protected showFilterBar : boolean = false;
+  public displayModeEnum = DisplayModeEnum;
 
   //@select(['entities','cities'])
   //private cities$ : Observable<Map<string,ICity>>
   private dailyTrips: Array<IDailyTrip> = new Array<IDailyTrip>();
   private firstDailyTrip: boolean = true;
-
+  protected displayMode : DisplayModeEnum;
 
   constructor(private _store: NgRedux<IAppState>,
     private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
@@ -55,6 +56,8 @@ export class HomePage implements AfterViewInit {
     this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories'])
         .map(getFilterCategories(this._store));
     this.search$ = this._store.select<string>(['ui','viewPoint','searchKey']);
+
+    this.displayMode = DisplayModeEnum.Map;
   }
 
   ngAfterViewInit(): void {
@@ -128,4 +131,29 @@ export class HomePage implements AfterViewInit {
 
     return ret;
   }
+
+  protected switchDisplayMode() {
+    if (this.displayMode === DisplayModeEnum.List)
+      this.displayMode = DisplayModeEnum.Map;
+    else
+      this.displayMode = DisplayModeEnum.List;
+  }
+
+  protected getSwitchButtonClass() {
+    return {
+      'map': this.displayMode === DisplayModeEnum.Map,
+      'list': this.displayMode === DisplayModeEnum.List
+    }
+  }
+
+  protected getStyle(expect) {
+    return {
+      'display': this.displayMode === expect? 'inline':'none'
+    }
+  }
+}
+
+export enum DisplayModeEnum {
+  Map,
+  List
 }
