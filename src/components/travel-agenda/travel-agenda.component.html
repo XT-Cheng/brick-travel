@@ -1,0 +1,30 @@
+<ion-grid no-padding>
+  <ion-row>
+    <ion-content col-4 no-padding>
+      <ion-list>
+        <div>
+          <ion-item-sliding *ngFor="let dailyTrip of dailyTrips">
+            <ion-item>
+              <h1 class='day'>D{{i}}</h1>
+              <i style="align-self: center;" class="icon iconfont icon-liebiao2"></i>
+              <div class='arrow-right'></div>
+            </ion-item>
+            <ion-item-options side="right"> 
+              <button ion-button icon-only>
+              <ion-icon color='danger' name="trash"></ion-icon>
+            </button>
+            </ion-item-options>
+          </ion-item-sliding>
+        </div>
+        <ion-item style='text-align: center;'>
+          <button ion-button color="secondary" outline>
+          <ion-icon style='color: green' name="add-circle"></ion-icon>
+          &nbsp;&nbsp;增加一天
+        </button>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+    <ion-content col-8 col-8-md no-padding>
+    </ion-content>
+  </ion-row>
+</ion-grid>

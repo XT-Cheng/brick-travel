@@ -4,7 +4,7 @@ import { Searchbar } from 'ionic-angular';
 import { Observable } from 'rxjs/Rx';
 
 import { IAppState } from '../../modules/store/store.model';
-import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { UIActionGenerator } from '../../modules/store/ui/viewPoint/viewPoint.action';
 
 @Component({
   selector: 'viewpoint-search',

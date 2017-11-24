@@ -1,0 +1,95 @@
+travel-agenda {
+    display: block;
+    width: 100%;
+    height: 100%; 
+    
+    .scroll-content {
+        padding: 0;
+    }
+
+    .gu-mirror .iconfont {
+        display: none;
+    }
+
+    .gu-mirror .arrow-right {
+        display: none;
+    }
+
+    .gu-mirror .tp-item {
+        display: none;
+    }
+
+    .grid {
+        padding: 0;
+        height: 100%;
+    }
+
+    .row {
+        height: 100%;
+    }
+
+    .day-item.active {
+        background-color: #b5f3c1;
+    }
+        
+    .day-item {
+        background-color: #f8f8f8;
+    }
+
+    .vp-item {
+        background-color: #f5eded;
+    }
+
+    .tp-item {
+        min-height: 0;
+        background-color: #f5eded;
+    }
+
+    .tp-item .label {
+        margin: 0;
+    }
+
+    .label {
+        margin: 8px 8px 8px 0
+    }
+
+    ion-item-options {
+        .button {
+            background-color: #e6e4d7
+        }
+    }
+
+    ion-item .label {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .day {
+        width: 48px;
+        height: 48px;
+        display: inline-block;
+        text-align: center;
+        text-transform: uppercase;
+        border-radius: 50%;
+        background: #41c074;
+        margin: 0 !important;
+        color: #fff;
+        line-height: 48px;
+        font-size: 20px;
+        font-weight: 400;
+        margin: 0;
+        font-family: HelveticaNeue-light;
+        cursor: move;
+    }
+
+    .arrow-right {
+        position: absolute;
+        right: 0;
+        top: 27px;
+        width: 0;
+        height: 0;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-left: 7px solid rgb(173, 173, 169)
+    }
+}

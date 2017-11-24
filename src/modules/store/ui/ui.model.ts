@@ -1,15 +1,7 @@
-export const INIT_UI_STATE = {
-  viewPoint: {
-    searchKey: '',
-    filters: []
-  }
-}
-
-export interface IViewPointUI {
-  searchKey: string,
-  filters: string[]
-}
+import { IViewPointUI } from "./viewPoint/viewPoint.model";
+import { ITravelAgendaUI } from "./travelAgenda/travelAgenda.model";
 
 export interface IUIState {
-  viewPoint: IViewPointUI
-}
+    viewPoint: IViewPointUI,
+    travelAgenda: ITravelAgendaUI
+  }

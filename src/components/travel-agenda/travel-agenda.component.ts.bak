@@ -1,0 +1,246 @@
+import { Component, Input, EventEmitter, Output, AfterViewInit, ViewChild, Renderer2, ElementRef } from '@angular/core';
+import { DragulaService } from "../../providers/dragula.service";
+
+import { TravelAgenda, DailyTrip, TransportationCategory, TravelViewPoint } from "../../data-model/travel-agenda.model";
+import { Content, List } from 'ionic-angular';
+import * as Rx from 'rxjs';
+
+@Component({
+  selector: 'travel-agenda',
+  templateUrl: 'travel-agenda.component.html'
+})
+export class TravelAgendaComponent implements AfterViewInit {
+  //#region Private member
+  private _agenda: TravelAgenda;
+  private _transportationTypes: string[];
+  private _currentDailyTrip: DailyTrip;
+  private _tranCategory = TransportationCategory;
+  private _viewPointDragHandle: any;
+  private _dayDragHandle: any;
+  private _self : TravelAgendaComponent;
+  private _touchMoveViewPoint : any;
+  private _touchMoveDay : any;
+  private _vpScrollContent : any;
+  private _dayScrollContent : any;
+  private _vpScrollRect : any;
+  private _dayScrollRect : any;
+  private _dayDragSub : Rx.Subscription;
+  private _viewPointDragSub : Rx.Subscription;
+
+  //#endregion
+
+  //#region Private property
+  @ViewChild('vpList', { read: List }) private _vpListCmp: List;
+  @ViewChild('dayList', { read: List }) private _dayListCmp: List;
+  @ViewChild('vpContent', { read: ElementRef }) private _vpContentRef: ElementRef;
+  @ViewChild('vpContent', { read: Content }) private _vpContent: Content;
+  @ViewChild('dayContent', { read: ElementRef }) private _dayContentRef: ElementRef;
+  @ViewChild('dayContent', { read: Content }) private _dayContent: Content;
+  //#endregion
+
+  //#region Event
+  @Output() daySelected: EventEmitter<DailyTrip> = new EventEmitter<DailyTrip>();
+  //#endregion
+
+  //#region Constructor
+  constructor(private _dragulaService: DragulaService, private _renderer: Renderer2) {
+    this._self = this;
+
+    this._touchMoveViewPoint = this.touchMoveViewPoint.bind(this);
+    this._touchMoveDay = this.touchMoveDay.bind(this);
+
+    this._dragulaService.dropModel.subscribe((value : any) => {
+      this._currentDailyTrip.refresh();
+    });
+  }
+  //#endregion
+
+  //#region Interface implementation
+  ngAfterViewInit(): void {
+    this._dragulaService.dropModel.subscribe((value: any) => {
+      if (this._currentDailyTrip !== null) this._currentDailyTrip.refresh();
+    });
+    this._dragulaService.cloned.subscribe((value: any) => {
+      let mirror = value[1];
+      mirror.style.width = this.getRectWidth(mirror.children[0].getBoundingClientRect()) + 'px';
+      mirror.style.height = this.getRectHeight(mirror.children[0].getBoundingClientRect()) + 'px';
+    });
+    this._dragulaService.dragend.subscribe((value: any) => {
+      let bagName = value[0];
+      let el = value[1];
+
+      if (bagName === 'vp-bag') {
+        this.onViewPointDragEnd(el);
+      }
+      else {
+        this.onDayDragEnd(el);
+      }
+    });
+    this._dragulaService.drag.subscribe((value: any) => {
+      let bagName = value[0];
+      let el = value[1];
+      let source = value[2];
+
+      if (bagName === 'vp-bag') {
+        this.onViewPointDrag(el, source);
+      }
+      else {
+        this.onDayDrag(el, source);
+      }
+    });
+
+    this._vpScrollContent =this._vpContentRef.nativeElement.querySelector('.scroll-content');
+    this._dayScrollContent =this._dayContentRef.nativeElement.querySelector('.scroll-content');
+  }
+  //#endregion
+
+  //#region Public property
+
+  public get tranCategory(): typeof TransportationCategory {
+    return this._tranCategory;
+  }
+
+  @Input()
+  public set agenda(agenda: TravelAgenda) {
+    if (agenda === undefined) 
+      return;
+    
+    this._agenda = agenda;
+    if (this._agenda.dailyTrips.length > 0) {
+      this._currentDailyTrip = this._agenda.dailyTrips[0];
+    }
+  }
+  public get agenda() {
+    return this._agenda;
+  }
+
+  @Input()
+  public get dailyTrips(): Array<DailyTrip> {
+    if (this._agenda !== undefined) return this._agenda.dailyTrips;
+
+    return new Array<DailyTrip>();
+  }
+
+  @Input()
+  public get currentViewPoints(): Array<TravelViewPoint> {
+    if (this._currentDailyTrip !== undefined) return this._currentDailyTrip.travelViewPoints;
+
+    return new Array<TravelViewPoint>();
+  }
+
+  @Input()
+  public get currentDailyTrip(): DailyTrip {
+    return this._currentDailyTrip;
+  }
+
+  @Input()
+  public get transportationTypes(): string[] {
+    return this._transportationTypes;
+  }
+
+  //#endregion
+
+  //#region Protected properties
+  protected get dragulaOptions() : any {
+    let that = this;
+    let that_moves = (el: any, source: any, handle: any, sibling: any) : boolean => {
+      return that.moves(el, source, handle, sibling);
+    };
+    return {moves: that_moves};
+  }
+  //#endregion
+
+  //#region Protected method
+  protected dayClicked(dailyTrip: DailyTrip) {
+    this._currentDailyTrip = dailyTrip;
+    this.daySelected.emit(dailyTrip);
+  }
+
+  protected getDayItemClass(dailyTrip: DailyTrip) {
+    return {
+      'day-item': true,
+      'active': dailyTrip === this._currentDailyTrip
+    };
+  }
+
+  protected addDay() {
+    this._agenda.dailyTrips.push(new DailyTrip());
+  }
+
+  protected isActvie(dailyTrip: DailyTrip): boolean {
+    return this._currentDailyTrip === dailyTrip;
+  }
+
+  protected addViewPoint() {
+    // this._navCtrl.push(ViewpointListPage,{
+    //   'viewMode': false, 
+    //   'dailyTrip': this._currentDayTrip
+    // });
+  }
+  //#endregion
+
+  //#region Private method
+  private touchMoveViewPoint(e: any) {
+    this._vpScrollRect = this._vpScrollContent.getBoundingClientRect();
+    
+    if (e.touches[0].clientY < this._vpScrollRect.top)
+      this._vpContent.scrollTo(0,this._vpScrollContent.scrollTop - 10);
+
+    if (e.touches[0].clientY > this._vpScrollRect.bottom)
+      this._vpContent.scrollTo(0,this._vpScrollContent.scrollTop + 10);
+  }
+
+  private touchMoveDay(e: any) {
+    this._dayScrollRect = this._dayScrollContent.getBoundingClientRect();
+
+    if (e.touches[0].clientY < this._dayScrollRect.top)
+      this._dayContent.scrollTo(0,this._dayScrollContent.scrollTop - 10);
+
+    if (e.touches[0].clientY > this._dayScrollRect.bottom)
+      this._dayContent.scrollTo(0,this._dayScrollContent.scrollTop + 10);
+  }
+
+
+  public moves(el: any, source: any, handle: any, sibling: any): boolean {
+    let valid = (handle.tagName === 'I');
+    if (valid) {
+      if (el.children[0].classList.contains('vp-item'))
+      this._viewPointDragHandle = handle;
+      else
+        this._dayDragHandle = handle;
+    }
+    return valid;
+  }
+
+  private onViewPointDrag(el: any, source: any) {
+    this._vpListCmp.sliding = false;
+    this._renderer.setStyle(this._vpScrollContent, 'overflow-y', 'hidden');
+    this._viewPointDragSub =  Rx.Observable.fromEvent(this._viewPointDragHandle,'touchmove').subscribe(e=>{
+      this.touchMoveViewPoint(e);
+    });
+  }
+
+  private onDayDrag(el: any, source: any) {
+    this._dayListCmp.sliding = false;
+    this._renderer.setStyle(this._dayScrollContent, 'overflow-y', 'hidden');
+    this._dayDragSub =  Rx.Observable.fromEvent(this._dayDragHandle,'touchmove').subscribe(e=>{
+      this.touchMoveDay(e);
+    });
+  }
+
+  private onViewPointDragEnd(el: any) {
+    this._vpListCmp.sliding = true;
+    this._renderer.setStyle(this._vpScrollContent, 'overflow-y', 'scroll');
+    this._viewPointDragSub.unsubscribe();
+  }
+
+  private onDayDragEnd(el: any) {
+    this._dayListCmp.sliding = true;
+    this._renderer.setStyle(this._dayScrollContent, 'overflow-y', 'scroll');
+    this._dayDragSub.unsubscribe();
+  }
+
+  private getRectWidth(rect: any) { return rect.width || (rect.right - rect.left); }
+  private getRectHeight(rect: any) { return rect.height || (rect.bottom - rect.top); }
+  //#endregion
+}
