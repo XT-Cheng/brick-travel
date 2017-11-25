@@ -1,4 +1,3 @@
-import { dailyTrip } from '../../modules/store/entity/entity.schema';
 import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs/Rx';
@@ -6,7 +5,6 @@ import { Observable, Subscription } from 'rxjs/Rx';
 import { IDailyTrip, ITravelAgenda } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IAppState } from '../../modules/store/store.model';
 import { getSelectedTravelAgenda } from '../../modules/store/ui/travelAgenda/travelAgenda.selector';
-import { DragulaService } from '../../providers/dragula.service';
 
 @Component({
   selector: 'travel-agenda',
@@ -34,7 +32,7 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>,private _dragulaService: DragulaService) {
+  constructor(private _store: NgRedux<IAppState>) {
     this.selectedTravelAgenda$ = this._store.select<string>(['ui', 'travelAgenda','selectedId'])
       .map(getSelectedTravelAgenda(this._store));
   }
