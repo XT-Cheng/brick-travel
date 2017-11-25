@@ -2,11 +2,10 @@ import { NgRedux } from '@angular-redux/store';
 import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 
-import { IFilterCategory } from '../../modules/store/entity/filterCategory/filterCategory.model';
-import { IFilterCriteria } from '../../modules/store/entity/filterCategory/filterCategory.model';
 import { IAppState } from '../../modules/store/store.model';
-import { getCurrentFilters } from '../../modules/store/ui/viewPoint/viewPoint.selector';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 
 @Component({
   selector: 'viewpoint-filter',
@@ -19,8 +18,8 @@ export class ViewPointFilterComponent implements AfterViewInit {
 
   //#region Protected member
 
-  protected currentFilterCategories$: Observable<Array<IFilterCategory>>;
-  protected selectedCategory: IFilterCategory = null;
+  protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
+  protected selectedCategory: IFilterCategoryBiz = null;
 
   //protected selectedCriteries : Array<IFilterCriteria> = new Array<IFilterCriteria>();
 
@@ -28,7 +27,7 @@ export class ViewPointFilterComponent implements AfterViewInit {
 
   //#region Protected property
 
-  @Output() protected backGroundClicked$: EventEmitter<void>;
+  @Output() protected backGroundClickedEvent: EventEmitter<void>;
 
   //#endregion
 
@@ -42,7 +41,7 @@ export class ViewPointFilterComponent implements AfterViewInit {
 
   //#region Constructor
   constructor(private _uiActionGenerator: UIActionGenerator, private _store: NgRedux<IAppState>) {
-    this.backGroundClicked$ = new EventEmitter();
+    this.backGroundClickedEvent = new EventEmitter();
     this.currentFilterCategories$ = this._store.select<string[]>(['ui', 'viewPoint', 'filters'])
       .map(getCurrentFilters(this._store));
   }
@@ -55,17 +54,17 @@ export class ViewPointFilterComponent implements AfterViewInit {
 
   //#region Protected methods
   protected backGroundClicked(): void {
-    this.backGroundClicked$.emit();
+    this.backGroundClickedEvent.emit();
   }
 
-  protected getCriteriaClass(criteria: IFilterCriteria) {
+  protected getCriteriaClass(criteria: IFilterCriteriaBiz) {
     return {
       'active': criteria.isChecked,
       'inactive': !criteria.isChecked
     }
   }
 
-  protected getCategoryClass(category: IFilterCategory) {
+  protected getCategoryClass(category: IFilterCategoryBiz) {
     let hasCheckedCriteria = category.criteries.some(criteria => {
       return criteria.isChecked
     });
@@ -76,7 +75,7 @@ export class ViewPointFilterComponent implements AfterViewInit {
     }
   }
 
-  protected criteriaClicked(event: any, criteria: IFilterCriteria) {
+  protected criteriaClicked(event: any, criteria: IFilterCriteriaBiz) {
     criteria.isChecked = !criteria.isChecked;
 
     if (!this.selectedCategory.criteries.find(c => !c.isChecked)) {

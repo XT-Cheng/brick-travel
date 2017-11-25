@@ -12,7 +12,7 @@
 </ion-header>
 
 <ion-content no-padding>
-  <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' [dailyTrip]='dayTripSelected$ | async'></a-map>
+  <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' [dailyTrip]='dayTripSelected$ | async' [viewPoints]='viewPoints$ | async'></a-map>
   <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='dayTripSelected$ | async'
     [viewMode]='true'></viewpoint-list>
   <travel-agenda [ngStyle]='getStyle(displayModeEnum.Agenda)'></travel-agenda>
@@ -31,5 +31,5 @@
   </ion-fab>
 </ion-content>
 
-<viewpoint-search *ngIf='showSearchBar' (backGroundClicked$)='dismissSearchBar()'></viewpoint-search>
-<viewpoint-filter *ngIf='showFilterBar' (backGroundClicked$)='dismissFilterBar()'></viewpoint-filter>
+<viewpoint-search *ngIf='showSearchBar' [searchKey]='search$ | async' (searchEvent)='searchViewPoint($event)' (backGroundClickedEvent)='dismissSearchBar()'></viewpoint-search>
+<viewpoint-filter *ngIf='showFilterBar' (backGroundClickedEvent)='dismissFilterBar()'></viewpoint-filter>

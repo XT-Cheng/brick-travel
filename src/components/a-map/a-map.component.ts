@@ -1,13 +1,20 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, ComponentFactory, ComponentFactoryResolver, Injector, ComponentRef, Input, OnDestroy } from "@angular/core";
-import { ViewPointMarkerComponent } from "./viewpoint-marker/viewpoint-marker.component";
-import { InformationWindowComponent } from "./information-window/information-window.component";
-import { IViewPoint } from "../../modules/store/entity/viewPoint/viewPoint.model";
-import { IDailyTrip, ITravelViewPoint } from "../../modules/store/entity/travelAgenda/travelAgenda.model";
-import { Observable } from "rxjs/Observable";
-import { NgRedux } from "@angular-redux/store";
-import { IAppState } from "../../modules/store/store.model";
-import { getViewPoints } from "../../modules/store/entity/viewPoint/viewPoint.selector";
-import { Subscription } from "rxjs";
+import {
+    AfterViewInit,
+    Component,
+    ComponentFactory,
+    ComponentFactoryResolver,
+    ComponentRef,
+    ElementRef,
+    Injector,
+    Input,
+    OnDestroy,
+    ViewChild,
+} from '@angular/core';
+
+import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
+import { InformationWindowComponent } from './information-window/information-window.component';
+import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
+import { IDailyTripBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 
 @Component({
   selector: 'a-map',
@@ -26,14 +33,10 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
   private _markers: Map<string, MarkerInfor>;
 
   private _travelLines: Array<AMap.Polyline>;
-
-  private _viewPoints$: Observable<Array<IViewPoint>>;
-
-    private _unSubs : Array<Subscription> = new Array<Subscription>();
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>,private _resolver: ComponentFactoryResolver, private _injector: Injector) {
+  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
     this._markers = new Map<string, MarkerInfor>();
 
     this._travelLines = new Array<AMap.Polyline>();
@@ -41,9 +44,6 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
     this._viewPointMarkerFactory = this._resolver.resolveComponentFactory(ViewPointMarkerComponent);
 
     this._informationWindowFactory = this._resolver.resolveComponentFactory(InformationWindowComponent);
-
-    this._viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints'])
-        .map(getViewPoints(this._store));
   }
   //#endregion Constructor
 
@@ -73,7 +73,7 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
   }
 
   @Input()
-  public set dailyTrip(dailyTrip: IDailyTrip) {
+  public set dailyTrip(dailyTrip: IDailyTripBiz) {
     if (this._map === null) return;
 
     //Remove all of viewPoint from trip first 
@@ -90,7 +90,7 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
 
     this.setWindowViewMode(false);
     
-    let viewPoints = (<ITravelViewPoint[]>dailyTrip.travelViewPoints).map(tvp => tvp.viewPoint);
+    let viewPoints = (<ITravelViewPointBiz[]>dailyTrip.travelViewPoints).map(tvp => tvp.viewPoint);
 
     let sequence = 0;
 
@@ -118,15 +118,11 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
   ngAfterViewInit(): void {
     this._map = new AMap.Map(this._mapElement.nativeElement, {});
     this.loadPlugin();
-
-    this._unSubs.push(this._viewPoints$.subscribe(viewPoints => {
-      this.viewPoints = viewPoints;
-    }));
   }
 
   ngOnDestroy(): void {
-    this._unSubs.forEach(un => un.unsubscribe());
   }
+
   //#endregion Implements interface
 
   //#region Private method

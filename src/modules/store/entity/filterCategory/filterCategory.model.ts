@@ -1,13 +1,12 @@
 export interface IFilterCriteria {
     id: string,
     name: string,
-    criteria: string,
-    isChecked: boolean
+    criteria: string
 };
 
 export interface IFilterCategory {
     id: string
     name: string,
-    criteries: IFilterCriteria[],
+    criteries: string[],
     filter: string
 };

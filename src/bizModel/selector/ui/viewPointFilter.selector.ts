@@ -1,12 +1,12 @@
-import { NgRedux } from '@angular-redux/store';
-import { asMutable } from 'seamless-immutable';
+import { NgRedux } from "@angular-redux/store";
+import { IAppState } from "../../../modules/store/store.model";
 
-import { IFilterCategory } from '../../entity/filterCategory/filterCategory.model';
-import { IAppState } from '../../store.model';
+import { asMutable } from 'seamless-immutable';
+import { IFilterCategoryBiz } from "../../model/filterCategory.biz.model";
 
 export function getCurrentFilters(store : NgRedux<IAppState>) {
-    return (data : string[]) : Array<IFilterCategory> => {
-        let ret = new Array<IFilterCategory>();
+    return (data : string[]) : Array<IFilterCategoryBiz> => {
+        let ret = new Array<IFilterCategoryBiz>();
        
         let criteries =  asMutable(store.getState().entities.filterCriteries,{deep: true});
         let categories = asMutable(store.getState().entities.filterCategories,{deep: true});

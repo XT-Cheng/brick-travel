@@ -7,16 +7,16 @@ import { asMutable } from 'seamless-immutable';
 
 import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
-import { IFilterCategory } from '../../modules/store/entity/filterCategory/filterCategory.model';
-import { getFilterCategories } from '../../modules/store/entity/filterCategory/filterCategory.selector';
+import { getFilterCategories } from '../../bizModel/selector/entity/filterCategory.selector';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
-import { IDailyTrip, ITravelAgenda } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
-import { getTravelAgendas } from '../../modules/store/entity/travelAgenda/travelAgenda.selector';
+import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
-import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
-import { getViewPoints } from '../../modules/store/entity/viewPoint/viewPoint.selector';
+import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { IDailyTripBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { IFilterCategoryBiz } from '../../bizModel/model/filterCategory.biz.model';
 
 @Component({
   selector: 'page-home',
@@ -29,13 +29,13 @@ export class HomePage implements AfterViewInit {
   
   //@select(['entities','viewPoints'])
   //@select(getViewPoints)
-  protected viewPoints$: Observable<Array<IViewPoint>>;
-  protected travelAgendas$: Observable<Array<ITravelAgenda>>;
-  protected filterCategories$: Observable<Array<IFilterCategory>>;
+  protected viewPoints$: Observable<Array<IViewPointBiz>>;
+  protected travelAgendas$: Observable<Array<ITravelAgendaBiz>>;
+  protected filterCategories$: Observable<Array<IFilterCategoryBiz>>;
 
   protected search$ : Observable<string>;
 
-  protected dayTripSelected$: Subject<IDailyTrip> = new Subject<IDailyTrip>();
+  protected dayTripSelected$: Subject<IDailyTripBiz> = new Subject<IDailyTripBiz>();
 
   protected showSearchBar : boolean = false;
   protected showFilterBar : boolean = false;
@@ -43,7 +43,7 @@ export class HomePage implements AfterViewInit {
 
   //@select(['entities','cities'])
   //private cities$ : Observable<Map<string,ICity>>
-  private dailyTrips: Array<IDailyTrip> = new Array<IDailyTrip>();
+  private dailyTrips: Array<IDailyTripBiz> = new Array<IDailyTripBiz>();
   private firstDailyTrip: boolean = true;
   protected displayMode : DisplayModeEnum;
 
@@ -51,15 +51,15 @@ export class HomePage implements AfterViewInit {
     private _uiActionGeneration : UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
     private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
-    this.viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints'])
+    this.viewPoints$ = this._store.select<{ [id: string]: IViewPointBiz }>(['entities', 'viewPoints'])
         .map(getViewPoints(this._store));
-    this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas'])
+    this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgendaBiz }>(['entities', 'travelAgendas'])
         .map(getTravelAgendas(this._store));
-    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories'])
+    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategoryBiz }>(['entities', 'filterCategories'])
         .map(getFilterCategories(this._store));
     this.search$ = this._store.select<string>(['ui','viewPoint','searchKey']);
 
-    this.displayMode = DisplayModeEnum.Agenda;
+    this.displayMode = DisplayModeEnum.Map;
   }
 
   ngAfterViewInit(): void {
@@ -118,8 +118,8 @@ export class HomePage implements AfterViewInit {
     this.dayTripSelected$.next(null);
   }
 
-  getDailyTrips(): Array<IDailyTrip> {
-    let ret = new Array<IDailyTrip>();
+  getDailyTrips(): Array<IDailyTripBiz> {
+    let ret = new Array<IDailyTripBiz>();
     let viewPoints = asMutable(this._store.getState().entities.viewPoints, { deep: true });
     let dailyTrips = asMutable(this._store.getState().entities.dailyTrips, { deep: true });
     let travelViewPoints = asMutable(this._store.getState().entities.travelViewPoints, { deep: true });
@@ -135,6 +135,10 @@ export class HomePage implements AfterViewInit {
     });
 
     return ret;
+  }
+
+  protected searchViewPoint(searchKey :string) {
+    this._uiActionGeneration.searchViewPoint(searchKey);
   }
 
   protected switchDisplayMode() {

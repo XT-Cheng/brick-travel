@@ -2,9 +2,9 @@ import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs/Rx';
 
-import { IDailyTrip, ITravelAgenda } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IAppState } from '../../modules/store/store.model';
-import { getSelectedTravelAgenda } from '../../modules/store/ui/travelAgenda/travelAgenda.selector';
+import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgenda.selector';
+import { ITravelAgendaBiz, IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
 
 @Component({
   selector: 'travel-agenda',
@@ -18,9 +18,9 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#endregion
 
   //#region Protected member
-  protected selectedTravelAgenda$: Observable<ITravelAgenda>;
-  protected travelAgenda : ITravelAgenda;
-  protected selectedDailyTrip : IDailyTrip;
+  protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
+  protected travelAgenda : ITravelAgendaBiz;
+  protected selectedDailyTrip : IDailyTripBiz;
   //#endregion
 
   //#region Private property
@@ -60,7 +60,7 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#endregion
 
   //#region Protected method
-  protected dayClicked(dailyTrip : IDailyTrip) {
+  protected dayClicked(dailyTrip : IDailyTripBiz) {
     this.selectedDailyTrip = dailyTrip;
   }
   //#endregion

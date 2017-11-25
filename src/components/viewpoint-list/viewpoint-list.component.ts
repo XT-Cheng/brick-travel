@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { IDailyTrip } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
-import { getViewPoints } from '../../modules/store/entity/viewPoint/viewPoint.selector';
+import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
 import { IAppState } from '../../modules/store/store.model';
 
 @Component({

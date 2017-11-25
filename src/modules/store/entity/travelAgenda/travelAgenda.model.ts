@@ -11,12 +11,12 @@ export interface ITravelAgenda {
     id: string;
     name: string;
     user: string;
-    dailyTrips: IDailyTrip[] | string[]
+    dailyTrips:  string[]
 };
 
 export interface IDailyTrip {
     id: string;
-    travelViewPoints: ITravelViewPoint[] | string[];
+    travelViewPoints:  string[];
 }
 
 export interface ITravelViewPoint {
