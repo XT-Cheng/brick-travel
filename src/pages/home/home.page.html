@@ -5,18 +5,18 @@
     </ion-title>
     <ion-buttons end>
       <button ion-button icon-only color="royal" [ngClass]='getSwitchButtonClass()' (click)='switchDisplayMode()'>
-            <ion-icon name="map"></ion-icon>
+        <ion-icon name="map"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content no-padding>
-  <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' [dailyTrip]='dayTripSelected$ | async' [viewPoints]='viewPoints$ | async'></a-map>
-  <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='dayTripSelected$ | async'
+  <a-map [ngStyle]='getStyle(displayModeEnum.Map)' [dailyTrip]='dayTripSelected$ | async' [viewPoints]='viewPoints$ | async'></a-map>
+  <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='dayTripSelected$ | async' [viewPoints]='viewPoints$ | async'
     [viewMode]='true'></viewpoint-list>
-  <travel-agenda [ngStyle]='getStyle(displayModeEnum.Agenda)'></travel-agenda>
-    <ion-fab right edge #fab>
+  <travel-agenda [travelAgenda]='selectedTravelAgenda$ | async' [ngStyle]='getStyle(displayModeEnum.Agenda)'></travel-agenda>
+  <ion-fab right edge #fab>
     <button ion-fab mini>
       <ion-icon name="add"></ion-icon>
     </button>
@@ -32,4 +32,5 @@
 </ion-content>
 
 <viewpoint-search *ngIf='showSearchBar' [searchKey]='search$ | async' (searchEvent)='searchViewPoint($event)' (backGroundClickedEvent)='dismissSearchBar()'></viewpoint-search>
-<viewpoint-filter *ngIf='showFilterBar' (backGroundClickedEvent)='dismissFilterBar()'></viewpoint-filter>
+<viewpoint-filter *ngIf='showFilterBar' [filterCategories]='currentFilterCategories$ | async' (criteriaClickedEvent)='criteriaClicked($event)'
+  (backGroundClickedEvent)='dismissFilterBar()'></viewpoint-filter>

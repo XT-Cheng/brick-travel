@@ -1,13 +1,8 @@
-import { NgRedux } from '@angular-redux/store';
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
-import { Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
 
 import { IDailyTrip } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
-import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
-import { IAppState } from '../../modules/store/store.model';
 
 @Component({
   selector: 'viewpoint-list',
@@ -19,8 +14,7 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Private member
-  private _unSubs : Array<Subscription> = new Array<Subscription>();
-  private _viewPoints$: Observable<Array<IViewPoint>>;
+  
   //#endregion
 
   //#region Event
@@ -28,9 +22,8 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>) {
-    this._viewPoints$ = this._store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints'])
-      .map(getViewPoints(this._store));
+  constructor() {
+
   }
   //#endregion
 
@@ -48,13 +41,10 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
 
 //#region Implements interface
 ngAfterViewInit(): void {
-  this._unSubs.push(this._viewPoints$.subscribe(viewPoints => {
-    this.viewPoints = viewPoints;
-  }));
+
 }
 
 ngOnDestroy(): void {
-  this._unSubs.forEach(un => un.unsubscribe());
 }
 //#endregion Implements interface
   

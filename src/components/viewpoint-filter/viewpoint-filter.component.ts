@@ -1,10 +1,5 @@
-import { NgRedux } from '@angular-redux/store';
-import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { IAppState } from '../../modules/store/store.model';
-import { UIActionGenerator } from '../../modules/store/ui/ui.action';
-import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 
 @Component({
@@ -18,17 +13,16 @@ export class ViewPointFilterComponent implements AfterViewInit {
 
   //#region Protected member
 
-  protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
   protected selectedCategory: IFilterCategoryBiz = null;
-
-  //protected selectedCriteries : Array<IFilterCriteria> = new Array<IFilterCriteria>();
-
+  @Input() protected filterCategories : Array<IFilterCategoryBiz>;
+  
   //#endregion
 
   //#region Protected property
 
   @Output() protected backGroundClickedEvent: EventEmitter<void>;
-
+  @Output() protected criteriaClickedEvent: EventEmitter<{category: IFilterCategoryBiz, criteria: IFilterCriteriaBiz}>;
+  
   //#endregion
 
   //#region Public property
@@ -40,10 +34,9 @@ export class ViewPointFilterComponent implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _uiActionGenerator: UIActionGenerator, private _store: NgRedux<IAppState>) {
+  constructor() {
     this.backGroundClickedEvent = new EventEmitter();
-    this.currentFilterCategories$ = this._store.select<string[]>(['ui', 'viewPoint', 'filters'])
-      .map(getCurrentFilters(this._store));
+    this.criteriaClickedEvent = new EventEmitter();
   }
   //#endregion
 
@@ -76,15 +69,7 @@ export class ViewPointFilterComponent implements AfterViewInit {
   }
 
   protected criteriaClicked(event: any, criteria: IFilterCriteriaBiz) {
-    criteria.isChecked = !criteria.isChecked;
-
-    if (!this.selectedCategory.criteries.find(c => !c.isChecked)) {
-      this.selectedCategory.criteries.forEach(c => {
-        c.isChecked = false;
-      })
-    }
-
-    this.execUIAction();
+    this.criteriaClickedEvent.emit({category: this.selectedCategory,criteria: criteria});
   }
 
   protected clicked($event, category) {
@@ -94,18 +79,6 @@ export class ViewPointFilterComponent implements AfterViewInit {
   //#endregion
 
   //#region Private methods
-  private execUIAction() {
-    let checkId : string = null;
-    let unCheckIds : Array<string> = new Array<string>();
-
-    this.selectedCategory.criteries.forEach(c => {
-      if (c.isChecked)
-        checkId = c.id;
-      else
-        unCheckIds.push(c.id);
-    });
-
-    this._uiActionGenerator.selectCriteria(checkId,unCheckIds);
-  }
+  
   //#endregion
 }

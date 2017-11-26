@@ -3,7 +3,7 @@
 <div class='filter'>
     <ion-grid no-padding>
         <ion-row>
-            <button ion-button outline col [ngClass]='getCategoryClass(category)' *ngFor="let category of (currentFilterCategories$ | async)" icon-right (click)='clicked($event,category)'>
+            <button ion-button outline col [ngClass]='getCategoryClass(category)' *ngFor="let category of filterCategories" icon-right (click)='clicked($event,category)'>
                 {{category.name}}
                 <ion-icon name="arrow-dropdown"></ion-icon>
             </button>
