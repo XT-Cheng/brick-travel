@@ -4,14 +4,14 @@ import { FabContainer } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { asMutable } from 'seamless-immutable';
+import 'rxjs/add/operator/combineLatest'
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getFilterCategories } from '../../bizModel/selector/entity/filterCategory.selector';
-import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
 import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
-import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgenda.selector';
+import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgendaSelected.selector';
 import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
 import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
@@ -19,6 +19,8 @@ import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAg
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
+import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 
 @Component({
   selector: 'page-home',
@@ -31,7 +33,6 @@ export class HomePage implements AfterViewInit {
   protected filterCategories$: Observable<Array<IFilterCategoryBiz>>;
   protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
   protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
-
   protected search$: Observable<string>;
 
   protected dayTripSelected$: Subject<IDailyTripBiz> = new Subject<IDailyTripBiz>();
@@ -48,16 +49,16 @@ export class HomePage implements AfterViewInit {
     private _uiActionGeneration: UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
     private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
-    this.viewPoints$ = this._store.select<{ [id: string]: IViewPointBiz }>(['entities', 'viewPoints'])
-      .map(getViewPoints(this._store));
-    this.travelAgendas$ = this._store.select<{ [id: string]: ITravelAgendaBiz }>(['entities', 'travelAgendas'])
-      .map(getTravelAgendas(this._store));
-    this.filterCategories$ = this._store.select<{ [id: string]: IFilterCategoryBiz }>(['entities', 'filterCategories'])
-      .map(getFilterCategories(this._store));
-    this.currentFilterCategories$ = this._store.select<string[]>(['ui', 'viewPoint', 'filters']).map(getCurrentFilters(this._store));
-    this.search$ = this._store.select<string>(['ui', 'viewPoint', 'searchKey']);
-    this.selectedTravelAgenda$ = this._store.select<string>(['ui', 'travelAgenda', 'selectedId'])
-      .map(getSelectedTravelAgenda(this._store));
+
+    this.viewPoints$ = getViewPoints(_store);
+    this.travelAgendas$ = getTravelAgendas(_store);
+    this.filterCategories$ = getFilterCategories(this._store);
+    this.search$ = getViewPointSearch(this._store);
+    this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
+    
+    this.currentFilterCategories$ =  getCurrentFilters(this._store);
+      
+    
     this.displayMode = DisplayModeEnum.Agenda;
   }
 
@@ -66,23 +67,6 @@ export class HomePage implements AfterViewInit {
     this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaActionUIActionGenerator.loadTravelAgendas();
     this._filterCategoryActionUIActionGenerator.loadFilterCategories();
-
-    this.selectedTravelAgenda$.subscribe(data => console.log(data));
-    this.viewPoints$.subscribe(data => {
-      console.log('ViewPoint Changed!');
-    })
-    this.travelAgendas$.subscribe(data => {
-      console.log('Agenda Changed!');
-      if (data.length > 0) {
-        this._uiActionGeneration.selectTravelAgenda("1");
-        //this.dailyTrips = this.getDailyTrips();
-      }
-      // if ( this.dailyTrips.length>0)
-      //   this.dayTripSelected$.next(this.dailyTrips[0]);
-    })
-    this.search$.subscribe(searchKey => {
-      console.log(searchKey);
-    })
   }
 
   dismissSearchBar(): void {
@@ -168,10 +152,11 @@ export class HomePage implements AfterViewInit {
   }
 
   protected switchDisplayMode() {
-    if (this.displayMode === DisplayModeEnum.List)
-      this.displayMode = DisplayModeEnum.Map;
-    else
-      this.displayMode = DisplayModeEnum.List;
+    this._uiActionGeneration.selectTravelAgenda("1");
+    // if (this.displayMode === DisplayModeEnum.List)
+    //   this.displayMode = DisplayModeEnum.Map;
+    // else
+    //   this.displayMode = DisplayModeEnum.List;
   }
 
   protected getSwitchButtonClass() {

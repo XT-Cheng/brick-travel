@@ -18,7 +18,7 @@
     [viewMode]='true'></viewpoint-list> -->
     <travel-agenda style="flex:1" [travelAgenda]='selectedTravelAgenda$ | async' (dailyTripSelectedEvent)='dailyTripSelected($event)' ></travel-agenda>
   </div>
-  <!-- <ion-fab right edge #fab>
+  <ion-fab right edge #fab>
     <button ion-fab mini>
       <ion-icon name="add"></ion-icon>
     </button>
@@ -30,7 +30,7 @@
         <ion-icon name="color-filter"></ion-icon>
       </button>
     </ion-fab-list>
-  </ion-fab> -->
+  </ion-fab>
 </ion-content>
 
 <viewpoint-search *ngIf='showSearchBar' [searchKey]='search$ | async' (searchEvent)='searchViewPoint($event)' (backGroundClickedEvent)='dismissSearchBar()'></viewpoint-search>
