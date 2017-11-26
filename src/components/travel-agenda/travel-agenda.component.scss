@@ -65,4 +65,10 @@ travel-agenda {
         border-bottom: 7px solid transparent;
         border-left: 7px solid rgb(173, 173, 169)
     }
+
+    .title {
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
 }

@@ -118,6 +118,10 @@ export class HomePage implements AfterViewInit {
     this.dayTripSelected$.next(null);
   }
 
+  dailyTripSelected(dailyTrip : IDailyTripBiz) {
+    this.dayTripSelected$.next(dailyTrip);
+  }
+
   getDailyTrips(): Array<IDailyTripBiz> {
     let ret = new Array<IDailyTripBiz>();
     let viewPoints = asMutable(this._store.getState().entities.viewPoints, { deep: true });

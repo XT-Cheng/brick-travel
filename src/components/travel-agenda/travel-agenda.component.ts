@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
@@ -25,6 +25,9 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
     if (ta && ta.dailyTrips && ta.dailyTrips.length >0) {
       this._travelAgenda = ta;
       this.selectedDailyTrip = ta.dailyTrips[0];
+      setTimeout(() => {
+        this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
+      });
     }
   }
 
@@ -35,6 +38,8 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   protected get transCategoryNameAndValues(): {name: string,value: any }[] {
     return EnumEx.getNamesAndValues(TransportationCategory)
   }
+
+  @Output() protected dailyTripSelectedEvent : EventEmitter<IDailyTripBiz>
 
   //#endregion
 
@@ -48,12 +53,12 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
 
   //#region Constructor
   constructor() {
+    this.dailyTripSelectedEvent = new EventEmitter<IDailyTripBiz>();
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
-
   }
 
   ngOnDestroy(): void {
@@ -72,6 +77,7 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#region Protected method
   protected dayClicked(dailyTrip : IDailyTripBiz) : void {
     this.selectedDailyTrip = dailyTrip;
+    this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
   }
 
   protected isSelectedDailyTrip(dailyTrip : IDailyTripBiz) {

@@ -74,6 +74,7 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
 
   @Input()
   public set dailyTrip(dailyTrip: IDailyTripBiz) {
+    console.log("a-map setup dailyTrip:" + dailyTrip);
     if (this._map === null) return;
 
     //Remove all of viewPoint from trip first 
