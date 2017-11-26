@@ -4,4 +4,4 @@ export const INIT_UI_TRAVELAGENDA_STATE = {
 
 export interface ITravelAgendaUI {
     selectedId: string
-  }
+}

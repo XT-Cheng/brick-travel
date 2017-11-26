@@ -1,7 +1,7 @@
 import { NgRedux } from '@angular-redux/store';
 import { asMutable } from 'seamless-immutable';
 import { IAppState } from '../../../modules/store/store.model';
-import { ITravelAgendaBiz } from '../../model/travelAgenda.biz.model';
+import { ITravelAgendaBiz, caculateDistance } from '../../model/travelAgenda.biz.model';
 
 export function getTravelAgendas(store : NgRedux<IAppState>) {
     return (data : { [id : string] : ITravelAgendaBiz }) : Array<ITravelAgendaBiz> => {
@@ -21,6 +21,8 @@ export function getTravelAgendas(store : NgRedux<IAppState>) {
                     let travelViewPoint = dailyTrip.travelViewPoints[key];
                     travelViewPoint.viewPoint = viewPoints[travelViewPoint.viewPoint];
                 });
+
+                caculateDistance(dailyTrip);
             });
             ret.push(agenda);
         });

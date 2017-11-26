@@ -44,9 +44,7 @@
                   "rate": 2
                 }]
               },
-              "transportationToNext": {
-                "type": 0
-              }
+              "transportationToNext": 1
             },
             {
               "id": "2",
@@ -81,9 +79,7 @@
                   "rate": 2
                 }]
               },
-              "transportationToNext": {
-                "type": 0
-              }
+              "transportationToNext": 0
             }
           ]
         },
@@ -123,9 +119,7 @@
                   "rate": 2
                 }]
               },
-              "transportationToNext": {
-                "type": 0
-              }
+              "transportationToNext": 0
             },
             {
               "id": "6",
@@ -160,9 +154,7 @@
                   "rate": 2
                 }]
               },
-              "transportationToNext": {
-                "type": 0
-              }
+              "transportationToNext": 0
             }
           ]
         }

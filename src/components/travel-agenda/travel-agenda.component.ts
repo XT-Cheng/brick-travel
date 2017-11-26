@@ -1,10 +1,8 @@
-import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
-import { AfterViewInit, Component, OnDestroy, Input } from '@angular/core';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 
-import { IAppState } from '../../modules/store/store.model';
-import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgenda.selector';
-import { ITravelAgendaBiz, IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
+import { EnumEx } from '../../utils/enumEx';
 
 @Component({
   selector: 'travel-agenda',
@@ -12,12 +10,32 @@ import { ITravelAgendaBiz, IDailyTripBiz } from '../../bizModel/model/travelAgen
 })
 export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#region Private member
-
+  private  _travelAgenda : ITravelAgendaBiz;
+  
   //#endregion
 
   //#region Protected member
-  @Input() protected travelAgenda : ITravelAgendaBiz;
+  
   protected selectedDailyTrip : IDailyTripBiz;
+  
+  //#endregion
+
+  //#region Protected property
+  @Input() protected set travelAgenda(ta : ITravelAgendaBiz) {
+    if (ta && ta.dailyTrips && ta.dailyTrips.length >0) {
+      this._travelAgenda = ta;
+      this.selectedDailyTrip = ta.dailyTrips[0];
+    }
+  }
+
+  protected get travelAgenda() : ITravelAgendaBiz {
+    return this._travelAgenda;
+  }
+
+  protected get transCategoryNameAndValues(): {name: string,value: any }[] {
+    return EnumEx.getNamesAndValues(TransportationCategory)
+  }
+
   //#endregion
 
   //#region Private property
@@ -29,12 +47,13 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>) {
+  constructor() {
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
+
   }
 
   ngOnDestroy(): void {
@@ -51,8 +70,35 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#endregion
 
   //#region Protected method
-  protected dayClicked(dailyTrip : IDailyTripBiz) {
+  protected dayClicked(dailyTrip : IDailyTripBiz) : void {
     this.selectedDailyTrip = dailyTrip;
+  }
+
+  protected isSelectedDailyTrip(dailyTrip : IDailyTripBiz) {
+    return {'display': this.selectedDailyTrip === dailyTrip?'block':'none'};
+  }
+
+  protected getDayItemClass(dailyTrip: IDailyTripBiz) {
+    return {
+      'day-item': true,
+      'active': dailyTrip === this.selectedDailyTrip
+    };
+  }
+
+  protected getTravelViewPointItemClass(travelViewPoint : ITravelViewPointBiz) {
+    return {
+      'vp-item': true
+    };
+  }
+
+  protected getTransportationItemClass(travelViewPoint : ITravelViewPointBiz) {
+    return {
+      'tp-item': true
+    };
+  }
+
+  protected changed($event) {
+    console.log('changed');  
   }
   //#endregion
 

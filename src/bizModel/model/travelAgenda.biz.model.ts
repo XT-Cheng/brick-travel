@@ -10,12 +10,28 @@ export interface ITravelAgendaBiz {
 
 export interface IDailyTripBiz {
     id: string,
-    travelViewPoints: ITravelViewPointBiz[]
+    travelViewPoints: ITravelViewPointBiz[],
+    lastViewPoint: string
 }
 
 export interface ITravelViewPointBiz {
     id: string,
     viewPoint: IViewPointBiz,
     distanceToNext: number,
-    transportationType: TransportationCategory
+    transportationToNext: TransportationCategory
+}
+
+export function caculateDistance(dailyTrip : IDailyTripBiz) {
+    if (!dailyTrip || !dailyTrip.travelViewPoints) return;
+
+    for (let i = 0; i < dailyTrip.travelViewPoints.length - 1; i++) {
+        let vp = dailyTrip.travelViewPoints[i];
+        let vpNext = dailyTrip.travelViewPoints[i + 1];
+
+        vp.distanceToNext = Math.round(new AMap.LngLat(vp.viewPoint.longtitude, vp.viewPoint.latitude).distance(
+            new AMap.LngLat(vpNext.viewPoint.longtitude, vpNext.viewPoint.latitude)
+        ));
+    }
+
+    dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
 }

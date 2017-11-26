@@ -1,11 +1,11 @@
 <ion-grid no-padding>
   <ion-row>
-    <ion-list col-4>
+    <ion-list col-4 style='padding: 0;'>
       <ion-item-sliding *ngFor="let dailyTrip of travelAgenda?.dailyTrips;index as i">
-        <ion-item (click)='dayClicked(dailyTrip)'>
+        <ion-item [ngClass]='getDayItemClass(dailyTrip)' (click)='dayClicked(dailyTrip)'>
           <h1 class='day'>D{{i}}</h1>
           <i style="align-self: center;" class="icon iconfont icon-liebiao2"></i>
-          <div class='arrow-right'></div>
+          <div class='arrow-right' [ngStyle]="isSelectedDailyTrip(dailyTrip)"></div>
         </ion-item>
         <ion-item-options side="right">
           <button ion-button icon-only>
@@ -20,23 +20,31 @@
         </button>
       </ion-item>
     </ion-list>
-    <ion-list col-8>
-      <ion-item-sliding *ngFor="let travelViewPoint of selectedDailyTrip?.travelViewPoints;index as i">
-        <ion-item class='vp-item'>
-          <ion-grid>
-            <ion-row>
-              <h2 col-2 col-2-md>{{i+1}}</h2>
-              <h3 col-8 col-10-md>{{travelViewPoint.viewPoint.name}}</h3>
-              <i col-2 style="align-self: center; text-align:right;" class="icon iconfont icon-liebiao2"></i>
-            </ion-row>
-          </ion-grid>
+    <ion-list col-8 style='padding: 0;'>
+      <div *ngFor="let travelViewPoint of selectedDailyTrip?.travelViewPoints;index as i">
+        <ion-item-sliding>
+          <ion-item [ngClass]='getTravelViewPointItemClass(travelViewPoint)'>
+            <ion-grid>
+              <ion-row>
+                <h2 col-2 col-2-md>{{i+1}}</h2>
+                <h3 col-8 col-10-md>{{travelViewPoint.viewPoint.name}}</h3>
+                <i col-2 style="align-self: center; text-align:right;" class="icon iconfont icon-liebiao2"></i>
+              </ion-row>
+            </ion-grid>
+          </ion-item>
+          <ion-item-options side="right">
+            <button ion-button icon-only>
+              <ion-icon color='danger' name="trash"></ion-icon>
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+        <ion-item [ngClass]='getTransportationItemClass(travelViewPoint)' *ngIf="travelViewPoint.id !== selectedDailyTrip.lastViewPoint">
+          <ion-label>距离: {{travelViewPoint.distanceToNext}}</ion-label>
+          <ion-select [(ngModel)]="travelViewPoint.transportationToNext" (ionChange)='changed($event)'>
+            <ion-option *ngFor="let nameValue of transCategoryNameAndValues" [selected]='nameValue.value === travelViewPoint.transportationToNext' [value]="nameValue.value">{{nameValue.name}}</ion-option>
+          </ion-select>
         </ion-item>
-        <ion-item-options side="right">
-          <button ion-button icon-only>
-            <ion-icon color='danger' name="trash"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
+      </div>
       <ion-item>
         <button ion-button color="secondary" outline>
           <ion-icon style='color: green' name="add-circle"></ion-icon>
