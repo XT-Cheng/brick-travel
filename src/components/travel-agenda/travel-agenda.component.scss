@@ -1,43 +1,36 @@
 
-
 travel-agenda {
-    :host {
-        display: flex;
+    ion-item {
+       .label {
+            display: flex;
+            justify-content: space-between;
+            margin: 13px 0 13px 0;
+        }
+
+        h1 {
+            flex: 1;
+            text-align: center;
+        }
+    
+        i {
+            align-self: center;
+            padding: 0 6px 0 6px;
+        }
     }
     
-    ion-item .label {
-        display: flex;
-        justify-content: space-between;
-        margin: 13px 0 13px 0;
-    }
-
-    .day-item {
-        background-color: #f8f8f8;
-    }
-
-    .day-item.active {
+    .day-item .active {
         background-color: #b5f3c1;
     }
     
     ion-label .button {
         margin: 0 auto;
-    }
-
-    ion-item h1 {
-        flex: 1;
-        text-align: center;
-    }
-
-    ion-item i {
-        align-self: center;
-        padding: 0 6px 0 6px;
-    }
+    }    
 
     ion-item-options .button:last-child {
         padding-right: 0px;
     }
 
-    .vp-item {
+    .vp-item ion-item {
         background-color: #f5eded;
     }
 
@@ -45,20 +38,20 @@ travel-agenda {
         min-height: 0;
         background-color: #f5eded;
         font-size: x-small;
-    }
 
-    .tp-item .label {
-        margin: 2px 0 2px 0;
+        .label {
+            margin: 2px 0 2px 0;
+        }
+    
+        .select {
+            padding: 3px 8px 3px 16px;
+        }
+    
+        .select-text {
+            margin: auto;
+        }    
     }
-
-    .tp-item .select {
-        padding: 3px 8px 3px 16px;
-    }
-
-    .tp-item .select-text {
-        margin: auto;
-    }
-
+    
     .arrow-right {
         position: absolute;
         right: 0;

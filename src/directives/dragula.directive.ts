@@ -52,6 +52,7 @@ export class DragulaDirective implements OnInit, OnChanges {
         } else {
           this.drake.models = [changes.dragulaModel.currentValue];
         }
+        this.dragulaService.handleModels(this.dragula,this.drake);
       }
     }
   }

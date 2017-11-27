@@ -1,11 +1,21 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, Renderer2, ViewChild, ElementRef } from '@angular/core';
-
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
-import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
-import { EnumEx } from '../../utils/enumEx';
-import { DragulaService } from '../../providers/dragula.service';
-import { List, Scroll } from 'ionic-angular';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    Output,
+    Renderer2,
+    ViewChild,
+} from '@angular/core';
+import { List } from 'ionic-angular';
 import { Observable, Subscription } from 'rxjs';
+
+import { IDailyTripBiz, ITravelAgendaBiz, caculateDistance } from '../../bizModel/model/travelAgenda.biz.model';
+import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
+import { DragulaService } from '../../providers/dragula.service';
+import { EnumEx } from '../../utils/enumEx';
 
 @Component({
   selector: 'travel-agenda',
@@ -81,6 +91,10 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
 
   //#region Interface implementation
   ngAfterViewInit(): void {
+    this._dragulaService.dropModel.subscribe((value: any) => {
+      if (this.selectedDailyTrip !== null) caculateDistance(this.selectedDailyTrip);
+    });
+
     this._dragulaService.drag.subscribe((value: any) => {
       let bagName = value[0];
       let el = value[1];
@@ -143,26 +157,10 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
 
   protected getDayItemClass(dailyTrip: IDailyTripBiz) {
     return {
-      'day-item': true,
       'active': dailyTrip === this.selectedDailyTrip
     };
   }
-
-  protected getTravelViewPointItemClass(travelViewPoint : ITravelViewPointBiz) {
-    return {
-      'vp-item': true
-    };
-  }
-
-  protected getTransportationItemClass(travelViewPoint : ITravelViewPointBiz) {
-    return {
-      'tp-item': true
-    };
-  }
-
-  protected changed($event) {
-    console.log('changed');  
-  }
+  
   //#endregion
 
   //#region Private method

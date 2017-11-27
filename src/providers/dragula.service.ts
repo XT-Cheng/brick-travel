@@ -57,7 +57,7 @@ export class DragulaService {
     this.handleModels(name, bag.drake);
   }
 
-  private handleModels(name: string, drake: any): void {
+  public handleModels(name: string, drake: any): void {
     let dragElm: any;
     let dragIndex: number;
     let dropIndex: number;
