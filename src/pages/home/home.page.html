@@ -16,7 +16,7 @@
     <a-map style="height: 40%;" [dailyTrip]='dayTripSelected$ | async' [viewPoints]='viewPoints$ | async'></a-map>
     <!-- <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='dayTripSelected$ | async' [viewPoints]='viewPoints$ | async'
     [viewMode]='true'></viewpoint-list> -->
-    <travel-agenda style="flex:1" [travelAgenda]='selectedTravelAgenda$ | async' (dailyTripSelectedEvent)='dailyTripSelected($event)' ></travel-agenda>
+    <travel-agenda style="flex:1;" [travelAgenda]='selectedTravelAgenda$ | async' (dailyTripSelectedEvent)='dailyTripSelected($event)' ></travel-agenda>
   </div>
   <ion-fab right edge #fab>
     <button ion-fab mini>

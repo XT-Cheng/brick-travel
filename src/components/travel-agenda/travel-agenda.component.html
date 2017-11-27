@@ -1,7 +1,7 @@
-<ion-grid no-padding>
-  <ion-row>
-    <ion-list col-4 style='padding: 0;'>
-      <ion-item-sliding *ngFor="let dailyTrip of travelAgenda?.dailyTrips;index as i">
+<ion-scroll #dayScroll scrollY="true" col-4>
+  <ion-list #dayList style='padding: 0;'>
+    <div [dragula]="'day-bag'" [dragulaOptions]='dragulaOptions'>
+      <ion-item-sliding [ngClass]='getDayItemClass(dailyTrip)' *ngFor="let dailyTrip of travelAgenda?.dailyTrips;index as i">
         <ion-item [ngClass]='getDayItemClass(dailyTrip)' (click)='dayClicked(dailyTrip)'>
           <h1 class='day'>D{{i}}</h1>
           <i style="align-self: center;" class="icon iconfont icon-liebiao2"></i>
@@ -13,16 +13,21 @@
           </button>
         </ion-item-options>
       </ion-item-sliding>
-      <ion-item>
-        <button ion-button color="secondary" outline>
-          <ion-icon style='color: green' name="add-circle"></ion-icon>
-          &nbsp;&nbsp;增加一天
-        </button>
-      </ion-item>
-    </ion-list>
-    <ion-list col-8 style='padding: 0;'>
+    </div>
+    <ion-item>
+      <button ion-button color="secondary" outline>
+        <ion-icon style='color: green' name="add-circle"></ion-icon>
+        &nbsp;&nbsp;增加一天
+      </button>
+    </ion-item>
+
+  </ion-list>
+</ion-scroll>
+<ion-scroll #vpScroll scrollY="true" col-8>
+  <ion-list #vpList style='padding: 0;'>
+    <div [dragula]="'vp-bag'" [dragulaOptions]='dragulaOptions'>
       <div *ngFor="let travelViewPoint of selectedDailyTrip?.travelViewPoints;index as i">
-        <ion-item-sliding>
+        <ion-item-sliding [ngClass]='getTravelViewPointItemClass(travelViewPoint)'>
           <ion-item [ngClass]='getTravelViewPointItemClass(travelViewPoint)'>
             <ion-grid>
               <ion-row>
@@ -41,16 +46,17 @@
         <ion-item [ngClass]='getTransportationItemClass(travelViewPoint)' *ngIf="travelViewPoint.id !== selectedDailyTrip.lastViewPoint">
           <ion-label>距离: {{travelViewPoint.distanceToNext}}</ion-label>
           <ion-select [(ngModel)]="travelViewPoint.transportationToNext" (ionChange)='changed($event)'>
-            <ion-option *ngFor="let nameValue of transCategoryNameAndValues" [selected]='nameValue.value === travelViewPoint.transportationToNext' [value]="nameValue.value">{{nameValue.name}}</ion-option>
+            <ion-option *ngFor="let nameValue of transCategoryNameAndValues" [selected]='nameValue.value === travelViewPoint.transportationToNext'
+              [value]="nameValue.value">{{nameValue.name}}</ion-option>
           </ion-select>
         </ion-item>
       </div>
-      <ion-item>
-        <button ion-button color="secondary" outline>
-          <ion-icon style='color: green' name="add-circle"></ion-icon>
-          &nbsp;&nbsp;增加项目
-        </button>
-      </ion-item>
-    </ion-list>
-  </ion-row>
-</ion-grid>
+    </div>
+    <ion-item>
+      <button ion-button color="secondary" outline>
+        <ion-icon style='color: green' name="add-circle"></ion-icon>
+        &nbsp;&nbsp;增加项目
+      </button>
+    </ion-item>
+  </ion-list>
+</ion-scroll>

@@ -1,4 +1,10 @@
+
+
 travel-agenda {
+    :host {
+        display: flex;
+    }
+    
     ion-item .label {
         display: flex;
         justify-content: space-between;
