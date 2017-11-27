@@ -6,7 +6,7 @@ import { ITravelAgendaBiz } from '../../model/travelAgenda.biz.model';
 import { getTravelAgendas } from '../entity/travelAgenda.selector';
 
 function getSelectedAgendaId(store : NgRedux<IAppState>) : Observable<string> {
-   return store.select<string>(['ui', 'travelAgenda', 'selectedId']);
+   return store.select<string>(['ui', 'travelAgenda', 'selectedTravelAgendaId']);
 }
 
 function getTravelAgendaById(agendaId: string, agendas: ITravelAgendaBiz[]) {

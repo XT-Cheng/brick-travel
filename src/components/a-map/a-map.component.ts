@@ -200,7 +200,8 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
     // new AMap.Marker({
     //   position: point,
     //   offset: new AMap.Pixel(0, 0),
-    //   map: this._map
+    //   map: this._map,
+    //   animation: "AMAP_ANIMATION_BOUNCE"
     // });
     // this._map.setZoomAndCenter(18,point);
     //#endregion

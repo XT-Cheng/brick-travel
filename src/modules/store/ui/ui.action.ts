@@ -2,7 +2,7 @@ import { IActionMetaInfo, IActionPayload } from "../store.action";
 import { Injectable } from "@angular/core";
 import { dispatch } from "@angular-redux/store";
 import { searchViewPointAction, selectCriteriaAction } from "./viewPoint/viewPoint.action";
-import { selectTravelAgendaAction } from "./travelAgenda/travelAgenda.action";
+import { selectTravelAgendaAction, selectDailyTripAction } from "./travelAgenda/travelAgenda.action";
 
 export interface IUIActionMetaInfo extends IActionMetaInfo {}
 
@@ -18,4 +18,7 @@ export class UIActionGenerator {
 
     @dispatch()
     selectTravelAgenda = selectTravelAgendaAction;
+
+    @dispatch()
+    selectDailyTrip = selectDailyTripAction;
 }

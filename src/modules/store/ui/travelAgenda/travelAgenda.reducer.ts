@@ -6,7 +6,13 @@ export function travelAgendaReducer(state = INIT_UI_TRAVELAGENDA_STATE, action: 
     switch (action.type) {
       case UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA: {
         let nextState = asMutable(state, { deep: true });
-        nextState.selectedId = action.payload.selectedId;
+        nextState.selectedTravelAgendaId = action.payload.selectedTravelAgendaId;
+  
+        return nextState;
+      }
+      case UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP: {
+        let nextState = asMutable(state, { deep: true });
+        nextState.selectedDailyTripId = action.payload.selectedDailyTripId;
   
         return nextState;
       }

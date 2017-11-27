@@ -48,8 +48,6 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
 
   //#region Protected member
   
-  protected selectedDailyTrip : IDailyTripBiz;
-  
   //#endregion
 
   //#region Protected property
@@ -57,11 +55,11 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
     if (ta && ta.dailyTrips && ta.dailyTrips.length >0) {
       this._travelAgenda = ta;
       this.selectedDailyTrip = ta.dailyTrips[0];
-      setTimeout(() => {
-        this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
-      });
+      this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
     }
   }
+
+  @Input() protected selectedDailyTrip : IDailyTripBiz;
 
   protected get travelAgenda() : ITravelAgendaBiz {
     return this._travelAgenda;
@@ -147,17 +145,16 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   }
 
   protected dayClicked(dailyTrip : IDailyTripBiz) : void {
-    this.selectedDailyTrip = dailyTrip;
-    this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
+    this.dailyTripSelectedEvent.emit(dailyTrip);
   }
 
   protected isSelectedDailyTrip(dailyTrip : IDailyTripBiz) {
-    return {'display': this.selectedDailyTrip === dailyTrip?'block':'none'};
+    return {'display': this.selectedDailyTrip.id === dailyTrip.id?'block':'none'};
   }
 
   protected getDayItemClass(dailyTrip: IDailyTripBiz) {
     return {
-      'active': dailyTrip === this.selectedDailyTrip
+      'active': dailyTrip.id === this.selectedDailyTrip.id
     };
   }
   

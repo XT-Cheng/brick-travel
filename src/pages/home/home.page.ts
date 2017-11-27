@@ -1,31 +1,31 @@
+import 'rxjs/add/operator/combineLatest';
+
 import { NgRedux } from '@angular-redux/store';
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 import { asMutable } from 'seamless-immutable';
-import 'rxjs/add/operator/combineLatest'
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getFilterCategories } from '../../bizModel/selector/entity/filterCategory.selector';
+import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
 import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
+import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
 import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgendaSelected.selector';
 import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
+import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
-import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
-import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.page.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: 'home.page.html'
 })
 export class HomePage implements AfterViewInit {
   protected viewPoints$: Observable<Array<IViewPointBiz>>;
@@ -33,15 +33,16 @@ export class HomePage implements AfterViewInit {
   protected filterCategories$: Observable<Array<IFilterCategoryBiz>>;
   protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
   protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
+  protected selectedDailyTrip$: Observable<IDailyTripBiz>;
   protected search$: Observable<string>;
 
-  protected dayTripSelected$: Subject<IDailyTripBiz> = new Subject<IDailyTripBiz>();
+  //protected dayTripSelected$: Subject<IDailyTripBiz> = new Subject<IDailyTripBiz>();
 
   protected showSearchBar: boolean = false;
   protected showFilterBar: boolean = false;
   public displayModeEnum = DisplayModeEnum;
 
-  private dailyTrips: Array<IDailyTripBiz> = new Array<IDailyTripBiz>();
+  //private dailyTrips: Array<IDailyTripBiz> = new Array<IDailyTripBiz>();
   private firstDailyTrip: boolean = true;
   protected displayMode: DisplayModeEnum;
 
@@ -55,6 +56,7 @@ export class HomePage implements AfterViewInit {
     this.filterCategories$ = getFilterCategories(this._store);
     this.search$ = getViewPointSearch(this._store);
     this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
+    this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
     
     this.currentFilterCategories$ =  getCurrentFilters(this._store);
       
@@ -67,6 +69,8 @@ export class HomePage implements AfterViewInit {
     this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaActionUIActionGenerator.loadTravelAgendas();
     this._filterCategoryActionUIActionGenerator.loadFilterCategories();
+
+    this.selectedDailyTrip$.subscribe(x => console.log(x));
   }
 
   dismissSearchBar(): void {
@@ -94,16 +98,17 @@ export class HomePage implements AfterViewInit {
   }
 
   changeDailyTrip(): void {
-    this.dayTripSelected$.next(this.dailyTrips[this.firstDailyTrip ? 1 : 0]);
+    //this.dayTripSelected$.next(this.dailyTrips[this.firstDailyTrip ? 1 : 0]);
     this.firstDailyTrip = !this.firstDailyTrip;
   }
 
   clearDailyTrip(): void {
-    this.dayTripSelected$.next(null);
+    //this.dayTripSelected$.next(null);
   }
 
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
-    this.dayTripSelected$.next(dailyTrip);
+    //this.dayTripSelected$.next(dailyTrip);
+    this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
   }
 
   getDailyTrips(): Array<IDailyTripBiz> {

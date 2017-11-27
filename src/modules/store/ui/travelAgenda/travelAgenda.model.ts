@@ -1,7 +1,9 @@
 export const INIT_UI_TRAVELAGENDA_STATE = {
-  selectedId: ''
+  selectedTravelAgendaId: '',
+  selectedDailyTripId: ''
 }
 
 export interface ITravelAgendaUI {
-    selectedId: string
+  selectedTravelAgendaId: string,
+  selectedDailyTripId: string,
 }

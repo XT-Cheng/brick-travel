@@ -31,6 +31,7 @@ declare namespace AMap {
     getExtData(): any;
     getPosition(): LngLat;
     setPosition(lnglat : LngLat);
+    setAnimation(animate:String);
   }
 
   class LngLat {
