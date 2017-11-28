@@ -71,7 +71,7 @@ export function entityLoadActionFailed(entityType : EntityTypeEnum) {
 export function entityLoadActionSucceeded(entityType : EntityTypeEnum) {
     return (entities : IEntities) : EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: {pagination:null,progressing: true, entityType: entityType,phaseType: EntityActionPhaseEnum.SUCCEED},
+        meta: {pagination:null,progressing: false, entityType: entityType,phaseType: EntityActionPhaseEnum.SUCCEED},
         payload: {entities: entities,error: null},
     })
 }
@@ -81,7 +81,7 @@ export function entityLoadActionSucceeded(entityType : EntityTypeEnum) {
 export function entityUpdateAction<T>(entityType : EntityTypeEnum,entityKey : string) {
     return (id: string,entity : T) : EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
-        meta: {pagination:null,progressing: true, entityType: entityType,phaseType: EntityActionPhaseEnum.SUCCEED},
+        meta: {pagination:null,progressing: false, entityType: entityType,phaseType: EntityActionPhaseEnum.SUCCEED},
         payload: {entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }}),error: null},
     })
 }

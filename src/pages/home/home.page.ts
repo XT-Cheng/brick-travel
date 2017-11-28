@@ -109,18 +109,18 @@ export class HomePage implements AfterViewInit {
 
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
     //this.dayTripSelected$.next(dailyTrip);
-    this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
+    this._uiActionGeneration.selectDailyTrip(dailyTrip);
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {
-    this._uiActionGeneration.selectViewPoint(viewPoint.id);
+    this._uiActionGeneration.selectViewPoint(viewPoint);
   }
 
   dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.dailyTrip;
     let travelAgeanda = value.travelAgenda;
     this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip.id,translateDailTrip(dailyTrip));
-    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(dailyTrip.id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgenda(travelAgeanda));
   }
 
   getDailyTrips(): Array<IDailyTripBiz> {

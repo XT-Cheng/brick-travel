@@ -1,6 +1,7 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
 import { IUIActionMetaInfo, IUIActionPayload } from '../ui.action';
+import { IViewPointBiz } from '../../../../bizModel/model/viewPoint.biz.model';
 
 export interface IUIViewPointActionMetaInfo extends IUIActionMetaInfo {
 
@@ -26,23 +27,23 @@ export enum UIViewPointActionTypeEnum {
 export function searchViewPointAction(searchKey: string): UIViewPointAction {
     return {
         type: UIViewPointActionTypeEnum.SEARCH_VIEWPOINT,
-        meta: null,
-        payload: { searchKey: searchKey, error: null }
+        meta: { progressing : false },
+        payload: { searchKey: searchKey, error: null}
     };
 }
 
-export function selectViewPointAction(selectedViewPointId: string): UIViewPointAction {
+export function selectViewPointAction(viewPoint: IViewPointBiz): UIViewPointAction {
     return {
         type: UIViewPointActionTypeEnum.SELECT_VIEWPOINT,
-        meta: null,
-        payload: { selectedViewPointId: selectedViewPointId, error: null }
+        meta: { progressing : false },
+        payload: { selectedViewPointId: viewPoint?viewPoint.id:'', error: null }
     };
 }
 
 export function selectCriteriaAction(selectedCriteriaId: string, unSelectedCriteriaIds: string[]): UIViewPointAction {
     return {
         type: UIViewPointActionTypeEnum.SELECT_CRITERIA,
-        meta: null,
+        meta: { progressing : false },
         payload: {
             selectCriteria: {
                 selectedCriteriaId: selectedCriteriaId,

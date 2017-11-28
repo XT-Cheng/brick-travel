@@ -60,8 +60,11 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   @Input() protected set travelAgenda(ta : ITravelAgendaBiz) {
     if (ta && ta.dailyTrips && ta.dailyTrips.length >0) {
       this._travelAgenda = ta;
-      this.selectedDailyTrip = ta.dailyTrips[0];
-      this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
+
+      if (!this.selectedDailyTrip) {
+        this.selectedDailyTrip = ta.dailyTrips[0];
+        this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
+      } 
     }
   }
 
@@ -158,6 +161,7 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
 
   protected dayClicked(dailyTrip : IDailyTripBiz) : void {
     this.dailyTripSelectedEvent.emit(dailyTrip);
+    this.viewPointSelectedEvent.emit(null);
   }
 
   protected travelViewPointClicked(travelViewPoint : ITravelViewPointBiz) {
@@ -165,12 +169,12 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   }
 
   protected isSelectedDailyTrip(dailyTrip : IDailyTripBiz) {
-    return {'display': this.selectedDailyTrip.id === dailyTrip.id?'block':'none'};
+    return {'display': this.selectedDailyTrip && (this.selectedDailyTrip.id === dailyTrip.id)?'block':'none'};
   }
 
   protected getDayItemClass(dailyTrip: IDailyTripBiz) {
     return {
-      'active': dailyTrip.id === this.selectedDailyTrip.id
+      'active': dailyTrip && (dailyTrip.id === this.selectedDailyTrip.id)
     };
   }
 

@@ -75,6 +75,8 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
 
   @Input()
   public set dailyTrip(dailyTrip: IDailyTripBiz) {
+    if (!dailyTrip) return;
+    
     if (this._map === null) return;
 
     //Remove all of viewPoint from trip first 
@@ -115,6 +117,8 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
   }
 
   @Input() set selectedViewPoint(vp : IViewPointBiz) {
+    if (!vp) return;
+
     this._markers.forEach(marker => {
       if (marker.viewPoint.id === vp.id) {
         this._map.setCenter(marker.marker.getPosition());
