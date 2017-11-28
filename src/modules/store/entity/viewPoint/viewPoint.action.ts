@@ -1,17 +1,22 @@
-import { Injectable } from "@angular/core";
+import { dispatch } from '@angular-redux/store';
+import { Injectable } from '@angular/core';
 
-import { dispatch } from "@angular-redux/store";
-
-import { EntityTypeEnum, EntityActionTypeEnum, entityActionStarted, entityActionFailed, entityAction, entityActionSucceeded } from "../entity.action";
+import {
+    entityLoadAction,
+    entityLoadActionFailed,
+    entityLoadActionStarted,
+    entityLoadActionSucceeded,
+    EntityTypeEnum,
+} from '../entity.action';
 
 @Injectable()
 export class ViewPointActionGenerator {
-    loadViewPointStarted = entityActionStarted(EntityActionTypeEnum.LOAD,EntityTypeEnum.VIEWPOINT);
+    loadViewPointStarted = entityLoadActionStarted(EntityTypeEnum.VIEWPOINT);
 
     @dispatch()
-    loadViewPoints = entityAction(EntityActionTypeEnum.LOAD,EntityTypeEnum.VIEWPOINT);
+    loadViewPoints = entityLoadAction(EntityTypeEnum.VIEWPOINT);
 
-    loadViewPointSucceeded = entityActionSucceeded(EntityActionTypeEnum.LOAD,EntityTypeEnum.VIEWPOINT);
+    loadViewPointSucceeded = entityLoadActionSucceeded(EntityTypeEnum.VIEWPOINT);
     
-    loadViewPointFailed  = entityActionFailed(EntityActionTypeEnum.LOAD,EntityTypeEnum.VIEWPOINT);
+    loadViewPointFailed  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINT);
 }

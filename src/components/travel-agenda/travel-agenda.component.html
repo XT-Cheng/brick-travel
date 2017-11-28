@@ -28,7 +28,7 @@
     <div [dragula]="'vp-bag'" [dragulaOptions]='dragulaOptions' [dragulaModel]="selectedDailyTrip?.travelViewPoints">
       <div *ngFor="let travelViewPoint of selectedDailyTrip?.travelViewPoints;index as i">
         <ion-item-sliding class='vp-item'>
-          <ion-item>
+          <ion-item [ngClass]='getTravelViewPointItemClass(travelViewPoint)' (click)='travelViewPointClicked(travelViewPoint)'>
             <ion-grid>
               <ion-row>
                 <h2 col-2 col-2-md>{{i+1}}</h2>

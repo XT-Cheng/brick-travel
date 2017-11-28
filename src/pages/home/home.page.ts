@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { asMutable } from 'seamless-immutable';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, translateDailTrip, translateTravelAgenda } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getFilterCategories } from '../../bizModel/selector/entity/filterCategory.selector';
 import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
@@ -22,6 +22,7 @@ import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAg
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
 
 @Component({
   selector: 'page-home',
@@ -34,6 +35,7 @@ export class HomePage implements AfterViewInit {
   protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
   protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
   protected selectedDailyTrip$: Observable<IDailyTripBiz>;
+  protected selectedViewPoint$: Observable<IViewPointBiz>;
   protected search$: Observable<string>;
 
   //protected dayTripSelected$: Subject<IDailyTripBiz> = new Subject<IDailyTripBiz>();
@@ -57,10 +59,9 @@ export class HomePage implements AfterViewInit {
     this.search$ = getViewPointSearch(this._store);
     this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
     this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
-    
+    this.selectedViewPoint$ = getSelectedViewPoint(this._store);
     this.currentFilterCategories$ =  getCurrentFilters(this._store);
-      
-    
+
     this.displayMode = DisplayModeEnum.Agenda;
   }
 
@@ -109,6 +110,17 @@ export class HomePage implements AfterViewInit {
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
     //this.dayTripSelected$.next(dailyTrip);
     this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
+  }
+
+  viewPointSelected(viewPoint : IViewPointBiz) {
+    this._uiActionGeneration.selectViewPoint(viewPoint.id);
+  }
+
+  dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
+    let dailyTrip = value.dailyTrip;
+    let travelAgeanda = value.travelAgenda;
+    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip.id,translateDailTrip(dailyTrip));
+    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(dailyTrip.id,translateTravelAgenda(travelAgeanda));
   }
 
   getDailyTrips(): Array<IDailyTripBiz> {

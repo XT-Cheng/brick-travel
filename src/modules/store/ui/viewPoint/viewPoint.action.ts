@@ -8,6 +8,7 @@ export interface IUIViewPointActionMetaInfo extends IUIActionMetaInfo {
 
 export interface IUIViewPointActionPayload extends IUIActionPayload {
     searchKey?: string,
+    selectedViewPointId?: string,
     selectCriteria?: {
         selectedCriteriaId: string,
         unSelectedCriteriaIds: string[]
@@ -18,6 +19,7 @@ export type UIViewPointAction = FluxStandardAction<IUIViewPointActionPayload, IU
 
 export enum UIViewPointActionTypeEnum {
     SEARCH_VIEWPOINT = "UI:VIEWPOINT:SEARCH_VIEWPOINT",
+    SELECT_VIEWPOINT = "UI:VIEWPOINT:SELECT_VIEWPOINT",
     SELECT_CRITERIA = "UI:VIEWPOINT:SELECT_CRITERIA"
 }
 
@@ -26,6 +28,14 @@ export function searchViewPointAction(searchKey: string): UIViewPointAction {
         type: UIViewPointActionTypeEnum.SEARCH_VIEWPOINT,
         meta: null,
         payload: { searchKey: searchKey, error: null }
+    };
+}
+
+export function selectViewPointAction(selectedViewPointId: string): UIViewPointAction {
+    return {
+        type: UIViewPointActionTypeEnum.SELECT_VIEWPOINT,
+        meta: null,
+        payload: { selectedViewPointId: selectedViewPointId, error: null }
     };
 }
 

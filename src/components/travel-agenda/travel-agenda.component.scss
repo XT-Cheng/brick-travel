@@ -11,7 +11,7 @@ travel-agenda {
             flex: 1;
             text-align: center;
         }
-    
+        
         i {
             align-self: center;
             padding: 0 6px 0 6px;
@@ -19,6 +19,10 @@ travel-agenda {
     }
     
     .day-item .active {
+        background-color: #b5f3c1;
+    }
+
+    .vp-item .active {
         background-color: #b5f3c1;
     }
     

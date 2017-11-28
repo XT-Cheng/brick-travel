@@ -11,6 +11,12 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
 
       return nextState;
     }
+    case UIViewPointActionTypeEnum.SELECT_VIEWPOINT: {
+      let nextState = asMutable(state, { deep: true });
+      nextState.selectedViewPointId = action.payload.selectedViewPointId;
+
+      return nextState;
+    }
     case UIViewPointActionTypeEnum.SELECT_CRITERIA: {
       let nextState = <IViewPointUI>asMutable(state, { deep: true });
       let select = action.payload.selectCriteria;

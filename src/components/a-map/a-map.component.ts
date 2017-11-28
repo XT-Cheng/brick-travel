@@ -15,6 +15,7 @@ import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model
 import { InformationWindowComponent } from './information-window/information-window.component';
 import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
 import { IDailyTripBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 
 @Component({
   selector: 'a-map',
@@ -112,6 +113,19 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
 
     this.generateLines();
   }
+
+  @Input() set selectedViewPoint(vp : IViewPointBiz) {
+    this._markers.forEach(marker => {
+      if (marker.viewPoint.id === vp.id) {
+        this._map.setCenter(marker.marker.getPosition());
+        marker.marker.setAnimation("AMAP_ANIMATION_BOUNCE");
+        setTimeout(()=> {
+          marker.marker.setAnimation("AMAP_ANIMATION_NONE");
+        },2000);
+      }
+    })
+  }
+  
   //#endregion Public property
 
   //#region Implements interface

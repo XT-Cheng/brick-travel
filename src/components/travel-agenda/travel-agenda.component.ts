@@ -12,7 +12,13 @@ import {
 import { List } from 'ionic-angular';
 import { Observable, Subscription } from 'rxjs';
 
-import { IDailyTripBiz, ITravelAgendaBiz, caculateDistance } from '../../bizModel/model/travelAgenda.biz.model';
+import {
+    caculateDistance,
+    IDailyTripBiz,
+    ITravelAgendaBiz,
+    ITravelViewPointBiz,
+} from '../../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { DragulaService } from '../../providers/dragula.service';
 import { EnumEx } from '../../utils/enumEx';
@@ -60,6 +66,7 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   }
 
   @Input() protected selectedDailyTrip : IDailyTripBiz;
+  @Input() protected selectedViewPoint : IViewPointBiz;
 
   protected get travelAgenda() : ITravelAgendaBiz {
     return this._travelAgenda;
@@ -69,7 +76,9 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
     return EnumEx.getNamesAndValues(TransportationCategory)
   }
 
-  @Output() protected dailyTripSelectedEvent : EventEmitter<IDailyTripBiz>
+  @Output() protected dailyTripSelectedEvent : EventEmitter<IDailyTripBiz>;
+  @Output() protected viewPointSelectedEvent : EventEmitter<IViewPointBiz>;
+  @Output() protected dailyTripChangedEvent : EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>;
 
   //#endregion
 
@@ -84,12 +93,15 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   //#region Constructor
   constructor(private _dragulaService: DragulaService,private _renderer: Renderer2) {
     this.dailyTripSelectedEvent = new EventEmitter<IDailyTripBiz>();
+    this.viewPointSelectedEvent = new EventEmitter<IViewPointBiz>();
+    this.dailyTripChangedEvent = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>();
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
     this._dragulaService.dropModel.subscribe((value: any) => {
+      this.dailyTripChangedEvent.emit({dailyTrip: this.selectedDailyTrip, travelAgenda: this.travelAgenda});
       if (this.selectedDailyTrip !== null) caculateDistance(this.selectedDailyTrip);
     });
 
@@ -148,6 +160,10 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
     this.dailyTripSelectedEvent.emit(dailyTrip);
   }
 
+  protected travelViewPointClicked(travelViewPoint : ITravelViewPointBiz) {
+    this.viewPointSelectedEvent.emit(travelViewPoint.viewPoint);
+  }
+
   protected isSelectedDailyTrip(dailyTrip : IDailyTripBiz) {
     return {'display': this.selectedDailyTrip.id === dailyTrip.id?'block':'none'};
   }
@@ -156,6 +172,12 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
     return {
       'active': dailyTrip.id === this.selectedDailyTrip.id
     };
+  }
+
+  protected getTravelViewPointItemClass(travelViewPoint : ITravelViewPointBiz) {
+    return {
+      'active': this.selectedViewPoint && travelViewPoint.viewPoint.id === this.selectedViewPoint.id
+    }
   }
   
   //#endregion

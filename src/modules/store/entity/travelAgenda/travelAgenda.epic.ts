@@ -1,15 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Epic, createEpicMiddleware } from 'redux-observable';
-import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
+
+import { Injectable } from '@angular/core';
+import { createEpicMiddleware, Epic } from 'redux-observable';
+import { of } from 'rxjs/observable/of';
 
 import { IAppState } from '../../store.model';
 import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
-import { TravelAgendaService } from './travelAgenda.service';
 import { TravelAgendaActionGenerator } from './travelAgenda.action';
+import { TravelAgendaService } from './travelAgenda.service';
 
 @Injectable()
 export class TravelAgendaEpic {

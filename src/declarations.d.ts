@@ -6,6 +6,7 @@ declare namespace AMap {
     remove(marker: Marker | Polyline | Array<Marker> | Array<Polyline>): void;
     clearInfoWindow(): void;
     setZoomAndCenter(zoomLevel:Number,center:LngLat): void;
+    setCenter(center:LngLat): void;
   }
 
   class MarkerClusterer {

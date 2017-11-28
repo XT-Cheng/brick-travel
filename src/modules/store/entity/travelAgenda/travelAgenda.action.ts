@@ -1,30 +1,37 @@
-import { Injectable } from "@angular/core";
+import { dispatch } from '@angular-redux/store';
+import { Injectable } from '@angular/core';
 
-import { dispatch } from "@angular-redux/store";
-import { entityActionStarted, EntityActionTypeEnum, EntityTypeEnum, entityAction, entityActionSucceeded, entityActionFailed } from "../entity.action";
+import {
+    entityLoadAction,
+    entityLoadActionFailed,
+    entityLoadActionStarted,
+    entityLoadActionSucceeded,
+    EntityTypeEnum,
+    entityUpdateAction,
+} from '../entity.action';
+import { IDailyTrip, ITravelAgenda } from './travelAgenda.model';
 
 @Injectable()
 export class TravelAgendaActionGenerator {
 
     //#region load TravelAgenda
-    loadTravelAgendaStarted = entityActionStarted(EntityActionTypeEnum.LOAD, EntityTypeEnum.TRAVELAGENDA);
+    loadTravelAgendaStarted = entityLoadActionStarted(EntityTypeEnum.TRAVELAGENDA);
 
     @dispatch()
-    loadTravelAgendas = entityAction(EntityActionTypeEnum.LOAD, EntityTypeEnum.TRAVELAGENDA);
+    loadTravelAgendas = entityLoadAction(EntityTypeEnum.TRAVELAGENDA);
 
-    loadTravelAgendaSucceeded = entityActionSucceeded(EntityActionTypeEnum.LOAD, EntityTypeEnum.TRAVELAGENDA);
+    loadTravelAgendaSucceeded = entityLoadActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
 
-    loadTravelAgendaFailed = entityActionFailed(EntityActionTypeEnum.LOAD, EntityTypeEnum.TRAVELAGENDA)
+    loadTravelAgendaFailed = entityLoadActionFailed(EntityTypeEnum.TRAVELAGENDA)
     //#endregion
 
     //#region update TravelAgenda
-    updateTravelAgendaStarted = entityActionStarted(EntityActionTypeEnum.UPDATE, EntityTypeEnum.TRAVELAGENDA);
-
     @dispatch()
-    updateTravelAgendas = entityAction(EntityActionTypeEnum.UPDATE, EntityTypeEnum.TRAVELAGENDA);
+    updateTravelAgenda = entityUpdateAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
+    //#endregion
 
-    updateTravelAgendaSucceeded = entityActionSucceeded(EntityActionTypeEnum.UPDATE, EntityTypeEnum.TRAVELAGENDA);
-
-    updateTravelAgendaFailed = entityActionFailed(EntityActionTypeEnum.UPDATE, EntityTypeEnum.TRAVELAGENDA)
+    //#region update TravelAgenda
+    @dispatch()
+    updateDailyTrip = entityUpdateAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
     //#endregion
 }

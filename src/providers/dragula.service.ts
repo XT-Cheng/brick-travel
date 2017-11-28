@@ -28,9 +28,9 @@ export class DragulaService {
     }
     bag = {name, drake};
     this.bags.push(bag);
-    if (drake.models) { // models to sync with (must have same structure as containers)
+    //if (drake.models) { // models to sync with (must have same structure as containers)
       this.handleModels(name, drake);
-    }
+    //}
     if (!bag.initEvents) {
       this.setupEvents(bag);
     }
@@ -57,7 +57,7 @@ export class DragulaService {
     this.handleModels(name, bag.drake);
   }
 
-  public handleModels(name: string, drake: any): void {
+  private handleModels(name: string, drake: any): void {
     let dragElm: any;
     let dragIndex: number;
     let dropIndex: number;

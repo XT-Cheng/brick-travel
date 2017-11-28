@@ -1,5 +1,9 @@
-import { IViewPointBiz } from "./viewPoint.biz.model";
-import { TransportationCategory } from "../../modules/store/entity/travelAgenda/travelAgenda.model";
+import {
+    IDailyTrip,
+    ITravelAgenda,
+    TransportationCategory,
+} from '../../modules/store/entity/travelAgenda/travelAgenda.model';
+import { IViewPointBiz } from './viewPoint.biz.model';
 
 export interface ITravelAgendaBiz {
     id: string,
@@ -34,4 +38,20 @@ export function caculateDistance(dailyTrip : IDailyTripBiz) {
     }
 
     dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
+}
+
+export function translateDailTrip(dailyTrip : IDailyTripBiz) : IDailyTrip {
+    return {
+        id: dailyTrip.id,
+        travelViewPoints: dailyTrip.travelViewPoints.map(tvp => tvp.id)
+    };
+}
+
+export function translateTravelAgenda(travelAgenda : ITravelAgendaBiz) : ITravelAgenda {
+    return {
+        id: travelAgenda.id,
+        name: travelAgenda.name,
+        user: travelAgenda.user,
+        dailyTrips:  travelAgenda.dailyTrips.map(dt => dt.id)
+    }
 }
