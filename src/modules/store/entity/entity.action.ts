@@ -43,36 +43,60 @@ export enum EntityActionTypeEnum  {
     UPDATE = "ENTITY:UPDATE"
 }
 
+let defaultEntityActionPayload = {
+    error: null,
+    entities: null
+}
+
+let defaultEntityActionMeta = {
+    pagination: null,
+    phaseType: EntityActionPhaseEnum.SUCCEED,
+    progressing: false
+}
+
+
 //#region Load Actions
 export function entityLoadAction(entityType : EntityTypeEnum) {
     return (page: number = 0,limit: number = 50) : EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: {pagination: {page: page,limit: limit},progressing: true,entityType: entityType,phaseType: EntityActionPhaseEnum.TRIGGER},
-        payload: null
+        meta: Object.assign({},defaultEntityActionMeta,{
+            pagination: {page: page,limit: limit},progressing: true,entityType: entityType,phaseType: EntityActionPhaseEnum.TRIGGER
+        }),
+        payload: defaultEntityActionPayload
     })
 }
 
 export function entityLoadActionStarted( entityType : EntityTypeEnum) {
     return () : EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: {pagination:null,progressing: true, entityType: entityType,phaseType: EntityActionPhaseEnum.START},
-        payload: null,
+        meta: Object.assign({},defaultEntityActionMeta,{
+            progressing: true, entityType: entityType,phaseType: EntityActionPhaseEnum.START
+        }),
+        payload: defaultEntityActionPayload,
     })
 }
 
 export function entityLoadActionFailed(entityType : EntityTypeEnum) {
     return (error: Error) : EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: {pagination:null,progressing: false, entityType: entityType,phaseType: EntityActionPhaseEnum.FAIL},
-        payload: {entities: null,error: error}
+        meta: Object.assign({},defaultEntityActionMeta,{
+            entityType: entityType,phaseType: EntityActionPhaseEnum.FAIL
+        }),
+        payload: Object.assign({},defaultEntityActionPayload,{
+            error: error
+        })
     })
 }
 
 export function entityLoadActionSucceeded(entityType : EntityTypeEnum) {
     return (entities : IEntities) : EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: {pagination:null,progressing: false, entityType: entityType,phaseType: EntityActionPhaseEnum.SUCCEED},
-        payload: {entities: entities,error: null},
+        meta: Object.assign({},defaultEntityActionMeta,{
+            entityType: entityType
+        }),
+        payload: Object.assign({},defaultEntityActionPayload,{
+            entities: entities
+        })
     })
 }
 //#endregion
@@ -81,8 +105,12 @@ export function entityLoadActionSucceeded(entityType : EntityTypeEnum) {
 export function entityUpdateAction<T>(entityType : EntityTypeEnum,entityKey : string) {
     return (id: string,entity : T) : EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
-        meta: {pagination:null,progressing: false, entityType: entityType,phaseType: EntityActionPhaseEnum.SUCCEED},
-        payload: {entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }}),error: null},
+        meta: Object.assign({},defaultEntityActionMeta,{
+            entityType: entityType
+        }),
+        payload: Object.assign({},defaultEntityActionPayload,{
+            entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }})
+        })
     })
 }
 //#endregion

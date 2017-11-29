@@ -1,6 +1,7 @@
-import { Component, ChangeDetectorRef, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 
-import { IViewPoint } from "../../../modules/store/entity/viewPoint/viewPoint.model";
+import { IViewPointBiz } from '../../../bizModel/model/viewPoint.biz.model';
+import { ActionAllowed } from '../a-map.component';
 
 @Component({
   selector: 'information-window-a',
@@ -8,13 +9,11 @@ import { IViewPoint } from "../../../modules/store/entity/viewPoint/viewPoint.mo
 })
 export class InformationWindowComponent {
   //Private member
-  private _viewPoint: IViewPoint;
-  private _isInTrip: boolean;
-  private _isViewMode: boolean = true;
+
   //Private member
 
   //Event
-  
+
   //Event
 
   //Constructor
@@ -23,30 +22,10 @@ export class InformationWindowComponent {
   //Constructor
 
   //Public property
-  public set isInTrip(isInTrip: boolean) {
-    this._isInTrip = isInTrip;
-  }
 
-  public get isInTrip(): boolean {
-    return this._isInTrip;
-  }
+  @Input() public actionAllowed: ActionAllowed;
+  @Input() public viewPoint: IViewPointBiz;
 
-  public set isViewMode(isViewMode: boolean) {
-    this._isViewMode = isViewMode;
-  }
-
-  public get isViewMode(): boolean {
-    return this._isViewMode;
-  }
-
-  @Input()
-  public set viewPoint(viewPoint: IViewPoint) {
-    this._viewPoint = viewPoint;
-  }
-
-  public get viewPoint(): IViewPoint {
-    return this._viewPoint;
-  }
   //Public property
 
   //Implemented interface
@@ -61,17 +40,18 @@ export class InformationWindowComponent {
 
   //Protected method
   protected getIconName() {
-    return (this._isInTrip) ? 'remove' : 'add';
-  }
-
-  protected getInnerCardStyle() {
-    if (this._isViewMode) return {'max-width' : 'none', 'width': '100%'};
+    return this.actionAllowed === ActionAllowed.REMOVE ? 'remove' : 'add';
   }
 
   protected getStyle() {
     return {
-      'background-color': (this._isInTrip) ? '#e6e0e0;' : '#ffffff;'
+      'background-color': this.actionAllowed === ActionAllowed.NONE ? '#ffffff;' : '#e6e0e0;'
     }
   }
+
+  protected displayButton() : boolean {
+    return this.actionAllowed !== ActionAllowed.NONE;
+  }
+
   //Protected method
 }

@@ -17,6 +17,7 @@ import { StoreModule } from '../modules/store/store.module';
 import { HomePage } from '../pages/home/home.page';
 import { DragulaService } from '../providers/dragula.service';
 import { App } from './app.component';
+import { ViewPointsPage } from '../pages/view-points/view-points';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { App } from './app.component';
     ViewPointSearchComponent,
     ViewPointListComponent,
     TravelAgendaComponent,
-    DragulaDirective
+    DragulaDirective,
+    ViewPointsPage
   ],
   imports: [
     BrowserModule,
@@ -41,6 +43,7 @@ import { App } from './app.component';
   entryComponents: [
     App,
     HomePage,
+    ViewPointsPage,
     ViewPointMarkerComponent,
     InformationWindowComponent
   ],

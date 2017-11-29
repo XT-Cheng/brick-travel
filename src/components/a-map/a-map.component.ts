@@ -7,63 +7,72 @@ import {
     ElementRef,
     Injector,
     Input,
-    OnDestroy,
     ViewChild,
 } from '@angular/core';
 
-import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
-import { InformationWindowComponent } from './information-window/information-window.component';
-import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
 import { IDailyTripBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { InformationWindowComponent } from './information-window/information-window.component';
+import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
 
 @Component({
   selector: 'a-map',
   templateUrl: 'a-map.component.html'
 })
-export class AMapComponent implements AfterViewInit,OnDestroy {
+export class AMapComponent implements AfterViewInit {
   //#region Private member
   @ViewChild('map') private _mapElement: ElementRef;
 
   private _map: AMap.Map = null;
-
   private _viewPointMarkerFactory: ComponentFactory<ViewPointMarkerComponent>;
-
   private _informationWindowFactory: ComponentFactory<InformationWindowComponent>;
-
   private _markers: Map<string, MarkerInfor>;
-
   private _travelLines: Array<AMap.Polyline>;
+  private _dailyTrip : IDailyTripBiz = null;
+  private _viewMode : boolean;
+
   //#endregion
 
   //#region Constructor
+  
   constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
     this._markers = new Map<string, MarkerInfor>();
-
     this._travelLines = new Array<AMap.Polyline>();
-
     this._viewPointMarkerFactory = this._resolver.resolveComponentFactory(ViewPointMarkerComponent);
-
     this._informationWindowFactory = this._resolver.resolveComponentFactory(InformationWindowComponent);
   }
+  
   //#endregion Constructor
 
-  //#region Public property
-  @Input()
-  public set viewPoints(viewPoints: Array<IViewPoint>) {
-    if (this._map === null) return;
+  //#region Protected property
+  @Input() protected set viewMode(viewMode: boolean) {
+    this._viewMode = viewMode;
 
+    this._markers.forEach(marker => {
+      marker.windowComponent.instance.actionAllowed = this.actionAllowed(marker.viewPoint);
+      marker.windowComponent.instance.detectChanges();
+    })
+  }
+
+  protected get viewMode() : boolean {
+    return this._viewMode;
+  }
+
+  @Input()
+  protected set viewPoints(viewPoints: Array<IViewPointBiz>) {
+    if (this._map === null) return;
+    
     viewPoints.forEach(viewPoint => {
       //Find it
       let found = this._markers.get(viewPoint.id);
 
       if (!found) {
         //Not found, create it
-        this.generateMarker(viewPoint, false, -1);
+        this.generateMarker(viewPoint, this.actionAllowed(viewPoint),false, -1);
       }
       else {
         //Found, update it with viewPoint
-        this.updateMarkerInfor(found,viewPoint,found.markerComponent.instance.isInTrip,found.markerComponent.instance.sequence);
+        this.updateMarkerInfor(found,viewPoint,this.actionAllowed(viewPoint),false,found.markerComponent.instance.sequence);
       }
     });
 
@@ -74,24 +83,22 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
   }
 
   @Input()
-  public set dailyTrip(dailyTrip: IDailyTripBiz) {
-    if (!dailyTrip) return;
+  protected set dailyTrip(dailyTrip: IDailyTripBiz) {
+    this._dailyTrip = dailyTrip;
     
     if (this._map === null) return;
 
     //Remove all of viewPoint from trip first 
-    for (let [,markerInfor] of this._markers.entries()) {
-      this.updateMarkerInfor(markerInfor,markerInfor.viewPoint,false,-1);
-    }
+    // for (let [,markerInfor] of this._markers.entries()) {
+    //   this.updateMarkerInfor(markerInfor,markerInfor.viewPoint,this.actionAllowed(markerInfor.viewPoint),false,-1);
+    // }
 
-    if (dailyTrip === null) {
+    if (!this._dailyTrip) {
       this._map.remove(this._travelLines);
       this._travelLines = new Array<AMap.Polyline>();
-      this.setWindowViewMode(true);
+      this.setWindowActionAllowed(ActionAllowed.NONE);
       return;
     }
-
-    this.setWindowViewMode(false);
     
     let viewPoints = (<ITravelViewPointBiz[]>dailyTrip.travelViewPoints).map(tvp => tvp.viewPoint);
 
@@ -103,11 +110,11 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
 
       if (!found) {
         //Not found, create it
-        this.generateMarker(viewPoint, true, sequence);
+        this.generateMarker(viewPoint,this.actionAllowed(viewPoint),true, sequence);
       }
       else {
         //Found, update it
-        this.updateMarkerInfor(found,viewPoint,true,sequence);
+        this.updateMarkerInfor(found,viewPoint,this.actionAllowed(viewPoint),true,sequence);
       }
 
       sequence++;
@@ -116,7 +123,11 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
     this.generateLines();
   }
 
-  @Input() set selectedViewPoint(vp : IViewPointBiz) {
+  protected get dailyTrip() : IDailyTripBiz {
+    return this._dailyTrip;
+  }
+
+  @Input() protected set selectedViewPoint(vp : IViewPointBiz) {
     if (!vp) return;
 
     this._markers.forEach(marker => {
@@ -138,9 +149,6 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
     this.loadPlugin();
   }
 
-  ngOnDestroy(): void {
-  }
-
   //#endregion Implements interface
 
   //#region Private method
@@ -150,9 +158,9 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
     });
   }
 
-  private setWindowViewMode(viewMode : boolean) {
+  private setWindowActionAllowed(actionAllowed : ActionAllowed) {
     this._markers.forEach(vpInfo => {
-      vpInfo.windowComponent.instance.isViewMode = viewMode;
+      vpInfo.windowComponent.instance.actionAllowed = actionAllowed;
       vpInfo.windowComponent.instance.detectChanges();
     })
   }
@@ -170,8 +178,8 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
     });
 
     markerInfors.forEach(marker => {
-      if (marker.markerComponent.instance.isInTrip)
-      linePoints.push(marker.marker.getPosition());
+      if (marker.markerComponent.instance.inCurrentTrip)
+        linePoints.push(marker.marker.getPosition());
     });
 
     this._travelLines.push(new AMap.Polyline({
@@ -187,21 +195,24 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
   //#endregion
 
   //#region Update MarkerInfor
-  private updateMarkerInfor(markerInfo: MarkerInfor, viewPoint: IViewPoint,isInTrip: boolean,sequence : number) {
+  private updateMarkerInfor(markerInfo: MarkerInfor, viewPoint: IViewPointBiz,actionAllowed: ActionAllowed,inCurrentTrip : boolean,sequence : number) {
     markerInfo.viewPoint = viewPoint;
     
     markerInfo.marker.setPosition(new AMap.LngLat(viewPoint.longtitude, viewPoint.latitude));
 
-    markerInfo.markerComponent.instance.viewPoint = markerInfo.windowComponent.instance.viewPoint = viewPoint;
-    markerInfo.markerComponent.instance.isInTrip = markerInfo.windowComponent.instance.isInTrip = isInTrip;
+    markerInfo.markerComponent.instance.viewPoint =  viewPoint;
+    markerInfo.markerComponent.instance.inCurrentTrip = inCurrentTrip;
     markerInfo.markerComponent.instance.sequence = sequence;
     markerInfo.markerComponent.instance.detectChanges();
+
+    markerInfo.windowComponent.instance.actionAllowed = this.actionAllowed(viewPoint);
+    markerInfo.windowComponent.instance.viewPoint =viewPoint;
     markerInfo.windowComponent.instance.detectChanges();
   }
   //#endregion Update MarkerInfo
 
   //#region Generate ViewPoint marker
-  private generateMarker(viewPoint: IViewPoint, isInTrip: boolean, sequence: number) {
+  private generateMarker(viewPoint: IViewPointBiz, actionAloowed: ActionAllowed,inCurrentTrip : boolean, sequence: number) {
     let point = new AMap.LngLat(viewPoint.longtitude, viewPoint.latitude);
 
     //Create Marker Component
@@ -226,7 +237,7 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
 
     marker.setExtData(viewPoint);
     crMarker.instance.viewPoint = viewPoint;
-    crMarker.instance.isInTrip = isInTrip;
+    crMarker.instance.inCurrentTrip = inCurrentTrip;
     crMarker.instance.sequence = sequence;
     crMarker.instance.detectChanges();
 
@@ -239,12 +250,12 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
       offset: new AMap.Pixel(0, -1 * ViewPointMarkerComponent.HEIGHT),
     });
     crWindow.instance.viewPoint = viewPoint;
-    crWindow.instance.isInTrip = isInTrip;
+    crWindow.instance.actionAllowed = actionAloowed;
     crWindow.instance.detectChanges();
 
     let markerClickListener = AMap.event.addListener(marker, "click", ($event: any) => {
       let marker = <AMap.Marker>$event.target;
-      let viewPoint = <IViewPoint>marker.getExtData();
+      let viewPoint = <IViewPointBiz>marker.getExtData();
 
       if (this._markers.has(viewPoint.id)) {
         let window = this._markers.get(viewPoint.id).window;
@@ -263,14 +274,42 @@ export class AMapComponent implements AfterViewInit,OnDestroy {
   }
   //#endregion
 
+  private isInCurrentTrip(viewPoint : IViewPointBiz) : boolean {
+    let ret = false;
+
+    if (this.dailyTrip) {
+      this.dailyTrip.travelViewPoints.forEach(tvp => {
+        if (viewPoint.id === tvp.viewPoint.id) 
+          ret = true;
+      });
+    }
+    
+    return ret;
+  }
+
+  private actionAllowed(viewPoint : IViewPointBiz) : ActionAllowed {
+    if (!this._viewMode && this._dailyTrip) {
+      if (this.isInCurrentTrip(viewPoint))
+        return ActionAllowed.REMOVE;
+      return ActionAllowed.ADD;
+    }
+
+    return ActionAllowed.NONE;
+  }
   //#endregion Private method
+}
+
+export enum ActionAllowed {
+  ADD,
+  REMOVE,
+  NONE
 }
 
 export interface MarkerInfor {
   marker: AMap.Marker,
   markerComponent: ComponentRef<ViewPointMarkerComponent>,
   markerClickListener: any,
-  viewPoint: IViewPoint,
+  viewPoint: IViewPointBiz,
   window: AMap.InfoWindow;
   windowComponent: ComponentRef<InformationWindowComponent>;
 }

@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
-import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
+import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 
-import { IDailyTrip } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
-import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model';
+import { ActionAllowed } from '../a-map/a-map.component';
 
 @Component({
   selector: 'viewpoint-list',
@@ -10,15 +10,15 @@ import { IViewPoint } from '../../modules/store/entity/viewPoint/viewPoint.model
 })
 export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   //#region Protected member
-  
+
   //#endregion
 
   //#region Private member
-  
+
   //#endregion
 
   //#region Event
-  
+
   //#endregion
 
   //#region Constructor
@@ -29,35 +29,35 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
 
   //#region Protected property
 
-  @Input() protected viewMode : boolean ;
-  @Input() protected viewPoints : Array<IViewPoint>;
-  @Input() protected dailyTrip : IDailyTrip;
+  @Input() protected viewMode: boolean;
+  @Input() protected viewPoints: Array<IViewPointBiz>;
+  @Input() protected dailyTrip: IDailyTripBiz;
 
-//#endregion
+  //#endregion
 
   //#region Public property
 
   //#endregion
 
-//#region Implements interface
-ngAfterViewInit(): void {
+  //#region Implements interface
+  ngAfterViewInit(): void {
 
-}
+  }
 
-ngOnDestroy(): void {
-}
-//#endregion Implements interface
-  
-//#region Public method
+  ngOnDestroy(): void {
+  }
+  //#endregion Implements interface
+
+  //#region Public method
 
   //#endregion
 
   //#region Protected method
-  protected clicked($event: any, viewPoint: IViewPoint) {
+  protected clicked($event: any, viewPoint: IViewPointBiz) {
     //this.viewPointClicked.emit(viewPoint);
   }
 
-  protected addOrRemove(viewPoint: IViewPoint) {
+  protected addOrRemove(viewPoint: IViewPointBiz) {
     // if (this._viewMode) return;
 
     // if (this.isInTrip(viewPoint)) {
@@ -83,31 +83,48 @@ ngOnDestroy(): void {
     // }
   }
 
-  protected getIconName(viewPoint: IViewPoint) {
-    return this.isInTrip(viewPoint) ? 'remove' : 'add';
+  protected getIconName(viewPoint: IViewPointBiz) {
+    return this.actionAllowed(viewPoint) === ActionAllowed.REMOVE ? 'remove' : 'add';
   }
 
-  protected getInnerCardStyle() {
-    if (this.viewMode) return {'max-width' : 'none', 'width': '100%'};
-  }
+  // protected getInnerCardStyle() {
+  //   if (this.actionAllowed) return {'max-width' : 'none', 'width': '100%'};
+  // }
 
-  protected getStyle(viewPoint: IViewPoint) {
+  protected getStyle(viewPoint: IViewPointBiz) {
     return {
-      'background-color': this.isInTrip(viewPoint) ? '#e6e0e0' : '#ffffff'
+      'background-color': this.actionAllowed(viewPoint) === ActionAllowed.NONE ? '#ffffff;' : '#e6e0e0;'
     }
   }
+
+  protected displayButton(viewPoint: IViewPointBiz): boolean {
+    return this.actionAllowed(viewPoint) !== ActionAllowed.NONE;
+  }
+
   //#endregion
 
   //#region Private method
-  private isInTrip(viewPoint: IViewPoint): boolean {
-    // if (this._dailyTrip === null) return false;
+  private isInCurrentTrip(viewPoint: IViewPointBiz): boolean {
+    let ret = false;
 
-    // for (let tvp of this._dailyTrip.travelViewPoints) {
-    //   if (viewPoint.encode() === tvp.viewPoint.encode()) {
-    //     return true;
-    //   }
-    // }
-    return false;
+    if (this.dailyTrip) {
+      this.dailyTrip.travelViewPoints.forEach(tvp => {
+        if (viewPoint.id === tvp.viewPoint.id)
+          ret = true;
+      });
+    }
+
+    return ret;
+  }
+
+  private actionAllowed(viewPoint: IViewPointBiz): ActionAllowed {
+    if (!this.viewMode && this.dailyTrip) {
+        if (this.isInCurrentTrip(viewPoint))
+          return ActionAllowed.REMOVE;
+        return ActionAllowed.ADD;
+    }
+
+    return ActionAllowed.NONE;
   }
   //#endregion
 }

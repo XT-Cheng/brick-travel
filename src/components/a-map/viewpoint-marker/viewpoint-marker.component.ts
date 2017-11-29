@@ -1,6 +1,7 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, Input } from '@angular/core';
 
-import { IViewPoint, ViewPointCategory } from "../../../modules/store/entity/viewPoint/viewPoint.model";
+import { ViewPointCategory } from "../../../modules/store/entity/viewPoint/viewPoint.model";
+import { IViewPointBiz } from '../../../bizModel/model/viewPoint.biz.model';
 
 @Component({
   selector: 'viewpoint-marker-a',
@@ -11,9 +12,6 @@ export class ViewPointMarkerComponent {
   public static readonly WIDTH : number = 48;
   public static readonly HEIGHT : number = 48;
 
-  private _viewPoint: IViewPoint = null;
-  private _isInTrip: boolean;
-  private _sequence: number;
   //#endregion
 
   //Constructor
@@ -22,21 +20,11 @@ export class ViewPointMarkerComponent {
   //Constructor
 
   //Public property
-  public set viewPoint(viewPoint: IViewPoint) {
-    this._viewPoint = viewPoint;
-  }
 
-  public set isInTrip(isInTrip: boolean) {
-    this._isInTrip = isInTrip;
-  }
+  @Input() public viewPoint : IViewPointBiz;
+  @Input() public sequence : number;
+  @Input() public inCurrentTrip : boolean;
 
-  public get isInTrip(): boolean {
-    return this._isInTrip;
-  }
-
-  public set sequence(sequence: number) {
-    this._sequence = sequence;
-  }
   //Public property
 
   //Implemented interface
@@ -51,7 +39,7 @@ export class ViewPointMarkerComponent {
 
   //Protected method
   protected getSequenceDisplay() : string {
-    return this._isInTrip?(this._sequence + 1).toString():'';
+    return this.inCurrentTrip?(this.sequence + 1).toString():'';
   }
 
   protected getOuterClass() {
@@ -62,7 +50,7 @@ export class ViewPointMarkerComponent {
   }
 
   protected getInnerClass() {
-    if (this._viewPoint === null)
+    if (this.viewPoint === null)
       return {
         'icon-icon': false,
         'icon-restaurant': true,
@@ -70,9 +58,8 @@ export class ViewPointMarkerComponent {
         'icon-stack-small': true
       };
 
-    if (this._isInTrip)
-      return this.getInnerClassOfTravelViewPoint();
-
+    if (this.inCurrentTrip)
+    return this.getInnerClassOfTravelViewPoint();
     return this.getInnerClassOfViewPoint();
   }
 
@@ -84,15 +71,9 @@ export class ViewPointMarkerComponent {
   }
 
   protected getStyle() {
-    if (this._isInTrip)
-      return {
-        'color': 'green',
-        'width': `${ViewPointMarkerComponent.WIDTH}px`,
-        'height': `${ViewPointMarkerComponent.HEIGHT}px`,
-      };
-    
     let color: string;
-    switch (this._viewPoint.category) {
+    
+    switch (this.viewPoint.category) {
       case ViewPointCategory.View:
         color = 'blue';
         break;
@@ -102,6 +83,9 @@ export class ViewPointMarkerComponent {
       default:
         color = 'green';
     }
+
+    if (this.inCurrentTrip)
+    color = 'green';
 
     return {
       'color': color,
@@ -114,7 +98,7 @@ export class ViewPointMarkerComponent {
   //Private method
   private getInnerClassOfViewPoint() {
     let isView, isShopping, isRestaurant: boolean;
-    switch (this._viewPoint.category) {
+    switch (this.viewPoint.category) {
       case ViewPointCategory.View:
         isView = true;
         break;

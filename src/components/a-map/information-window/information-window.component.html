@@ -1,7 +1,7 @@
 <ion-card #card [ngStyle]='getStyle()' class='outer-card'>
   <ion-grid fixed>
     <ion-row>
-      <ion-col [ngStyle]='getInnerCardStyle()' [attr.col-12]='isViewMode?"":null' [attr.col-9]='!isViewMode?"":null'>
+      <ion-col [attr.col-12]='displayButton()?null:""' [attr.col-9]='!displayButton()?null:""'>
         <ion-card class='inner-card' [ngStyle]='getStyle(viewPoint)'>
           <ion-grid fixed>
             <ion-row>
@@ -16,7 +16,7 @@
           </ion-grid>
         </ion-card>
       </ion-col>
-      <ion-col col-3 *ngIf='!isViewMode'>
+      <ion-col col-3 *ngIf='displayButton()'>
         <button ion-button icon-only clear large>
           <ion-icon [name]='getIconName()'></ion-icon>
         </button>
