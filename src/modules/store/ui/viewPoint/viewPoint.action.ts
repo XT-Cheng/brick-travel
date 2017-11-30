@@ -41,12 +41,12 @@ export function searchViewPointAction(searchKey: string): UIViewPointAction {
     };
 }
 
-export function selectViewPointAction(viewPoint: IViewPointBiz): UIViewPointAction {
+export function selectViewPointAction(viewPoint: IViewPointBiz | string): UIViewPointAction {
     return {
         type: UIViewPointActionTypeEnum.SELECT_VIEWPOINT,
         meta: { progressing : false },
         payload: Object.assign({},defaultViewPointActionPayload,{
-            selectedViewPointId: viewPoint?viewPoint.id:''
+            selectedViewPointId:  typeof viewPoint === 'string' ? viewPoint : viewPoint.id
         })
     };
 }

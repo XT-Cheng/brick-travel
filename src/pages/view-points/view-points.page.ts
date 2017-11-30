@@ -1,6 +1,6 @@
 import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
-import { AfterViewInit, Component } from '@angular/core';
-import { FabContainer } from 'ionic-angular';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { FabContainer, NavController, NavParams, Content } from 'ionic-angular';
 import { Observable } from 'rxjs/Rx';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
@@ -18,17 +18,20 @@ import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAg
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { ViewPointPage } from '../view-point/view-point.page';
 
 @Component({
   selector: 'page-view-points',
-  templateUrl: 'view-points.html',
+  templateUrl: 'view-points.page.html',
 })
 export class ViewPointsPage implements AfterViewInit {
   //#region Private member
-
+  @ViewChild(Content) _content : Content;
+  
   //#endregion
 
   //#region Protected member
+  
   protected viewPoints$: Observable<Array<IViewPointBiz>>;
   protected selectedViewPoint$: Observable<IViewPointBiz>;
   protected viewMode$: Observable<boolean>;
@@ -44,7 +47,9 @@ export class ViewPointsPage implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>,
+  constructor(private _nav: NavController,
+    private _navParams: NavParams,
+    private _store: NgRedux<IAppState>,
     private _uiActionGeneration: UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator,
     private _cityActionGenerator: CityActionGenerator,
@@ -127,12 +132,18 @@ export class ViewPointsPage implements AfterViewInit {
     else
       this.displayMode = DisplayModeEnum.Map;
   }
-  //#endregion
 
-  //#region Test Methods
-  protected test() {
-    this._uiActionGeneration.selectDailyTrip('1');
+  protected viewPointClicked(viewPoint : IViewPointBiz) {
+    this._uiActionGeneration.selectViewPoint(viewPoint);
+    this._nav.push(ViewPointPage);
   }
+
+  protected getIconName() :string {
+    return (this.displayMode === DisplayModeEnum.Map) ? 'list':'map'; 
+  }
+
+  //#region Private metohds
+
   //#endregion
 }
 

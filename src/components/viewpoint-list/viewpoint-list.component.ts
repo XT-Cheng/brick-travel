@@ -1,7 +1,7 @@
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 
+import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map/a-map.component';
 
 @Component({
@@ -18,17 +18,16 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Event
-
+  @Output() viewPointClickedEvent : EventEmitter<IViewPointBiz>;
   //#endregion
 
   //#region Constructor
   constructor() {
-
+    this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
   }
   //#endregion
 
   //#region Protected property
-
   @Input() protected viewMode: boolean;
   @Input() protected viewPoints: Array<IViewPointBiz>;
   @Input() protected dailyTrip: IDailyTripBiz;
@@ -99,6 +98,10 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
 
   protected displayButton(viewPoint: IViewPointBiz): boolean {
     return this.actionAllowed(viewPoint) !== ActionAllowed.NONE;
+  }
+
+  protected viewPointClicked(viewPoint : IViewPointBiz) {
+    this.viewPointClickedEvent.emit(viewPoint);
   }
 
   //#endregion

@@ -14,11 +14,14 @@ import { ViewPointListComponent } from '../components/viewpoint-list/viewpoint-l
 import { ViewPointSearchComponent } from '../components/viewpoint-search/viewpoint-search.component';
 import { DragulaDirective } from '../directives/dragula.directive';
 import { StoreModule } from '../modules/store/store.module';
-import { HomePage } from '../pages/home/home.page';
+import { TestPage } from '../pages/test/test.page';
 import { DragulaService } from '../providers/dragula.service';
 import { App } from './app.component';
-import { ViewPointsPage } from '../pages/view-points/view-points';
+import { ViewPointsPage } from '../pages/view-points/view-points.page';
 import { CityPickPage } from '../pages/city-pick/city-pick.page';
+import { ViewPointDetailComponent } from '../components/viewpoint-detail/viewpoint-detail';
+import { HomePage } from '../pages/home/home.page';
+import { ViewPointPage } from '../pages/view-point/view-point.page';
 
 @NgModule({
   declarations: [
@@ -26,11 +29,14 @@ import { CityPickPage } from '../pages/city-pick/city-pick.page';
     AMapComponent,
     ViewPointMarkerComponent,
     InformationWindowComponent,
+    TestPage,
     HomePage,
+    ViewPointPage,
     RateComponent,
     ViewPointFilterComponent,
     ViewPointSearchComponent,
     ViewPointListComponent,
+    ViewPointDetailComponent,
     TravelAgendaComponent,
     DragulaDirective,
     ViewPointsPage,
@@ -44,7 +50,9 @@ import { CityPickPage } from '../pages/city-pick/city-pick.page';
   bootstrap: [IonicApp],
   entryComponents: [
     App,
+    TestPage,
     HomePage,
+    ViewPointPage,
     ViewPointsPage,
     CityPickPage,
     ViewPointMarkerComponent,

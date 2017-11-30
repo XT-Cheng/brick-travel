@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { IViewPointBiz } from '../../../bizModel/model/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map.component';
@@ -13,11 +13,12 @@ export class InformationWindowComponent {
   //Private member
 
   //Event
-
+  @Output() public viewPointClickedEvent : EventEmitter<IViewPointBiz>;
   //Event
 
   //Constructor
   constructor(private _cdRef: ChangeDetectorRef) {
+    this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
   }
   //Constructor
 
@@ -51,6 +52,10 @@ export class InformationWindowComponent {
 
   protected displayButton() : boolean {
     return this.actionAllowed !== ActionAllowed.NONE;
+  }
+
+  protected viewPointClicked(viewPoint : IViewPointBiz) {
+    this.viewPointClickedEvent.emit(viewPoint);
   }
 
   //Protected method

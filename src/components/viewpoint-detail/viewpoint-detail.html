@@ -1,0 +1,40 @@
+<ion-slides pager="true">
+  <ion-slide *ngFor="let image of viewPoint.images">
+    <img [src]="image">
+  </ion-slide>
+</ion-slides>
+<div class='vp-description'>
+  <i class='iconfont icon-cangkucangchu-xianxing'></i>
+  <p>{{viewPoint.description}}</p>
+</div>
+<div class='vp-detail'>
+  <div class='address'>
+    <i class='iconfont icon-cangkucangchu-xianxing'></i>
+    <p>{{viewPoint.address}}</p>
+  </div>
+  <div class='tips'>
+    <i class='iconfont icon-cangkucangchu-xianxing'></i>
+    <p>{{viewPoint.tips}}</p>
+  </div>
+  <div class='timeNeeded'>
+    <i class='iconfont icon-cangkucangchu-xianxing'></i>
+    <p>{{viewPoint.timeNeeded}}</p>
+  </div>
+</div>
+<div class='vp-comments'>
+  <ion-list>
+    <ion-item *ngFor="let c of viewPoint.comments">
+      <ion-avatar item-start>
+        <img [src]="c.avatar">
+      </ion-avatar>
+      <p class='fl'>{{c.user}}说</p>
+      <div> 
+        <span class='fr'>{{c.publishedAt | date:'shortDate'}}</span>
+        <rate class='fr' [readOnly]='true' [(ngModel)]="c.rate"></rate> 
+       </div>
+      <div>
+        <p class='commentDetail'>{{c.detail}}</p>
+      </div>        
+    </ion-item>
+  </ion-list>
+</div>

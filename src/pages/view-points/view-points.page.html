@@ -3,10 +3,7 @@
     <ion-title>View Points</ion-title>
     <ion-buttons end>
       <button ion-button icon-only color="royal" (click)='switchDisplayMode()'>
-        <ion-icon name="map"></ion-icon>
-      </button>
-      <button ion-button icon-only color="royal" (click)='test()'>
-        <ion-icon name="calculator"></ion-icon>
+        <ion-icon [name]="getIconName()"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -16,11 +13,13 @@
             [viewPoints]='viewPoints$ | async' 
             [dailyTrip]='selectedDailyTrip$ | async'
             [selectedViewPoint]='selectedViewPoint$ | async'
-            [viewMode]='viewMode$ | async'></a-map>
+            [viewMode]='viewMode$ | async'
+            (viewPointClickedEvent)='viewPointClicked($event)'></a-map>
     <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)'
                     [dailyTrip]='selectedDailyTrip$ | async'
                     [viewPoints]='viewPoints$ | async'
-                    [viewMode]='viewMode$ | async'></viewpoint-list>
+                    [viewMode]='viewMode$ | async'
+                    (viewPointClickedEvent)='viewPointClicked($event)'></viewpoint-list>
   <ion-fab right edge #fab>
     <button ion-fab mini>
       <ion-icon name="add"></ion-icon>

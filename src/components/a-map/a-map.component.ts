@@ -8,6 +8,8 @@ import {
     Injector,
     Input,
     ViewChild,
+    Output,
+    EventEmitter,
 } from '@angular/core';
 
 import { IDailyTripBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
@@ -40,9 +42,16 @@ export class AMapComponent implements AfterViewInit {
     this._travelLines = new Array<AMap.Polyline>();
     this._viewPointMarkerFactory = this._resolver.resolveComponentFactory(ViewPointMarkerComponent);
     this._informationWindowFactory = this._resolver.resolveComponentFactory(InformationWindowComponent);
+    
+    this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
   }
   
   //#endregion Constructor
+
+  //#region Event
+  @Output() viewPointClickedEvent : EventEmitter<IViewPointBiz>;
+  
+  //#endregion
 
   //#region Protected property
   @Input() protected set viewMode(viewMode: boolean) {
@@ -89,9 +98,9 @@ export class AMapComponent implements AfterViewInit {
     if (this._map === null) return;
 
     //Remove all of viewPoint from trip first 
-    // for (let [,markerInfor] of this._markers.entries()) {
-    //   this.updateMarkerInfor(markerInfor,markerInfor.viewPoint,this.actionAllowed(markerInfor.viewPoint),false,-1);
-    // }
+    for (let [,markerInfor] of this._markers.entries()) {
+      this.updateMarkerInfor(markerInfor,markerInfor.viewPoint,this.actionAllowed(markerInfor.viewPoint),false,-1);
+    }
 
     if (!this._dailyTrip) {
       this._map.remove(this._travelLines);
@@ -251,6 +260,10 @@ export class AMapComponent implements AfterViewInit {
     });
     crWindow.instance.viewPoint = viewPoint;
     crWindow.instance.actionAllowed = actionAloowed;
+    crWindow.instance.viewPointClickedEvent.subscribe(viewPoint => {
+      this._markers.get(viewPoint.id).window.close();
+      this.viewPointClickedEvent.emit(viewPoint);
+    });
     crWindow.instance.detectChanges();
 
     let markerClickListener = AMap.event.addListener(marker, "click", ($event: any) => {
@@ -258,8 +271,10 @@ export class AMapComponent implements AfterViewInit {
       let viewPoint = <IViewPointBiz>marker.getExtData();
 
       if (this._markers.has(viewPoint.id)) {
+        this._map.setCenter(marker.getPosition());
         let window = this._markers.get(viewPoint.id).window;
-        window.open(this._map, marker.getPosition());
+        setTimeout(()=> window.open(this._map, marker.getPosition()),300);
+        
       }
     });
 

@@ -2,7 +2,7 @@
   <ion-grid fixed>
     <ion-row>
       <ion-col [attr.col-12]='displayButton()?null:""' [attr.col-9]='!displayButton()?null:""'>
-        <ion-card class='inner-card' [ngStyle]='getStyle(viewPoint)'>
+        <ion-card class='inner-card' [ngStyle]='getStyle(viewPoint)' (click)='viewPointClicked(viewPoint)'>
           <ion-grid fixed>
             <ion-row>
               <ion-col class='col-img' col-5>
