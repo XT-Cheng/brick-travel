@@ -1,6 +1,6 @@
 import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { FabContainer, NavController, NavParams, Content } from 'ionic-angular';
+import { Content, FabContainer, NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Rx';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
@@ -48,7 +48,6 @@ export class ViewPointsPage implements AfterViewInit {
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _navParams: NavParams,
     private _store: NgRedux<IAppState>,
     private _uiActionGeneration: UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator,

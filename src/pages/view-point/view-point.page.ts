@@ -1,6 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
@@ -21,9 +20,7 @@ export class ViewPointPage {
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>,
-    private _nav: NavController,
-    private _navParams: NavParams) {
+  constructor(private _store: NgRedux<IAppState>) {
       this.selectedViewPoint$ = getSelectedViewPoint(this._store);
   }
 

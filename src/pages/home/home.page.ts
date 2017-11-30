@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
-import { NavController, NavParams } from 'ionic-angular';
 
 import { ViewPointsPage } from '../view-points/view-points.page';
 
@@ -20,8 +19,7 @@ export class HomePage implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _nav: NavController,
-              private _navParams: NavParams) {
+  constructor() {
   }
   //#endregion
 
