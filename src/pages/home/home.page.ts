@@ -109,7 +109,7 @@ export class HomePage implements AfterViewInit {
 
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
     //this.dayTripSelected$.next(dailyTrip);
-    this._uiActionGeneration.selectDailyTrip(dailyTrip);
+    this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {

@@ -18,6 +18,7 @@ import { HomePage } from '../pages/home/home.page';
 import { DragulaService } from '../providers/dragula.service';
 import { App } from './app.component';
 import { ViewPointsPage } from '../pages/view-points/view-points';
+import { CityPickPage } from '../pages/city-pick/city-pick.page';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ViewPointsPage } from '../pages/view-points/view-points';
     ViewPointListComponent,
     TravelAgendaComponent,
     DragulaDirective,
-    ViewPointsPage
+    ViewPointsPage,
+    CityPickPage
   ],
   imports: [
     BrowserModule,
@@ -44,6 +46,7 @@ import { ViewPointsPage } from '../pages/view-points/view-points';
     App,
     HomePage,
     ViewPointsPage,
+    CityPickPage,
     ViewPointMarkerComponent,
     InformationWindowComponent
   ],

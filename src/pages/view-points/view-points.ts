@@ -2,7 +2,6 @@ import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
 import { AfterViewInit, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
 import { Observable } from 'rxjs/Rx';
-import { Map } from 'rxjs/util/Map';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';

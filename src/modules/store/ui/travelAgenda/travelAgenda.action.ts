@@ -1,6 +1,6 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
-import { IDailyTripBiz, ITravelAgendaBiz } from '../../../../bizModel/model/travelAgenda.biz.model';
+import { ITravelAgendaBiz } from '../../../../bizModel/model/travelAgenda.biz.model';
 import { IActionMetaInfo, IActionPayload } from '../../store.action';
 
 export interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {

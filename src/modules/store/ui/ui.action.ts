@@ -4,6 +4,7 @@ import { dispatch } from "@angular-redux/store";
 import { searchViewPointAction, selectCriteriaAction, selectViewPointAction } from "./viewPoint/viewPoint.action";
 import { selectTravelAgendaAction, selectDailyTripAction } from "./travelAgenda/travelAgenda.action";
 import { FluxStandardAction } from "flux-standard-action";
+import { selectCityAction } from "./city/city.action";
 
 export interface IUIActionMetaInfo extends IActionMetaInfo {}
 
@@ -51,4 +52,7 @@ export class UIActionGenerator {
 
     @dispatch()
     setViewMode = setViewModeAction;
+
+    @dispatch()
+    selectCity = selectCityAction;
 }

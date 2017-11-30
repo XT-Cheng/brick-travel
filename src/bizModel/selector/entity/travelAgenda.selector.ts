@@ -3,14 +3,15 @@ import { asMutable } from 'seamless-immutable';
 import { IAppState } from '../../../modules/store/store.model';
 import { ITravelAgendaBiz, caculateDistance } from '../../model/travelAgenda.biz.model';
 import { Observable } from 'rxjs/Observable';
+import { ITravelAgenda } from '../../../modules/store/entity/travelAgenda/travelAgenda.model';
 
 export function getTravelAgendas(store : NgRedux<IAppState>) : Observable<ITravelAgendaBiz[]> {
-    return store.select<{ [id: string]: ITravelAgendaBiz }>(['entities', 'travelAgendas'])
+    return store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas'])
     .map(getTravelAgendasInternal(store));
 }
 
 function getTravelAgendasInternal(store : NgRedux<IAppState>) {
-    return (data : { [id : string] : ITravelAgendaBiz }) : Array<ITravelAgendaBiz> => {
+    return (data : { [id : string] : ITravelAgenda }) : Array<ITravelAgendaBiz> => {
         let ret = new Array<ITravelAgendaBiz>();
         let viewPoints = asMutable(store.getState().entities.viewPoints,{deep: true});
         let dailyTrips = asMutable(store.getState().entities.dailyTrips,{deep: true});

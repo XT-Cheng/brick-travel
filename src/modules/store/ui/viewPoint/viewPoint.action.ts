@@ -1,6 +1,5 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
-import { IUIActionMetaInfo, IUIActionPayload } from '../ui.action';
 import { IViewPointBiz } from '../../../../bizModel/model/viewPoint.biz.model';
 import { IActionMetaInfo, IActionPayload } from '../../store.action';
 

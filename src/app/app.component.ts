@@ -3,14 +3,18 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Platform } from 'ionic-angular';
 
+//import { CityPickPage } from '../pages/city-pick/city-pick.page';
 import { ViewPointsPage } from '../pages/view-points/view-points';
+//import { HomePage } from '../pages/home/home.page';
 
 @Component({
   templateUrl: 'app.page.html'
 })
 export class App {
   rootPage:any = ViewPointsPage;
-
+  //rootPage:any =  HomePage;
+  //rootPage:any = CityPickPage;
+  
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
