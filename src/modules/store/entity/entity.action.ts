@@ -40,7 +40,9 @@ export enum EntityTypeEnum {
 export enum EntityActionTypeEnum  {
     LOAD = "ENTITY:LOAD",
     SAVE = "ENTITY:SAVE",
-    UPDATE = "ENTITY:UPDATE"
+    UPDATE = "ENTITY:UPDATE",
+    INSERT = "ENTITY:INSERT",
+    DELETE = "ENTITY:DELETE"
 }
 
 let defaultEntityActionPayload = {
@@ -105,6 +107,34 @@ export function entityLoadActionSucceeded(entityType : EntityTypeEnum) {
 export function entityUpdateAction<T>(entityType : EntityTypeEnum,entityKey : string) {
     return (id: string,entity : T) : EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
+        meta: Object.assign({},defaultEntityActionMeta,{
+            entityType: entityType
+        }),
+        payload: Object.assign({},defaultEntityActionPayload,{
+            entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }})
+        })
+    })
+}
+//#endregion
+
+//#region Insert action
+export function entityInsertAction<T>(entityType : EntityTypeEnum,entityKey : string) {
+    return (id: string,entity : T) : EntityAction => ({
+        type: EntityActionTypeEnum.INSERT,
+        meta: Object.assign({},defaultEntityActionMeta,{
+            entityType: entityType
+        }),
+        payload: Object.assign({},defaultEntityActionPayload,{
+            entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }})
+        })
+    })
+}
+//#endregion
+
+//#region Insert action
+export function entityDeleteAction<T>(entityType : EntityTypeEnum,entityKey : string) {
+    return (id: string,entity : T) : EntityAction => ({
+        type: EntityActionTypeEnum.DELETE,
         meta: Object.assign({},defaultEntityActionMeta,{
             entityType: entityType
         }),

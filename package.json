@@ -38,10 +38,12 @@
     "rxjs": "5.4.3",
     "seamless-immutable": "^7.1.2",
     "sw-toolbox": "3.6.0",
+    "uuid": "^3.1.0",
     "zone.js": "0.8.18"
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.0.1",
+    "@types/uuid": "^3.4.3",
     "typescript": "2.6.1"
   },
   "description": "An Ionic project"

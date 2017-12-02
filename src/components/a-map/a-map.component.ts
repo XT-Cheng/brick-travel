@@ -16,6 +16,7 @@ import { IDailyTripBiz, ITravelViewPointBiz } from '../../bizModel/model/travelA
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { InformationWindowComponent } from './information-window/information-window.component';
 import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'a-map',
@@ -71,6 +72,8 @@ export class AMapComponent implements AfterViewInit {
   protected set viewPoints(viewPoints: Array<IViewPointBiz>) {
     if (this._map === null) return;
     
+    this.destroyExtraMarkers(viewPoints.map(vp => vp.id));
+
     viewPoints.forEach(viewPoint => {
       //Find it
       let found = this._markers.get(viewPoint.id);
@@ -89,10 +92,12 @@ export class AMapComponent implements AfterViewInit {
     if (viewPoints.length > 0)
       this._map.setZoomAndCenter(14, this._markers.get(viewPoints[0].id).marker.getPosition());
     //TODO
+
+    this._map.setFitView();
   }
 
   @Input()
-  protected set dailyTrip(dailyTrip: IDailyTripBiz) {
+  protected set dailyTrip(dailyTrip: IDailyTripBiz) { 
     this._dailyTrip = dailyTrip;
     
     if (this._map === null) return;
@@ -108,6 +113,8 @@ export class AMapComponent implements AfterViewInit {
       this.setWindowActionAllowed(ActionAllowed.NONE);
       return;
     }
+    
+    this.destroyExtraMarkers(dailyTrip.travelViewPoints.map(tvp => tvp.viewPoint.id));
     
     let viewPoints = (<ITravelViewPointBiz[]>dailyTrip.travelViewPoints).map(tvp => tvp.viewPoint);
 
@@ -130,6 +137,8 @@ export class AMapComponent implements AfterViewInit {
     });
 
     this.generateLines();
+
+    this._map.setFitView();
   }
 
   protected get dailyTrip() : IDailyTripBiz {
@@ -260,7 +269,7 @@ export class AMapComponent implements AfterViewInit {
     });
     crWindow.instance.viewPoint = viewPoint;
     crWindow.instance.actionAllowed = actionAloowed;
-    crWindow.instance.viewPointClickedEvent.subscribe(viewPoint => {
+    let windowSubscription = crWindow.instance.viewPointClickedEvent.subscribe(viewPoint => {
       this._markers.get(viewPoint.id).window.close();
       this.viewPointClickedEvent.emit(viewPoint);
     });
@@ -284,10 +293,28 @@ export class AMapComponent implements AfterViewInit {
       viewPoint: viewPoint,
       window: window,
       windowComponent: crWindow,
-      markerClickListener: markerClickListener
+      markerClickListener: markerClickListener,
+      windowClickSuscription: windowSubscription
     });
   }
   //#endregion
+
+  private destroyMarker(viewPointId : string) {
+    let markerInfor = this._markers.get(viewPointId);
+
+    if (markerInfor) {
+      this._map.remove(markerInfor.marker);
+      this._map.remove(markerInfor.window);
+
+      markerInfor.windowClickSuscription.unsubscribe();
+      AMap.event.removeListener(markerInfor.markerClickListener);
+
+      markerInfor.markerComponent.destroy();
+      markerInfor.windowComponent.destroy();
+
+      this._markers.delete(viewPointId);
+    }
+  }
 
   private isInCurrentTrip(viewPoint : IViewPointBiz) : boolean {
     let ret = false;
@@ -311,6 +338,14 @@ export class AMapComponent implements AfterViewInit {
 
     return ActionAllowed.NONE;
   }
+
+  private destroyExtraMarkers( remains : Array<string>) {
+    let toBeRemove = Array.from(this._markers.keys()).filter(key => {
+      return !remains.find(remain => remain === key);
+    });
+
+    toBeRemove.forEach(remove => this.destroyMarker(remove));
+  }
   //#endregion Private method
 }
 
@@ -320,6 +355,11 @@ export enum ActionAllowed {
   NONE
 }
 
+export enum MapMode {
+  DailyTrip,
+  ViewPoint
+}
+
 export interface MarkerInfor {
   marker: AMap.Marker,
   markerComponent: ComponentRef<ViewPointMarkerComponent>,
@@ -327,4 +367,5 @@ export interface MarkerInfor {
   viewPoint: IViewPointBiz,
   window: AMap.InfoWindow;
   windowComponent: ComponentRef<InformationWindowComponent>;
+  windowClickSuscription: Subscription
 }

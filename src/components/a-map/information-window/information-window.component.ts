@@ -1,7 +1,8 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
 
 import { IViewPointBiz } from '../../../bizModel/model/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'information-window-a',
@@ -13,12 +14,12 @@ export class InformationWindowComponent {
   //Private member
 
   //Event
-  @Output() public viewPointClickedEvent : EventEmitter<IViewPointBiz>;
+  @Output() public viewPointClickedEvent : Subject<IViewPointBiz>;
   //Event
 
   //Constructor
   constructor(private _cdRef: ChangeDetectorRef) {
-    this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
+    this.viewPointClickedEvent = new Subject<IViewPointBiz>();
   }
   //Constructor
 
@@ -30,7 +31,7 @@ export class InformationWindowComponent {
   //Public property
 
   //Implemented interface
-
+  
   //Implemented interface
 
   //Public method
@@ -55,7 +56,7 @@ export class InformationWindowComponent {
   }
 
   protected viewPointClicked(viewPoint : IViewPointBiz) {
-    this.viewPointClickedEvent.emit(viewPoint);
+    this.viewPointClickedEvent.next(viewPoint);
   }
 
   //Protected method

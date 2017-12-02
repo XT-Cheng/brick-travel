@@ -3,6 +3,7 @@
     {
       "id": "1",
       "name": "黄山",
+      "cover": "assets/img/IMG_4201.jpg",
       "user": {
         "id": "1",
         "name": "whoiscxt"

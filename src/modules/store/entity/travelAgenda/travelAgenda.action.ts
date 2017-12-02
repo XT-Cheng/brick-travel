@@ -8,6 +8,8 @@ import {
     entityLoadActionSucceeded,
     EntityTypeEnum,
     entityUpdateAction,
+    entityInsertAction,
+    entityDeleteAction,
 } from '../entity.action';
 import { IDailyTrip, ITravelAgenda } from './travelAgenda.model';
 
@@ -33,5 +35,18 @@ export class TravelAgendaActionGenerator {
     //#region update TravelAgenda
     @dispatch()
     updateDailyTrip = entityUpdateAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
+    //#endregion
+
+    //#region insert DailyTrip
+    @dispatch()
+    insertDailyTrip = entityInsertAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
+
+    //#endregion
+
+    //#region delete DailyTrip
+
+    @dispatch()
+    deleteDailyTrip = entityDeleteAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
+
     //#endregion
 }

@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Travel Agenda
+    </ion-title>
+    <ion-buttons end>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content no-padding>
+  <div style="display: flex;flex-direction:column; height:100%;" class='column'>
+    <a-map style="height: 40%;" 
+          [dailyTrip]='selectedDailyTrip$ | async'
+          [selectedViewPoint]='selectedViewPoint$ | async'></a-map>
+    <travel-agenda  style="flex:1;" 
+                    [selectedDailyTrip]='selectedDailyTrip$ | async' 
+                    [selectedViewPoint]='selectedViewPoint$ | async'
+                    [travelAgenda]='selectedTravelAgenda$ | async'
+                    (dailyTripSelectedEvent)='dailyTripSelected($event)'
+                    (viewPointSelectedEvent)='viewPointSelected($event)'
+                    (travelAgendaChangedEvent)='travelAgendaChanged($event)'
+                    (dailyTripAddedEvent)='dailyTripAdded($event)'
+                    (dailyTripRemovedEvent)='dailyTripRemoved($event)'
+                    (travelViewPointAddRequestEvent)='travelViewPointAddRequest()'></travel-agenda>
+  </div>
+</ion-content>

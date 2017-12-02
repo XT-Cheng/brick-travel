@@ -7,6 +7,7 @@ declare namespace AMap {
     clearInfoWindow(): void;
     setZoomAndCenter(zoomLevel:Number,center:LngLat): void;
     setCenter(center:LngLat): void;
+    setFitView() : void;
   }
 
   class MarkerClusterer {

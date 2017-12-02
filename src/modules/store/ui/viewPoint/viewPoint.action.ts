@@ -46,7 +46,7 @@ export function selectViewPointAction(viewPoint: IViewPointBiz | string): UIView
         type: UIViewPointActionTypeEnum.SELECT_VIEWPOINT,
         meta: { progressing : false },
         payload: Object.assign({},defaultViewPointActionPayload,{
-            selectedViewPointId:  typeof viewPoint === 'string' ? viewPoint : viewPoint.id
+            selectedViewPointId: viewPoint? (typeof viewPoint === 'string' ? viewPoint : viewPoint.id) : ''
         })
     };
 }

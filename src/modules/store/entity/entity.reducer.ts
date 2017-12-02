@@ -36,6 +36,36 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
 
         return nextState;
       }
+      case EntityActionTypeEnum.INSERT: {
+        let nextState = asMutable(state); 
+
+        Object.keys(action.payload.entities).forEach(key => {
+          Object.keys(action.payload.entities[key]).forEach(id => {
+            if (!Object.keys(state[key]).find(toFind => id === toFind)){
+              if (isImmutable(nextState[key]))
+                nextState[key] = asMutable(nextState[key]);
+              nextState[key][id] = action.payload.entities[key][id];
+            }
+          });
+        });
+
+        return nextState;
+      }
+      case EntityActionTypeEnum.DELETE: {
+        let nextState = asMutable(state); 
+
+        Object.keys(action.payload.entities).forEach(key => {
+          Object.keys(action.payload.entities[key]).forEach(id => {
+            if (Object.keys(state[key]).find(toFind => id === toFind)){
+              if (isImmutable(nextState[key]))
+                nextState[key] = asMutable(nextState[key]);
+              delete nextState[key][id];
+            }
+          });
+        });
+
+        return nextState;
+      }
     }
   }
   

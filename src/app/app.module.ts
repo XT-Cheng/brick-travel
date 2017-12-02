@@ -22,6 +22,7 @@ import { CityPickPage } from '../pages/city-pick/city-pick.page';
 import { ViewPointDetailComponent } from '../components/viewpoint-detail/viewpoint-detail';
 import { HomePage } from '../pages/home/home.page';
 import { ViewPointPage } from '../pages/view-point/view-point.page';
+import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { ViewPointPage } from '../pages/view-point/view-point.page';
     TravelAgendaComponent,
     DragulaDirective,
     ViewPointsPage,
+    TravelAgendaPage,
     CityPickPage
   ],
   imports: [
@@ -54,6 +56,7 @@ import { ViewPointPage } from '../pages/view-point/view-point.page';
     HomePage,
     ViewPointPage,
     ViewPointsPage,
+    TravelAgendaPage,
     CityPickPage,
     ViewPointMarkerComponent,
     InformationWindowComponent

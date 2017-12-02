@@ -9,6 +9,7 @@ export interface ITravelAgendaBiz {
     id: string,
     name: string,
     user: string,
+    cover: string,
     dailyTrips: IDailyTripBiz[]
 };
 
@@ -37,7 +38,10 @@ export function caculateDistance(dailyTrip : IDailyTripBiz) {
         ));
     }
 
-    dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
+    if (dailyTrip.travelViewPoints.length > 0)
+        dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
+    else
+        dailyTrip.lastViewPoint = '';
 }
 
 export function translateDailTrip(dailyTrip : IDailyTripBiz) : IDailyTrip {
@@ -52,6 +56,7 @@ export function translateTravelAgenda(travelAgenda : ITravelAgendaBiz) : ITravel
         id: travelAgenda.id,
         name: travelAgenda.name,
         user: travelAgenda.user,
+        cover: travelAgenda.cover,
         dailyTrips:  travelAgenda.dailyTrips.map(dt => dt.id)
     }
 }

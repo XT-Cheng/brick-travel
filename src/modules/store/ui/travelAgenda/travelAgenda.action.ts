@@ -1,6 +1,6 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
-import { ITravelAgendaBiz } from '../../../../bizModel/model/travelAgenda.biz.model';
+import { ITravelAgendaBiz, IDailyTripBiz } from '../../../../bizModel/model/travelAgenda.biz.model';
 import { IActionMetaInfo, IActionPayload } from '../../store.action';
 
 export interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {
@@ -27,22 +27,22 @@ export enum UITravelAgendaActionTypeEnum {
     SELECT_DAILYTRIP = "UI:TRAVELAGENDA:SELECT_DAILYTRIP"
 }
 
-export function selectTravelAgendaAction(selectedTravelAgendaId: string): UITravelAgendaAction {
+export function selectTravelAgendaAction(selectedTravelAgenda : ITravelAgendaBiz | string): UITravelAgendaAction {
     return {
         type: UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA,
         meta: { progressing : false },
         payload: Object.assign({},defaultAgendaActionPayload,{
-            selectedTravelAgendaId: selectedTravelAgendaId
+            selectedTravelAgendaId: typeof selectedTravelAgenda === 'string' ? selectedTravelAgenda : selectedTravelAgenda.id
         })
     };
 }
 
-export function selectDailyTripAction(selectedDailyTripId: string): UITravelAgendaAction {
+export function selectDailyTripAction(selectedDailyTrip: IDailyTripBiz | string): UITravelAgendaAction {
     return {
         type: UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP,
         meta: { progressing : false },
         payload: Object.assign({},defaultAgendaActionPayload,{
-            selectedDailyTripId: selectedDailyTripId
+            selectedDailyTripId: typeof selectedDailyTrip === 'string' ? selectedDailyTrip : selectedDailyTrip.id
         })
     };
 }

@@ -11,6 +11,7 @@ export interface ITravelAgenda {
     id: string;
     name: string;
     user: string;
+    cover: string,
     dailyTrips:  string[]
 };
 

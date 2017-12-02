@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { List } from 'ionic-angular';
 import { Observable, Subscription } from 'rxjs';
+import * as uuid from 'uuid';
 
 import {
     caculateDistance,
@@ -81,7 +82,14 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
 
   @Output() protected dailyTripSelectedEvent : EventEmitter<IDailyTripBiz>;
   @Output() protected viewPointSelectedEvent : EventEmitter<IViewPointBiz>;
-  @Output() protected dailyTripChangedEvent : EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>;
+
+  @Output() protected dailyTripAddedEvent : EventEmitter<{added: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>;
+  @Output() protected dailyTripRemovedEvent : EventEmitter<{removed: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>;
+
+  @Output() protected travelViewPointRemovedEvent : EventEmitter<{removed: ITravelViewPointBiz,travelAgenda:ITravelAgendaBiz}>;
+  @Output() protected travelViewPointAddRequestEvent : EventEmitter<void>;
+  
+  @Output() protected travelAgendaChangedEvent : EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>;
 
   //#endregion
 
@@ -97,14 +105,22 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
   constructor(private _dragulaService: DragulaService,private _renderer: Renderer2) {
     this.dailyTripSelectedEvent = new EventEmitter<IDailyTripBiz>();
     this.viewPointSelectedEvent = new EventEmitter<IViewPointBiz>();
-    this.dailyTripChangedEvent = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>();
+    
+    this.dailyTripAddedEvent = new EventEmitter<{added: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>();
+    this.dailyTripRemovedEvent = new EventEmitter<{removed: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>();
+    
+    this.travelViewPointRemovedEvent = new EventEmitter<{removed: ITravelViewPointBiz,travelAgenda:ITravelAgendaBiz}>();
+    
+    this.travelViewPointAddRequestEvent = new EventEmitter<void>();
+    
+    this.travelAgendaChangedEvent = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda:ITravelAgendaBiz}>();
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
     this._dragulaService.dropModel.subscribe((value: any) => {
-      this.dailyTripChangedEvent.emit({dailyTrip: this.selectedDailyTrip, travelAgenda: this.travelAgenda});
+      this.travelAgendaChangedEvent.emit({dailyTrip: this.selectedDailyTrip, travelAgenda: this.travelAgenda});
       if (this.selectedDailyTrip !== null) caculateDistance(this.selectedDailyTrip);
     });
 
@@ -174,16 +190,37 @@ export class TravelAgendaComponent implements AfterViewInit,OnDestroy {
 
   protected getDayItemClass(dailyTrip: IDailyTripBiz) {
     return {
-      'active': dailyTrip && (dailyTrip.id === this.selectedDailyTrip.id)
+      'active': dailyTrip && this.selectedDailyTrip && (dailyTrip.id === this.selectedDailyTrip.id)
     };
   }
 
   protected getTravelViewPointItemClass(travelViewPoint : ITravelViewPointBiz) {
     return {
-      'active': this.selectedViewPoint && travelViewPoint.viewPoint.id === this.selectedViewPoint.id
+      'active': travelViewPoint && this.selectedViewPoint && travelViewPoint.viewPoint.id === this.selectedViewPoint.id
     }
   }
   
+protected addTravelViewPointReq() {
+  this.travelViewPointAddRequestEvent.emit();
+}
+
+  protected addDay() {
+    //Create daily trip
+    let dailyTrip : IDailyTripBiz = {
+      id: uuid.v1(),
+      travelViewPoints: [],
+      lastViewPoint: ''
+    };
+    this.travelAgenda.dailyTrips.push(dailyTrip);
+
+    this.dailyTripAddedEvent.emit({added: dailyTrip, travelAgenda: this.travelAgenda});
+  }
+
+  protected deleteDay(dailyTrip : IDailyTripBiz) {
+    this.travelAgenda.dailyTrips = this.travelAgenda.dailyTrips.filter(trip => trip.id !== dailyTrip.id);
+    this.dailyTripRemovedEvent.emit({removed: dailyTrip, travelAgenda: this.travelAgenda});
+  }
+
   //#endregion
 
   //#region Private method
