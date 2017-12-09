@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>View Points Select</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="royal" (click)='switchDisplayMode()'>
+        <ion-icon [name]="getIconName()"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content no-padding>
+    <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' 
+            [viewPoints]='viewPoints$ | async'
+            [dailyTrip]='selectedDailyTrip$ | async'
+            [selectedViewPoint]='selectedViewPoint$ | async'
+            [viewMode]='viewMode$ | async'
+            (viewPointClickedEvent)='viewPointClicked($event)'></a-map>
+    <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)'
+                    [dailyTrip]='selectedDailyTrip$ | async'
+                    [viewPoints]='viewPoints$ | async'
+                    [viewMode]='viewMode$ | async'
+                    (viewPointClickedEvent)='viewPointClicked($event)'></viewpoint-list>
+  <ion-fab right edge #fab>
+    <button ion-fab mini>
+      <ion-icon name="add"></ion-icon>
+    </button>
+    <ion-fab-list>
+      <button ion-fab (click)='displaySearchBar(fab)'>
+        <ion-icon name="search"></ion-icon>
+      </button>
+      <button ion-fab (click)='displayFilterBar(fab)'>
+        <ion-icon name="color-filter"></ion-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>
+
+<viewpoint-search *ngIf='showSearchBar' 
+                  [searchKey]='currentSearch$ | async' 
+                  (searchEvent)='searchViewPoint($event)' 
+                  (backGroundClickedEvent)='dismissSearchBar()'></viewpoint-search>
+<viewpoint-filter *ngIf='showFilterBar' 
+                  [filterCategories]='currentFilterCategories$ | async' 
+                  (criteriaClickedEvent)='criteriaClicked($event)'
+                  (backGroundClickedEvent)='dismissFilterBar()'></viewpoint-filter>

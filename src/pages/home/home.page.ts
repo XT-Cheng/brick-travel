@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
-import { ViewPointsPage } from '../view-points/view-points.page';
+import { ViewPointsListPage } from '../view-points-list/view-points-list.page';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 
 @Component({
@@ -15,7 +15,7 @@ export class HomePage implements AfterViewInit {
 
   //#region Protected member
 
-  protected viewPointPage = ViewPointsPage;
+  protected viewPointsListPage = ViewPointsListPage;
   protected travelAgendaPage = TravelAgendaPage;
   
   //#endregion

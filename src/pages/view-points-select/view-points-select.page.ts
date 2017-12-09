@@ -4,11 +4,8 @@ import { Content, FabContainer, NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Rx';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
-import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
-import { getViewMode } from '../../bizModel/selector/ui/viewModeSelector';
 import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
 import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
@@ -19,15 +16,19 @@ import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/v
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { ViewPointPage } from '../view-point/view-point.page';
+import { AMapComponent } from '../../components/a-map/a-map.component';
+import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { getViewMode } from '../../bizModel/selector/ui/viewModeSelector';
+import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
 
 @Component({
-  selector: 'page-view-points',
-  templateUrl: 'view-points.page.html',
+  selector: 'page-view-points-select',
+  templateUrl: 'view-points-select.page.html',
 })
-export class ViewPointsPage implements AfterViewInit {
+export class ViewPointsSelectPage implements AfterViewInit {
   //#region Private member
   @ViewChild(Content) _content : Content;
-  
+  @ViewChild(AMapComponent) _aMap : AMapComponent;
   //#endregion
 
   //#region Protected member
@@ -54,7 +55,7 @@ export class ViewPointsPage implements AfterViewInit {
     private _cityActionGenerator: CityActionGenerator,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator,
     private _filterCategoryActionGenerator: FilterCategoryActionGenerator) {
-    this.displayMode = DisplayModeEnum.List;
+    this.displayMode = DisplayModeEnum.Map;
 
     this.viewPoints$ = getViewPoints(this._store);
     this.selectedViewPoint$ = getSelectedViewPoint(this._store);
@@ -128,8 +129,10 @@ export class ViewPointsPage implements AfterViewInit {
   protected switchDisplayMode() {
     if (this.displayMode === DisplayModeEnum.Map)
       this.displayMode = DisplayModeEnum.List;
-    else
+    else {
       this.displayMode = DisplayModeEnum.Map;
+      setTimeout(() => this._aMap.setFitView());
+    }
   }
 
   protected viewPointClicked(viewPoint : IViewPointBiz) {

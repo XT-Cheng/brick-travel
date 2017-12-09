@@ -2,6 +2,7 @@ import 'rxjs/add/operator/combineLatest';
 
 import { NgRedux } from '@angular-redux/store';
 import { AfterViewInit, Component } from '@angular/core';
+import { NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 
 import {
@@ -17,8 +18,7 @@ import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelect
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
-import { NavController } from 'ionic-angular';
-import { ViewPointsPage } from '../view-points/view-points.page';
+import { ViewPointsSelectPage } from '../view-points-select/view-points-select.page';
 
 @Component({
   selector: 'page-travel-agenda',
@@ -72,7 +72,7 @@ export class TravelAgendaPage implements AfterViewInit {
   }
 
   travelViewPointAddRequest() {
-    this._nav.push(ViewPointsPage);
+    this._nav.push(ViewPointsSelectPage);
   }
 
   dailyTripAdded(value : {added : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {

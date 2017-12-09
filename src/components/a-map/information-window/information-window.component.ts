@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, Output } from '@angular/core';
+import { Subject } from 'rxjs';
 
 import { IViewPointBiz } from '../../../bizModel/model/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map.component';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'information-window-a',

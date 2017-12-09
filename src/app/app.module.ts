@@ -17,12 +17,13 @@ import { StoreModule } from '../modules/store/store.module';
 import { TestPage } from '../pages/test/test.page';
 import { DragulaService } from '../providers/dragula.service';
 import { App } from './app.component';
-import { ViewPointsPage } from '../pages/view-points/view-points.page';
+import { ViewPointsListPage } from '../pages/view-points-list/view-points-list.page';
 import { CityPickPage } from '../pages/city-pick/city-pick.page';
 import { ViewPointDetailComponent } from '../components/viewpoint-detail/viewpoint-detail';
 import { HomePage } from '../pages/home/home.page';
 import { ViewPointPage } from '../pages/view-point/view-point.page';
 import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
+import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
     ViewPointDetailComponent,
     TravelAgendaComponent,
     DragulaDirective,
-    ViewPointsPage,
+    ViewPointsListPage,
+    ViewPointsSelectPage,
     TravelAgendaPage,
     CityPickPage
   ],
@@ -55,7 +57,8 @@ import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
     TestPage,
     HomePage,
     ViewPointPage,
-    ViewPointsPage,
+    ViewPointsListPage,
+    ViewPointsSelectPage,
     TravelAgendaPage,
     CityPickPage,
     ViewPointMarkerComponent,
