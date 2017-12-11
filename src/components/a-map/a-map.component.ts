@@ -217,7 +217,7 @@ export class AMapComponent implements AfterViewInit {
     let markerInfors = Array.from(this._markers.values());
 
     markerInfors.sort((a, b) => {
-      return a.markerComponent.instance.sequence - a.markerComponent.instance.sequence;
+      return a.markerComponent.instance.sequence - b.markerComponent.instance.sequence;
     });
 
     markerInfors.forEach(marker => {

@@ -22,6 +22,6 @@ export interface IDailyTrip {
 
 export interface ITravelViewPoint {
     id: string,
-    viewPoint: IViewPoint;
+    viewPoint: string;
     transportationToNext: TransportationCategory;
 }

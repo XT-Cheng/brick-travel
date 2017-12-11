@@ -4,11 +4,23 @@ import { Content, FabContainer, NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Rx';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
+import {
+    IDailyTripBiz,
+    ITravelAgendaBiz,
+    ITravelViewPointBiz,
+    translateDailTrip,
+    translateTravelAgenda,
+    translateTravelViewPoint,
+} from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
+import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
+import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgendaSelected.selector';
+import { getViewMode } from '../../bizModel/selector/ui/viewModeSelector';
 import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
 import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
+import { AMapComponent } from '../../components/a-map/a-map.component';
 import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
@@ -16,10 +28,6 @@ import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/v
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { ViewPointPage } from '../view-point/view-point.page';
-import { AMapComponent } from '../../components/a-map/a-map.component';
-import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
-import { getViewMode } from '../../bizModel/selector/ui/viewModeSelector';
-import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
 
 @Component({
   selector: 'page-view-points-select',
@@ -27,16 +35,17 @@ import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelect
 })
 export class ViewPointsSelectPage implements AfterViewInit {
   //#region Private member
-  @ViewChild(Content) _content : Content;
-  @ViewChild(AMapComponent) _aMap : AMapComponent;
+  @ViewChild(Content) _content: Content;
+  @ViewChild(AMapComponent) _aMap: AMapComponent;
   //#endregion
 
   //#region Protected member
-  
+
   protected viewPoints$: Observable<Array<IViewPointBiz>>;
   protected selectedViewPoint$: Observable<IViewPointBiz>;
   protected viewMode$: Observable<boolean>;
   protected selectedDailyTrip$: Observable<IDailyTripBiz>;
+  protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
   protected currentSearch$: Observable<string>;
   protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
 
@@ -59,6 +68,7 @@ export class ViewPointsSelectPage implements AfterViewInit {
 
     this.viewPoints$ = getViewPoints(this._store);
     this.selectedViewPoint$ = getSelectedViewPoint(this._store);
+    this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
     this.viewMode$ = getViewMode(this._store);
     this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
     this.currentFilterCategories$ = getCurrentFilters(this._store);
@@ -135,13 +145,33 @@ export class ViewPointsSelectPage implements AfterViewInit {
     }
   }
 
-  protected viewPointClicked(viewPoint : IViewPointBiz) {
+  protected viewPointClicked(viewPoint: IViewPointBiz) {
     this._uiActionGeneration.selectViewPoint(viewPoint);
     this._nav.push(ViewPointPage);
   }
 
-  protected getIconName() :string {
-    return (this.displayMode === DisplayModeEnum.Map) ? 'list':'map'; 
+  protected getIconName(): string {
+    return (this.displayMode === DisplayModeEnum.Map) ? 'list' : 'map';
+  }
+
+  protected viewPointAdded(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, added: ITravelViewPointBiz }) {
+    let dailyTrip = value.dailyTrip;
+    let travelAgenda = value.travelAgenda;
+    let travelViewPoint = value.added;
+
+    this._travelAgendaActionGenerator.insertTravelViewPoint(travelViewPoint.id, translateTravelViewPoint(travelViewPoint));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailTrip(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgenda(travelAgenda));
+  }
+
+  protected viewPointRemoved(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, removed: ITravelViewPointBiz }) {
+    let dailyTrip = value.dailyTrip;
+    let travelAgenda = value.travelAgenda;
+    let travelViewPoint = value.removed;
+
+    this._travelAgendaActionGenerator.deleteTravelViewPoint(travelViewPoint.id, translateTravelViewPoint(travelViewPoint));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailTrip(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgenda(travelAgenda));
   }
 
   //#region Private metohds

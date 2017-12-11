@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import * as uuid from 'uuid';
 
-import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelViewPointBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map/a-map.component';
 
@@ -18,12 +19,17 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Event
-  @Output() viewPointClickedEvent : EventEmitter<IViewPointBiz>;
+  @Output() viewPointClickedEvent: EventEmitter<IViewPointBiz>;
+  @Output() viewPointAddedToDailyTrip: EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,added: ITravelViewPointBiz}>;
+  @Output() viewPointRemovedFromDailyTrip: EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>;
+  
   //#endregion
 
   //#region Constructor
   constructor() {
     this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
+    this.viewPointAddedToDailyTrip = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,added: ITravelViewPointBiz}>();
+    this.viewPointRemovedFromDailyTrip = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>();
   }
   //#endregion
 
@@ -31,6 +37,7 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   @Input() protected viewMode: boolean;
   @Input() protected viewPoints: Array<IViewPointBiz>;
   @Input() protected dailyTrip: IDailyTripBiz;
+  @Input() protected travelAgenda : ITravelAgendaBiz;
 
   //#endregion
 
@@ -52,34 +59,25 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Protected method
-  protected clicked($event: any, viewPoint: IViewPointBiz) {
-    //this.viewPointClicked.emit(viewPoint);
-  }
 
   protected addOrRemove(viewPoint: IViewPointBiz) {
-    // if (this._viewMode) return;
-
-    // if (this.isInTrip(viewPoint)) {
-    //   let travelViewPoints = this._dailyTrip.travelViewPoints;
-    //   //Remove
-    //   for (let index = 0; index < travelViewPoints.length; index++) {
-    //     let vp = travelViewPoints[index].viewPoint;
-    //     if (vp.longtitude === viewPoint.longtitude && vp.latitude === viewPoint.latitude) {
-    //       travelViewPoints.splice(index, 1);
-    //     }
-    //   }
-    // }
-    // else {
-    //   //Add
-    //   for (let index = 0; index < this._viewPoints.length; index++) {
-    //     let vp = this._viewPoints[index];
-    //     if (vp.longtitude === viewPoint.longtitude && vp.latitude === viewPoint.latitude) {
-    //       let travleViewPoint = new TravelViewPoint();
-    //       travleViewPoint.viewPoint = viewPoint;
-    //       this._dailyTrip.travelViewPoints.push(travleViewPoint);
-    //     }
-    //   }
-    // }
+    if (this.actionAllowed(viewPoint) == ActionAllowed.ADD) {
+      //Create travel viewPoint
+      let travelViewPoint: ITravelViewPointBiz = {
+        id: uuid.v1(),
+        viewPoint: viewPoint,
+        distanceToNext: -1,
+        transportationToNext: null
+      };
+      this.dailyTrip.travelViewPoints.push(travelViewPoint);
+      this.viewPointAddedToDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,added: travelViewPoint})
+    }
+    else {
+      let removed = this.dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint.id == viewPoint.id)
+      this.dailyTrip.travelViewPoints =
+        this.dailyTrip.travelViewPoints.filter(tvp => tvp.viewPoint.id != viewPoint.id);
+        this.viewPointRemovedFromDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,removed: removed[0]})
+    }
   }
 
   protected getIconName(viewPoint: IViewPointBiz) {
@@ -100,7 +98,7 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
     return this.actionAllowed(viewPoint) !== ActionAllowed.NONE;
   }
 
-  protected viewPointClicked(viewPoint : IViewPointBiz) {
+  protected viewPointClicked(viewPoint: IViewPointBiz) {
     this.viewPointClickedEvent.emit(viewPoint);
   }
 
@@ -122,9 +120,9 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
 
   private actionAllowed(viewPoint: IViewPointBiz): ActionAllowed {
     if (!this.viewMode && this.dailyTrip) {
-        if (this.isInCurrentTrip(viewPoint))
-          return ActionAllowed.REMOVE;
-        return ActionAllowed.ADD;
+      if (this.isInCurrentTrip(viewPoint))
+        return ActionAllowed.REMOVE;
+      return ActionAllowed.ADD;
     }
 
     return ActionAllowed.NONE;

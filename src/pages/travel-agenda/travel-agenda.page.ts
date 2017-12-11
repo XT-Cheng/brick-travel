@@ -8,8 +8,10 @@ import { Observable } from 'rxjs/Observable';
 import {
     IDailyTripBiz,
     ITravelAgendaBiz,
+    ITravelViewPointBiz,
     translateDailTrip,
     translateTravelAgenda,
+    translateTravelViewPoint,
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
@@ -66,13 +68,23 @@ export class TravelAgendaPage implements AfterViewInit {
 
   travelAgendaChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.dailyTrip;
-    let travelAgeanda = value.travelAgenda;
+    let travelAgenda = value.travelAgenda;
     this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id,translateDailTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id,translateTravelAgenda(travelAgenda));
   }
 
   travelViewPointAddRequest() {
     this._nav.push(ViewPointsSelectPage);
+  }
+
+  travelViewPointRemoved(value : {removed : ITravelViewPointBiz,dailyTrip: IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
+    let dailyTrip = value.dailyTrip;
+    let travelAgenda = value.travelAgenda;
+    let removed = value.removed;
+    
+    this._travelAgendaActionGenerator.deleteTravelViewPoint(removed.id, translateTravelViewPoint(removed));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailTrip(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgenda(travelAgenda));
   }
 
   dailyTripAdded(value : {added : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {

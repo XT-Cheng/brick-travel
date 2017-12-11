@@ -2,6 +2,7 @@ import {
     IDailyTrip,
     ITravelAgenda,
     TransportationCategory,
+    ITravelViewPoint,
 } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IViewPointBiz } from './viewPoint.biz.model';
 
@@ -48,6 +49,14 @@ export function translateDailTrip(dailyTrip : IDailyTripBiz) : IDailyTrip {
     return {
         id: dailyTrip.id,
         travelViewPoints: dailyTrip.travelViewPoints.map(tvp => tvp.id)
+    };
+}
+
+export function translateTravelViewPoint(travelViewPoint : ITravelViewPointBiz) : ITravelViewPoint {
+    return {
+        id: travelViewPoint.id,
+        viewPoint: travelViewPoint.viewPoint.id,
+        transportationToNext: travelViewPoint.transportationToNext
     };
 }
 

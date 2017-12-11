@@ -17,9 +17,12 @@
             (viewPointClickedEvent)='viewPointClicked($event)'></a-map>
     <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)'
                     [dailyTrip]='selectedDailyTrip$ | async'
+                    [travelAgenda]='selectedTravelAgenda$ | async'
                     [viewPoints]='viewPoints$ | async'
                     [viewMode]='viewMode$ | async'
-                    (viewPointClickedEvent)='viewPointClicked($event)'></viewpoint-list>
+                    (viewPointClickedEvent)='viewPointClicked($event)'
+                    (viewPointAddedToDailyTrip)='viewPointAdded($event)'
+                    (viewPointRemovedFromDailyTrip)='viewPointRemoved($event)'></viewpoint-list>
   <ion-fab right edge #fab>
     <button ion-fab mini>
       <ion-icon name="add"></ion-icon>

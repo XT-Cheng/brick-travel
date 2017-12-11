@@ -11,11 +11,10 @@ import {
     entityInsertAction,
     entityDeleteAction,
 } from '../entity.action';
-import { IDailyTrip, ITravelAgenda } from './travelAgenda.model';
+import { IDailyTrip, ITravelAgenda, ITravelViewPoint } from './travelAgenda.model';
 
 @Injectable()
 export class TravelAgendaActionGenerator {
-
     //#region load TravelAgenda
     loadTravelAgendaStarted = entityLoadActionStarted(EntityTypeEnum.TRAVELAGENDA);
 
@@ -25,6 +24,7 @@ export class TravelAgendaActionGenerator {
     loadTravelAgendaSucceeded = entityLoadActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
 
     loadTravelAgendaFailed = entityLoadActionFailed(EntityTypeEnum.TRAVELAGENDA)
+    
     //#endregion
 
     //#region update TravelAgenda
@@ -32,7 +32,7 @@ export class TravelAgendaActionGenerator {
     updateTravelAgenda = entityUpdateAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
     //#endregion
 
-    //#region update TravelAgenda
+    //#region update DailyTrip
     @dispatch()
     updateDailyTrip = entityUpdateAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
     //#endregion
@@ -47,6 +47,19 @@ export class TravelAgendaActionGenerator {
 
     @dispatch()
     deleteDailyTrip = entityDeleteAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
+
+    //#endregion
+
+    //#region insert TravelViewPoint
+    @dispatch()
+    insertTravelViewPoint = entityInsertAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
+    //#endregion
+
+
+    //#region delete DailyTrip
+
+    @dispatch()
+    deleteTravelViewPoint = entityDeleteAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
 
     //#endregion
 }
