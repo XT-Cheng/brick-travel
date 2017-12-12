@@ -1,11 +1,13 @@
 export const INIT_UI_VIEWPOINT_STATE = {
   searchKey: '',
   selectedViewPointId: '',
-  filters: []
+  filterCriteriaIds: [],
+  filteredViewPointIds: []
 }
 
 export interface IViewPointUI {
   searchKey: string,
   selectedViewPointId: string,
-  filters: string[]
+  filterCriteriaIds: string[],
+  filteredViewPointIds: string[]
 }

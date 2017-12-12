@@ -9,8 +9,8 @@ import { IViewPointBiz } from '../../../bizModel/model/viewPoint.biz.model';
 })
 export class ViewPointMarkerComponent {
   //#region Private member
-  public static readonly WIDTH : number = 48;
-  public static readonly HEIGHT : number = 48;
+  public static readonly WIDTH: number = 48;
+  public static readonly HEIGHT: number = 48;
 
   //#endregion
 
@@ -21,9 +21,9 @@ export class ViewPointMarkerComponent {
 
   //Public property
 
-  @Input() public viewPoint : IViewPointBiz;
-  @Input() public sequence : number;
-  @Input() public inCurrentTrip : boolean;
+  @Input() public viewPoint: IViewPointBiz;
+  @Input() public sequence: number;
+  @Input() public inCurrentTrip: boolean;
 
   //Public property
 
@@ -38,14 +38,14 @@ export class ViewPointMarkerComponent {
   //Public method
 
   //Protected method
-  protected getSequenceDisplay() : string {
-    return this.inCurrentTrip?(this.sequence + 1).toString():'';
+  protected getSequenceDisplay(): string {
+    return this.inCurrentTrip ? (this.sequence + 1).toString() : '';
   }
 
   protected getOuterClass() {
     return {
       'icon-stack-normal': true,
-      'icon-map2':  true
+      'icon-map2': true
     }
   }
 
@@ -59,7 +59,7 @@ export class ViewPointMarkerComponent {
       };
 
     if (this.inCurrentTrip)
-    return this.getInnerClassOfTravelViewPoint();
+      return this.getInnerClassOfTravelViewPoint();
     return this.getInnerClassOfViewPoint();
   }
 
@@ -72,7 +72,7 @@ export class ViewPointMarkerComponent {
 
   protected getStyle() {
     let color: string;
-    
+
     switch (this.viewPoint.category) {
       case ViewPointCategory.View:
         color = 'blue';
@@ -85,7 +85,7 @@ export class ViewPointMarkerComponent {
     }
 
     if (this.inCurrentTrip)
-    color = 'green';
+      color = 'green';
 
     return {
       'color': color,
@@ -101,6 +101,9 @@ export class ViewPointMarkerComponent {
     switch (this.viewPoint.category) {
       case ViewPointCategory.View:
         isView = true;
+        break;
+      case ViewPointCategory.Food:
+        isRestaurant = true;
         break;
       case ViewPointCategory.Shopping:
         isShopping = true;

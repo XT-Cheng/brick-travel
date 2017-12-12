@@ -14,12 +14,17 @@ export class InformationWindowComponent {
   //Private member
 
   //Event
-  @Output() public viewPointClickedEvent : Subject<IViewPointBiz>;
+  @Output() viewPointClickedEvent : Subject<IViewPointBiz>;
+  @Output() viewPointAddedEvent: Subject<IViewPointBiz>;
+  @Output() viewPointRemovedEvent: Subject<IViewPointBiz>;
+  
   //Event
 
   //Constructor
   constructor(private _cdRef: ChangeDetectorRef) {
     this.viewPointClickedEvent = new Subject<IViewPointBiz>();
+    this.viewPointAddedEvent = new Subject<IViewPointBiz>();
+    this.viewPointRemovedEvent = new Subject<IViewPointBiz>();
   }
   //Constructor
 
@@ -59,5 +64,13 @@ export class InformationWindowComponent {
     this.viewPointClickedEvent.next(viewPoint);
   }
 
+  protected addOrRemove(viewPoint: IViewPointBiz) {
+    if (this.actionAllowed == ActionAllowed.ADD) {
+     this.viewPointAddedEvent.next(viewPoint);
+    }
+    else {
+     this.viewPointRemovedEvent.next(viewPoint);
+    }
+  }
   //Protected method
 }

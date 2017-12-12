@@ -76,18 +76,14 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
       let removed = this.dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint.id == viewPoint.id)
       this.dailyTrip.travelViewPoints =
         this.dailyTrip.travelViewPoints.filter(tvp => tvp.viewPoint.id != viewPoint.id);
-        this.viewPointRemovedFromDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,removed: removed[0]})
+        this.viewPointRemovedFromDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,removed: removed})
     }
   }
 
   protected getIconName(viewPoint: IViewPointBiz) {
     return this.actionAllowed(viewPoint) === ActionAllowed.REMOVE ? 'remove' : 'add';
   }
-
-  // protected getInnerCardStyle() {
-  //   if (this.actionAllowed) return {'max-width' : 'none', 'width': '100%'};
-  // }
-
+  
   protected getStyle(viewPoint: IViewPointBiz) {
     return {
       'background-color': this.actionAllowed(viewPoint) === ActionAllowed.NONE ? '#ffffff;' : '#e6e0e0;'

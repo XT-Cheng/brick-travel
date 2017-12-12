@@ -21,11 +21,11 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
       let nextState = <IViewPointUI>asMutable(state, { deep: true });
       let select = action.payload.selectCriteria;
 
-      nextState.filters = nextState.filters
+      nextState.filterCriteriaIds = nextState.filterCriteriaIds
         .filter(id => !select.unSelectedCriteriaIds.find(removed => removed === id));
 
       if (action.payload.selectCriteria.selectedCriteriaId)
-        nextState.filters.push(action.payload.selectCriteria.selectedCriteriaId);
+        nextState.filterCriteriaIds.push(action.payload.selectCriteria.selectedCriteriaId);
 
       return nextState;
     }

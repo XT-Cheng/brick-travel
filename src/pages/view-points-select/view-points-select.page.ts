@@ -13,11 +13,10 @@ import {
     translateTravelViewPoint,
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
 import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
 import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgendaSelected.selector';
 import { getViewMode } from '../../bizModel/selector/ui/viewModeSelector';
-import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
+import { getCurrentFilters, getFilteredViewPoints } from '../../bizModel/selector/ui/viewPointFilter.selector';
 import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
 import { AMapComponent } from '../../components/a-map/a-map.component';
@@ -66,7 +65,7 @@ export class ViewPointsSelectPage implements AfterViewInit {
     private _filterCategoryActionGenerator: FilterCategoryActionGenerator) {
     this.displayMode = DisplayModeEnum.Map;
 
-    this.viewPoints$ = getViewPoints(this._store);
+    this.viewPoints$ = getFilteredViewPoints(this._store);
     this.selectedViewPoint$ = getSelectedViewPoint(this._store);
     this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
     this.viewMode$ = getViewMode(this._store);
@@ -82,6 +81,10 @@ export class ViewPointsSelectPage implements AfterViewInit {
     this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaActionGenerator.loadTravelAgendas();
     this._filterCategoryActionGenerator.loadFilterCategories();
+
+    this.currentFilterCategories$.subscribe(categories => {
+      console.log('Categories:' + categories);
+    });
   }
   //#endregion
 

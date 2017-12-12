@@ -9,5 +9,6 @@ export interface IFilterCategoryBiz {
     id: string,
     name: string,
     criteries: IFilterCriteriaBiz[],
-    filter: string
+    filter: string,
+    filterFunction: string
 };

@@ -2,14 +2,15 @@
   "filterCategories": [{
     "name": "类型",
     "id": "1",
+    "filterFunction": "filterByCategory",
     "criteries":[{
       "id": "2",
       "name": "景点",
-      "criteria": ""
+      "criteria": "0"
     },{
       "id": "3",
       "name": "美食",
-      "criteria": ""
+      "criteria": "1"
     }]},
     {
       "id": "2",

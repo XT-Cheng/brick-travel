@@ -1,5 +1,3 @@
-import { IViewPoint } from "../viewPoint/viewPoint.model"
-
 export enum TransportationCategory {
     Walking,
     SmallBus,

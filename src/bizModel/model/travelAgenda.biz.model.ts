@@ -37,6 +37,10 @@ export function caculateDistance(dailyTrip : IDailyTripBiz) {
         vp.distanceToNext = Math.round(new AMap.LngLat(vp.viewPoint.longtitude, vp.viewPoint.latitude).distance(
             new AMap.LngLat(vpNext.viewPoint.longtitude, vpNext.viewPoint.latitude)
         ));
+
+        if (vp.transportationToNext == null) {
+            vp.transportationToNext = TransportationCategory.Walking;
+        }
     }
 
     if (dailyTrip.travelViewPoints.length > 0)

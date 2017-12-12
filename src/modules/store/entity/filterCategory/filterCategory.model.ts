@@ -8,5 +8,6 @@ export interface IFilterCategory {
     id: string
     name: string,
     criteries: string[],
-    filter: string
+    filter: string,
+    filterFunction: string
 };

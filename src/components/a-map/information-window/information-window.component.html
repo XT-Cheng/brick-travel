@@ -17,7 +17,7 @@
         </ion-card>
       </ion-col>
       <ion-col col-3 *ngIf='displayButton()'>
-        <button ion-button icon-only clear large>
+        <button ion-button icon-only clear large  (click)='addOrRemove(viewPoint)'>
           <ion-icon [name]='getIconName()'></ion-icon>
         </button>
       </ion-col>
