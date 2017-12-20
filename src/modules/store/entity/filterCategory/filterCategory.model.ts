@@ -5,7 +5,7 @@ export interface IFilterCriteria {
 };
 
 export interface IFilterCategory {
-    id: string
+    id: string,
     name: string,
     criteries: string[],
     filter: string,

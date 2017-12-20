@@ -24,10 +24,13 @@ export class ViewPointService {
 
   //#region Public methods
   public getViewPoints(pagination : IPagination): Observable<IEntities> {
-    let jsonFile = (pagination.page == 0)?'assets/data/viewPoints.json':'assets/data/viewPoints.page.json'
-    return this._http.get(jsonFile).map(resp => resp.json())
+    //let url = (pagination.page == 0)?'assets/data/viewPoints.json':'assets/data/viewPoints.page.json'
+    let url = 'http://localhost:3000/viewPoint'
+    return this._http.get(url).map(resp => {
+      return resp.json()
+    })
     .map(records => {
-      return normalize(records.viewPoints, [ viewPoint ]).entities;
+      return normalize(records, [ viewPoint ]).entities;
     })
   }
   //#endregion

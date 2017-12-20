@@ -9,18 +9,18 @@ export enum ViewPointCategory {
 
 export interface IViewPoint {
     id: string,
-    name: string;
-    description: string;
-    tips: string;
-    timeNeeded: string;
-    thumbnail: string;
-    address: string;
-    latitude: number;
-    longtitude: number;
-    category: ViewPointCategory;
-    rank: number;
-    images : string[];
-    comments: IViewPointComment[] | string[];
+    name: string,
+    description: string,
+    tips: string,
+    timeNeeded: string,
+    thumbnail: string,
+    address: string,
+    latitude: number,
+    longtitude: number,
+    category: ViewPointCategory,
+    rank: number,
+    images : string[],
+    comments: IViewPointComment[] | string[],
 }
 
 export interface IViewPointComment {
