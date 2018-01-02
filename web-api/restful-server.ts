@@ -6,6 +6,7 @@ import { connect, Schema } from 'mongoose';
 import * as logger from 'morgan';
 import { Observable } from 'rxjs/Rx';
 import { ViewPointRoute } from './routes/viewPoint.route';
+import { CityRoute } from './routes/city.route';
 
 /**
  * The server.
@@ -101,6 +102,7 @@ export class RestfulServer {
 
             //Route create
             ViewPointRoute.create(router);
+            CityRoute.create(router);
             
             //use router middleware
             this.app.use(router);

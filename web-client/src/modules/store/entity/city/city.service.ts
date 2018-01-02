@@ -24,11 +24,10 @@ export class CityService {
 
   //#region Public methods
   public getCities(pagination : IPagination): Observable<IEntities> {
-    let jsonFile = (pagination.page == 0)?'assets/data/cities.json':'assets/data/cities.page.json'
-    return this._http.get(jsonFile)
+    return this._http.get('http://localhost:3000/cities')
     .map(resp => resp.json())
     .map(records => {
-      return normalize(records.cities, [ city ]).entities;
+      return normalize(records, [ city ]).entities;
     })
   }
   //#endregion
