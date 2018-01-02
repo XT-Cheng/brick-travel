@@ -1,0 +1,30 @@
+<ion-list>
+  <ion-card class='outer-card' [ngStyle]='getStyle(viewPoint)' *ngFor="let viewPoint of viewPoints">
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col [attr.col-12]='displayButton(viewPoint)?null:""' 
+                 [attr.col-9]='!displayButton(viewPoint)?null:""'
+                 (click)='viewPointClicked(viewPoint)' >
+          <ion-card class='inner-card' [ngStyle]='getStyle(viewPoint)'>
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col class='col-img' col-5>
+                  <img style='height:80px;width:80px;' [src]="viewPoint.thumbnail">
+                </ion-col>
+                <ion-col col-7>
+                  <div class='title'>{{viewPoint.name}}</div>
+                  <rate class='fr' [readOnly]='true' [(ngModel)]="viewPoint.rank"></rate>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </ion-col>
+        <ion-col col-3 *ngIf='displayButton(viewPoint)'>
+          <button ion-button icon-only clear large (click)='addOrRemove(viewPoint)'>
+            <ion-icon [name]='getIconName(viewPoint)'></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+</ion-list>

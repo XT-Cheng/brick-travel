@@ -1,0 +1,28 @@
+{
+  "filterCategories": [{
+    "name": "类型",
+    "id": "1",
+    "filterFunction": "filterByCategory",
+    "criteries":[{
+      "id": "2",
+      "name": "景点",
+      "criteria": "0"
+    },{
+      "id": "3",
+      "name": "美食",
+      "criteria": "1"
+    }]},
+    {
+      "id": "2",
+      "name": "时间消耗",
+      "criteries":[{
+        "id": "5",
+        "name": "1小时以内",
+        "criteria": ""
+      },{
+        "id": "6",
+        "name": "1-2小时",
+        "criteria": ""
+      }]}
+  ]
+}
