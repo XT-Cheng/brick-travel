@@ -27,7 +27,7 @@ export class ViewPointEpic {
       .ofType(EntityActionTypeEnum.LOAD)
       .filter(action => action.meta.entityType === entityType && !!action.meta.pagination)
       .switchMap(action => {
-        return this._service.getViewPoints(action.meta.pagination)
+        return this._service.getViewPoints(action.meta.pagination,action.payload.queryCondition)
         .map(data => this._action.loadViewPointSucceeded(data))
         .catch(response => 
           of(this._action.loadViewPointFailed(response))

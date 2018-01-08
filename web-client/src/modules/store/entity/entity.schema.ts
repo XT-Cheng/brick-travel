@@ -4,11 +4,12 @@ export const viewPointComment = new schema.Entity('viewPointComments');
 
 export const user = new schema.Entity('users');
 
-export const viewPoint = new schema.Entity('viewPoints',{
-    comments: [ viewPointComment ]
-});
-
 export const city = new schema.Entity('cities');
+
+export const viewPoint = new schema.Entity('viewPoints',{
+    comments: [ viewPointComment ],
+    city: city
+});
 
 export const travelViewPoint = new schema.Entity('travelViewPoints',{
     viewPoint: viewPoint

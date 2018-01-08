@@ -24,8 +24,7 @@ export class TravelAgendaService {
 
   //#region Public methods
   public getTravelAgenda(pagination : IPagination): Observable<IEntities> {
-    let jsonFile = 'assets/data/travelAgendas.json'
-    return this._http.get(jsonFile)
+    return this._http.get('http://localhost:3000/travelAgendas')
     .map(resp => resp.json())
     .map(records => {
       return normalize(records.travelAgendas, [ travelAgenda ]).entities;

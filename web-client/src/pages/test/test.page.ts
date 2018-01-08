@@ -94,7 +94,7 @@ export class TestPage implements AfterViewInit {
 
   fetchMore(): void {
     //this._cityAction.loadCities(1,50);
-    this._viewPointActionGenerator.loadViewPoints(1, 50);
+   // this._viewPointActionGenerator.loadViewPoints(1, 50);
     //this._travelAgendaAction.loadTravelAgendas();
   }
 

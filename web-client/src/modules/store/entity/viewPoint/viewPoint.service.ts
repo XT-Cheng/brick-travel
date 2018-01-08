@@ -6,7 +6,7 @@ import { Observable } from "rxjs/Observable";
 import { normalize } from 'normalizr';
 import { viewPoint } from '../entity.schema';
 import { IEntities } from '../entity.model';
-import { IPagination } from '../entity.action';
+import { IPagination, IQueryCondition } from '../entity.action';
 
 @Injectable()
 export class ViewPointService {
@@ -23,9 +23,16 @@ export class ViewPointService {
   //#endregion
 
   //#region Public methods
-  public getViewPoints(pagination : IPagination): Observable<IEntities> {
-    //let url = (pagination.page == 0)?'assets/data/viewPoints.json':'assets/data/viewPoints.page.json'
-    let url = 'http://localhost:3000/viewPoint'
+  public getViewPoints(pagination : IPagination, queryCondition : IQueryCondition): Observable<IEntities> {
+    let url = 'http://localhost:3000/';
+    if (queryCondition) {
+      url += queryCondition['cityId'];
+      url += '/viewPoints';;
+    }
+    else {
+      url += 'viewPoints';
+    }
+    
     return this._http.get(url).map(resp => {
       return resp.json()
     })

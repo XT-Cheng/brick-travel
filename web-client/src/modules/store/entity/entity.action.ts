@@ -14,8 +14,13 @@ export interface IPagination {
     limit: number;
 }
 
+export interface IQueryCondition {
+    [key : string] : string;
+}
+
 export interface IEntityActionPayload extends IActionPayload {
     entities: IEntities
+    queryCondition? : IQueryCondition
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
@@ -60,12 +65,14 @@ let defaultEntityActionMeta = {
 
 //#region Load Actions
 export function entityLoadAction(entityType : EntityTypeEnum) {
-    return (page: number = 0,limit: number = 50) : EntityAction => ({
+    return (queryCondition : IQueryCondition = {}, page: number = 0,limit: number = 50) : EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
         meta: Object.assign({},defaultEntityActionMeta,{
             pagination: {page: page,limit: limit},progressing: true,entityType: entityType,phaseType: EntityActionPhaseEnum.TRIGGER
         }),
-        payload: defaultEntityActionPayload
+        payload: Object.assign({},defaultEntityActionPayload,{
+            queryCondition: queryCondition
+        })
     })
 }
 

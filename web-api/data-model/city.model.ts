@@ -1,5 +1,4 @@
-import { Mongoose, Schema, Document, model } from 'mongoose'
-import { prop, Typegoose, ModelType, InstanceType, arrayProp, pre, instanceMethod, staticMethod } from 'typegoose';
+import { ModelType, prop, staticMethod, Typegoose } from 'typegoose';
 
 export class City extends Typegoose {
     @prop()
@@ -18,12 +17,6 @@ export var CityModel = new City().getModelForClass(City, {
         toJSON: {
             transform: (doc, ret, options) => {
                 ret.id = ret._id;
-                if (ret.comments) {
-                    ret.comments = ret.comments.map((comment) => {
-                        delete comment._id;
-                        return comment;
-                    })
-                };
                 delete ret._id;
                 delete ret.__v;
                 return ret;

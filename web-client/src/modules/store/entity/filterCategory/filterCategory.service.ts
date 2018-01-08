@@ -24,10 +24,10 @@ export class FilterCategoryService {
 
   //#region Public methods
   public getFilterCategory(pagination : IPagination): Observable<IEntities> {
-    let jsonFile = 'assets/data/filterCategories.json';
-    return this._http.get(jsonFile).map(resp => resp.json())
+    return this._http.get('http://localhost:3000/filterCategories')
+    .map(resp => resp.json())
     .map(records => {
-      return normalize(records.filterCategories, [ filterCategory ]).entities;
+      return normalize(records, [ filterCategory ]).entities;
     })
   }
   //#endregion

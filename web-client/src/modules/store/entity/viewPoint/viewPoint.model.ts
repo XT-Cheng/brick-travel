@@ -9,6 +9,7 @@ export enum ViewPointCategory {
 
 export interface IViewPoint {
     id: string,
+    city: string,
     name: string,
     description: string,
     tips: string,

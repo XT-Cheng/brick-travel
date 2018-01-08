@@ -1,18 +1,20 @@
 import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Content, FabContainer, NavController } from 'ionic-angular';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subscription } from 'rxjs/Rx';
 
+import { ICityBiz } from '../../bizModel/model/city.biz.model';
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { getSelectedCity } from '../../bizModel/selector/ui/citySelected.selector';
 import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
-import { getViewMode } from '../../bizModel/selector/ui/viewModeSelector';
+import { getViewMode } from '../../bizModel/selector/ui/viewModeSelected.selector';
 import { getCurrentFilters, getFilteredViewPoints } from '../../bizModel/selector/ui/viewPointFilter.selector';
 import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
@@ -24,7 +26,8 @@ import { ViewPointPage } from '../view-point/view-point.page';
   selector: 'page-view-points-list',
   templateUrl: 'view-points-list.page.html',
 })
-export class ViewPointsListPage implements AfterViewInit {
+export class ViewPointsListPage implements AfterViewInit, OnDestroy {
+
   //#region Private member
   @ViewChild(Content) _content : Content;
   @ViewChild(AMapComponent) _aMap : AMapComponent;
@@ -38,6 +41,9 @@ export class ViewPointsListPage implements AfterViewInit {
   protected selectedDailyTrip$: Observable<IDailyTripBiz>;
   protected currentSearch$: Observable<string>;
   protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
+  protected selectedCity$ : Observable<ICityBiz>;
+  
+  protected subscriptions : Array<Subscription>;
 
   protected displayModeEnum = DisplayModeEnum;
   protected displayMode: DisplayModeEnum;
@@ -51,7 +57,6 @@ export class ViewPointsListPage implements AfterViewInit {
     private _store: NgRedux<IAppState>,
     private _uiActionGeneration: UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator,
-    private _cityActionGenerator: CityActionGenerator,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator,
     private _filterCategoryActionGenerator: FilterCategoryActionGenerator) {
     this.displayMode = DisplayModeEnum.Map;
@@ -61,17 +66,28 @@ export class ViewPointsListPage implements AfterViewInit {
     this.viewMode$ = getViewMode(this._store);
     this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
     this.currentFilterCategories$ = getCurrentFilters(this._store);
+    this.selectedCity$ =  getSelectedCity(this._store);
     this.currentSearch$ = getViewPointSearch(this._store);
+
+    this.subscriptions = new Array<Subscription>();
   }
   //#endregion
 
   //#region Implements interface
   ngAfterViewInit(): void {
-    this._cityActionGenerator.loadCities();
-    this._viewPointActionGenerator.loadViewPoints();
+    //this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaActionGenerator.loadTravelAgendas();
     this._filterCategoryActionGenerator.loadFilterCategories();
+
+    this.subscriptions.push(this.selectedCity$.subscribe(city => {
+      this._viewPointActionGenerator.loadViewPoints({cityId: city.id});
+    }));
   }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
   //#endregion
 
   //#region Protected method

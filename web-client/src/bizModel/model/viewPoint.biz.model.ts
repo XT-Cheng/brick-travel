@@ -1,9 +1,11 @@
 import { ViewPointCategory } from "../../modules/store/entity/viewPoint/viewPoint.model";
+import { ICity } from "../../modules/store/entity/city/city.model";
 
 
 export interface IViewPointBiz {
     id: string,
     name: string,
+    city: ICity,
     description: string,
     tips: string,
     timeNeeded: string,

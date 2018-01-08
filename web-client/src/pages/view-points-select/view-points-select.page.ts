@@ -15,7 +15,7 @@ import {
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
 import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgendaSelected.selector';
-import { getViewMode } from '../../bizModel/selector/ui/viewModeSelector';
+import { getViewMode } from '../../bizModel/selector/ui/viewModeSelected.selector';
 import { getCurrentFilters, getFilteredViewPoints } from '../../bizModel/selector/ui/viewPointFilter.selector';
 import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';

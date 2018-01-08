@@ -1,5 +1,6 @@
 import { Mongoose, Schema, Document, model } from 'mongoose'
-import { prop, Typegoose, ModelType, InstanceType, arrayProp, pre, instanceMethod, staticMethod } from 'typegoose';
+import { prop, Typegoose, ModelType, InstanceType, arrayProp, pre, instanceMethod, staticMethod, Ref } from 'typegoose';
+import { City } from './city.model';
 
 export enum ViewPointCategory {
     View,
@@ -26,10 +27,12 @@ export class ViewPointComment {
 }
 
 export class ViewPoint extends Typegoose {
-    private static readonly commentsPerLoad = 2;
+    public static readonly commentsPerLoad = 2;
 
     @prop()
     name: string;
+    @prop({ref: City})
+    city: Ref<City>;
     @prop()
     description: string;
     @prop()
@@ -61,16 +64,34 @@ export class ViewPoint extends Typegoose {
         return this.save();
     }
     @staticMethod
-    static loadComments(this: ModelType<ViewPoint> & typeof ViewPoint, id: string,skip: number,limit: number) {
-        return this.findById(id).slice('comments',[skip,limit]).select('comments');
+    static loadComments(this: ModelType<ViewPoint> & typeof ViewPoint, id: string, skip: number) {
+        //NOTE: https://stackoverflow.com/questions/7670073/how-to-combine-both-slice-and-select-returned-keys-operation-in-function-update
+        return this.findById(id).slice('comments', [skip, ViewPoint.commentsPerLoad])
+            .select({
+                name: 0,
+                updatedAt: 0,
+                createdAt: 0,
+                _id: 0,
+                description: 0,
+                tips: 0,
+                timeNeeded: 0,
+                thumbnail: 0,
+                address: 0,
+                latitude: 0,
+                longtitude: 0,
+                category: 0,
+                rank: 0,
+                images: 0,
+                countOfComments: 0
+            });
     }
     @staticMethod
     static findViewPoints(this: ModelType<ViewPoint> & typeof ViewPoint) {
-        return this.find().slice('comments',[0,ViewPoint.commentsPerLoad]);
+        return this.find().slice('comments', [0, ViewPoint.commentsPerLoad]);
     }
     @staticMethod
-    static createViewPoint(this: ModelType<ViewPoint> & typeof ViewPoint, create: any) {
-        return this.create(create);
+    static findViewPointsByCity(this: ModelType<ViewPoint> & typeof ViewPoint, cityId : string) {
+        return this.find({city: cityId}).slice('comments', [0, ViewPoint.commentsPerLoad]);
     }
 }
 
