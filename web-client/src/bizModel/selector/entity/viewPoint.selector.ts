@@ -13,7 +13,7 @@ export function getViewPoints(store : NgRedux<IAppState>) : Observable<IViewPoin
 }
 
 function getViewPointsInternal(store : NgRedux<IAppState>) {
-    return (data : { [id : string] : IViewPoint }) : IViewPointBiz[] => {
+    return (data : { [_id : string] : IViewPoint }) : IViewPointBiz[] => {
         let ret = new Array<IViewPointBiz>();
         let cities = asMutable(store.getState().entities.cities);
         let comments = asMutable(store.getState().entities.viewPointComments);
@@ -21,7 +21,7 @@ function getViewPointsInternal(store : NgRedux<IAppState>) {
         Object.keys(viewPoints).forEach(key => {
             let viewPoint = viewPoints[key];
             viewPoint.city = cities[viewPoint.city];
-            viewPoint.comments = viewPoint.comments.map(id => comments[id]);
+            viewPoint.comments = viewPoint.comments.map(_id => comments[_id]);
             ret.push(viewPoint);
         });
         

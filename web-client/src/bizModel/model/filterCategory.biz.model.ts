@@ -1,12 +1,12 @@
 export interface IFilterCriteriaBiz {
-    id: string,
+    _id: string,
     name: string,
     criteria: string,
     isChecked: boolean
 };
 
 export interface IFilterCategoryBiz {
-    id: string,
+    _id: string,
     name: string,
     criteries: IFilterCriteriaBiz[],
     filter: string,

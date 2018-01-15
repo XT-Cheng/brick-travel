@@ -3,12 +3,16 @@ import { prop, Typegoose, ModelType, InstanceType, arrayProp, pre, instanceMetho
 
 export class FilterCriteria {
     @prop()
+    _id: string;
+    @prop()
     name: string;
     @prop()
     criteria: string;
 }
 
 export class FilterCategory extends Typegoose {
+    @prop()
+    _id: string;
     @prop()
     name: string;
     @prop()
@@ -26,15 +30,6 @@ export var FilterCategoryModel = new FilterCategory().getModelForClass(FilterCat
         timestamps: true,
         toJSON: {
             transform: (doc, ret, options) => {
-                ret.id = ret._id;
-                if (ret.criteries) {
-                    ret.criteries = ret.criteries.map((criteria) => {
-                        criteria.id = criteria._id;
-                        delete criteria._id;
-                        return criteria;
-                    })
-                };
-                delete ret._id;
                 delete ret.__v;
                 return ret;
             }

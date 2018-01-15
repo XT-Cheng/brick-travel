@@ -6,7 +6,7 @@ export enum TransportationCategory {
 }
 
 export interface ITravelAgenda {
-    id: string,
+    _id: string,
     name: string,
     user: string,
     cover: string,
@@ -14,12 +14,12 @@ export interface ITravelAgenda {
 };
 
 export interface IDailyTrip {
-    id: string,
+    _id: string,
     travelViewPoints:  string[],
 }
 
 export interface ITravelViewPoint {
-    id: string,
+    _id: string,
     viewPoint: string,
     transportationToNext: TransportationCategory
 }

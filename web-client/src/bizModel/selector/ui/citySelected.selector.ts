@@ -12,7 +12,7 @@ function getSelectedCityId(store: NgRedux<IAppState>): Observable<string> {
 function getCityById(cityId: string, cities: ICityBiz[]): ICityBiz {
     let found = null;
     cities.forEach(city => {
-            if (city.id === cityId) {
+            if (city._id === cityId) {
                 found = city;
         }
     })

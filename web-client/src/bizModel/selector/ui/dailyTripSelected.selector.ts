@@ -13,7 +13,7 @@ function getDailyTripById(dailyTripId: string, travelAgendas: ITravelAgendaBiz[]
     let found = null;
     travelAgendas.forEach(agenda => {
         agenda.dailyTrips.forEach(dailyTrip => {
-            if (dailyTrip.id === dailyTripId) {
+            if (dailyTrip._id === dailyTripId) {
                 found = dailyTrip;
             }
         })

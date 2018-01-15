@@ -10,6 +10,10 @@ import {
     entityUpdateAction,
     entityInsertAction,
     entityDeleteAction,
+    entityFlushAction,
+    entityFlushActionStarted,
+    entityFlushActionSucceeded,
+    entityFlushActionFailed,
 } from '../entity.action';
 import { IDailyTrip, ITravelAgenda, ITravelViewPoint } from './travelAgenda.model';
 
@@ -43,6 +47,12 @@ export class TravelAgendaActionGenerator {
 
     //#endregion
 
+    //#region insert TravelAgenda
+    @dispatch()
+    insertTravelAgenda = entityInsertAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
+
+    //#endregion
+
     //#region delete DailyTrip
 
     @dispatch()
@@ -55,11 +65,26 @@ export class TravelAgendaActionGenerator {
     insertTravelViewPoint = entityInsertAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
     //#endregion
 
+    //#region delete TravelViewPoint
+    @dispatch()
+    updateTravelViewPoint = entityUpdateAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
+    //#endregion
 
-    //#region delete DailyTrip
+    //#region delete TravelViewPoint
 
     @dispatch()
     deleteTravelViewPoint = entityDeleteAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
 
+    //#endregion
+
+    //#region flush TravelAgenda
+    flushTravelAgendaStarted = entityFlushActionStarted(EntityTypeEnum.TRAVELAGENDA);
+
+    @dispatch()
+    flushTravelAgenda = entityFlushAction(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
+    
+    flushTravelAgendaSucceeded = entityFlushActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
+
+    flushTravelAgendaFailed = entityFlushActionFailed(EntityTypeEnum.TRAVELAGENDA)
     //#endregion
 }

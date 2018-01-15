@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { asMutable } from 'seamless-immutable';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz, translateDailTrip, translateTravelAgenda } from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, translateDailyTrip, translateTravelAgenda } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getFilterCategories } from '../../bizModel/selector/entity/filterCategory.selector';
 import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
@@ -109,7 +109,7 @@ export class TestPage implements AfterViewInit {
 
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
     //this.dayTripSelected$.next(dailyTrip);
-    this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
+    this._uiActionGeneration.selectDailyTrip(dailyTrip._id);
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {
@@ -119,8 +119,8 @@ export class TestPage implements AfterViewInit {
   dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.dailyTrip;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip.id,translateDailTrip(dailyTrip));
-    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
+    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgenda(travelAgeanda));
   }
 
   getDailyTrips(): Array<IDailyTripBiz> {
@@ -156,9 +156,9 @@ export class TestPage implements AfterViewInit {
 
     filterChanged.category.criteries.forEach(c => {
       if (c.isChecked)
-        checkId = c.id;
+        checkId = c._id;
       else
-        unCheckIds.push(c.id);
+        unCheckIds.push(c._id);
     });
 
     this._uiActionGeneration.selectCriteria(checkId, unCheckIds);

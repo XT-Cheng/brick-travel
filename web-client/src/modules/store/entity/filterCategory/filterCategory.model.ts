@@ -1,11 +1,11 @@
 export interface IFilterCriteria {
-    id: string,
+    _id: string,
     name: string,
     criteria: string
 };
 
 export interface IFilterCategory {
-    id: string,
+    _id: string,
     name: string,
     criteries: string[],
     filter: string,

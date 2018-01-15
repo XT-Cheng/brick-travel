@@ -8,29 +8,31 @@ export interface IEntityActionMetaInfo extends IActionMetaInfo {
     entityType: EntityTypeEnum;
     phaseType: EntityActionPhaseEnum;
 }
-  
+
 export interface IPagination {
     page: number;
     limit: number;
 }
 
 export interface IQueryCondition {
-    [key : string] : string;
+    [key: string]: string;
 }
 
 export interface IEntityActionPayload extends IActionPayload {
     entities: IEntities
-    queryCondition? : IQueryCondition
+    queryCondition?: IQueryCondition,
+    objectId? : string
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
 export type EntityAction = FluxStandardAction<IEntityActionPayload, IEntityActionMetaInfo>;
 
-export enum EntityActionPhaseEnum{
+export enum EntityActionPhaseEnum {
     TRIGGER = "TRIGGER",
     START = "START",
     SUCCEED = "SUCCEED",
     FAIL = "FAIL",
+    EXECUTE = "EXECUTE"
 }
 
 export enum EntityTypeEnum {
@@ -43,68 +45,77 @@ export enum EntityTypeEnum {
     TRAVELVIEWPOINT = "TRAVELVIEWPOINT"
 }
 
-export enum EntityActionTypeEnum  {
+export enum EntityActionTypeEnum {
     LOAD = "ENTITY:LOAD",
     SAVE = "ENTITY:SAVE",
     UPDATE = "ENTITY:UPDATE",
     INSERT = "ENTITY:INSERT",
-    DELETE = "ENTITY:DELETE"
+    DELETE = "ENTITY:DELETE",
+    FLUSH = "ENTITY:FLUSH"
 }
 
 let defaultEntityActionPayload = {
     error: null,
-    entities: null
+    entities: null,
+    objectId: ''
 }
 
 let defaultEntityActionMeta = {
     pagination: null,
-    phaseType: EntityActionPhaseEnum.SUCCEED,
+    phaseType: EntityActionPhaseEnum.EXECUTE,
     progressing: false
 }
 
 
 //#region Load Actions
-export function entityLoadAction(entityType : EntityTypeEnum) {
-    return (queryCondition : IQueryCondition = {}, page: number = 0,limit: number = 50) : EntityAction => ({
+export function entityLoadAction(entityType: EntityTypeEnum) {
+    return (queryCondition: IQueryCondition = {}, page: number = 0, limit: number = 50): EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: Object.assign({},defaultEntityActionMeta,{
-            pagination: {page: page,limit: limit},progressing: true,entityType: entityType,phaseType: EntityActionPhaseEnum.TRIGGER
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            pagination: { page: page, limit: limit },
+            progressing: true,
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.TRIGGER
         }),
-        payload: Object.assign({},defaultEntityActionPayload,{
+        payload: Object.assign({}, defaultEntityActionPayload, {
             queryCondition: queryCondition
         })
     })
 }
 
-export function entityLoadActionStarted( entityType : EntityTypeEnum) {
-    return () : EntityAction => ({
+export function entityLoadActionStarted(entityType: EntityTypeEnum) {
+    return (): EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: Object.assign({},defaultEntityActionMeta,{
-            progressing: true, entityType: entityType,phaseType: EntityActionPhaseEnum.START
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            progressing: true,
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.START
         }),
         payload: defaultEntityActionPayload,
     })
 }
 
-export function entityLoadActionFailed(entityType : EntityTypeEnum) {
-    return (error: Error) : EntityAction => ({
+export function entityLoadActionFailed(entityType: EntityTypeEnum) {
+    return (error: Error): EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: Object.assign({},defaultEntityActionMeta,{
-            entityType: entityType,phaseType: EntityActionPhaseEnum.FAIL
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            entityType: entityType, 
+            phaseType: EntityActionPhaseEnum.FAIL
         }),
-        payload: Object.assign({},defaultEntityActionPayload,{
+        payload: Object.assign({}, defaultEntityActionPayload, {
             error: error
         })
     })
 }
 
-export function entityLoadActionSucceeded(entityType : EntityTypeEnum) {
-    return (entities : IEntities) : EntityAction => ({
+export function entityLoadActionSucceeded(entityType: EntityTypeEnum) {
+    return (entities: IEntities): EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
-        meta: Object.assign({},defaultEntityActionMeta,{
-            entityType: entityType
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.SUCCEED
         }),
-        payload: Object.assign({},defaultEntityActionPayload,{
+        payload: Object.assign({}, defaultEntityActionPayload, {
             entities: entities
         })
     })
@@ -112,42 +123,94 @@ export function entityLoadActionSucceeded(entityType : EntityTypeEnum) {
 //#endregion
 
 //#region Update action
-export function entityUpdateAction<T>(entityType : EntityTypeEnum,entityKey : string) {
-    return (id: string,entity : T) : EntityAction => ({
+export function entityUpdateAction<T>(entityType: EntityTypeEnum, entityKey: string) {
+    return (id: string, entity: T): EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
-        meta: Object.assign({},defaultEntityActionMeta,{
+        meta: Object.assign({}, defaultEntityActionMeta, {
             entityType: entityType
         }),
-        payload: Object.assign({},defaultEntityActionPayload,{
-            entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }})
+        payload: Object.assign({}, defaultEntityActionPayload, {
+            entities: Object.assign({}, INIT_ENTITY_STATE, { [entityKey]: { [id]: entity } })
         })
     })
 }
 //#endregion
 
 //#region Insert action
-export function entityInsertAction<T>(entityType : EntityTypeEnum,entityKey : string) {
-    return (id: string,entity : T) : EntityAction => ({
+export function entityInsertAction<T>(entityType: EntityTypeEnum, entityKey: string) {
+    return (id: string, entity: T): EntityAction => ({
         type: EntityActionTypeEnum.INSERT,
-        meta: Object.assign({},defaultEntityActionMeta,{
+        meta: Object.assign({}, defaultEntityActionMeta, {
             entityType: entityType
         }),
-        payload: Object.assign({},defaultEntityActionPayload,{
-            entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }})
+        payload: Object.assign({}, defaultEntityActionPayload, {
+            entities: Object.assign({}, INIT_ENTITY_STATE, { [entityKey]: { [id]: entity } })
         })
     })
 }
 //#endregion
 
-//#region Insert action
-export function entityDeleteAction<T>(entityType : EntityTypeEnum,entityKey : string) {
-    return (id: string,entity : T) : EntityAction => ({
+//#region Flush action
+export function entityFlushAction(entityType: EntityTypeEnum, entityKey: string) {
+    return (id: string): EntityAction => ({
+        type: EntityActionTypeEnum.FLUSH,
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.TRIGGER
+        }),
+        payload: Object.assign({}, defaultEntityActionPayload, {
+           objectId: id
+        })
+    })
+}
+
+export function entityFlushActionStarted(entityType: EntityTypeEnum) {
+    return (): EntityAction => ({
+        type: EntityActionTypeEnum.FLUSH,
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            progressing: true,
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.START
+        }),
+        payload: defaultEntityActionPayload,
+    })
+}
+
+export function entityFlushActionFailed(entityType: EntityTypeEnum) {
+    return (error: Error): EntityAction => ({
+        type: EntityActionTypeEnum.FLUSH,
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.FAIL
+        }),
+        payload: Object.assign({}, defaultEntityActionPayload, {
+            error: error
+        })
+    })
+}
+
+export function entityFlushActionSucceeded(entityType: EntityTypeEnum) {
+    return (): EntityAction => ({
+        type: EntityActionTypeEnum.FLUSH,
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.SUCCEED
+        }),
+        payload: defaultEntityActionPayload
+    })
+}
+
+//#endregion
+
+//#region Delete action
+export function entityDeleteAction<T>(entityType: EntityTypeEnum, entityKey: string) {
+    return (id: string, entity: T): EntityAction => ({
         type: EntityActionTypeEnum.DELETE,
-        meta: Object.assign({},defaultEntityActionMeta,{
+        meta: Object.assign({}, defaultEntityActionMeta, {
             entityType: entityType
         }),
-        payload: Object.assign({},defaultEntityActionPayload,{
-            entities: Object.assign({},INIT_ENTITY_STATE,{[entityKey]: {[id] : entity }})
+        payload: Object.assign({}, defaultEntityActionPayload, {
+            entities: Object.assign({}, INIT_ENTITY_STATE, { [entityKey]: { [id]: entity } })
         })
     })
 }

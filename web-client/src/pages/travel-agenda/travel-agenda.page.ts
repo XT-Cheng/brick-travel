@@ -1,5 +1,6 @@
 import 'rxjs/add/operator/combineLatest';
 
+
 import { NgRedux } from '@angular-redux/store';
 import { AfterViewInit, Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
@@ -9,9 +10,9 @@ import {
     IDailyTripBiz,
     ITravelAgendaBiz,
     ITravelViewPointBiz,
-    translateDailTrip,
+    translateDailyTrip,
     translateTravelAgenda,
-    translateTravelViewPoint,
+    translateTravelViewPoint
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
@@ -52,14 +53,13 @@ export class TravelAgendaPage implements AfterViewInit {
 
 //#region Implements interface
   ngAfterViewInit(): void {
-    this._uiActionGeneration.selectTravelAgenda('1');
   }
 
   //#endregion
 
   //#region Protected method
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
-    this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
+    this._uiActionGeneration.selectDailyTrip(dailyTrip._id);
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {
@@ -69,8 +69,14 @@ export class TravelAgendaPage implements AfterViewInit {
   travelAgendaChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.dailyTrip;
     let travelAgenda = value.travelAgenda;
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id,translateDailTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id,translateTravelAgenda(travelAgenda));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
+    
+    dailyTrip.travelViewPoints.forEach(tvp => {
+      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp._id,translateTravelViewPoint(tvp));
+    })
+    
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id,translateTravelAgenda(travelAgenda));
+    this._travelAgendaActionGenerator.flushTravelAgenda(travelAgenda._id);
   }
 
   travelViewPointAddRequest() {
@@ -82,16 +88,16 @@ export class TravelAgendaPage implements AfterViewInit {
     let travelAgenda = value.travelAgenda;
     let removed = value.removed;
     
-    this._travelAgendaActionGenerator.deleteTravelViewPoint(removed.id, translateTravelViewPoint(removed));
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgenda(travelAgenda));
+    this._travelAgendaActionGenerator.deleteTravelViewPoint(removed._id, translateTravelViewPoint(removed));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id, translateDailyTrip(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id, translateTravelAgenda(travelAgenda));
   }
 
   dailyTripAdded(value : {added : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.added;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionGenerator.insertDailyTrip(dailyTrip.id,translateDailTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionGenerator.insertDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgenda(travelAgeanda));
   
     this._uiActionGeneration.selectDailyTrip(dailyTrip);
   }
@@ -99,8 +105,8 @@ export class TravelAgendaPage implements AfterViewInit {
   dailyTripRemoved(value : {removed : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.removed;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionGenerator.deleteDailyTrip(dailyTrip.id,translateDailTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionGenerator.deleteDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgenda(travelAgeanda));
   
     this._uiActionGeneration.selectDailyTrip('');
   }

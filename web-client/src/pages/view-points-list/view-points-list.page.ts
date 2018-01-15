@@ -80,7 +80,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
     this._filterCategoryActionGenerator.loadFilterCategories();
 
     this.subscriptions.push(this.selectedCity$.subscribe(city => {
-      this._viewPointActionGenerator.loadViewPoints({cityId: city.id});
+      this._viewPointActionGenerator.loadViewPoints({cityId: city._id});
     }));
   }
 
@@ -109,9 +109,9 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
 
     filterChanged.category.criteries.forEach(c => {
       if (c.isChecked)
-        checkId = c.id;
+        checkId = c._id;
       else
-        unCheckIds.push(c.id);
+        unCheckIds.push(c._id);
     });
 
     this._uiActionGeneration.selectCriteria(checkId, unCheckIds);

@@ -12,7 +12,7 @@ export function getCities(store : NgRedux<IAppState>) : Observable<ICityBiz[]> {
 }
 
 function getCitiesInternal(store : NgRedux<IAppState>) {
-    return (data : { [id : string] : ICity }) : ICityBiz[] => {
+    return (data : { [_id : string] : ICity }) : ICityBiz[] => {
         let ret = new Array<ICityBiz>();
         let cities = asMutable(data,{deep: true});
         Object.keys(cities).forEach(key => {

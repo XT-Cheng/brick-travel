@@ -21,7 +21,7 @@ function getFilterCriteriaIds(store: NgRedux<IAppState>): Observable<string[]> {
 function buildCurrentFilterCategories(checkIds: string[], categories: IFilterCategoryBiz[]) {
     categories.forEach(category => {
         category.criteries.forEach(criteria => {
-            criteria.isChecked = !!checkIds.find(id => id === criteria.id);
+            criteria.isChecked = !!checkIds.find(_id => _id === criteria._id);
         })
     });
 

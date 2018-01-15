@@ -16,18 +16,18 @@ export const INIT_ENTITY_STATE = {
 }
 
 export interface IEntities {
-  cities: { [id : string] : ICity },
-  viewPoints: { [id : string] : IViewPoint },
-  viewPointComments: { [id : string] : IViewPointComment },
-  users: { [id : string] : IUser },
-  travelViewPoints: { [id : string] : ITravelViewPoint },
-  dailyTrips: { [id : string] : IDailyTrip },
-  travelAgendas: { [id : string] : ITravelAgenda },
-  filterCategories: {[id : string] : IFilterCategory},
-  filterCriteries: {[id : string] : IFilterCriteria}
+  cities: { [_id : string] : ICity },
+  viewPoints: { [_id : string] : IViewPoint },
+  viewPointComments: { [_id : string] : IViewPointComment },
+  users: { [_id : string] : IUser },
+  travelViewPoints: { [_id : string] : ITravelViewPoint },
+  dailyTrips: { [_id : string] : IDailyTrip },
+  travelAgendas: { [_id : string] : ITravelAgenda },
+  filterCategories: {[_id : string] : IFilterCategory},
+  filterCriteries: {[_id : string] : IFilterCriteria}
 }
 
 export interface IUser {
-  id: string,
+  _id: string,
   name: string
 }

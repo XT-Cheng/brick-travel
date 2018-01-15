@@ -32,7 +32,7 @@ export function selectTravelAgendaAction(selectedTravelAgenda : ITravelAgendaBiz
         type: UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA,
         meta: { progressing : false },
         payload: Object.assign({},defaultAgendaActionPayload,{
-            selectedTravelAgendaId: typeof selectedTravelAgenda === 'string' ? selectedTravelAgenda : selectedTravelAgenda.id
+            selectedTravelAgendaId: typeof selectedTravelAgenda === 'string' ? selectedTravelAgenda : selectedTravelAgenda._id
         })
     };
 }
@@ -42,7 +42,7 @@ export function selectDailyTripAction(selectedDailyTrip: IDailyTripBiz | string)
         type: UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP,
         meta: { progressing : false },
         payload: Object.assign({},defaultAgendaActionPayload,{
-            selectedDailyTripId: typeof selectedDailyTrip === 'string' ? selectedDailyTrip : selectedDailyTrip.id
+            selectedDailyTripId: typeof selectedDailyTrip === 'string' ? selectedDailyTrip : selectedDailyTrip._id
         })
     };
 }

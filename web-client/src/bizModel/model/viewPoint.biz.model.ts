@@ -3,7 +3,7 @@ import { ICity } from "../../modules/store/entity/city/city.model";
 
 
 export interface IViewPointBiz {
-    id: string,
+    _id: string,
     name: string,
     city: ICity,
     description: string,
@@ -20,7 +20,7 @@ export interface IViewPointBiz {
 }
 
 export interface IViewPointCommentBiz {
-    id: string,
+    _id: string,
     detail: string,
     user: string,
     avatar: string,

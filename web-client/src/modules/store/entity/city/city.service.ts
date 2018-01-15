@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
@@ -14,7 +14,7 @@ export class CityService {
   //#endregion
 
   //#region Constructor
-  constructor(public _http: Http) {
+  constructor(public _http: HttpClient) {
   }
   //#endregion
 
@@ -25,7 +25,6 @@ export class CityService {
   //#region Public methods
   public getCities(pagination : IPagination): Observable<IEntities> {
     return this._http.get('http://localhost:3000/cities')
-    .map(resp => resp.json())
     .map(records => {
       return normalize(records, [ city ]).entities;
     })

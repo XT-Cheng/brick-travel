@@ -10,6 +10,8 @@ export enum TransportationCategory {
 }
 
 export class TravelViewPoint {
+    @prop()
+    _id: string;
     @prop({ enum: TransportationCategory })
     transportationToNext: TransportationCategory;
     @prop({ref: ViewPoint})
@@ -17,11 +19,15 @@ export class TravelViewPoint {
 }
 
 export class DailyTrip {
+    @prop()
+    _id: string;
     @arrayProp({items: TravelViewPoint})
     travelViewPoints : TravelViewPoint[];
 }
 
 export class TravelAgenda extends Typegoose {
+    @prop()
+    _id: string;
     @prop()
     name: string;
     @prop()
@@ -52,22 +58,6 @@ export var TravelAgendaModel = new TravelAgenda().getModelForClass(TravelAgenda,
         timestamps: true,
         toJSON: {
             transform: (doc, ret, options) => {
-                ret.id = ret._id;
-                if (ret.dailyTrips) {
-                    ret.dailyTrips = ret.dailyTrips.map((dailyTrip) => {
-                        if (dailyTrip.travelViewPoints) {
-                            dailyTrip.travelViewPoints = dailyTrip.travelViewPoints.map((tvp) => {
-                                tvp.id = tvp._id;
-                                delete tvp._id;
-                                return tvp;
-                            });
-                        }
-                        dailyTrip.id = dailyTrip._id;
-                        delete dailyTrip._id;
-                        return dailyTrip;
-                    })
-                };
-                delete ret._id;
                 delete ret.__v;
                 return ret;
             }

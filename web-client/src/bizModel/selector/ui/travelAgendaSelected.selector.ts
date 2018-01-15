@@ -10,7 +10,7 @@ function getSelectedAgendaId(store : NgRedux<IAppState>) : Observable<string> {
 }
 
 function getTravelAgendaById(agendaId: string, agendas: ITravelAgendaBiz[]) {
-    return agendas.find(agenda => agenda.id === agendaId);
+    return agendas.find(agenda => agenda._id === agendaId);
 }
 
 export function getSelectedTravelAgenda(store : NgRedux<IAppState>) : Observable<ITravelAgendaBiz> {

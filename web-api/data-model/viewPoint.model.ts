@@ -13,6 +13,8 @@ export enum ViewPointCategory {
 
 export class ViewPointComment {
     @prop()
+    _id: string;
+    @prop()
     detail: string;
     @prop()
     user: string;
@@ -28,7 +30,8 @@ export class ViewPointComment {
 
 export class ViewPoint extends Typegoose {
     public static readonly commentsPerLoad = 2;
-
+    @prop()
+    _id: string;
     @prop()
     name: string;
     @prop({ref: City})
@@ -100,14 +103,6 @@ export var ViewPointModel = new ViewPoint().getModelForClass(ViewPoint, {
         timestamps: true,
         toJSON: {
             transform: (doc, ret, options) => {
-                ret.id = ret._id;
-                if (ret.comments) {
-                    ret.comments = ret.comments.map((comment) => {
-                        delete comment._id;
-                        return comment;
-                    })
-                };
-                delete ret._id;
                 delete ret.__v;
                 return ret;
             }

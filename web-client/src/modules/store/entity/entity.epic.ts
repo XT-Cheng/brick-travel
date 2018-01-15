@@ -11,7 +11,10 @@ export class EntityEpics {
 
   public createEpics() {
     return [
-      this._cityEpic.createEpic(),this._viewPointEpic.createEpic(),this._travelAgendaEpic.createEpic(),this._filterCategoryEpic.createEpic()
+      this._cityEpic.createEpic(),
+      this._viewPointEpic.createEpic(),
+      ...this._travelAgendaEpic.createEpic(),
+      this._filterCategoryEpic.createEpic()
     ];
   }
 }

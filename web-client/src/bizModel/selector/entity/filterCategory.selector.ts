@@ -7,18 +7,18 @@ import { Observable } from 'rxjs/Observable';
 import { IFilterCategory } from '../../../modules/store/entity/filterCategory/filterCategory.model';
 
 export function getFilterCategories(store : NgRedux<IAppState>) : Observable<IFilterCategoryBiz[]> {
-    return store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories'])
+    return store.select<{ [_id: string]: IFilterCategory }>(['entities', 'filterCategories'])
     .map(getFilterCategoriesInternal(store));
 }
 
 export function getFilterCategoriesInternal(store : NgRedux<IAppState>) {
-    return (data : { [id : string] : IFilterCategory }) : Array<IFilterCategoryBiz> => {
+    return (data : { [_id : string] : IFilterCategory }) : Array<IFilterCategoryBiz> => {
         let ret = new Array<IFilterCategoryBiz>();
         let criteries = asMutable(store.getState().entities.filterCriteries,{deep: true});
         let categories = asMutable(data,{deep: true});
         Object.keys(categories).forEach(key => {
             let category = categories[key];
-            category.criteries = category.criteries.map(id => criteries[id])
+            category.criteries = category.criteries.map(_id => criteries[_id])
             ret.push(category);
         });
         

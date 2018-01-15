@@ -2,6 +2,8 @@ import { ModelType, prop, staticMethod, Typegoose } from 'typegoose';
 
 export class City extends Typegoose {
     @prop()
+    _id: string;
+    @prop()
     name: string;
     @prop()
     thumbnail: string;
@@ -16,8 +18,6 @@ export var CityModel = new City().getModelForClass(City, {
         timestamps: true,
         toJSON: {
             transform: (doc, ret, options) => {
-                ret.id = ret._id;
-                delete ret._id;
                 delete ret.__v;
                 return ret;
             }

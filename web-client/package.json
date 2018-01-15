@@ -26,6 +26,7 @@
     "@ionic-native/status-bar": "4.3.2",
     "@ionic/storage": "2.0.1",
     "@types/node": "^8.0.58",
+    "bson": "^1.0.4",
     "dragula": "^3.7.2",
     "flux-standard-action": "^2.0.0",
     "ionic-angular": "3.8.0",
@@ -42,7 +43,6 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.0.1",
-    "@types/uuid": "^3.4.3",
     "typescript": "2.6.1"
   },
   "description": "Brick travel web client"

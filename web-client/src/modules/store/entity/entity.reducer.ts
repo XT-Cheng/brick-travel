@@ -10,11 +10,11 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
         let nextState = asMutable(state); 
 
         Object.keys(action.payload.entities).forEach(key => {
-          Object.keys(action.payload.entities[key]).forEach(id => {
-            if (!Object.keys(state[key]).find(toFind => id === toFind)){
+          Object.keys(action.payload.entities[key]).forEach(_id => {
+            if (!Object.keys(state[key]).find(toFind => _id === toFind)){
               if (isImmutable(nextState[key]))
                 nextState[key] = asMutable(nextState[key]);
-              nextState[key][id] = action.payload.entities[key][id];
+              nextState[key][_id] = action.payload.entities[key][_id];
             }
           });
         });
@@ -25,11 +25,11 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
         let nextState = asMutable(state); 
 
         Object.keys(action.payload.entities).forEach(key => {
-          Object.keys(action.payload.entities[key]).forEach(id => {
-            if (Object.keys(state[key]).find(toFind => id === toFind)){
+          Object.keys(action.payload.entities[key]).forEach(_id => {
+            if (Object.keys(state[key]).find(toFind => _id === toFind)){
               if (isImmutable(nextState[key]))
                 nextState[key] = asMutable(nextState[key]);
-              nextState[key][id] = action.payload.entities[key][id];
+              nextState[key][_id] = action.payload.entities[key][_id];
             }
           });
         });
@@ -40,11 +40,11 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
         let nextState = asMutable(state); 
 
         Object.keys(action.payload.entities).forEach(key => {
-          Object.keys(action.payload.entities[key]).forEach(id => {
-            if (!Object.keys(state[key]).find(toFind => id === toFind)){
+          Object.keys(action.payload.entities[key]).forEach(_id => {
+            if (!Object.keys(state[key]).find(toFind => _id === toFind)){
               if (isImmutable(nextState[key]))
                 nextState[key] = asMutable(nextState[key]);
-              nextState[key][id] = action.payload.entities[key][id];
+              nextState[key][_id] = action.payload.entities[key][_id];
             }
           });
         });
@@ -55,11 +55,11 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
         let nextState = asMutable(state); 
 
         Object.keys(action.payload.entities).forEach(key => {
-          Object.keys(action.payload.entities[key]).forEach(id => {
-            if (Object.keys(state[key]).find(toFind => id === toFind)){
+          Object.keys(action.payload.entities[key]).forEach(_id => {
+            if (Object.keys(state[key]).find(toFind => _id === toFind)){
               if (isImmutable(nextState[key]))
                 nextState[key] = asMutable(nextState[key]);
-              delete nextState[key][id];
+              delete nextState[key][_id];
             }
           });
         });

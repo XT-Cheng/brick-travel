@@ -8,7 +8,7 @@ import { createEpicMiddleware, Epic } from 'redux-observable';
 import { of } from 'rxjs/observable/of';
 
 import { IAppState } from '../../store.model';
-import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
+import { EntityAction, EntityActionTypeEnum, EntityTypeEnum, EntityActionPhaseEnum } from '../entity.action';
 import { TravelAgendaActionGenerator } from './travelAgenda.action';
 import { TravelAgendaService } from './travelAgenda.service';
 
@@ -20,18 +20,32 @@ export class TravelAgendaEpic {
   ) {}
 
   public createEpic() {
-    return createEpicMiddleware(this.createEpicInternal(EntityTypeEnum.TRAVELAGENDA));
+    return [createEpicMiddleware(this.createEpicLoadInternal(EntityTypeEnum.TRAVELAGENDA)),
+      createEpicMiddleware(this.createEpicFlushInternal(EntityTypeEnum.TRAVELAGENDA))];
   }
 
-  private createEpicInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
+  private createEpicLoadInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
     return (action$, store) => action$
     .ofType(EntityActionTypeEnum.LOAD)
-    .filter(action => action.meta.entityType === entityType && !!action.meta.pagination)
+    .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER && !!action.meta.pagination)
       .switchMap(action => this._service.getTravelAgenda(action.meta.pagination)
       .map(data => this._action.loadTravelAgendaSucceeded(data))
         .catch(response => 
           of(this._action.loadTravelAgendaFailed(response))
         )
         .startWith(this._action.loadTravelAgendaStarted()));
+  }
+
+  private createEpicFlushInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
+    return (action$, store) => action$
+    .ofType(EntityActionTypeEnum.FLUSH)
+    .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
+      .switchMap(action => 
+        this._service.flushTravelAgenda(action.payload.objectId,store.getState())
+      .map(() => this._action.flushTravelAgendaSucceeded())
+        .catch(response => 
+          of(this._action.flushTravelAgendaFailed(response))
+        )
+        .startWith(this._action.flushTravelAgendaStarted()));
   }
 }

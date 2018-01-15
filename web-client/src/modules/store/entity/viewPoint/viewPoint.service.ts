@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
@@ -14,7 +14,7 @@ export class ViewPointService {
   //#endregion
 
   //#region Constructor
-  constructor(public _http: Http) {
+  constructor(public _http: HttpClient) {
   }
   //#endregion
 
@@ -33,9 +33,7 @@ export class ViewPointService {
       url += 'viewPoints';
     }
     
-    return this._http.get(url).map(resp => {
-      return resp.json()
-    })
+    return this._http.get(url)
     .map(records => {
       return normalize(records, [ viewPoint ]).entities;
     })
