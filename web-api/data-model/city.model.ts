@@ -1,7 +1,6 @@
 import { ModelType, prop, staticMethod, Typegoose } from 'typegoose';
 import { ObjectId } from 'mongodb';
 
-
 export class City extends Typegoose {
     @prop()
     _id: string;
