@@ -1,4 +1,5 @@
 import { ModelType, prop, staticMethod, Typegoose } from 'typegoose';
+import { ObjectId } from 'mongodb';
 
 export class City extends Typegoose {
     @prop()
@@ -10,6 +11,10 @@ export class City extends Typegoose {
     @staticMethod
     static findCities(this: ModelType<City> & typeof City) {
         return this.find();
+    }
+    @staticMethod
+    static createCity(this: ModelType<City> & typeof City,create: any) {
+        return this.create(create);
     }
 }
 
