@@ -24,10 +24,20 @@ export class ViewPointRoute {
             await ViewPointRoute.load(req, res, next);
         }));
 
+        //Insert ViewPoint
+        router.post('/viewPoints', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+            await ViewPointRoute.insert(req, res, next);
+        }));
+
         //Insert ViewPoint comment by ViewPoint id
         router.post('/viewPoints/:id/comment', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             await ViewPointRoute.addComment(req, res, next);
         }));
+    }
+
+    private static async insert(req: Request, res: Response, next: NextFunction) {
+        await ViewPointModel.createViewPoint(req.body);
+        res.json(true);
     }
 
     private static async addComment(req: Request, res: Response, next: NextFunction) {

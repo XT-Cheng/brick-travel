@@ -2,7 +2,7 @@ import * as bodyParser from 'body-parser';
 import errorHandler = require('errorhandler');
 import * as express from 'express';
 import { createServer, Server } from 'http';
-import { connect, Schema } from 'mongoose';
+import { connect, Schema, Mongoose } from 'mongoose';
 import * as logger from 'morgan';
 import { Observable } from 'rxjs/Rx';
 import { ViewPointRoute } from './routes/viewPoint.route';
@@ -63,9 +63,10 @@ export class RestfulServer {
             });
     }
 
-    private connectDb() : Observable<void> {
-        return Observable.create(observer => {
-            connect('mongodb://localhost/local', { useMongoClient: true });
+    private connectDb(): Observable<void> {
+        return Observable.create(async observer => {
+            require('mongoose').Promise = global.Promise;
+            await connect('mongodb://localhost/local', { useMongoClient: true });
             console.log("DB Connected!");
             observer.complete();
         })
@@ -107,10 +108,9 @@ export class RestfulServer {
             CityRoute.create(router);
             FilterCategoryRoute.create(router);
             TravelAgendaRoute.create(router);
-            
+
             //use router middleware
             this.app.use(router);
-            console.log("routes");
             observer.complete();
         })
     }

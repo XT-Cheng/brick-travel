@@ -96,6 +96,10 @@ export class ViewPoint extends Typegoose {
     static findViewPointsByCity(this: ModelType<ViewPoint> & typeof ViewPoint, cityId : string) {
         return this.find({city: cityId}).slice('comments', [0, ViewPoint.commentsPerLoad]);
     }
+    @staticMethod
+    static createViewPoint(this: ModelType<ViewPoint> & typeof ViewPoint,create: any) {
+        return this.create(create);
+    }
 }
 
 export var ViewPointModel = new ViewPoint().getModelForClass(ViewPoint, {
