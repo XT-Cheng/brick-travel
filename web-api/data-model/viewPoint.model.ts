@@ -59,7 +59,7 @@ export class ViewPoint extends Typegoose {
     @prop({ default: 0 })
     countOfComments: number;
     @arrayProp({ items: ViewPointComment })
-    comments: ViewPointComment[]; 
+    comments: ViewPointComment[];
     @instanceMethod
     addComment(this: InstanceType<ViewPoint>, comment: ViewPointComment) {
         this.comments.push(comment);
