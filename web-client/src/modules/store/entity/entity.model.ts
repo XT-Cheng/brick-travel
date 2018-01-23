@@ -3,6 +3,16 @@ import { IViewPoint, IViewPointComment } from "./viewPoint/viewPoint.model";
 import { ITravelViewPoint, IDailyTrip, ITravelAgenda } from "./travelAgenda/travelAgenda.model";
 import { IFilterCategory, IFilterCriteria } from "./filterCategory/filterCategory.model";
 
+export enum EntityPersistentStatusEnum {
+  NEW,
+  SYNCED,
+  DIRTY
+}
+
+export interface IPersistentStatus {
+  persistentStatus: EntityPersistentStatusEnum
+}
+
 export const INIT_ENTITY_STATE = {
   cities: {},
   viewPoints: {},

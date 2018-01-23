@@ -82,6 +82,8 @@ export class TravelAgendaActionGenerator {
 
     @dispatch()
     flushTravelAgenda = entityFlushAction(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
+
+    nonDispatchFlushTravelAgenda = entityFlushAction(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
     
     flushTravelAgendaSucceeded = entityFlushActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
 

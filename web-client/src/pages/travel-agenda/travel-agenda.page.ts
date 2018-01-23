@@ -10,9 +10,9 @@ import {
     IDailyTripBiz,
     ITravelAgendaBiz,
     ITravelViewPointBiz,
-    translateDailyTrip,
-    translateTravelAgenda,
-    translateTravelViewPoint
+    translateDailyTripFromBiz,
+    translateTravelAgendaFromBiz,
+    translateTravelViewPointFromBiz
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
@@ -69,14 +69,13 @@ export class TravelAgendaPage implements AfterViewInit {
   travelAgendaChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.dailyTrip;
     let travelAgenda = value.travelAgenda;
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id,translateDailyTripFromBiz(dailyTrip));
     
     dailyTrip.travelViewPoints.forEach(tvp => {
-      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp._id,translateTravelViewPoint(tvp));
+      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp._id,translateTravelViewPointFromBiz(tvp));
     })
     
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id,translateTravelAgenda(travelAgenda));
-    this._travelAgendaActionGenerator.flushTravelAgenda(travelAgenda._id);
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id,translateTravelAgendaFromBiz(travelAgenda));
   }
 
   travelViewPointAddRequest() {
@@ -88,16 +87,16 @@ export class TravelAgendaPage implements AfterViewInit {
     let travelAgenda = value.travelAgenda;
     let removed = value.removed;
     
-    this._travelAgendaActionGenerator.deleteTravelViewPoint(removed._id, translateTravelViewPoint(removed));
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id, translateDailyTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id, translateTravelAgenda(travelAgenda));
+    this._travelAgendaActionGenerator.deleteTravelViewPoint(removed._id, translateTravelViewPointFromBiz(removed));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id, translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id, translateTravelAgendaFromBiz(travelAgenda));
   }
 
   dailyTripAdded(value : {added : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.added;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionGenerator.insertDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionGenerator.insertDailyTrip(dailyTrip._id,translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgendaFromBiz(travelAgeanda));
   
     this._uiActionGeneration.selectDailyTrip(dailyTrip);
   }
@@ -105,8 +104,8 @@ export class TravelAgendaPage implements AfterViewInit {
   dailyTripRemoved(value : {removed : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.removed;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionGenerator.deleteDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionGenerator.deleteDailyTrip(dailyTrip._id,translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgendaFromBiz(travelAgeanda));
   
     this._uiActionGeneration.selectDailyTrip('');
   }

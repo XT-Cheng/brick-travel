@@ -1,15 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Epic, createEpicMiddleware } from 'redux-observable';
-import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
 
+import { Injectable } from '@angular/core';
+import { Epic } from 'redux-observable';
+import { of } from 'rxjs/observable/of';
+
 import { IAppState } from '../../store.model';
-import { CityService } from './city.service';
-import { CityActionGenerator } from './city.action';
 import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
+import { CityActionGenerator } from './city.action';
+import { CityService } from './city.service';
 
 @Injectable()
 export class CityEpic {
@@ -19,7 +20,7 @@ export class CityEpic {
   ) {}
 
   public createEpic() {
-    return createEpicMiddleware(this.createEpicInternal(EntityTypeEnum.CITY));
+    return this.createEpicInternal(EntityTypeEnum.CITY);
   }
 
   private createEpicInternal(entityType : EntityTypeEnum ): Epic<EntityAction, IAppState> {

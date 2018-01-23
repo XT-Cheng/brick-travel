@@ -1,15 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Epic, createEpicMiddleware } from 'redux-observable';
-import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
 
+import { Injectable } from '@angular/core';
+import { Epic } from 'redux-observable';
+import { of } from 'rxjs/observable/of';
+
 import { IAppState } from '../../store.model';
-import { FilterCategoryService } from './filterCategory.service';
-import { FilterCategoryActionGenerator } from './filterCategory.action';
 import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
+import { FilterCategoryActionGenerator } from './filterCategory.action';
+import { FilterCategoryService } from './filterCategory.service';
 
 @Injectable()
 export class FilterCategoryEpic {
@@ -19,7 +20,7 @@ export class FilterCategoryEpic {
   ) {}
 
   public createEpic() {
-    return createEpicMiddleware(this.createEpicInternal(EntityTypeEnum.FILTERCATEGORY));
+    return this.createEpicInternal(EntityTypeEnum.FILTERCATEGORY);
   }
 
   private createEpicInternal(entityType : EntityTypeEnum ): Epic<EntityAction, IAppState> {

@@ -9,8 +9,70 @@ import { asMutable } from 'seamless-immutable';
 
 import { IAppState } from '../../store.model';
 import { IPagination } from '../entity.action';
-import { IEntities } from '../entity.model';
+import { EntityPersistentStatusEnum, IEntities } from '../entity.model';
 import { travelAgenda } from '../entity.schema';
+import { TransportationCategory } from './travelAgenda.model';
+
+interface ITravelAgendaPersistent {
+  _id: string,
+  name: string,
+  user: string,
+  cover: string,
+  dailyTrips: IDailyTripPersistent[]
+};
+
+interface IDailyTripPersistent {
+  _id: string,
+  travelViewPoints: ITravelViewPointPersistent[]
+}
+
+interface ITravelViewPointPersistent {
+  _id: string,
+  viewPoint: string,
+  transportationToNext: TransportationCategory
+}
+
+function translateTravelViewPointFromState(travelViewPointId : string,store : IAppState) : ITravelViewPointPersistent {
+  let travelViewPoint = asMutable(store.entities.travelViewPoints[travelViewPointId]);
+  let ret = {
+    _id : travelViewPoint._id,
+    transportationToNext: travelViewPoint.transportationToNext,
+    viewPoint: travelViewPoint.viewPoint
+  }
+
+  return ret;
+}
+
+function translateDailyTripFromState(dailyTripId: string,store : IAppState): IDailyTripPersistent {
+  let dailyTrip = asMutable(store.entities.dailyTrips[dailyTripId]);
+  let ret = {
+    _id : dailyTrip._id,
+    travelViewPoints: []
+  }
+
+  dailyTrip.travelViewPoints.forEach(tvp => {
+    ret.travelViewPoints.push(translateTravelViewPointFromState(tvp,store));
+  });
+
+  return ret;
+}
+
+function translateTravelAgendaFromState(travelAgendaId: string,store : IAppState): ITravelAgendaPersistent  {
+  let travelAgenda = asMutable(store.entities.travelAgendas[travelAgendaId]);
+  let ret = {
+      _id: travelAgenda._id,
+      name: travelAgenda.name,
+      user: travelAgenda.user,
+      cover: travelAgenda.cover,
+      dailyTrips: []
+  };
+
+  travelAgenda.dailyTrips.forEach(dt => {
+      ret.dailyTrips.push(translateDailyTripFromState(dt,store));
+  });
+
+  return ret;
+}
 
 @Injectable()
 export class TravelAgendaService {
@@ -35,17 +97,16 @@ export class TravelAgendaService {
   }
 
   public flushTravelAgenda(id: string, store : IAppState) : Observable<void> {
-    let agenda = asMutable(store.entities.travelAgendas[id],{deep: true});
-    agenda.dailyTrips = agenda.dailyTrips.map(dt => {
-      return asMutable(store.entities.dailyTrips[dt],{deep: true});
-    });
-    agenda.dailyTrips.forEach(dt => {
-      dt.travelViewPoints = dt.travelViewPoints.map(tvp => {
-        return asMutable(store.entities.travelViewPoints[tvp],{deep: true});
-      })
-    });
-
-    return this._http.post('http://localhost:3000/travelAgendas',[agenda])
+    let agenda = translateTravelAgendaFromState(id,store);
+    let state = store.entities.travelAgendas[id];
+    let url : string;
+    if (state.persistentStatus == EntityPersistentStatusEnum.NEW) {
+      url = 'http://localhost:3000/travelAgendas';
+    }
+    else {
+      url = '';
+    }
+    return this._http.post(url,[agenda])
     .map(resp => console.log(resp));
   }
   //#endregion

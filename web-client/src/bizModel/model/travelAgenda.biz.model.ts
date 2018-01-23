@@ -1,14 +1,15 @@
+import { ObjectID } from 'bson';
+
+import { EntityPersistentStatusEnum, IPersistentStatus } from '../../modules/store/entity/entity.model';
 import {
     IDailyTrip,
     ITravelAgenda,
-    TransportationCategory,
     ITravelViewPoint,
+    TransportationCategory,
 } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IViewPointBiz } from './viewPoint.biz.model';
 
-import { ObjectID } from 'bson';
-
-export interface ITravelAgendaBiz {
+export interface ITravelAgendaBiz extends IPersistentStatus{
     _id: string,
     name: string,
     user: string,
@@ -53,34 +54,10 @@ export function caculateDistance(dailyTrip: IDailyTripBiz) {
         dailyTrip.lastViewPoint = '';
 }
 
-export function translateDailyTrip(dailyTrip: IDailyTripBiz): IDailyTrip {
-    return {
-        _id: dailyTrip._id,
-        travelViewPoints: dailyTrip.travelViewPoints.map(tvp => tvp._id)
-    };
-}
-
-export function translateTravelViewPoint(travelViewPoint: ITravelViewPointBiz): ITravelViewPoint {
-    return {
-        _id: travelViewPoint._id,
-        viewPoint: travelViewPoint.viewPoint._id,
-        transportationToNext: travelViewPoint.transportationToNext
-    };
-}
-
-export function translateTravelAgenda(travelAgenda: ITravelAgendaBiz): ITravelAgenda {
-    return {
-        _id: travelAgenda._id,
-        name: travelAgenda.name,
-        user: travelAgenda.user,
-        cover: travelAgenda.cover,
-        dailyTrips: travelAgenda.dailyTrips.map(dt => dt._id)
-    }
-}
-
 export function createTravelAgenda(): ITravelAgendaBiz {
     return {
         _id: new ObjectID().toHexString(),
+        persistentStatus: EntityPersistentStatusEnum.NEW,
         name: '',
         user: '',
         cover: '',
@@ -103,4 +80,30 @@ export function createTravelViewPoint(viewPoint: IViewPointBiz): ITravelViewPoin
         distanceToNext: -1,
         transportationToNext: null
     };
+}
+
+export function translateDailyTripFromBiz(dailyTrip: IDailyTripBiz): IDailyTrip {
+    return {
+        _id: dailyTrip._id,
+        travelViewPoints: dailyTrip.travelViewPoints.map(tvp => tvp._id)
+    };
+}
+
+export function translateTravelViewPointFromBiz(travelViewPoint: ITravelViewPointBiz): ITravelViewPoint {
+    return {
+        _id: travelViewPoint._id,
+        viewPoint: travelViewPoint.viewPoint._id,
+        transportationToNext: travelViewPoint.transportationToNext
+    };
+}
+
+export function translateTravelAgendaFromBiz(travelAgenda: ITravelAgendaBiz): ITravelAgenda {
+    return {
+        _id: travelAgenda._id,
+        persistentStatus: travelAgenda.persistentStatus,
+        name: travelAgenda.name,
+        user: travelAgenda.user,
+        cover: travelAgenda.cover,
+        dailyTrips: travelAgenda.dailyTrips.map(dt => dt._id)
+    }
 }

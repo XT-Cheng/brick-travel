@@ -1,3 +1,5 @@
+import { IPersistentStatus } from "../entity.model";
+
 export enum TransportationCategory {
     Walking,
     SmallBus,
@@ -5,7 +7,7 @@ export enum TransportationCategory {
     SelfDrive
 }
 
-export interface ITravelAgenda {
+export interface ITravelAgenda extends IPersistentStatus {
     _id: string,
     name: string,
     user: string,

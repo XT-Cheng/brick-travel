@@ -2,6 +2,7 @@ import { NgRedux, NgReduxModule } from '@angular-redux/store';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { createLogger } from 'redux-logger';
+import { createEpicMiddleware } from 'redux-observable';
 import { stateTransformer } from 'redux-seamless-immutable';
 
 import { CityActionGenerator } from './entity/city/city.action';
@@ -42,6 +43,6 @@ export class StoreModule {
         this._store.configureStore(
             rootReducer,
             <IAppState>{},
-            [createLogger({stateTransformer: stateTransformer}), ...this._rootEpics.createEpics()]);
+            [createLogger({stateTransformer: stateTransformer}), createEpicMiddleware(this._rootEpics.createEpics())]);
     }
 }

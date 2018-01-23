@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { asMutable } from 'seamless-immutable';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz, translateDailyTrip, translateTravelAgenda } from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, translateDailyTripFromBiz, translateTravelAgendaFromBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getFilterCategories } from '../../bizModel/selector/entity/filterCategory.selector';
 import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
@@ -119,8 +119,8 @@ export class TestPage implements AfterViewInit {
   dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.dailyTrip;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip._id,translateDailyTrip(dailyTrip));
-    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgenda(travelAgeanda));
+    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip._id,translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgendaFromBiz(travelAgeanda));
   }
 
   getDailyTrips(): Array<IDailyTripBiz> {

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
-import { createTravelAgenda, translateTravelAgenda } from '../../bizModel/model/travelAgenda.biz.model';
+import { createTravelAgenda, translateTravelAgendaFromBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
@@ -31,15 +31,15 @@ export class HomePage implements AfterViewInit {
 
   //#region Implements interface
   ngAfterViewInit(): void {
-    let createdTravelAgenda = createTravelAgenda();
-    this._entityActionGeneration.insertTravelAgenda(createdTravelAgenda._id,translateTravelAgenda(createdTravelAgenda));
-    this._uiActionGeneration.selectTravelAgenda(createdTravelAgenda);
   }
   //#endregion
 
   //#region Protected method
-  protected onTabSelect(event) {
-
+  protected onNewAgenda(event) {
+    let createdTravelAgenda = createTravelAgenda();
+    this._entityActionGeneration.insertTravelAgenda(createdTravelAgenda._id,translateTravelAgendaFromBiz(createdTravelAgenda));
+    //this._entityActionGeneration.flushTravelAgenda(createdTravelAgenda._id);
+    this._uiActionGeneration.selectTravelAgenda(createdTravelAgenda);
   }
   //#endregion
 }
