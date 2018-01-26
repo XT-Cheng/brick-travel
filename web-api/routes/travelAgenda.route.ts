@@ -1,10 +1,7 @@
-import { Router, Response, Request, NextFunction } from "express";
-import { ViewPointService } from "../business/viewPoint.service";
-import { ViewPointModel, ViewPoint } from "../data-model/viewPoint.model";
-import { asyncMiddleware } from "../utils/utility";
-//import { Mongoose, Schema, Document, model } from 'mongoose'
-import * as mongoose from 'mongoose';
-import { TravelAgendaModel } from "../data-model/travelAgenda.model";
+import { NextFunction, Request, Response, Router } from 'express';
+
+import { TravelAgendaModel } from '../data-model/travelAgenda.model';
+import { asyncMiddleware } from '../utils/utility';
 
 export class TravelAgendaRoute {
     public static create(router: Router) {

@@ -1,6 +1,15 @@
-import { Mongoose, Schema, Document, model } from 'mongoose'
-import { prop, Typegoose, ModelType, InstanceType, arrayProp, pre, instanceMethod, staticMethod, Ref } from 'typegoose';
+import {
+    arrayProp,
+    instanceMethod,
+    InstanceType,
+    ModelType,
+    prop,
+    Ref,
+    staticMethod,
+    Typegoose,
+} from '../typegoose/typegoose';
 import { City } from './city.model';
+import { BSON, ObjectId } from 'bson';
 
 export enum ViewPointCategory {
     View,
@@ -11,9 +20,16 @@ export enum ViewPointCategory {
     Lodging
 }
 
-export class ViewPointComment {
+export class ViewPointComment extends Typegoose {
     @prop()
     _id: string;
+    @prop()
+    get id() : string {
+        return this._id
+    };
+    set id(value) {
+        this._id = value;
+    }
     @prop()
     detail: string;
     @prop()
@@ -28,13 +44,32 @@ export class ViewPointComment {
     rate: number;
 }
 
+new ViewPointComment().getModelForClass(ViewPointComment, {
+    schemaOptions: {
+        toJSON: {
+            virtuals: true,
+            transform: (doc, ret, options) => {
+                delete ret._id;
+                return ret;
+            }
+        }
+    }
+});
+
 export class ViewPoint extends Typegoose {
     public static readonly commentsPerLoad = 2;
     @prop()
     _id: string;
     @prop()
+    get id() : string {
+        return this._id
+    };
+    set id(value) {
+        this._id = value;
+    }
+    @prop()
     name: string;
-    @prop({ref: City})
+    @prop({ref: City,idType: 'String'})
     city: Ref<City>;
     @prop()
     description: string;
@@ -94,7 +129,7 @@ export class ViewPoint extends Typegoose {
     }
     @staticMethod
     static findViewPointsByCity(this: ModelType<ViewPoint> & typeof ViewPoint, cityId : string) {
-        return this.find({city: cityId}).slice('comments', [0, ViewPoint.commentsPerLoad]);
+        return this.find({city: cityId }).slice('comments', [0, ViewPoint.commentsPerLoad]);
     }
     @staticMethod
     static createViewPoint(this: ModelType<ViewPoint> & typeof ViewPoint,create: any) {
@@ -106,7 +141,9 @@ export var ViewPointModel = new ViewPoint().getModelForClass(ViewPoint, {
     schemaOptions: {
         timestamps: true,
         toJSON: {
+            virtuals: true,
             transform: (doc, ret, options) => {
+                delete ret._id;
                 delete ret.__v;
                 return ret;
             }

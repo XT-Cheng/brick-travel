@@ -1,5 +1,4 @@
-import { Mongoose, Schema, Document, model } from 'mongoose'
-import { prop, Typegoose, ModelType, InstanceType, arrayProp, pre, instanceMethod, staticMethod, Ref } from 'typegoose';
+import { arrayProp, ModelType, prop, Ref, staticMethod, Typegoose } from '../typegoose/typegoose';
 import { ViewPoint } from './viewPoint.model';
 
 export enum TransportationCategory {
@@ -64,26 +63,3 @@ export var TravelAgendaModel = new TravelAgenda().getModelForClass(TravelAgenda,
         }
     }
 });
-
-//#region Classic mongoose
-// var childSchma = new Schema({
-//     user : String
-// },{timestamps: true});
-// childSchma.pre('save',(next)=> {
-//     console.log('pre save child');
-//     next();
-// })
-
-// var blogSchema = new Schema({
-//     title:  String,
-//     author: String,
-//     users : [childSchma]
-//   },{timestamps: true});
-
-// blogSchema.pre('save',(next)=> {
-//     console.log('pre save blog');
-//     next();
-// })
-
-// export var blogModel = model('blog',blogSchema);
-//#endregion

@@ -1,9 +1,7 @@
-import { Router, Response, Request, NextFunction } from "express";
-import { ViewPointService } from "../business/viewPoint.service";
-import { ViewPointModel, ViewPoint } from "../data-model/viewPoint.model";
-import { asyncMiddleware } from "../utils/utility";
-//import { Mongoose, Schema, Document, model } from 'mongoose'
-import * as mongoose from 'mongoose';
+import { NextFunction, Request, Response, Router } from 'express';
+
+import { ViewPointModel } from '../data-model/viewPoint.model';
+import { asyncMiddleware } from '../utils/utility';
 
 export class ViewPointRoute {
     public static create(router: Router) {
@@ -21,7 +19,7 @@ export class ViewPointRoute {
 
         //Load ViewPoint by City with some comments retrieved
         router.get('/:cityId/viewPoints', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
-            await ViewPointRoute.load(req, res, next);
+            await ViewPointRoute.loadByCity(req, res, next);
         }));
 
         //Insert ViewPoint

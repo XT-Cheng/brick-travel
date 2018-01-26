@@ -1,7 +1,7 @@
-import { Router, Response, Request, NextFunction } from "express";
-import { CityModel, City } from "../data-model/city.model";
-import { asyncMiddleware } from "../utils/utility";
-import * as mongoose from 'mongoose';
+import { NextFunction, Request, Response, Router } from 'express';
+
+import { CityModel } from '../data-model/city.model';
+import { asyncMiddleware } from '../utils/utility';
 
 export class CityRoute {
     public static create(router: Router) {
