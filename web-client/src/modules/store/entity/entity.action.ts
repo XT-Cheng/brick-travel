@@ -51,7 +51,8 @@ export enum EntityActionTypeEnum {
     UPDATE = "ENTITY:UPDATE",
     INSERT = "ENTITY:INSERT",
     DELETE = "ENTITY:DELETE",
-    FLUSH = "ENTITY:FLUSH"
+    FLUSH = "ENTITY:FLUSH",
+    VIEWPOINTCOMMENTS = "ENTITY:VIEWPOINTCOMMENTS"
 }
 
 let defaultEntityActionPayload = {
@@ -108,9 +109,9 @@ export function entityLoadActionFailed(entityType: EntityTypeEnum) {
     })
 }
 
-export function entityLoadActionSucceeded(entityType: EntityTypeEnum) {
+export function entityLoadActionSucceeded(entityType: EntityTypeEnum,actionType: EntityActionTypeEnum = EntityActionTypeEnum.LOAD) {
     return (entities: IEntities): EntityAction => ({
-        type: EntityActionTypeEnum.LOAD,
+        type: actionType,
         meta: Object.assign({}, defaultEntityActionMeta, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.SUCCEED

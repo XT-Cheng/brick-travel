@@ -110,7 +110,6 @@ export class ViewPoint extends Typegoose {
                 city: 0,
                 updatedAt: 0,
                 createdAt: 0,
-                _id: 0,
                 description: 0,
                 tips: 0,
                 timeNeeded: 0,

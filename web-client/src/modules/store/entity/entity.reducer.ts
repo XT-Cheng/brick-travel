@@ -2,21 +2,21 @@ import { combineReducers } from 'redux-seamless-immutable';
 
 import { cityReducer } from './city/city.reducer';
 import { IEntities } from './entity.model';
-import { filterCategoryReducer } from './filterCategory/filterCategory.reducer';
-import { travelAgendaReducer } from './travelAgenda/travelAgenda.reducer';
-import { viewPointReducer } from './viewPoint/viewPoint.reducer';
+import { filterCategoryReducer, filterCriteriaReducer } from './filterCategory/filterCategory.reducer';
+import { dailyTripReducer, travelAgendaReducer, travelViewPointReducer } from './travelAgenda/travelAgenda.reducer';
+import { viewPointCommentReducer, viewPointReducer } from './viewPoint/viewPoint.reducer';
 
 export const entityReducer =
   combineReducers<IEntities>({
     cities: cityReducer,
     viewPoints: viewPointReducer,
-    viewPointComments: viewPointReducer,
-    travelViewPoints: travelAgendaReducer,
-    dailyTrips: travelAgendaReducer,
+    viewPointComments: viewPointCommentReducer,
+    travelViewPoints: travelViewPointReducer,
+    dailyTrips: dailyTripReducer,
     travelAgendas: travelAgendaReducer,
     users: (state,action) => state,
     filterCategories: filterCategoryReducer,
-    filterCriteries: filterCategoryReducer
+    filterCriteries: filterCriteriaReducer
   });
 
 // export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: EntityAction): IEntities {

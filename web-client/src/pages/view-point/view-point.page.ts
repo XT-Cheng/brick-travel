@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
 import { IAppState } from '../../modules/store/store.model';
+import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 
 @Component({
   selector: 'page-view-point',
@@ -20,7 +21,8 @@ export class ViewPointPage {
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>) {
+  constructor(private _store: NgRedux<IAppState>,
+              private _viewPointActionGenerator : ViewPointActionGenerator) {
       this.selectedViewPoint$ = getSelectedViewPoint(this._store);
   }
 
@@ -31,6 +33,8 @@ export class ViewPointPage {
   //#endregion
 
   //#region Protected method
-
+  protected fetchMoreComments(viewPoint : IViewPointBiz) {
+    this._viewPointActionGenerator.loadViewPointComments({viewPointId: viewPoint.id},viewPoint.comments.length);
+  }
   //#endregion
 }

@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
-import { Observable } from "rxjs/Observable";
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { normalize } from 'normalizr';
-import { viewPoint, viewPointComment } from '../entity.schema';
-import { IEntities } from '../entity.model';
+import { Observable } from 'rxjs/Observable';
+
 import { IPagination, IQueryCondition } from '../entity.action';
+import { IEntities } from '../entity.model';
+import { viewPoint } from '../entity.schema';
 
 @Injectable()
 export class ViewPointService {
@@ -44,7 +46,7 @@ export class ViewPointService {
     
     return this._http.get(url)
     .map(records => {
-      return normalize(records, {comments:[ viewPointComment ]}).entities;
+      return normalize(records, viewPoint).entities;
     })
   }
   //#endregion

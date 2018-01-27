@@ -1,15 +1,18 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
-import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
+
+import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 
 @Component({
   selector: 'viewpoint-detail',
   templateUrl: 'viewpoint-detail.html'
 })
 export class ViewPointDetailComponent implements AfterViewInit {
-//#region Private member
+  //#region Private member
+  private _viewPoint : IViewPointBiz;
 
+  @ViewChild(InfiniteScroll) private _infinteScroll: InfiniteScroll;
+  
   //#endregion
 
   //#region Protected member
@@ -18,7 +21,14 @@ export class ViewPointDetailComponent implements AfterViewInit {
 
   //#region Protected property
 
-  @Input() protected viewPoint : IViewPointBiz;
+  @Input() protected set viewPoint(value : IViewPointBiz) {
+    this._viewPoint = value;
+    if (this._infinteScroll)
+      this._infinteScroll.complete();
+  }
+  protected get viewPoint() : IViewPointBiz {
+    return this._viewPoint;
+  }
 
   //#endregion
 
@@ -27,12 +37,12 @@ export class ViewPointDetailComponent implements AfterViewInit {
   //#endregion
 
   //#region Event
-
+  @Output() protected fetchMoreCommentsEvent: EventEmitter<IViewPointBiz>;
   //#endregion
 
   //#region Constructor
-  constructor(private _viewPointActionGenerator: ViewPointActionGenerator) {
-    
+  constructor() {
+    this.fetchMoreCommentsEvent = new EventEmitter<IViewPointBiz>();
   }
   //#endregion
 
@@ -44,11 +54,11 @@ export class ViewPointDetailComponent implements AfterViewInit {
 
   //#region Protected methods
   protected doInfinite(infiniteScroll : InfiniteScroll) {
-    this._viewPointActionGenerator.loadViewPointComments({viewPointId: this.viewPoint.id},this.viewPoint.comments.length,3);
+    this.fetchMoreCommentsEvent.emit(this._viewPoint);
   }
 
   protected isFetchedAll() {
-    return this.viewPoint.comments.length == this.viewPoint.countOfComments;
+    return this._viewPoint.comments.length == this._viewPoint.countOfComments;
   }
   //#endregion
 }

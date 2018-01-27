@@ -7,6 +7,7 @@ import {
     entityLoadActionStarted,
     entityLoadActionSucceeded,
     EntityTypeEnum,
+    EntityActionTypeEnum,
 } from '../entity.action';
 
 @Injectable()
@@ -23,7 +24,8 @@ export class ViewPointActionGenerator {
     @dispatch()
     loadViewPointComments = entityLoadAction(EntityTypeEnum.VIEWPOINTCOMMENT);
 
-    loadViewPointCommentsSucceeded = entityLoadActionSucceeded(EntityTypeEnum.VIEWPOINTCOMMENT);
+    loadViewPointCommentsSucceeded = entityLoadActionSucceeded(
+        EntityTypeEnum.VIEWPOINTCOMMENT,EntityActionTypeEnum.VIEWPOINTCOMMENTS);
     
     loadViewPointCommentsFailed  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINTCOMMENT);
 }
