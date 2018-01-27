@@ -109,7 +109,7 @@ export class TestPage implements AfterViewInit {
 
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
     //this.dayTripSelected$.next(dailyTrip);
-    this._uiActionGeneration.selectDailyTrip(dailyTrip._id);
+    this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {
@@ -119,8 +119,8 @@ export class TestPage implements AfterViewInit {
   dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
     let dailyTrip = value.dailyTrip;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip._id,translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda._id,translateTravelAgendaFromBiz(travelAgeanda));
+    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip.id,translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgendaFromBiz(travelAgeanda));
   }
 
   getDailyTrips(): Array<IDailyTripBiz> {
@@ -156,9 +156,9 @@ export class TestPage implements AfterViewInit {
 
     filterChanged.category.criteries.forEach(c => {
       if (c.isChecked)
-        checkId = c._id;
+        checkId = c.id;
       else
-        unCheckIds.push(c._id);
+        unCheckIds.push(c.id);
     });
 
     this._uiActionGeneration.selectCriteria(checkId, unCheckIds);

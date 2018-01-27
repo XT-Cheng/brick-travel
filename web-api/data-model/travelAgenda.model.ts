@@ -8,25 +8,70 @@ export enum TransportationCategory {
     SelfDrive
 }
 
-export class TravelViewPoint {
+export class TravelViewPoint extends Typegoose{
     @prop()
     _id: string;
+    @prop()
+    get id() : string {
+        return this._id
+    };
+    set id(value) {
+        this._id = value;
+    }
     @prop({ enum: TransportationCategory })
     transportationToNext: TransportationCategory;
-    @prop({ref: ViewPoint})
+    @prop({ref: ViewPoint,idType: 'String'})
     viewPoint: Ref<ViewPoint>;
 }
 
-export class DailyTrip {
+new TravelViewPoint().getModelForClass(TravelViewPoint, {
+    schemaOptions: {
+        toJSON: {
+            virtuals: true,
+            transform: (doc, ret, options) => {
+                delete ret._id;
+                return ret;
+            }
+        }
+    }
+});
+
+export class DailyTrip extends Typegoose{
     @prop()
     _id: string;
+    @prop()
+    get id() : string {
+        return this._id
+    };
+    set id(value) {
+        this._id = value;
+    }
     @arrayProp({items: TravelViewPoint})
     travelViewPoints : TravelViewPoint[];
 }
 
+new DailyTrip().getModelForClass(DailyTrip, {
+    schemaOptions: {
+        toJSON: {
+            virtuals: true,
+            transform: (doc, ret, options) => {
+                delete ret._id;
+                return ret;
+            }
+        }
+    }
+});
+
 export class TravelAgenda extends Typegoose {
     @prop()
     _id: string;
+    @prop()
+    get id() : string {
+        return this._id
+    };
+    set id(value) {
+        this._id = value;
+    }
     @prop()
     name: string;
     @prop()
@@ -56,8 +101,10 @@ export var TravelAgendaModel = new TravelAgenda().getModelForClass(TravelAgenda,
     schemaOptions: {
         timestamps: true,
         toJSON: {
+            virtuals: true,
             transform: (doc, ret, options) => {
                 delete ret.__v;
+                delete ret._id;
                 return ret;
             }
         }

@@ -185,24 +185,24 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   }
 
   protected isSelectedDailyTrip(dailyTrip: IDailyTripBiz) {
-    return { 'display': this.selectedDailyTrip && (this.selectedDailyTrip._id === dailyTrip._id) ? 'block' : 'none' };
+    return { 'display': this.selectedDailyTrip && (this.selectedDailyTrip.id === dailyTrip.id) ? 'block' : 'none' };
   }
 
   protected getDayItemClass(dailyTrip: IDailyTripBiz) {
     return {
-      'active': dailyTrip && this.selectedDailyTrip && (dailyTrip._id === this.selectedDailyTrip._id)
+      'active': dailyTrip && this.selectedDailyTrip && (dailyTrip.id === this.selectedDailyTrip.id)
     };
   }
 
   protected getTravelViewPointItemClass(travelViewPoint: ITravelViewPointBiz) {
     return {
-      'active': travelViewPoint && this.selectedViewPoint && travelViewPoint.viewPoint._id === this.selectedViewPoint._id
+      'active': travelViewPoint && this.selectedViewPoint && travelViewPoint.viewPoint.id === this.selectedViewPoint.id
     }
   }
 
   protected removeTravelViewPoint(travelViewPoint: ITravelViewPointBiz) {
     this.selectedDailyTrip.travelViewPoints = this.selectedDailyTrip.travelViewPoints.
-                                                filter(tvp => tvp._id != travelViewPoint._id);
+                                                filter(tvp => tvp.id != travelViewPoint.id);
 
     this.travelViewPointRemovedEvent.emit({ removed: travelViewPoint, dailyTrip: this.selectedDailyTrip, travelAgenda: this.travelAgenda });
   }
@@ -220,7 +220,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   }
 
   protected deleteDay(dailyTrip: IDailyTripBiz) {
-    this.travelAgenda.dailyTrips = this.travelAgenda.dailyTrips.filter(trip => trip._id !== dailyTrip._id);
+    this.travelAgenda.dailyTrips = this.travelAgenda.dailyTrips.filter(trip => trip.id !== dailyTrip.id);
     this.dailyTripRemovedEvent.emit({ removed: dailyTrip, travelAgenda: this.travelAgenda });
   }
 

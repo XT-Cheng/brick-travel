@@ -23,7 +23,7 @@ function getTravelAgendasInternal(store : NgRedux<IAppState>) {
             agenda.dailyTrips = agenda.dailyTrips.map(id => dailyTrips[id]);
             Object.keys(agenda.dailyTrips).forEach(key => {
                 let dailyTrip = agenda.dailyTrips[key];
-                dailyTrip.travelViewPoints = dailyTrip.travelViewPoints.map(_id => travelViewPoints[_id]);
+                dailyTrip.travelViewPoints = dailyTrip.travelViewPoints.map(id => travelViewPoints[id]);
                 Object.keys(dailyTrip.travelViewPoints).forEach(key => {
                     let travelViewPoint = dailyTrip.travelViewPoints[key];
                     travelViewPoint.viewPoint = viewPoints[travelViewPoint.viewPoint];

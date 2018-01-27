@@ -107,9 +107,9 @@ export class ViewPointsSelectPage implements AfterViewInit {
 
     filterChanged.category.criteries.forEach(c => {
       if (c.isChecked)
-        checkId = c._id;
+        checkId = c.id;
       else
-        unCheckIds.push(c._id);
+        unCheckIds.push(c.id);
     });
 
     this._uiActionGeneration.selectCriteria(checkId, unCheckIds);
@@ -162,14 +162,14 @@ export class ViewPointsSelectPage implements AfterViewInit {
     let travelAgenda = value.travelAgenda;
     let travelViewPoint = value.added;
 
-    this._travelAgendaActionGenerator.insertTravelViewPoint(travelViewPoint._id, translateTravelViewPointFromBiz(travelViewPoint));
+    this._travelAgendaActionGenerator.insertTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
 
     dailyTrip.travelViewPoints.forEach(tvp => {
-      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp._id,translateTravelViewPointFromBiz(tvp));
+      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
     })
     
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id, translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id, translateTravelAgendaFromBiz(travelAgenda));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
   }
 
   protected viewPointRemoved(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, removed: ITravelViewPointBiz }) {
@@ -177,14 +177,14 @@ export class ViewPointsSelectPage implements AfterViewInit {
     let travelAgenda = value.travelAgenda;
     let travelViewPoint = value.removed;
 
-    this._travelAgendaActionGenerator.deleteTravelViewPoint(travelViewPoint._id, translateTravelViewPointFromBiz(travelViewPoint));
+    this._travelAgendaActionGenerator.deleteTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
     
     dailyTrip.travelViewPoints.forEach(tvp => {
-      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp._id,translateTravelViewPointFromBiz(tvp));
+      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
     })
     
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip._id, translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda._id, translateTravelAgendaFromBiz(travelAgenda));
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
   }
 
   //#region Private metohds

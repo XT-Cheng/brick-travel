@@ -8,7 +8,7 @@ import { Epic } from 'redux-observable';
 import { of } from 'rxjs/observable/of';
 
 import { IAppState } from '../../store.model';
-import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
+import { EntityAction, EntityActionTypeEnum, EntityTypeEnum, EntityActionPhaseEnum } from '../entity.action';
 import { ViewPointActionGenerator } from './viewPoint.action';
 import { ViewPointService } from './viewPoint.service';
 
@@ -26,7 +26,7 @@ export class ViewPointEpic {
   private createEpicInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
     return (action$, store) => action$
       .ofType(EntityActionTypeEnum.LOAD)
-      .filter(action => action.meta.entityType === entityType && !!action.meta.pagination)
+      .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
       .switchMap(action => {
         return this._service.getViewPoints(action.meta.pagination,action.payload.queryCondition)
         .map(data => this._action.loadViewPointSucceeded(data))

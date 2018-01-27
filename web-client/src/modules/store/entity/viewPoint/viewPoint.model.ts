@@ -8,7 +8,7 @@ export enum ViewPointCategory {
 }
 
 export interface IViewPoint {
-    _id: string,
+    id: string,
     city: string,
     name: string,
     description: string,
@@ -21,11 +21,11 @@ export interface IViewPoint {
     category: ViewPointCategory,
     rank: number,
     images : string[],
-    comments: IViewPointComment[] | string[],
+    comments: string[],
 }
 
 export interface IViewPointComment {
-    _id: string,
+    id: string,
     detail: string,
     user: string,
     avatar: string,

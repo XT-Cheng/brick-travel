@@ -1,5 +1,5 @@
 export interface ICity {
-    _id: string,
+    id: string,
     name: string,
     thumbnail: string,
 }

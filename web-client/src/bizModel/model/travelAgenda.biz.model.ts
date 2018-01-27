@@ -10,7 +10,7 @@ import {
 import { IViewPointBiz } from './viewPoint.biz.model';
 
 export interface ITravelAgendaBiz extends IPersistentStatus{
-    _id: string,
+    id: string,
     name: string,
     user: string,
     cover: string,
@@ -18,13 +18,13 @@ export interface ITravelAgendaBiz extends IPersistentStatus{
 };
 
 export interface IDailyTripBiz {
-    _id: string,
+    id: string,
     travelViewPoints: ITravelViewPointBiz[],
     lastViewPoint: string
 }
 
 export interface ITravelViewPointBiz {
-    _id: string,
+    id: string,
     viewPoint: IViewPointBiz,
     distanceToNext: number,
     transportationToNext: TransportationCategory
@@ -48,7 +48,7 @@ export function caculateDistance(dailyTrip: IDailyTripBiz) {
 
     if (dailyTrip.travelViewPoints.length > 0) {
         dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].transportationToNext = null;
-        dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1]._id;
+        dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
     }
     else
         dailyTrip.lastViewPoint = '';
@@ -56,7 +56,7 @@ export function caculateDistance(dailyTrip: IDailyTripBiz) {
 
 export function createTravelAgenda(): ITravelAgendaBiz {
     return {
-        _id: new ObjectID().toHexString(),
+        id: new ObjectID().toHexString(),
         persistentStatus: EntityPersistentStatusEnum.NEW,
         name: '',
         user: '',
@@ -67,7 +67,7 @@ export function createTravelAgenda(): ITravelAgendaBiz {
 
 export function createDailiyTrip(): IDailyTripBiz {
     return {
-        _id: new ObjectID().toHexString(),
+        id: new ObjectID().toHexString(),
         travelViewPoints: [],
         lastViewPoint: ''
     }
@@ -75,7 +75,7 @@ export function createDailiyTrip(): IDailyTripBiz {
 
 export function createTravelViewPoint(viewPoint: IViewPointBiz): ITravelViewPointBiz {
     return {
-        _id: new ObjectID().toHexString(),
+        id: new ObjectID().toHexString(),
         viewPoint: viewPoint,
         distanceToNext: -1,
         transportationToNext: null
@@ -84,26 +84,26 @@ export function createTravelViewPoint(viewPoint: IViewPointBiz): ITravelViewPoin
 
 export function translateDailyTripFromBiz(dailyTrip: IDailyTripBiz): IDailyTrip {
     return {
-        _id: dailyTrip._id,
-        travelViewPoints: dailyTrip.travelViewPoints.map(tvp => tvp._id)
+        id: dailyTrip.id,
+        travelViewPoints: dailyTrip.travelViewPoints.map(tvp => tvp.id)
     };
 }
 
 export function translateTravelViewPointFromBiz(travelViewPoint: ITravelViewPointBiz): ITravelViewPoint {
     return {
-        _id: travelViewPoint._id,
-        viewPoint: travelViewPoint.viewPoint._id,
+        id: travelViewPoint.id,
+        viewPoint: travelViewPoint.viewPoint.id,
         transportationToNext: travelViewPoint.transportationToNext
     };
 }
 
 export function translateTravelAgendaFromBiz(travelAgenda: ITravelAgendaBiz): ITravelAgenda {
     return {
-        _id: travelAgenda._id,
+        id: travelAgenda.id,
         persistentStatus: travelAgenda.persistentStatus,
         name: travelAgenda.name,
         user: travelAgenda.user,
         cover: travelAgenda.cover,
-        dailyTrips: travelAgenda.dailyTrips.map(dt => dt._id)
+        dailyTrips: travelAgenda.dailyTrips.map(dt => dt.id)
     }
 }

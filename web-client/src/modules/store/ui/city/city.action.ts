@@ -26,7 +26,7 @@ export function selectCityAction(city: ICityBiz): UICityAction {
         type: UICityActionTypeEnum.SELECT_CITY,
         meta: { progressing : false },
         payload: Object.assign({},defaultCityActionPayload,{
-            selectedCityId: city?city._id:''
+            selectedCityId: city?city.id:''
         })
     };
 }

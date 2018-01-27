@@ -12,7 +12,7 @@ function getSelectedViewPointId(store: NgRedux<IAppState>): Observable<string> {
 function getViewPointById(viewPointId: string, viewPoints: IViewPointBiz[]): IViewPointBiz {
     let found = null;
     viewPoints.forEach(viewPoint => {
-            if (viewPoint._id === viewPointId) {
+            if (viewPoint.id === viewPointId) {
                 found = viewPoint;
         }
     })

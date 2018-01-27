@@ -8,7 +8,7 @@ export enum TransportationCategory {
 }
 
 export interface ITravelAgenda extends IPersistentStatus {
-    _id: string,
+    id: string,
     name: string,
     user: string,
     cover: string,
@@ -16,12 +16,12 @@ export interface ITravelAgenda extends IPersistentStatus {
 };
 
 export interface IDailyTrip {
-    _id: string,
+    id: string,
     travelViewPoints:  string[],
 }
 
 export interface ITravelViewPoint {
-    _id: string,
+    id: string,
     viewPoint: string,
     transportationToNext: TransportationCategory
 }

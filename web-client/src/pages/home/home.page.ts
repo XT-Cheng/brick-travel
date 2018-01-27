@@ -37,7 +37,7 @@ export class HomePage implements AfterViewInit {
   //#region Protected method
   protected onNewAgenda(event) {
     let createdTravelAgenda = createTravelAgenda();
-    this._entityActionGeneration.insertTravelAgenda(createdTravelAgenda._id,translateTravelAgendaFromBiz(createdTravelAgenda));
+    this._entityActionGeneration.insertTravelAgenda(createdTravelAgenda.id,translateTravelAgendaFromBiz(createdTravelAgenda));
     //this._entityActionGeneration.flushTravelAgenda(createdTravelAgenda._id);
     this._uiActionGeneration.selectTravelAgenda(createdTravelAgenda);
   }

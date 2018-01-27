@@ -1,8 +1,9 @@
 import { NgRedux } from '@angular-redux/store';
+import { denormalize } from 'normalizr';
 import { Observable } from 'rxjs/Rx';
-import { asMutable } from 'seamless-immutable';
 
 import { ICity } from '../../../modules/store/entity/city/city.model';
+import { city } from '../../../modules/store/entity/entity.schema';
 import { IAppState } from '../../../modules/store/store.model';
 import { ICityBiz } from '../../model/city.biz.model';
 
@@ -12,14 +13,7 @@ export function getCities(store : NgRedux<IAppState>) : Observable<ICityBiz[]> {
 }
 
 function getCitiesInternal(store : NgRedux<IAppState>) {
-    return (data : { [_id : string] : ICity }) : ICityBiz[] => {
-        let ret = new Array<ICityBiz>();
-        let cities = asMutable(data,{deep: true});
-        Object.keys(cities).forEach(key => {
-            let city = cities[key];
-            ret.push(city);
-        });
-        
-        return ret;
+    return (data : { [id : string] : ICity }) : ICityBiz[] => {
+        return denormalize(Object.keys(data),[ city ],store.getState().entities);
     }
 }

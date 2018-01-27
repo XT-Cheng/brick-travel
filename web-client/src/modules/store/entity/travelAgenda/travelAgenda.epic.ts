@@ -28,7 +28,7 @@ export class TravelAgendaEpic {
   private createEpicLoadInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
     return (action$, store) => action$
       .ofType(EntityActionTypeEnum.LOAD)
-      .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER && !!action.meta.pagination)
+      .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
       .switchMap(action => this._service.getTravelAgenda(action.meta.pagination)
         .map(data => this._action.loadTravelAgendaSucceeded(data))
         .catch(response =>

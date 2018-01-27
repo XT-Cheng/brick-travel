@@ -8,7 +8,7 @@ import { Epic } from 'redux-observable';
 import { of } from 'rxjs/observable/of';
 
 import { IAppState } from '../../store.model';
-import { EntityAction, EntityActionTypeEnum, EntityTypeEnum } from '../entity.action';
+import { EntityAction, EntityActionTypeEnum, EntityTypeEnum, EntityActionPhaseEnum } from '../entity.action';
 import { FilterCategoryActionGenerator } from './filterCategory.action';
 import { FilterCategoryService } from './filterCategory.service';
 
@@ -26,7 +26,7 @@ export class FilterCategoryEpic {
   private createEpicInternal(entityType : EntityTypeEnum ): Epic<EntityAction, IAppState> {
     return (action$, store) => action$
       .ofType(EntityActionTypeEnum.LOAD)
-      .filter(action => action.meta.entityType === entityType && !!action.meta.pagination)
+      .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
       .switchMap(action => {
         return this._service.getFilterCategory(action.meta.pagination)
         .map(data => this._action.loadFilterCategorySucceeded(data))

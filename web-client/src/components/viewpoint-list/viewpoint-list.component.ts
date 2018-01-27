@@ -64,7 +64,7 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
     if (this.actionAllowed(viewPoint) == ActionAllowed.ADD) {
       //Create travel viewPoint
       let travelViewPoint: ITravelViewPointBiz = {
-        _id: uuid.v1(),
+        id: uuid.v1(),
         viewPoint: viewPoint,
         distanceToNext: -1,
         transportationToNext: null
@@ -73,9 +73,9 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
       this.viewPointAddedToDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,added: travelViewPoint})
     }
     else {
-      let removed = this.dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint._id == viewPoint._id)
+      let removed = this.dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint.id == viewPoint.id)
       this.dailyTrip.travelViewPoints =
-        this.dailyTrip.travelViewPoints.filter(tvp => tvp.viewPoint._id != viewPoint._id);
+        this.dailyTrip.travelViewPoints.filter(tvp => tvp.viewPoint.id != viewPoint.id);
         this.viewPointRemovedFromDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,removed: removed})
     }
   }
@@ -106,7 +106,7 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
 
     if (this.dailyTrip) {
       this.dailyTrip.travelViewPoints.forEach(tvp => {
-        if (viewPoint._id === tvp.viewPoint._id)
+        if (viewPoint.id === tvp.viewPoint.id)
           ret = true;
       });
     }

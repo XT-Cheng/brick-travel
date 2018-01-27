@@ -1,5 +1,5 @@
 export interface ICityBiz {
-    _id: string;
+    id: string;
     name: string;
     thumbnail: string;
 }
