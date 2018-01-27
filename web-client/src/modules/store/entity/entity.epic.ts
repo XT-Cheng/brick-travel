@@ -14,7 +14,7 @@ export class EntityEpics {
   public createEpics() {
     return combineEpics(
       this._cityEpic.createEpic(),
-      this._viewPointEpic.createEpic(),
+      ...this._viewPointEpic.createEpic(),
       ...this._travelAgendaEpic.createEpic(),
       this._filterCategoryEpic.createEpic()
     );

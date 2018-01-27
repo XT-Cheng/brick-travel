@@ -15,6 +15,7 @@ export interface IViewPointBiz {
     longtitude: number,
     category: ViewPointCategory,
     rank: number,
+    countOfComments: number,
     images : string[],
     comments: IViewPointCommentBiz[]
 }

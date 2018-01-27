@@ -8,9 +8,9 @@ export class ViewPointRoute {
         console.log('ViewPoint route create');
 
         //Load ViewPoint comments (pagination) by ViewPoint id
-        router.get('/viewPoints/:id/comments', (req: Request, res: Response, next: NextFunction) => {
+        router.get('/viewPoints/:id/comments', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             ViewPointRoute.loadComments(req, res, next);
-        });
+        }));
 
         //Load ViewPoint with some comments retrieved
         router.get('/viewPoints', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
@@ -47,7 +47,7 @@ export class ViewPointRoute {
     }
 
     private static async loadComments(req: Request, res: Response, next: NextFunction) {
-        var vp = await ViewPointModel.loadComments(req.params.id, parseInt(req.query['skip']));
+        var vp = await ViewPointModel.loadComments(req.params.id, parseInt(req.query['skip']), parseInt(req.query['limit']));
         res.json(vp);
     }
 

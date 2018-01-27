@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
+import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 
 @Component({
   selector: 'viewpoint-detail',
@@ -29,7 +31,7 @@ export class ViewPointDetailComponent implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor() {
+  constructor(private _viewPointActionGenerator: ViewPointActionGenerator) {
     
   }
   //#endregion
@@ -41,6 +43,12 @@ export class ViewPointDetailComponent implements AfterViewInit {
   //#endregion
 
   //#region Protected methods
-  
+  protected doInfinite(infiniteScroll : InfiniteScroll) {
+    this._viewPointActionGenerator.loadViewPointComments({viewPointId: this.viewPoint.id},this.viewPoint.comments.length,3);
+  }
+
+  protected isFetchedAll() {
+    return this.viewPoint.comments.length == this.viewPoint.countOfComments;
+  }
   //#endregion
 }

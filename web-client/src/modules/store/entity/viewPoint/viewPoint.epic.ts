@@ -20,10 +20,11 @@ export class ViewPointEpic {
   ) {}
 
   public createEpic() {
-    return this.createEpicInternal(EntityTypeEnum.VIEWPOINT);
+    return [this.createEpicLoadViewPointInternal(EntityTypeEnum.VIEWPOINT),
+      this.createEpicLoadViewPointCommentInternal(EntityTypeEnum.VIEWPOINTCOMMENT)];
   }
 
-  private createEpicInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
+  private createEpicLoadViewPointInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
     return (action$, store) => action$
       .ofType(EntityActionTypeEnum.LOAD)
       .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
@@ -34,6 +35,19 @@ export class ViewPointEpic {
           of(this._action.loadViewPointFailed(response))
         )
         .startWith(this._action.loadViewPointStarted())
+      });
+  }
+
+  private createEpicLoadViewPointCommentInternal(entityType : EntityTypeEnum): Epic<EntityAction, IAppState> {
+    return (action$, store) => action$
+      .ofType(EntityActionTypeEnum.LOAD)
+      .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
+      .switchMap(action => {
+        return this._service.getViewPointComments(action.meta.pagination,action.payload.queryCondition)
+        .map(data => this._action.loadViewPointCommentsSucceeded(data))
+        .catch(response => 
+          of(this._action.loadViewPointCommentsFailed(response))
+        )
       });
   }
 }

@@ -57,7 +57,7 @@ new ViewPointComment().getModelForClass(ViewPointComment, {
 });
 
 export class ViewPoint extends Typegoose {
-    public static readonly commentsPerLoad = 2;
+    public static readonly commentsFirstLoad = 2;
     @prop()
     _id: string;
     @prop()
@@ -102,11 +102,12 @@ export class ViewPoint extends Typegoose {
         return this.save();
     }
     @staticMethod
-    static loadComments(this: ModelType<ViewPoint> & typeof ViewPoint, id: string, skip: number) {
+    static loadComments(this: ModelType<ViewPoint> & typeof ViewPoint, id: string, skip: number,limit: number) {
         //NOTE: https://stackoverflow.com/questions/7670073/how-to-combine-both-slice-and-select-returned-keys-operation-in-function-update
-        return this.findById(id).slice('comments', [skip, ViewPoint.commentsPerLoad])
+        return this.findById(id).slice('comments', [skip, limit])
             .select({
                 name: 0,
+                city: 0,
                 updatedAt: 0,
                 createdAt: 0,
                 _id: 0,
@@ -125,11 +126,11 @@ export class ViewPoint extends Typegoose {
     }
     @staticMethod
     static findViewPoints(this: ModelType<ViewPoint> & typeof ViewPoint) {
-        return this.find().slice('comments', [0, ViewPoint.commentsPerLoad]);
+        return this.find().slice('comments', [0, ViewPoint.commentsFirstLoad]);
     }
     @staticMethod
     static findViewPointsByCity(this: ModelType<ViewPoint> & typeof ViewPoint, cityId : string) {
-        return this.find({city: cityId }).slice('comments', [0, ViewPoint.commentsPerLoad]);
+        return this.find({city: cityId }).slice('comments', [0, ViewPoint.commentsFirstLoad]);
     }
     @staticMethod
     static createViewPoint(this: ModelType<ViewPoint> & typeof ViewPoint,create: any) {

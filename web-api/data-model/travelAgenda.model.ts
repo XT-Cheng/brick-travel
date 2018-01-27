@@ -90,7 +90,7 @@ export class TravelAgenda extends Typegoose {
             path: 'dailyTrips.travelViewPoints.viewPoint',
             options: { 
                 slice: {
-                    'comments': [0,ViewPoint.commentsPerLoad],
+                    'comments': [0,ViewPoint.commentsFirstLoad],
                 }
              }
         });

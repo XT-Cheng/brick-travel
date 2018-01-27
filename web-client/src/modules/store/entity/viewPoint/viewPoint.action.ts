@@ -19,4 +19,11 @@ export class ViewPointActionGenerator {
     loadViewPointSucceeded = entityLoadActionSucceeded(EntityTypeEnum.VIEWPOINT);
     
     loadViewPointFailed  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINT);
+
+    @dispatch()
+    loadViewPointComments = entityLoadAction(EntityTypeEnum.VIEWPOINTCOMMENT);
+
+    loadViewPointCommentsSucceeded = entityLoadActionSucceeded(EntityTypeEnum.VIEWPOINTCOMMENT);
+    
+    loadViewPointCommentsFailed  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINTCOMMENT);
 }

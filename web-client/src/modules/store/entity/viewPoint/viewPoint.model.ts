@@ -20,6 +20,7 @@ export interface IViewPoint {
     longtitude: number,
     category: ViewPointCategory,
     rank: number,
+    countOfComments: number,
     images : string[],
     comments: string[],
 }

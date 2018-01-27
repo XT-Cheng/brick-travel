@@ -4,7 +4,7 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import { normalize } from 'normalizr';
-import { viewPoint } from '../entity.schema';
+import { viewPoint, viewPointComment } from '../entity.schema';
 import { IEntities } from '../entity.model';
 import { IPagination, IQueryCondition } from '../entity.action';
 
@@ -36,6 +36,15 @@ export class ViewPointService {
     return this._http.get(url)
     .map(records => {
       return normalize(records, [ viewPoint ]).entities;
+    })
+  }
+
+  public getViewPointComments(pagination : IPagination, queryCondition : IQueryCondition): Observable<IEntities> {
+    let url = `http://localhost:3000/viewPoints/${queryCondition['viewPointId']}/comments?skip=${pagination.page}&&limit=${pagination.limit}`;
+    
+    return this._http.get(url)
+    .map(records => {
+      return normalize(records, {comments:[ viewPointComment ]}).entities;
     })
   }
   //#endregion
