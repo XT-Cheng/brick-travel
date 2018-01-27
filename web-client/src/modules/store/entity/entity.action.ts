@@ -20,8 +20,8 @@ export interface IQueryCondition {
 
 export interface IEntityActionPayload extends IActionPayload {
     entities: IEntities
-    queryCondition?: IQueryCondition,
-    objectId? : string
+    queryCondition: IQueryCondition,
+    objectId : string
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
@@ -56,7 +56,8 @@ export enum EntityActionTypeEnum {
 
 let defaultEntityActionPayload = {
     error: null,
-    entities: null,
+    entities: {},
+    queryCondition: {},
     objectId: ''
 }
 
@@ -65,7 +66,6 @@ let defaultEntityActionMeta = {
     phaseType: EntityActionPhaseEnum.EXECUTE,
     progressing: false
 }
-
 
 //#region Load Actions
 export function entityLoadAction(entityType: EntityTypeEnum) {
