@@ -15,11 +15,6 @@ export function getFilterCategories(store : NgRedux<IAppState>) : Observable<IFi
 
 export function getFilterCategoriesInternal(store : NgRedux<IAppState>) {
     return (data : { [id : string] : IFilterCategory }) : Array<IFilterCategoryBiz> => {
-        let origin = denormalize(Object.keys(data),[ filterCategory ],store.getState().entities);
-        origin = origin.map(cat => {
-            cat.criteries = Immutable(cat.criteries).asMutable({deep: true});
-            return cat;
-        });
-        return origin;
+        return denormalize(Object.keys(data),[ filterCategory ],Immutable(store.getState().entities).asMutable({deep: true}));
     }
 }

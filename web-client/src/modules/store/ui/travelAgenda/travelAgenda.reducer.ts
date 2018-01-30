@@ -5,17 +5,10 @@ import * as Immutable from 'seamless-immutable';
 export function travelAgendaReducer(state = INIT_UI_TRAVELAGENDA_STATE, action: UITravelAgendaAction): ITravelAgendaUI {
     switch (action.type) {
       case UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA: {
-        let nextState = Immutable(state).asMutable( { deep: true });
-        nextState.selectedTravelAgendaId = action.payload.selectedTravelAgendaId;
-        nextState.selectedDailyTripId = '';
-  
-        return nextState;
+        return Immutable(state).set('selectedTravelAgendaId',action.payload.selectedTravelAgendaId);
       }
       case UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP: {
-        let nextState = Immutable(state).asMutable({ deep: true });
-        nextState.selectedDailyTripId = action.payload.selectedDailyTripId;
-  
-        return nextState;
+        return Immutable(state).set('selectedDailyTripId',action.payload.selectedDailyTripId);
       }
     }
     return state;

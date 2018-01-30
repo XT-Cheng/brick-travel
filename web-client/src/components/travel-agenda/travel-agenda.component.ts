@@ -31,7 +31,6 @@ import { EnumEx } from '../../utils/enumEx';
 })
 export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   //#region Private member
-  private _travelAgenda: ITravelAgendaBiz;
 
   private _viewPointDragHandle: any;
   private _dayDragHandle: any;

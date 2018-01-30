@@ -1,11 +1,12 @@
 import { NgRedux } from '@angular-redux/store';
-import * as Immutable from 'seamless-immutable';
-import { IAppState } from '../../../modules/store/store.model';
-import { ITravelAgendaBiz, caculateDistance } from '../../model/travelAgenda.biz.model';
-import { Observable } from 'rxjs/Observable';
-import { ITravelAgenda } from '../../../modules/store/entity/travelAgenda/travelAgenda.model';
-import { travelAgenda } from '../../../modules/store/entity/entity.schema';
 import { denormalize } from 'normalizr';
+import { Observable } from 'rxjs/Observable';
+import * as Immutable from 'seamless-immutable';
+
+import { travelAgenda } from '../../../modules/store/entity/entity.schema';
+import { ITravelAgenda } from '../../../modules/store/entity/travelAgenda/travelAgenda.model';
+import { IAppState } from '../../../modules/store/store.model';
+import { caculateDistance, ITravelAgendaBiz } from '../../model/travelAgenda.biz.model';
 
 export function getTravelAgendas(store : NgRedux<IAppState>) : Observable<ITravelAgendaBiz[]> {
     return store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas'])
