@@ -20,9 +20,7 @@ export class TravelAgendaEpic {
   ) { }
 
   public createEpic() {
-    return [this.createEpicLoadInternal(EntityTypeEnum.TRAVELAGENDA),
-      this.createEpicFlushInternal(EntityTypeEnum.TRAVELAGENDA),
-      this.createEpicInsertInternal(EntityTypeEnum.TRAVELAGENDA)];
+    return [this.createEpicLoadInternal(EntityTypeEnum.TRAVELAGENDA)];
   }
 
   private createEpicLoadInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
@@ -37,26 +35,26 @@ export class TravelAgendaEpic {
         .startWith(this._action.loadTravelAgendaStarted()));
   }
 
-  private createEpicFlushInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
-    return (action$, store) => action$
-      .ofType(EntityActionTypeEnum.FLUSH)
-      .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
-      .switchMap(action => {
-        return this._service.flushTravelAgenda(action.payload.objectId, store.getState())
-          .map(() => this._action.flushTravelAgendaSucceeded())
-          .catch(response =>
-            of(this._action.flushTravelAgendaFailed(response))
-          )
-          .startWith(this._action.flushTravelAgendaStarted())
-      });
-  }
+  // private createEpicFlushInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
+  //   return (action$, store) => action$
+  //     .ofType(EntityActionTypeEnum.FLUSH)
+  //     .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
+  //     .switchMap(action => {
+  //       return this._service.flushTravelAgenda(action.payload.objectId, store.getState())
+  //         .map(() => this._action.flushTravelAgendaSucceeded())
+  //         .catch(response =>
+  //           of(this._action.flushTravelAgendaFailed(response))
+  //         )
+  //         .startWith(this._action.flushTravelAgendaStarted())
+  //     });
+  // }
 
-  private createEpicInsertInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
-    return (action$, store) => action$
-      .ofType(EntityActionTypeEnum.INSERT)
-      .filter(action => action.meta.entityType === entityType)
-      .map(action => {
-        return this._action.nonDispatchFlushTravelAgenda(Object.keys(action.payload.entities.travelAgendas)[0]);
-      });
-  }
+  // private createEpicInsertInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
+  //   return (action$, store) => action$
+  //     .ofType(EntityActionTypeEnum.INSERT)
+  //     .filter(action => action.meta.entityType === entityType)
+  //     .map(action => {
+  //       return this._action.nonDispatchFlushTravelAgenda(Object.keys(action.payload.entities.travelAgendas)[0]);
+  //     });
+  // }
 }

@@ -5,16 +5,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { normalize } from 'normalizr';
 import { Observable } from 'rxjs/Observable';
-import { asMutable } from 'seamless-immutable';
+import * as Immutable from 'seamless-immutable';
 
 import { IAppState } from '../../store.model';
 import { IPagination } from '../entity.action';
-import { EntityPersistentStatusEnum, IEntities } from '../entity.model';
+import { IEntities } from '../entity.model';
 import { travelAgenda } from '../entity.schema';
 import { TransportationCategory } from './travelAgenda.model';
 
 interface ITravelAgendaPersistent {
-  _id: string,
+  id: string,
   name: string,
   user: string,
   cover: string,
@@ -22,20 +22,20 @@ interface ITravelAgendaPersistent {
 };
 
 interface IDailyTripPersistent {
-  _id: string,
+  id: string,
   travelViewPoints: ITravelViewPointPersistent[]
 }
 
 interface ITravelViewPointPersistent {
-  _id: string,
+  id: string,
   viewPoint: string,
   transportationToNext: TransportationCategory
 }
 
 function translateTravelViewPointFromState(travelViewPointId : string,store : IAppState) : ITravelViewPointPersistent {
-  let travelViewPoint = asMutable(store.entities.travelViewPoints[travelViewPointId]);
+  let travelViewPoint = Immutable(store.entities.travelViewPoints[travelViewPointId]).asMutable();
   let ret = {
-    _id : travelViewPoint._id,
+    id : travelViewPoint.id,
     transportationToNext: travelViewPoint.transportationToNext,
     viewPoint: travelViewPoint.viewPoint
   }
@@ -44,9 +44,9 @@ function translateTravelViewPointFromState(travelViewPointId : string,store : IA
 }
 
 function translateDailyTripFromState(dailyTripId: string,store : IAppState): IDailyTripPersistent {
-  let dailyTrip = asMutable(store.entities.dailyTrips[dailyTripId]);
+  let dailyTrip = Immutable(store.entities.dailyTrips[dailyTripId]).asMutable();
   let ret = {
-    _id : dailyTrip._id,
+    id : dailyTrip.id,
     travelViewPoints: []
   }
 
@@ -58,9 +58,9 @@ function translateDailyTripFromState(dailyTripId: string,store : IAppState): IDa
 }
 
 function translateTravelAgendaFromState(travelAgendaId: string,store : IAppState): ITravelAgendaPersistent  {
-  let travelAgenda = asMutable(store.entities.travelAgendas[travelAgendaId]);
+  let travelAgenda = Immutable(store.entities.travelAgendas[travelAgendaId]).asMutable();
   let ret = {
-      _id: travelAgenda._id,
+      id: travelAgenda.id,
       name: travelAgenda.name,
       user: travelAgenda.user,
       cover: travelAgenda.cover,
@@ -98,14 +98,14 @@ export class TravelAgendaService {
 
   public flushTravelAgenda(id: string, store : IAppState) : Observable<void> {
     let agenda = translateTravelAgendaFromState(id,store);
-    let state = store.entities.travelAgendas[id];
+    //let state = store.entities.travelAgendas[id];
     let url : string;
-    if (state.persistentStatus == EntityPersistentStatusEnum.NEW) {
-      url = 'http://localhost:3000/travelAgendas';
-    }
-    else {
-      url = '';
-    }
+    // if (state.persistentStatus == EntityPersistentStatusEnum.NEW) {
+    //   url = 'http://localhost:3000/travelAgendas';
+    // }
+    // else {
+    //   url = '';
+    // }
     return this._http.post(url,[agenda])
     .map(resp => console.log(resp));
   }

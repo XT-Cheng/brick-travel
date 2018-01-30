@@ -7,12 +7,12 @@ import { NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 
 import {
-    IDailyTripBiz,
-    ITravelAgendaBiz,
-    ITravelViewPointBiz,
-    translateDailyTripFromBiz,
-    translateTravelAgendaFromBiz,
-    translateTravelViewPointFromBiz
+  IDailyTripBiz,
+  ITravelAgendaBiz,
+  ITravelViewPointBiz,
+  translateDailyTripFromBiz,
+  translateTravelAgendaFromBiz,
+  translateTravelViewPointFromBiz
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
@@ -22,22 +22,23 @@ import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAg
 import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { ViewPointsSelectPage } from '../view-points-select/view-points-select.page';
+import { travelAgenda } from '../../modules/store/entity/entity.schema';
 
 @Component({
   selector: 'page-travel-agenda',
   templateUrl: 'travel-agenda.page.html'
 })
 export class TravelAgendaPage implements AfterViewInit {
-//#region Private member
+  //#region Private member
 
-//#endregion
+  //#endregion
 
-//#region Protected member
+  //#region Protected member
 
   protected selectedDailyTrip$: Observable<IDailyTripBiz>;
   protected selectedViewPoint$: Observable<IViewPointBiz>;
   protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
-  
+
   //#endregion
 
   //#region Constructor
@@ -45,69 +46,70 @@ export class TravelAgendaPage implements AfterViewInit {
     private _store: NgRedux<IAppState>,
     private _uiActionGeneration: UIActionGenerator,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator) {
-      this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
-      this.selectedViewPoint$ = getSelectedViewPoint(this._store);
-      this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
+    this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
+    this.selectedViewPoint$ = getSelectedViewPoint(this._store);
+    this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
   }
-//#endregion
+  //#endregion
 
-//#region Implements interface
+  //#region Implements interface
   ngAfterViewInit(): void {
   }
 
   //#endregion
 
   //#region Protected method
-  dailyTripSelected(dailyTrip : IDailyTripBiz) {
+  dailyTripSelected(dailyTrip: IDailyTripBiz) {
     this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
   }
 
-  viewPointSelected(viewPoint : IViewPointBiz) {
+  viewPointSelected(viewPoint: IViewPointBiz) {
     this._uiActionGeneration.selectViewPoint(viewPoint);
   }
 
-  travelAgendaChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
+  travelAgendaChanged(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }) {
     let dailyTrip = value.dailyTrip;
     let travelAgenda = value.travelAgenda;
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id,translateDailyTripFromBiz(dailyTrip));
-    
+    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+
     dailyTrip.travelViewPoints.forEach(tvp => {
-      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
+      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id, translateTravelViewPointFromBiz(tvp));
     })
-    
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id,translateTravelAgendaFromBiz(travelAgenda));
+
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
   }
 
   travelViewPointAddRequest() {
     this._nav.push(ViewPointsSelectPage);
   }
 
-  travelViewPointRemoved(value : {removed : ITravelViewPointBiz,dailyTrip: IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
+  travelViewPointRemoved(value: { removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz }) {
     let dailyTrip = value.dailyTrip;
-    let travelAgenda = value.travelAgenda;
     let removed = value.removed;
-    
+
     this._travelAgendaActionGenerator.deleteTravelViewPoint(removed.id, translateTravelViewPointFromBiz(removed));
     this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
   }
 
-  dailyTripAdded(value : {added : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
+  dailyTripAdded(value: { added: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }) {
     let dailyTrip = value.added;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionGenerator.insertDailyTrip(dailyTrip.id,translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgendaFromBiz(travelAgeanda));
-  
+    this._travelAgendaActionGenerator.insertDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda.id, translateTravelAgendaFromBiz(travelAgeanda));
+
     this._uiActionGeneration.selectDailyTrip(dailyTrip);
   }
 
-  dailyTripRemoved(value : {removed : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
+  dailyTripRemoved(value: { removed: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }) {
     let dailyTrip = value.removed;
     let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionGenerator.deleteDailyTrip(dailyTrip.id,translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgendaFromBiz(travelAgeanda));
-  
-    this._uiActionGeneration.selectDailyTrip('');
+    this._travelAgendaActionGenerator.deleteDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgeanda.id, translateTravelAgendaFromBiz(travelAgeanda));
+
+    if (travelAgeanda.dailyTrips.length > 0)
+      this._uiActionGeneration.selectDailyTrip(travelAgeanda.dailyTrips[0]);
+    else
+      this._uiActionGeneration.selectDailyTrip('');
   }
   //#endregion
 

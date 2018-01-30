@@ -1,7 +1,7 @@
 import { NgRedux } from '@angular-redux/store';
 import { denormalize } from 'normalizr';
 import { Observable } from 'rxjs/Observable';
-import { asMutable } from 'seamless-immutable';
+import * as Immutable from 'seamless-immutable';
 
 import { filterCategory } from '../../../modules/store/entity/entity.schema';
 import { IFilterCategory } from '../../../modules/store/entity/filterCategory/filterCategory.model';
@@ -17,7 +17,7 @@ export function getFilterCategoriesInternal(store : NgRedux<IAppState>) {
     return (data : { [id : string] : IFilterCategory }) : Array<IFilterCategoryBiz> => {
         let origin = denormalize(Object.keys(data),[ filterCategory ],store.getState().entities);
         origin = origin.map(cat => {
-            cat.criteries = asMutable(cat.criteries,{deep: true});
+            cat.criteries = Immutable(cat.criteries).asMutable({deep: true});
             return cat;
         });
         return origin;

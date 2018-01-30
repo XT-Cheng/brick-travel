@@ -20,7 +20,6 @@ export const dailyTrip = new schema.Entity('dailyTrips',{
 });
 
 export const travelAgenda = new schema.Entity('travelAgendas',{
-    user: user,
     dailyTrips: [dailyTrip]
 });
 

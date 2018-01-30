@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.0.1",
+    "@types/seamless-immutable": "^7.1.1",
     "typescript": "2.6.1"
   },
   "description": "Brick travel web client"

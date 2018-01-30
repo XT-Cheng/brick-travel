@@ -58,23 +58,9 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Protected property
-  @Input() protected set travelAgenda(ta: ITravelAgendaBiz) {
-    if (ta) {
-      this._travelAgenda = ta;
-
-      if (!this.selectedDailyTrip && ta.dailyTrips && ta.dailyTrips.length > 0) {
-        this.selectedDailyTrip = ta.dailyTrips[0];
-        this.dailyTripSelectedEvent.emit(this.selectedDailyTrip);
-      }
-    }
-  }
-
+  @Input() protected travelAgenda : ITravelAgendaBiz;
   @Input() protected selectedDailyTrip: IDailyTripBiz;
   @Input() protected selectedViewPoint: IViewPointBiz;
-
-  protected get travelAgenda(): ITravelAgendaBiz {
-    return this._travelAgenda;
-  }
 
   protected get transCategoryNameAndValues(): { name: string, value: any }[] {
     return EnumEx.getNamesAndValues(TransportationCategory)
@@ -86,7 +72,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   @Output() protected dailyTripAddedEvent: EventEmitter<{ added: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
   @Output() protected dailyTripRemovedEvent: EventEmitter<{ removed: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
 
-  @Output() protected travelViewPointRemovedEvent: EventEmitter<{ removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
+  @Output() protected travelViewPointRemovedEvent: EventEmitter<{ removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz }>;
   @Output() protected travelViewPointAddRequestEvent: EventEmitter<void>;
 
   @Output() protected travelAgendaChangedEvent: EventEmitter<{ dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
@@ -109,7 +95,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
     this.dailyTripAddedEvent = new EventEmitter<{ added: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>();
     this.dailyTripRemovedEvent = new EventEmitter<{ removed: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>();
 
-    this.travelViewPointRemovedEvent = new EventEmitter<{ removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>();
+    this.travelViewPointRemovedEvent = new EventEmitter<{ removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz }>();
 
     this.travelViewPointAddRequestEvent = new EventEmitter<void>();
 
@@ -203,8 +189,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   protected removeTravelViewPoint(travelViewPoint: ITravelViewPointBiz) {
     this.selectedDailyTrip.travelViewPoints = this.selectedDailyTrip.travelViewPoints.
                                                 filter(tvp => tvp.id != travelViewPoint.id);
-
-    this.travelViewPointRemovedEvent.emit({ removed: travelViewPoint, dailyTrip: this.selectedDailyTrip, travelAgenda: this.travelAgenda });
+    this.travelViewPointRemovedEvent.emit({ removed: travelViewPoint, dailyTrip: this.selectedDailyTrip });
   }
 
   protected addTravelViewPointReq() {

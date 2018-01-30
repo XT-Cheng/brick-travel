@@ -4,7 +4,6 @@ import { NgRedux } from '@angular-redux/store';
 import { AfterViewInit, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
-import { asMutable } from 'seamless-immutable';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, translateDailyTripFromBiz, translateTravelAgendaFromBiz } from '../../bizModel/model/travelAgenda.biz.model';
@@ -125,19 +124,19 @@ export class TestPage implements AfterViewInit {
 
   getDailyTrips(): Array<IDailyTripBiz> {
     let ret = new Array<IDailyTripBiz>();
-    let viewPoints = asMutable(this._store.getState().entities.viewPoints, { deep: true });
-    let dailyTrips = asMutable(this._store.getState().entities.dailyTrips, { deep: true });
-    let travelViewPoints = asMutable(this._store.getState().entities.travelViewPoints, { deep: true });
+    // let viewPoints = asMutable(this._store.getState().entities.viewPoints, { deep: true });
+    // let dailyTrips = asMutable(this._store.getState().entities.dailyTrips, { deep: true });
+    // let travelViewPoints = asMutable(this._store.getState().entities.travelViewPoints, { deep: true });
 
-    Object.keys(dailyTrips).forEach(key => {
-      let dailyTrip = dailyTrips[key];
-      dailyTrip.travelViewPoints = dailyTrip.travelViewPoints.map(id => travelViewPoints[id]);
-      Object.keys(dailyTrip.travelViewPoints).forEach(key => {
-        let travelViewPoint = dailyTrip.travelViewPoints[key];
-        travelViewPoint.viewPoint = viewPoints[travelViewPoint.viewPoint];
-      });
-      ret.push(dailyTrip);
-    });
+    // Object.keys(dailyTrips).forEach(key => {
+    //   let dailyTrip = dailyTrips[key];
+    //   dailyTrip.travelViewPoints = dailyTrip.travelViewPoints.map(id => travelViewPoints[id]);
+    //   Object.keys(dailyTrip.travelViewPoints).forEach(key => {
+    //     let travelViewPoint = dailyTrip.travelViewPoints[key];
+    //     travelViewPoint.viewPoint = viewPoints[travelViewPoint.viewPoint];
+    //   });
+    //   ret.push(dailyTrip);
+    // });
 
     return ret;
   }

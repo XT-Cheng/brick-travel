@@ -1,6 +1,5 @@
 import { ObjectID } from 'bson';
 
-import { EntityPersistentStatusEnum, IPersistentStatus } from '../../modules/store/entity/entity.model';
 import {
     IDailyTrip,
     ITravelAgenda,
@@ -9,7 +8,7 @@ import {
 } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IViewPointBiz } from './viewPoint.biz.model';
 
-export interface ITravelAgendaBiz extends IPersistentStatus{
+export interface ITravelAgendaBiz {
     id: string,
     name: string,
     user: string,
@@ -57,7 +56,6 @@ export function caculateDistance(dailyTrip: IDailyTripBiz) {
 export function createTravelAgenda(): ITravelAgendaBiz {
     return {
         id: new ObjectID().toHexString(),
-        persistentStatus: EntityPersistentStatusEnum.NEW,
         name: '',
         user: '',
         cover: '',
@@ -100,7 +98,6 @@ export function translateTravelViewPointFromBiz(travelViewPoint: ITravelViewPoin
 export function translateTravelAgendaFromBiz(travelAgenda: ITravelAgendaBiz): ITravelAgenda {
     return {
         id: travelAgenda.id,
-        persistentStatus: travelAgenda.persistentStatus,
         name: travelAgenda.name,
         user: travelAgenda.user,
         cover: travelAgenda.cover,
