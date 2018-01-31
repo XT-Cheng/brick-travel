@@ -25,6 +25,7 @@ import { HomePage } from '../pages/home/home.page';
 import { ViewPointPage } from '../pages/view-point/view-point.page';
 import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
 import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
+import { SelectorService } from '../providers/selector.service';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-se
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    DragulaService
+    DragulaService,
+    SelectorService
   ]
 })
 export class AppModule {}

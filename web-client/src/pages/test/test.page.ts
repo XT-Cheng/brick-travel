@@ -1,27 +1,23 @@
 import 'rxjs/add/operator/combineLatest';
 
-import { NgRedux } from '@angular-redux/store';
 import { AfterViewInit, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz, translateDailyTripFromBiz, translateTravelAgendaFromBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import {
+  IDailyTripBiz,
+  ITravelAgendaBiz,
+  translateDailyTripFromBiz,
+  translateTravelAgendaFromBiz,
+} from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { getFilterCategories } from '../../bizModel/selector/entity/filterCategory.selector';
-import { getTravelAgendas } from '../../bizModel/selector/entity/travelAgenda.selector';
-import { getViewPoints } from '../../bizModel/selector/entity/viewPoint.selector';
-import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
-import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgendaSelected.selector';
-import { getCurrentFilters } from '../../bizModel/selector/ui/viewPointFilter.selector';
-import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
 import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
-import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
-import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
+import { SelectorService } from '../../providers/selector.service';
 
 @Component({
   selector: 'page-test',
@@ -47,19 +43,19 @@ export class TestPage implements AfterViewInit {
   private firstDailyTrip: boolean = true;
   protected displayMode: DisplayModeEnum;
 
-  constructor(private _store: NgRedux<IAppState>,
-    private _uiActionGeneration: UIActionGenerator,
+  constructor(private _uiActionGeneration: UIActionGenerator,
+    private _selector: SelectorService,
     private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
     private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
 
-    this.viewPoints$ = getViewPoints(_store);
-    this.travelAgendas$ = getTravelAgendas(_store);
-    this.filterCategories$ = getFilterCategories(this._store);
-    this.search$ = getViewPointSearch(this._store);
-    this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
-    this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
-    this.selectedViewPoint$ = getSelectedViewPoint(this._store);
-    this.currentFilterCategories$ =  getCurrentFilters(this._store);
+    this.viewPoints$ = this._selector.viewPoints;
+    this.travelAgendas$ =  this._selector.travelAgendas;
+    this.filterCategories$ = this. _selector.filterCategories;
+    this.search$ =  this._selector.viewPointSearchKey;
+    this.selectedTravelAgenda$ =  this._selector.selectedTravelAgenda;
+    this.selectedDailyTrip$ =  this._selector.selectedDailyTrip
+    this.selectedViewPoint$ =  this._selector.selectedViewPoint;
+    this.currentFilterCategories$ = this._selector.currentFilters;
 
     this.displayMode = DisplayModeEnum.Agenda;
   }

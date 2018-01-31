@@ -1,6 +1,5 @@
 import 'rxjs/add/operator/combineLatest';
 
-import { NgRedux } from '@angular-redux/store';
 import { AfterViewInit, Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
@@ -14,12 +13,9 @@ import {
   translateTravelViewPointFromBiz,
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
-import { getSelectedTravelAgenda } from '../../bizModel/selector/ui/travelAgendaSelected.selector';
-import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
-import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { SelectorService } from '../../providers/selector.service';
 import { ViewPointsSelectPage } from '../view-points-select/view-points-select.page';
 
 @Component({
@@ -41,12 +37,12 @@ export class TravelAgendaPage implements AfterViewInit {
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _store: NgRedux<IAppState>,
+    private _selector:SelectorService,
     private _uiActionGeneration: UIActionGenerator,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator) {
-    this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
-    this.selectedViewPoint$ = getSelectedViewPoint(this._store);
-    this.selectedTravelAgenda$ = getSelectedTravelAgenda(this._store);
+    this.selectedDailyTrip$ = this._selector.selectedDailyTrip;
+    this.selectedViewPoint$ = this._selector.selectedViewPoint; 
+    this.selectedTravelAgenda$ =  this._selector.selectedTravelAgenda;
   }
   //#endregion
 

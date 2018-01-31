@@ -1,4 +1,3 @@
-import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Content, FabContainer, NavController } from 'ionic-angular';
@@ -8,18 +7,12 @@ import { ICityBiz } from '../../bizModel/model/city.biz.model';
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { getSelectedCity } from '../../bizModel/selector/ui/citySelected.selector';
-import { getSelectedDailyTrip } from '../../bizModel/selector/ui/dailyTripSelected.selector';
-import { getViewMode } from '../../bizModel/selector/ui/viewModeSelected.selector';
-import { getCurrentFilters, getFilteredViewPoints } from '../../bizModel/selector/ui/viewPointFilter.selector';
-import { getViewPointSearch } from '../../bizModel/selector/ui/viewPointSearch.selector';
-import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
 import { AMapComponent } from '../../components/a-map/a-map.component';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
-import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { SelectorService } from '../../providers/selector.service';
 import { ViewPointPage } from '../view-point/view-point.page';
 
 @Component({
@@ -54,20 +47,20 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _store: NgRedux<IAppState>,
+    private _selector : SelectorService,
     private _uiActionGeneration: UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator,
     private _filterCategoryActionGenerator: FilterCategoryActionGenerator) {
     this.displayMode = DisplayModeEnum.Map;
 
-    this.viewPoints$ = getFilteredViewPoints(this._store);
-    this.selectedViewPoint$ = getSelectedViewPoint(this._store);
-    this.viewMode$ = getViewMode(this._store);
-    this.selectedDailyTrip$ = getSelectedDailyTrip(this._store);
-    this.currentFilterCategories$ = getCurrentFilters(this._store);
-    this.selectedCity$ =  getSelectedCity(this._store);
-    this.currentSearch$ = getViewPointSearch(this._store);
+    this.viewPoints$ = this._selector.filteredViewPoints;
+    this.selectedViewPoint$ = this._selector.selectedViewPoint;
+    this.viewMode$ = this._selector.viewMode;
+    this.selectedDailyTrip$ = this._selector.selectedDailyTrip;
+    this.currentFilterCategories$ = this._selector.currentFilters;
+    this.selectedCity$ = this._selector.selectedCity;
+    this.currentSearch$ = this._selector.viewPointSearchKey;
 
     this.subscriptions = new Array<Subscription>();
   }

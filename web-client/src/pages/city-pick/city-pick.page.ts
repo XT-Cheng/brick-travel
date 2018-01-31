@@ -1,13 +1,11 @@
-import { NgRedux } from '@angular-redux/store/lib/src/components/ng-redux';
 import { AfterViewInit, Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 
 import { ICityBiz } from '../../bizModel/model/city.biz.model';
-import { getCities } from '../../bizModel/selector/entity/city.selector';
 import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
-import { IAppState } from '../../modules/store/store.model';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { SelectorService } from '../../providers/selector.service';
 import { HomePage } from '../home/home.page';
 
 @Component({
@@ -22,10 +20,10 @@ export class CityPickPage implements AfterViewInit {
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _store: NgRedux<IAppState>,
+    private _selector: SelectorService,
     private _cityActionGenerator : CityActionGenerator,
     private _uiActionGenerator : UIActionGenerator) {
-      this.cities$ = getCities(this._store);
+      this.cities$ = this._selector.cities;
   }
   //#endregion
 

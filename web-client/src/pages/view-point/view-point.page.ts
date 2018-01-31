@@ -1,11 +1,9 @@
-import { NgRedux } from '@angular-redux/store';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { getSelectedViewPoint } from '../../bizModel/selector/ui/viewPointSelected.selector';
-import { IAppState } from '../../modules/store/store.model';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
+import { SelectorService } from '../../providers/selector.service';
 
 @Component({
   selector: 'page-view-point',
@@ -21,9 +19,9 @@ export class ViewPointPage {
   //#endregion
 
   //#region Constructor
-  constructor(private _store: NgRedux<IAppState>,
+  constructor(private _selector:SelectorService,
               private _viewPointActionGenerator : ViewPointActionGenerator) {
-      this.selectedViewPoint$ = getSelectedViewPoint(this._store);
+      this.selectedViewPoint$ = this._selector.selectedViewPoint;
   }
 
   //#endregion
