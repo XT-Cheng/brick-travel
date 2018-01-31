@@ -13,13 +13,13 @@ import {
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { SelectorService } from '../../providers/selector.service';
 import { ViewPointPage } from '../view-point/view-point.page';
+import { CityService } from '../../providers/city.service';
 
 @Component({
   selector: 'page-view-points-select',
@@ -53,7 +53,7 @@ export class ViewPointsSelectPage implements AfterViewInit {
     private _selector : SelectorService,
     private _uiActionGeneration: UIActionGenerator,
     private _viewPointActionGenerator: ViewPointActionGenerator,
-    private _cityActionGenerator: CityActionGenerator,
+    private _cityService: CityService,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator,
     private _filterCategoryActionGenerator: FilterCategoryActionGenerator) {
     this.displayMode = DisplayModeEnum.Map;
@@ -70,7 +70,7 @@ export class ViewPointsSelectPage implements AfterViewInit {
 
   //#region Implements interface
   ngAfterViewInit(): void {
-    this._cityActionGenerator.loadCities();
+    this._cityService.loadCities();
     this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaActionGenerator.loadTravelAgendas();
     this._filterCategoryActionGenerator.loadFilterCategories();

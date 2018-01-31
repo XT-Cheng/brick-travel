@@ -3,8 +3,7 @@ import { NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 
 import { ICityBiz } from '../../bizModel/model/city.biz.model';
-import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
-import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { CityService } from '../../providers/city.service';
 import { SelectorService } from '../../providers/selector.service';
 import { HomePage } from '../home/home.page';
 
@@ -21,22 +20,21 @@ export class CityPickPage implements AfterViewInit {
   //#region Constructor
   constructor(private _nav: NavController,
     private _selector: SelectorService,
-    private _cityActionGenerator : CityActionGenerator,
-    private _uiActionGenerator : UIActionGenerator) {
+    private _cityService : CityService,) {
       this.cities$ = this._selector.cities;
   }
   //#endregion
 
   //#region Implements interface
   ngAfterViewInit() {
-    this._cityActionGenerator.loadCities();
+    this._cityService.load();
   }
 
   //#endregion
 
   //#region Protected methods
   protected clicked(city: ICityBiz) {
-    this._uiActionGenerator.selectCity(city);
+    this._cityService.selectCity(city);
     this._nav.setRoot(HomePage);
   }
   //#endregion

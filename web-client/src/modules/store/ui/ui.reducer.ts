@@ -3,7 +3,7 @@ import { viewPointReducer } from "./viewPoint/viewPoint.reducer";
 import { IUIState } from "./ui.model";
 import { travelAgendaReducer } from "./travelAgenda/travelAgenda.reducer";
 import { UIAction, UIActionTypeEnum } from "./ui.action";
-import { cityReducer } from "./city/city.reducer";
+import { cityReducer } from "../../../providers/city.service";
 
 export const uiReducer =
     combineReducers<IUIState>({

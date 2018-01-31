@@ -12,12 +12,12 @@ import {
   translateTravelAgendaFromBiz,
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { CityActionGenerator } from '../../modules/store/entity/city/city.action';
 import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { SelectorService } from '../../providers/selector.service';
+import { CityService } from '../../providers/city.service';
 
 @Component({
   selector: 'page-test',
@@ -45,7 +45,7 @@ export class TestPage implements AfterViewInit {
 
   constructor(private _uiActionGeneration: UIActionGenerator,
     private _selector: SelectorService,
-    private _viewPointActionGenerator: ViewPointActionGenerator, private _cityActionUIActionGenerator: CityActionGenerator,
+    private _viewPointActionGenerator: ViewPointActionGenerator, private _cityService: CityService,
     private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
 
     this.viewPoints$ = this._selector.viewPoints;
@@ -61,7 +61,7 @@ export class TestPage implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._cityActionUIActionGenerator.loadCities();
+    this._cityService.loadCities();
     this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaActionUIActionGenerator.loadTravelAgendas();
     this._filterCategoryActionUIActionGenerator.loadFilterCategories();

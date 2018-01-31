@@ -5,9 +5,6 @@ import { createLogger } from 'redux-logger';
 import { createEpicMiddleware } from 'redux-observable';
 import { stateTransformer } from 'redux-seamless-immutable';
 
-import { CityActionGenerator } from './entity/city/city.action';
-import { CityEpic } from './entity/city/city.epic';
-import { CityService } from './entity/city/city.service';
 import { EntityEpics } from './entity/entity.epic';
 import { FilterCategoryActionGenerator } from './entity/filterCategory/filterCategory.action';
 import { FilterCategoryEpic } from './entity/filterCategory/filterCategory.epic';
@@ -22,6 +19,7 @@ import { RootEpics } from './store.epic';
 import { IAppState } from './store.model';
 import { rootReducer } from './store.reducer';
 import { UIActionGenerator } from './ui/ui.action';
+import { CityService } from '../../providers/city.service';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -32,7 +30,7 @@ import { UIActionGenerator } from './ui/ui.action';
 @NgModule({
     imports: [NgReduxModule,HttpModule],
     providers: [RootEpics,EntityEpics,
-                CityService,CityEpic,CityActionGenerator,
+                CityService,
                 ViewPointService,ViewPointEpic,ViewPointActionGenerator,
                 TravelAgendaService,TravelAgendaEpic,TravelAgendaActionGenerator,
                 FilterCategoryService,FilterCategoryEpic,FilterCategoryActionGenerator,
