@@ -19,6 +19,18 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
         });
         return state;
       }
+      case EntityActionTypeEnum.APPEND_COMMENTS: {
+        let key = Object.keys(action.payload.entities.viewPoints)[0];
+        let oldViewPoint = state['viewPoints'][key];
+        let newViewPointcomments = oldViewPoint.comments.concat(Object.keys(action.payload.entities.viewPointComments));
+        //Update ViewPoint
+        state = Immutable(state).setIn(['viewPoints',key,'comments'],newViewPointcomments);
+        //Update ViewPointComments
+        let newViewPointComments = Immutable(state.viewPointComments).merge(action.payload.entities.viewPointComments);
+        state = Immutable(state).set('viewPointComments',newViewPointComments);
+
+        return state;
+      }
     }
   }
 

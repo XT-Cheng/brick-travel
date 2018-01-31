@@ -17,6 +17,7 @@ import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAg
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { SelectorService } from '../../providers/selector.service';
 import { ViewPointsSelectPage } from '../view-points-select/view-points-select.page';
+import { ViewPointService } from '../../providers/viewPoint.service';
 
 @Component({
   selector: 'page-travel-agenda',
@@ -38,6 +39,7 @@ export class TravelAgendaPage implements AfterViewInit {
   //#region Constructor
   constructor(private _nav: NavController,
     private _selector:SelectorService,
+    private _viewPointService:ViewPointService,
     private _uiActionGeneration: UIActionGenerator,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator) {
     this.selectedDailyTrip$ = this._selector.selectedDailyTrip;
@@ -58,7 +60,7 @@ export class TravelAgendaPage implements AfterViewInit {
   }
 
   viewPointSelected(viewPoint: IViewPointBiz) {
-    this._uiActionGeneration.selectViewPoint(viewPoint);
+    this._viewPointService.select(viewPoint);
   }
 
   travelAgendaChanged(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }) {

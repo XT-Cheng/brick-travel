@@ -85,6 +85,9 @@ export class SelectorService {
         this.getSelectedCity(this._store).subscribe((value) => {
             this.selectedCitySelector.next(value);
         })
+        this.getSelectedViewPoint(this._store).subscribe((value) => {
+            this.selectedViewPointSelector.next(value);
+        })
         this.getSelectedDailyTrip(this._store).subscribe((value) => {
             this.selectedDailyTripSelector.next(value);
         })

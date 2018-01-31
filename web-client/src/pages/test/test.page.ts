@@ -12,12 +12,12 @@ import {
   translateTravelAgendaFromBiz,
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
-import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
 import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { SelectorService } from '../../providers/selector.service';
 import { CityService } from '../../providers/city.service';
+import { FilterCategoryService } from '../../providers/filterCategory.service';
+import { ViewPointService } from '../../providers/viewPoint.service';
 
 @Component({
   selector: 'page-test',
@@ -44,9 +44,11 @@ export class TestPage implements AfterViewInit {
   protected displayMode: DisplayModeEnum;
 
   constructor(private _uiActionGeneration: UIActionGenerator,
-    private _selector: SelectorService,
-    private _viewPointActionGenerator: ViewPointActionGenerator, private _cityService: CityService,
-    private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, private _filterCategoryActionUIActionGenerator: FilterCategoryActionGenerator) {
+        private _selector: SelectorService,
+        private _viewPointService: ViewPointService, 
+        private _cityService: CityService,
+        private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, 
+        private _filterCategoryService: FilterCategoryService) {
 
     this.viewPoints$ = this._selector.viewPoints;
     this.travelAgendas$ =  this._selector.travelAgendas;
@@ -61,10 +63,10 @@ export class TestPage implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._cityService.loadCities();
-    this._viewPointActionGenerator.loadViewPoints();
+    this._cityService.load();
+    this._viewPointService.load();
     this._travelAgendaActionUIActionGenerator.loadTravelAgendas();
-    this._filterCategoryActionUIActionGenerator.loadFilterCategories();
+    this._filterCategoryService.load();
 
     this.selectedDailyTrip$.subscribe(x => console.log(x));
   }
@@ -108,7 +110,7 @@ export class TestPage implements AfterViewInit {
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {
-    this._uiActionGeneration.selectViewPoint(viewPoint);
+    this._viewPointService.select(viewPoint);
   }
 
   dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
@@ -156,11 +158,11 @@ export class TestPage implements AfterViewInit {
         unCheckIds.push(c.id);
     });
 
-    this._uiActionGeneration.selectCriteria(checkId, unCheckIds);
+    this._viewPointService.selectCriteria(checkId, unCheckIds);
   }
 
   protected searchViewPoint(searchKey: string) {
-    this._uiActionGeneration.searchViewPoint(searchKey);
+    this._viewPointService.search(searchKey);
   }
 
   protected switchDisplayMode() {

@@ -8,11 +8,10 @@ import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/fil
 import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { FilterCategoryActionGenerator } from '../../modules/store/entity/filterCategory/filterCategory.action';
 import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
-import { ViewPointActionGenerator } from '../../modules/store/entity/viewPoint/viewPoint.action';
-import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { FilterCategoryService } from '../../providers/filterCategory.service';
 import { SelectorService } from '../../providers/selector.service';
+import { ViewPointService } from '../../providers/viewPoint.service';
 import { ViewPointPage } from '../view-point/view-point.page';
 
 @Component({
@@ -48,10 +47,9 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   //#region Constructor
   constructor(private _nav: NavController,
     private _selector : SelectorService,
-    private _uiActionGeneration: UIActionGenerator,
-    private _viewPointActionGenerator: ViewPointActionGenerator,
+    private _viewPointService: ViewPointService,
     private _travelAgendaActionGenerator: TravelAgendaActionGenerator,
-    private _filterCategoryActionGenerator: FilterCategoryActionGenerator) {
+    private _filterCategoryService: FilterCategoryService) {
     this.displayMode = DisplayModeEnum.Map;
 
     this.viewPoints$ = this._selector.filteredViewPoints;
@@ -70,10 +68,10 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     //this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaActionGenerator.loadTravelAgendas();
-    this._filterCategoryActionGenerator.loadFilterCategories();
+    this._filterCategoryService.load();
 
     this.subscriptions.push(this.selectedCity$.subscribe(city => {
-      this._viewPointActionGenerator.loadViewPoints({cityId: city.id});
+      this._viewPointService.load({cityId: city.id});
     }));
   }
 
@@ -85,7 +83,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
 
   //#region Protected method
   protected searchViewPoint(searchKey: string) {
-    this._uiActionGeneration.searchViewPoint(searchKey);
+    this._viewPointService.search(searchKey);
   }
 
   protected criteriaClicked(filterChanged: { category: IFilterCategoryBiz, criteria: IFilterCriteriaBiz }) {
@@ -107,7 +105,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
         unCheckIds.push(c.id);
     });
 
-    this._uiActionGeneration.selectCriteria(checkId, unCheckIds);
+    this._viewPointService.selectCriteria(checkId, unCheckIds);
   }
 
   dismissSearchBar(): void {
@@ -144,7 +142,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   }
 
   protected viewPointClicked(viewPoint : IViewPointBiz) {
-    this._uiActionGeneration.selectViewPoint(viewPoint);
+    this._viewPointService.select(viewPoint);
     this._nav.push(ViewPointPage);
   }
 

@@ -106,14 +106,16 @@ export class CityService {
     }
     //#endregion
 
-    //#region Public methods
-    public getCities(pagination: IPagination): Observable<IEntities> {
+    //#region Private methods
+    private getCities(pagination: IPagination): Observable<IEntities> {
         return this._http.get('http://localhost:3000/cities')
             .map(records => {
                 return normalize(records, [city]).entities;
             })
     }
+    //#endregion
 
+    //#region Public methods
     public load() {
         this.loadCities();
     }

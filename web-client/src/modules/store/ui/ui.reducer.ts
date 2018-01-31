@@ -1,9 +1,10 @@
-import { combineReducers } from "redux";
-import { viewPointReducer } from "./viewPoint/viewPoint.reducer";
-import { IUIState } from "./ui.model";
-import { travelAgendaReducer } from "./travelAgenda/travelAgenda.reducer";
-import { UIAction, UIActionTypeEnum } from "./ui.action";
-import { cityReducer } from "../../../providers/city.service";
+import { combineReducers } from 'redux';
+
+import { cityReducer } from '../../../providers/city.service';
+import { viewPointReducer } from '../../../providers/viewPoint.service';
+import { travelAgendaReducer } from './travelAgenda/travelAgenda.reducer';
+import { UIAction, UIActionTypeEnum } from './ui.action';
+import { IUIState } from './ui.model';
 
 export const uiReducer =
     combineReducers<IUIState>({

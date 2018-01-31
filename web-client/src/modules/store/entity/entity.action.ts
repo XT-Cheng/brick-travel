@@ -52,7 +52,7 @@ export enum EntityActionTypeEnum {
     INSERT = "ENTITY:INSERT",
     DELETE = "ENTITY:DELETE",
     FLUSH = "ENTITY:FLUSH",
-    VIEWPOINTCOMMENTS = "ENTITY:VIEWPOINTCOMMENTS"
+    APPEND_COMMENTS = "ENTITY:APPEND_COMMENTS",
 }
 
 let defaultEntityActionPayload = {
