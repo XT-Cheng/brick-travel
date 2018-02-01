@@ -27,6 +27,8 @@ import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
 import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
 import { SelectorService } from '../providers/selector.service';
 import { CityService } from '../providers/city.service';
+import { ViewPointService } from '../providers/viewPoint.service';
+import { TravelAgendaService } from '../providers/travelAgenda.service';
 
 @NgModule({
   declarations: [
@@ -74,7 +76,9 @@ import { CityService } from '../providers/city.service';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     DragulaService,
     SelectorService,
-    CityService
+    CityService,
+    ViewPointService,
+    TravelAgendaService
   ]
 })
 export class AppModule {}

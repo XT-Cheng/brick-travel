@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
-import { createTravelAgenda, translateTravelAgendaFromBiz } from '../../bizModel/model/travelAgenda.biz.model';
-import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
-import { UIActionGenerator } from '../../modules/store/ui/ui.action';
+import { TravelAgendaService } from '../../providers/travelAgenda.service';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 import { ViewPointsListPage } from '../view-points-list/view-points-list.page';
 
@@ -24,8 +22,7 @@ export class HomePage implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _uiActionGeneration: UIActionGenerator,
-              private _entityActionGeneration: TravelAgendaActionGenerator) {
+  constructor(private _travelAgendaService: TravelAgendaService) {
   }
   //#endregion
 
@@ -36,10 +33,7 @@ export class HomePage implements AfterViewInit {
 
   //#region Protected method
   protected onNewAgenda(event) {
-    let createdTravelAgenda = createTravelAgenda();
-    this._entityActionGeneration.insertTravelAgenda(createdTravelAgenda.id,translateTravelAgendaFromBiz(createdTravelAgenda));
-    //this._entityActionGeneration.flushTravelAgenda(createdTravelAgenda._id);
-    this._uiActionGeneration.selectTravelAgenda(createdTravelAgenda);
+    this._travelAgendaService.select(this._travelAgendaService.addTravelAgenda());
   }
   //#endregion
 }

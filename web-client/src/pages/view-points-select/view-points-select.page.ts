@@ -3,20 +3,13 @@ import { Content, FabContainer, NavController } from 'ionic-angular';
 import { Observable } from 'rxjs/Rx';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import {
-  IDailyTripBiz,
-  ITravelAgendaBiz,
-  ITravelViewPointBiz,
-  translateDailyTripFromBiz,
-  translateTravelAgendaFromBiz,
-  translateTravelViewPointFromBiz,
-} from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { CityService } from '../../providers/city.service';
 import { FilterCategoryService } from '../../providers/filterCategory.service';
 import { SelectorService } from '../../providers/selector.service';
+import { TravelAgendaService } from '../../providers/travelAgenda.service';
 import { ViewPointService } from '../../providers/viewPoint.service';
 import { ViewPointPage } from '../view-point/view-point.page';
 
@@ -52,7 +45,7 @@ export class ViewPointsSelectPage implements AfterViewInit {
     private _selector : SelectorService,
     private _viewPointService: ViewPointService,
     private _cityService: CityService,
-    private _travelAgendaActionGenerator: TravelAgendaActionGenerator,
+    private _travelAgendaService: TravelAgendaService,
     private _filterCategoryService: FilterCategoryService) {
     this.displayMode = DisplayModeEnum.Map;
 
@@ -70,7 +63,7 @@ export class ViewPointsSelectPage implements AfterViewInit {
   ngAfterViewInit(): void {
     this._cityService.load();
     this._viewPointService.load();
-    this._travelAgendaActionGenerator.loadTravelAgendas();
+    this._travelAgendaService.load();
     this._filterCategoryService.load();
 
     this.currentFilterCategories$.subscribe(categories => {
@@ -149,33 +142,33 @@ export class ViewPointsSelectPage implements AfterViewInit {
   }
 
   protected viewPointAdded(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, added: ITravelViewPointBiz }) {
-    let dailyTrip = value.dailyTrip;
-    let travelAgenda = value.travelAgenda;
-    let travelViewPoint = value.added;
+    // let dailyTrip = value.dailyTrip;
+    // let travelAgenda = value.travelAgenda;
+    // let travelViewPoint = value.added;
 
-    this._travelAgendaActionGenerator.insertTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
+    // this._travelAgendaActionGenerator.insertTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
 
-    dailyTrip.travelViewPoints.forEach(tvp => {
-      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
-    })
+    // dailyTrip.travelViewPoints.forEach(tvp => {
+    //   this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
+    // })
     
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
+    // this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+    // this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
   }
 
   protected viewPointRemoved(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, removed: ITravelViewPointBiz }) {
-    let dailyTrip = value.dailyTrip;
-    let travelAgenda = value.travelAgenda;
-    let travelViewPoint = value.removed;
+    // let dailyTrip = value.dailyTrip;
+    // let travelAgenda = value.travelAgenda;
+    // let travelViewPoint = value.removed;
 
-    this._travelAgendaActionGenerator.deleteTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
+    // this._travelAgendaActionGenerator.deleteTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
     
-    dailyTrip.travelViewPoints.forEach(tvp => {
-      this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
-    })
+    // dailyTrip.travelViewPoints.forEach(tvp => {
+    //   this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
+    // })
     
-    this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
+    // this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+    // this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
   }
 
   //#region Private metohds

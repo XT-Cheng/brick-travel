@@ -8,9 +8,9 @@ import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/fil
 import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
 import { FilterCategoryService } from '../../providers/filterCategory.service';
 import { SelectorService } from '../../providers/selector.service';
+import { TravelAgendaService } from '../../providers/travelAgenda.service';
 import { ViewPointService } from '../../providers/viewPoint.service';
 import { ViewPointPage } from '../view-point/view-point.page';
 
@@ -48,7 +48,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   constructor(private _nav: NavController,
     private _selector : SelectorService,
     private _viewPointService: ViewPointService,
-    private _travelAgendaActionGenerator: TravelAgendaActionGenerator,
+    private _travelAgendaService: TravelAgendaService,
     private _filterCategoryService: FilterCategoryService) {
     this.displayMode = DisplayModeEnum.Map;
 
@@ -67,7 +67,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   //#region Implements interface
   ngAfterViewInit(): void {
     //this._viewPointActionGenerator.loadViewPoints();
-    this._travelAgendaActionGenerator.loadTravelAgendas();
+    this._travelAgendaService.load();
     this._filterCategoryService.load();
 
     this.subscriptions.push(this.selectedCity$.subscribe(city => {

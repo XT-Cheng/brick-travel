@@ -7,17 +7,14 @@ import { Observable } from 'rxjs/Observable';
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import {
   IDailyTripBiz,
-  ITravelAgendaBiz,
-  translateDailyTripFromBiz,
-  translateTravelAgendaFromBiz,
+  ITravelAgendaBiz
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { TravelAgendaActionGenerator } from '../../modules/store/entity/travelAgenda/travelAgenda.action';
-import { UIActionGenerator } from '../../modules/store/ui/ui.action';
 import { SelectorService } from '../../providers/selector.service';
 import { CityService } from '../../providers/city.service';
 import { FilterCategoryService } from '../../providers/filterCategory.service';
 import { ViewPointService } from '../../providers/viewPoint.service';
+import { TravelAgendaService } from '../../providers/travelAgenda.service';
 
 @Component({
   selector: 'page-test',
@@ -43,11 +40,10 @@ export class TestPage implements AfterViewInit {
   private firstDailyTrip: boolean = true;
   protected displayMode: DisplayModeEnum;
 
-  constructor(private _uiActionGeneration: UIActionGenerator,
-        private _selector: SelectorService,
+  constructor(private _selector: SelectorService,
         private _viewPointService: ViewPointService, 
         private _cityService: CityService,
-        private _travelAgendaActionUIActionGenerator: TravelAgendaActionGenerator, 
+        private _travelAgendaService: TravelAgendaService, 
         private _filterCategoryService: FilterCategoryService) {
 
     this.viewPoints$ = this._selector.viewPoints;
@@ -65,7 +61,7 @@ export class TestPage implements AfterViewInit {
   ngAfterViewInit(): void {
     this._cityService.load();
     this._viewPointService.load();
-    this._travelAgendaActionUIActionGenerator.loadTravelAgendas();
+    this._travelAgendaService.load();
     this._filterCategoryService.load();
 
     this.selectedDailyTrip$.subscribe(x => console.log(x));
@@ -106,7 +102,7 @@ export class TestPage implements AfterViewInit {
 
   dailyTripSelected(dailyTrip : IDailyTripBiz) {
     //this.dayTripSelected$.next(dailyTrip);
-    this._uiActionGeneration.selectDailyTrip(dailyTrip.id);
+    this._travelAgendaService.selectDailyTrip(dailyTrip);
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {
@@ -114,10 +110,10 @@ export class TestPage implements AfterViewInit {
   }
 
   dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {
-    let dailyTrip = value.dailyTrip;
-    let travelAgeanda = value.travelAgenda;
-    this._travelAgendaActionUIActionGenerator.updateDailyTrip(dailyTrip.id,translateDailyTripFromBiz(dailyTrip));
-    this._travelAgendaActionUIActionGenerator.updateTravelAgenda(travelAgeanda.id,translateTravelAgendaFromBiz(travelAgeanda));
+    // let dailyTrip = value.dailyTrip;
+    // let travelAgeanda = value.travelAgenda;
+    // this._travelAgendaService.updateDailyTrip(dailyTrip.id,translateDailyTripFromBiz(dailyTrip));
+    // this._travelAgendaService.updateTravelAgenda(travelAgeanda.id,translateTravelAgendaFromBiz(travelAgeanda));
   }
 
   getDailyTrips(): Array<IDailyTripBiz> {
@@ -166,7 +162,7 @@ export class TestPage implements AfterViewInit {
   }
 
   protected switchDisplayMode() {
-    this._uiActionGeneration.selectTravelAgenda("1");
+    //this._uiActionGeneration.selectTravelAgenda("1");
     // if (this.displayMode === DisplayModeEnum.List)
     //   this.displayMode = DisplayModeEnum.Map;
     // else

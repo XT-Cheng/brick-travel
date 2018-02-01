@@ -37,13 +37,15 @@ interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
     selectCriteria?: {
         selectedCriteriaId: string,
         unSelectedCriteriaIds: string[]
-    }
+    },
+    viewMode : boolean
 }
 
 const defaultViewPointActionPayload = {
     searchKey: '',
     selectedViewPointId: '',
     selectCriteria: null,
+    viewMode: false,
     error: null,
 }
 
@@ -52,7 +54,8 @@ const defaultViewPointActionPayload = {
  enum UIViewPointActionTypeEnum {
     SEARCH_VIEWPOINT = "UI:VIEWPOINT:SEARCH_VIEWPOINT",
     SELECT_VIEWPOINT = "UI:VIEWPOINT:SELECT_VIEWPOINT",
-    SELECT_CRITERIA = "UI:VIEWPOINT:SELECT_CRITERIA"
+    SELECT_CRITERIA = "UI:VIEWPOINT:SELECT_CRITERIA",
+    SET_VIEWMODE = "SET_VIEWMODE"
 }
 
 export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIViewPointAction): IViewPointUI {
@@ -62,6 +65,9 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
       }
       case UIViewPointActionTypeEnum.SELECT_VIEWPOINT: {
         return Immutable(state).set('selectedViewPointId', action.payload.selectedViewPointId);
+      }
+      case UIViewPointActionTypeEnum.SET_VIEWMODE: {
+        return Immutable(state).set('viewMode', action.payload.viewMode);
       }
       case UIViewPointActionTypeEnum.SELECT_CRITERIA: {
   
@@ -112,6 +118,17 @@ export class ViewPointService {
     //#endregion
 
     //#region UI Actions
+    @dispatch()
+    private setViewModeAction(viewMode: boolean): UIViewPointAction {
+        return {
+            type: UIViewPointActionTypeEnum.SET_VIEWMODE,
+            meta: { progressing : false },
+            payload: Object.assign({},defaultViewPointActionPayload,{
+                viewMode: viewMode
+            })
+        };
+    }
+
     @dispatch()
     private searchViewPointAction(searchKey: string): UIViewPointAction {
         return {

@@ -9,13 +9,10 @@ import { CityService } from '../../providers/city.service';
 import { FilterCategoryService } from '../../providers/filterCategory.service';
 import { ViewPointService } from '../../providers/viewPoint.service';
 import { EntityEpics } from './entity/entity.epic';
-import { TravelAgendaActionGenerator } from './entity/travelAgenda/travelAgenda.action';
-import { TravelAgendaEpic } from './entity/travelAgenda/travelAgenda.epic';
-import { TravelAgendaService } from './entity/travelAgenda/travelAgenda.service';
 import { RootEpics } from './store.epic';
 import { IAppState } from './store.model';
 import { rootReducer } from './store.reducer';
-import { UIActionGenerator } from './ui/ui.action';
+import { TravelAgendaService } from '../../providers/travelAgenda.service';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -28,9 +25,8 @@ import { UIActionGenerator } from './ui/ui.action';
     providers: [RootEpics,EntityEpics,
                 CityService,
                 ViewPointService,
-                TravelAgendaService,TravelAgendaEpic,TravelAgendaActionGenerator,
-                FilterCategoryService,
-                UIActionGenerator],
+                TravelAgendaService,
+                FilterCategoryService],
 })
 export class StoreModule {
     constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics) {

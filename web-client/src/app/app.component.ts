@@ -4,7 +4,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { Platform } from 'ionic-angular';
 
 import { CityPickPage } from '../pages/city-pick/city-pick.page';
-import { HomePage } from '../pages/home/home.page';
+
+//import { HomePage } from '../pages/home/home.page';
 //import { ViewPointsPage } from '../pages/view-points-list/view-points';
 //import { TestPage } from '../pages/test/test.page';
 //import { HomePage } from '../pages/home/home.page';
