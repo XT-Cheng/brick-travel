@@ -23,7 +23,7 @@ import { IEntities } from '../modules/store/entity/entity.model';
 import { city } from '../modules/store/entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
-import { INIT_UI_CITY_STATE, ICityUI } from '../modules/store/ui/city/city.model';
+import { INIT_UI_CITY_STATE, ICityUI, STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
 import * as Immutable from 'seamless-immutable'
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
@@ -35,7 +35,7 @@ enum UICityActionTypeEnum {
 export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): ICityUI {
     switch (action.type) {
         case UICityActionTypeEnum.SELECT_CITY: {
-            return Immutable(state).set('selectedCityId', action.payload.selectedCityId);
+            return Immutable(state).set(STORE_UI_CITY_KEY.selectedCityId, action.payload.selectedCityId);
         }
     }
     return state;
@@ -48,8 +48,8 @@ interface IUICityActionPayload extends IActionPayload {
     selectedCityId: string
 }
 
-const defaultCityActionPayload = {
-    selectedCityId: '',
+const defaultUICityActionPayload = {
+    [STORE_UI_CITY_KEY.selectedCityId]: '',
     error: null,
 }
 
@@ -63,14 +63,14 @@ export class CityService {
     //#region Actions
 
     //#region Entity Actions
-    private loadCityStarted = entityLoadActionStarted(EntityTypeEnum.CITY);
+    private loadCityStartedAction = entityLoadActionStarted(EntityTypeEnum.CITY);
 
     @dispatch()
-    private loadCities = entityLoadAction(EntityTypeEnum.CITY);
+    private loadCitiesAction = entityLoadAction(EntityTypeEnum.CITY);
 
-    private loadCitySucceeded = entityLoadActionSucceeded(EntityTypeEnum.CITY);
+    private loadCitySucceededAction = entityLoadActionSucceeded(EntityTypeEnum.CITY);
 
-    private loadCityFailed = entityLoadActionFailed(EntityTypeEnum.CITY)
+    private loadCityFailedAction = entityLoadActionFailed(EntityTypeEnum.CITY)
     //#endregion
 
     //#region UI Actions
@@ -79,8 +79,8 @@ export class CityService {
         return {
             type: UICityActionTypeEnum.SELECT_CITY,
             meta: { progressing: false },
-            payload: Object.assign({}, defaultCityActionPayload, {
-                selectedCityId: city ? city.id : ''
+            payload: Object.assign({}, defaultUICityActionPayload, {
+                [STORE_UI_CITY_KEY.selectedCityId]: city ? city.id : ''
             })
         };
     }
@@ -98,11 +98,11 @@ export class CityService {
             .ofType(EntityActionTypeEnum.LOAD)
             .filter(action => action.meta.entityType == entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
             .switchMap(action => this.getCities(action.meta.pagination)
-                .map(data => this.loadCitySucceeded(data))
+                .map(data => this.loadCitySucceededAction(data))
                 .catch(response =>
-                    of(this.loadCityFailed(response))
+                    of(this.loadCityFailedAction(response))
                 )
-                .startWith(this.loadCityStarted()));
+                .startWith(this.loadCityStartedAction()));
     }
     //#endregion
 
@@ -117,7 +117,7 @@ export class CityService {
 
     //#region Public methods
     public load() {
-        this.loadCities();
+        this.loadCitiesAction();
     }
 
     public selectCity(city: ICityBiz) {

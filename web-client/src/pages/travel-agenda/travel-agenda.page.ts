@@ -67,7 +67,7 @@ export class TravelAgendaPage implements AfterViewInit {
   }
 
   dailyTripAdded(travelAgenda: ITravelAgendaBiz) {
-    this._travelAgendaService.selectDailyTrip(this._travelAgendaService.addDailyTrip(travelAgenda));
+    this._travelAgendaService.addDailyTrip(travelAgenda);
   }
 
   dailyTripRemoved(value: { dailyTrip: IDailyTripBiz, isCurrentSelect: boolean }) {

@@ -31,14 +31,14 @@ export class FilterCategoryService {
     //#region Actions
 
     //#region Entity Actions
-    private loadFilterCategoryStarted = entityLoadActionStarted(EntityTypeEnum.FILTERCATEGORY);
+    private loadFilterCategoryStartedAction = entityLoadActionStarted(EntityTypeEnum.FILTERCATEGORY);
 
     @dispatch()
-    private loadFilterCategories = entityLoadAction(EntityTypeEnum.FILTERCATEGORY);
+    private loadFilterCategoriesAction = entityLoadAction(EntityTypeEnum.FILTERCATEGORY);
 
-    private loadFilterCategorySucceeded = entityLoadActionSucceeded(EntityTypeEnum.FILTERCATEGORY);
+    private loadFilterCategorySucceededAction = entityLoadActionSucceeded(EntityTypeEnum.FILTERCATEGORY);
 
-    private loadFilterCategoryFailed = entityLoadActionFailed(EntityTypeEnum.FILTERCATEGORY);
+    private loadFilterCategoryFailedAction = entityLoadActionFailed(EntityTypeEnum.FILTERCATEGORY);
     //#endregion
 
     //#region UI Actions
@@ -58,11 +58,11 @@ export class FilterCategoryService {
             .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
             .switchMap(action => {
                 return this.getFilterCategory(action.meta.pagination)
-                    .map(data => this.loadFilterCategorySucceeded(data))
+                    .map(data => this.loadFilterCategorySucceededAction(data))
                     .catch(response =>
-                        of(this.loadFilterCategoryFailed(response))
+                        of(this.loadFilterCategoryFailedAction(response))
                     )
-                    .startWith(this.loadFilterCategoryStarted())
+                    .startWith(this.loadFilterCategoryStartedAction())
             });
     }
     //#endregion
@@ -78,7 +78,7 @@ export class FilterCategoryService {
 
     //#region Public methods
     public load() {
-        this.loadFilterCategories();
+        this.loadFilterCategoriesAction();
     }
     //#endregion
 }

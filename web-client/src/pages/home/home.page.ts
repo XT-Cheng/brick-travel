@@ -33,7 +33,7 @@ export class HomePage implements AfterViewInit {
 
   //#region Protected method
   protected onNewAgenda(event) {
-    this._travelAgendaService.select(this._travelAgendaService.addTravelAgenda());
+    this._travelAgendaService.addTravelAgenda();
   }
   //#endregion
 }

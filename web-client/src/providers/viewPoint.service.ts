@@ -25,7 +25,7 @@ import { IEntities } from '../modules/store/entity/entity.model';
 import { viewPoint } from '../modules/store/entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
-import { INIT_UI_VIEWPOINT_STATE, IViewPointUI } from '../modules/store/ui/viewPoint/viewPoint.model';
+import { INIT_UI_VIEWPOINT_STATE, STORE_UI_VIEWPOINT_KEY,IViewPointUI } from '../modules/store/ui/viewPoint/viewPoint.model';
 
 interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
 
@@ -33,6 +33,7 @@ interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
 
  interface IUIViewPointActionPayload extends IActionPayload {
     searchKey?: string,
+    viewMode? : boolean,
     selectedViewPointId?: string,
     selectCriteria?: {
         selectedCriteriaId: string,
@@ -42,6 +43,7 @@ interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
 
 const defaultViewPointActionPayload = {
     searchKey: '',
+    viewMode: true,
     selectedViewPointId: '',
     selectCriteria: null,
     error: null,
@@ -52,20 +54,24 @@ const defaultViewPointActionPayload = {
  enum UIViewPointActionTypeEnum {
     SEARCH_VIEWPOINT = "UI:VIEWPOINT:SEARCH_VIEWPOINT",
     SELECT_VIEWPOINT = "UI:VIEWPOINT:SELECT_VIEWPOINT",
-    SELECT_CRITERIA = "UI:VIEWPOINT:SELECT_CRITERIA"
+    SELECT_CRITERIA = "UI:VIEWPOINT:SELECT_CRITERIA",
+    SET_VIEWMODE = "SET_VIEWMODE"
 }
 
 export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIViewPointAction): IViewPointUI {
     switch (action.type) {
       case UIViewPointActionTypeEnum.SEARCH_VIEWPOINT: {
-        return Immutable(state).set('searchKey', action.payload.searchKey);
+        return Immutable(state).set(STORE_UI_VIEWPOINT_KEY.searchKey, action.payload.searchKey);
       }
       case UIViewPointActionTypeEnum.SELECT_VIEWPOINT: {
-        return Immutable(state).set('selectedViewPointId', action.payload.selectedViewPointId);
+        return Immutable(state).set(STORE_UI_VIEWPOINT_KEY.selectedViewPointId, action.payload.selectedViewPointId);
+      }
+      case UIViewPointActionTypeEnum.SET_VIEWMODE: {
+        return Immutable(state).set(STORE_UI_VIEWPOINT_KEY.viewMode, action.payload.viewMode);
       }
       case UIViewPointActionTypeEnum.SELECT_CRITERIA: {
   
-        state = Immutable(state).set('selectedViewPointId', action.payload.selectedViewPointId);
+        state = Immutable(state).set(STORE_UI_VIEWPOINT_KEY.selectedViewPointId, action.payload.selectedViewPointId);
   
         let select = action.payload.selectCriteria;
   
@@ -76,7 +82,7 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
           if (action.payload.selectCriteria.selectedCriteriaId)
             filterCriteriaIds = filterCriteriaIds.concat(action.payload.selectCriteria.selectedCriteriaId);
   
-          return Immutable(state).set('filterCriteriaIds', filterCriteriaIds);
+          return Immutable(state).set(STORE_UI_VIEWPOINT_KEY.filterCriteriaIds, filterCriteriaIds);
         }
       }
     }
@@ -93,22 +99,22 @@ export class ViewPointService {
     //#region Actions
 
     //#region Entity Actions
-    private loadViewPointStarted = entityLoadActionStarted(EntityTypeEnum.VIEWPOINT);
+    private loadViewPointStartedAction = entityLoadActionStarted(EntityTypeEnum.VIEWPOINT);
 
     @dispatch()
-    private  loadViewPoints = entityLoadAction(EntityTypeEnum.VIEWPOINT);
+    private  loadViewPointsAction = entityLoadAction(EntityTypeEnum.VIEWPOINT);
 
-    private loadViewPointSucceeded = entityLoadActionSucceeded(EntityTypeEnum.VIEWPOINT);
+    private loadViewPointSucceededAction = entityLoadActionSucceeded(EntityTypeEnum.VIEWPOINT);
     
-    private loadViewPointFailed  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINT);
+    private loadViewPointFailedAction  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINT);
 
     @dispatch()
-    private loadViewPointComments = entityLoadAction(EntityTypeEnum.VIEWPOINTCOMMENT);
+    private loadViewPointCommentsAction = entityLoadAction(EntityTypeEnum.VIEWPOINTCOMMENT);
 
-    private loadViewPointCommentsSucceeded = entityLoadActionSucceeded(
+    private loadViewPointCommentsSucceededAction = entityLoadActionSucceeded(
         EntityTypeEnum.VIEWPOINTCOMMENT,EntityActionTypeEnum.APPEND_COMMENTS);
     
-    private loadViewPointCommentsFailed  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINTCOMMENT);
+    private loadViewPointCommentsFailedAction  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINTCOMMENT);
     //#endregion
 
     //#region UI Actions
@@ -134,6 +140,17 @@ export class ViewPointService {
         };
     }
     
+    @dispatch()
+    private setViewModeAction(viewMode: boolean): UIViewPointAction {
+        return {
+            type: UIViewPointActionTypeEnum.SET_VIEWMODE,
+            meta: { progressing : false },
+            payload: Object.assign({},defaultViewPointActionPayload,{
+                viewMode: viewMode
+            })
+        };
+    }
+
     @dispatch()
     private selectCriteriaAction(selectedCriteriaId: string, unSelectedCriteriaIds: string[]): UIViewPointAction {
         return {
@@ -163,11 +180,11 @@ export class ViewPointService {
           .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
           .switchMap(action => {
             return this.getViewPoints(action.meta.pagination,action.payload.queryCondition)
-            .map(data => this.loadViewPointSucceeded(data))
+            .map(data => this.loadViewPointSucceededAction(data))
             .catch(response => 
-              of(this.loadViewPointFailed(response))
+              of(this.loadViewPointFailedAction(response))
             )
-            .startWith(this.loadViewPointStarted())
+            .startWith(this.loadViewPointStartedAction())
           });
       }
     
@@ -177,9 +194,9 @@ export class ViewPointService {
           .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
           .switchMap(action => {
             return this.getViewPointComments(action.meta.pagination,action.payload.queryCondition)
-            .map(data => this.loadViewPointCommentsSucceeded(data))
+            .map(data => this.loadViewPointCommentsSucceededAction(data))
             .catch(response => 
-              of(this.loadViewPointCommentsFailed(response))
+              of(this.loadViewPointCommentsFailedAction(response))
             )
           });
       }
@@ -214,11 +231,11 @@ export class ViewPointService {
 
     //#region Public methods
     public load(queryCondition? : IQueryCondition) {
-        this.loadViewPoints(queryCondition);
+        this.loadViewPointsAction(queryCondition);
     }
 
     public loadComments(queryCondition? : IQueryCondition,page? : number, limit? : number) {
-        this.loadViewPointComments(queryCondition,page,limit);
+        this.loadViewPointCommentsAction(queryCondition,page,limit);
     }
 
     public select(viewPoint: IViewPointBiz) {
@@ -231,6 +248,10 @@ export class ViewPointService {
 
     public selectCriteria(selectedCriteriaId: string, unSelectedCriteriaIds: string[]) {
         this.selectCriteriaAction(selectedCriteriaId,unSelectedCriteriaIds);
+    }
+
+    public setViewMode(viewMode : boolean) {
+        this.setViewModeAction(viewMode);
     }
     //#endregion
 }
