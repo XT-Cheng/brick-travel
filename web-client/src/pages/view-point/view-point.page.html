@@ -4,5 +4,5 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
-  <viewpoint-detail (fetchMoreCommentsEvent)='fetchMoreComments($event)' [viewPoint]='selectedViewPoint$ | async'></viewpoint-detail>
+  <viewpoint-detail (fetchMoreCommentsEvent)='fetchMoreComments($event)' [viewPoint]='selector.selectedViewPoint$ | async'></viewpoint-detail>
 </ion-content>

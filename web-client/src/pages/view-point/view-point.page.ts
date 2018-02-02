@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { SelectorService } from '../../providers/selector.service';
@@ -15,13 +14,12 @@ export class ViewPointPage {
   //#endregion
 
   //#region Protected member
-  protected selectedViewPoint$: Observable<IViewPointBiz>;
+  
   //#endregion
 
   //#region Constructor
-  constructor(private _selector:SelectorService,
-              private _viewPointService : ViewPointService) {
-      this.selectedViewPoint$ = this._selector.selectedViewPoint;
+  constructor(private _viewPointService : ViewPointService,
+    protected selector:SelectorService,) {
   }
 
   //#endregion

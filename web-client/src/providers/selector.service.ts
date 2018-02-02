@@ -19,90 +19,97 @@ import { ViewPointFilterEx } from '../utils/viewPointFilterEx';
 
 @Injectable()
 export class SelectorService {
-    private viewPointSearchKeySelector: BehaviorSubject<string> = new BehaviorSubject('');
-    private viewModeSelector: BehaviorSubject<boolean> = new BehaviorSubject(true);
-    private selectedCitySelector: BehaviorSubject<ICityBiz> = new BehaviorSubject(null);
-    private selectedViewPointSelector: BehaviorSubject<IViewPointBiz> = new BehaviorSubject(null);
-    private selectedDailyTripSelector: BehaviorSubject<IDailyTripBiz> = new BehaviorSubject(null);
-    private selectedTravelAgendaSelector: BehaviorSubject<ITravelAgendaBiz> = new BehaviorSubject(null);
-    private filteredViewPointsSelector: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
-    private currentFiltersSelector: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
-    private viewPointsSelector: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
-    private citiesSelector: BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
-    private travelAgendasSelector: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
-    private filterCategoriesSelector: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
+    private viewPointSearchKeySelector$: BehaviorSubject<string> = new BehaviorSubject('');
+    private viewModeSelector$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+    private selectedCitySelector$: BehaviorSubject<ICityBiz> = new BehaviorSubject(null);
+    private selectedViewPointSelector$: BehaviorSubject<IViewPointBiz> = new BehaviorSubject(null);
+    private selectedDailyTripSelector$: BehaviorSubject<IDailyTripBiz> = new BehaviorSubject(null);
+    private selectedTravelAgendaSelector$: BehaviorSubject<ITravelAgendaBiz> = new BehaviorSubject(null);
+    private filteredViewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
+    private currentFiltersSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
+    private viewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
+    private citiesSelector$: BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
+    private travelAgendasSelector$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
+    private filterCategoriesSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
 
-    public get currentFilters(): Observable<IFilterCategoryBiz[]> {
-        return this.currentFiltersSelector.asObservable();
+    private _selectedCity :  ICityBiz;
+
+    public get selectedCity() : ICityBiz {
+        return this._selectedCity;
     }
-    public get selectedViewPoint(): Observable<IViewPointBiz> {
-        return this.selectedViewPointSelector.asObservable()
+
+    public get currentFilters$(): Observable<IFilterCategoryBiz[]> {
+        return this.currentFiltersSelector$.asObservable();
     }
-    public get viewPointSearchKey(): Observable<string> {
-        return this.viewPointSearchKeySelector.asObservable();
+    public get selectedViewPoint$(): Observable<IViewPointBiz> {
+        return this.selectedViewPointSelector$.asObservable()
     }
-    public get viewMode(): Observable<boolean> {
-        return this.viewModeSelector.asObservable();
+    public get viewPointSearchKey$(): Observable<string> {
+        return this.viewPointSearchKeySelector$.asObservable();
     }
-    public get selectedTravelAgenda(): Observable<ITravelAgendaBiz> {
-        return this.selectedTravelAgendaSelector.asObservable();
+    public get viewMode$(): Observable<boolean> {
+        return this.viewModeSelector$.asObservable();
     }
-    public get selectedDailyTrip(): Observable<IDailyTripBiz> {
-        return this.selectedDailyTripSelector.asObservable();
+    public get selectedTravelAgenda$(): Observable<ITravelAgendaBiz> {
+        return this.selectedTravelAgendaSelector$.asObservable();
     }
-    public get selectedCity(): Observable<ICityBiz> {
-        return this.selectedCitySelector.asObservable();
+    public get selectedDailyTrip$(): Observable<IDailyTripBiz> {
+        return this.selectedDailyTripSelector$.asObservable();
     }
-    public get cities(): Observable<ICityBiz[]> {
-        return this.citiesSelector.asObservable();
+    public get selectedCity$(): Observable<ICityBiz> {
+        return this.selectedCitySelector$.asObservable();
     }
-    public get filterCategories(): Observable<IFilterCategoryBiz[]> {
-        return this.filterCategoriesSelector.asObservable();
+    public get cities$(): Observable<ICityBiz[]> {
+        return this.citiesSelector$.asObservable();
     }
-    public get viewPoints(): Observable<IViewPointBiz[]> {
-        return this.viewPointsSelector.asObservable();
+    public get filterCategories$(): Observable<IFilterCategoryBiz[]> {
+        return this.filterCategoriesSelector$.asObservable();
     }
-    public get travelAgendas(): Observable<ITravelAgendaBiz[]> {
-        return this.travelAgendasSelector.asObservable();
+    public get viewPoints$(): Observable<IViewPointBiz[]> {
+        return this.viewPointsSelector$.asObservable();
     }
-    public get filteredViewPoints(): Observable<IViewPointBiz[]> {
-        return this.filteredViewPointsSelector.asObservable();
+    public get travelAgendas$(): Observable<ITravelAgendaBiz[]> {
+        return this.travelAgendasSelector$.asObservable();
+    }
+    public get filteredViewPoints$(): Observable<IViewPointBiz[]> {
+        return this.filteredViewPointsSelector$.asObservable();
     }
 
     constructor(private _store: NgRedux<IAppState>) {
         this.getViewPoints(this._store).subscribe((value) => {
-            this.viewPointsSelector.next(value);
+            this.viewPointsSelector$.next(value);
         });
         this.getTravelAgendas(this._store).subscribe((value) => {
-            this.travelAgendasSelector.next(value);
+            this.travelAgendasSelector$.next(value);
         })
         this.getFilterCategories(this._store).subscribe((value) => {
-            this.filterCategoriesSelector.next(value);
+            this.filterCategoriesSelector$.next(value);
         })
         this.getCities(this._store).subscribe((value) => {
-            this.citiesSelector.next(value);
+            this.citiesSelector$.next(value);
         })
         this.getSelectedCity(this._store).subscribe((value) => {
-            this.selectedCitySelector.next(value);
+            this._selectedCity = value;
+            this.selectedCitySelector$.next(value);
         })
         this.getSelectedViewPoint(this._store).subscribe((value) => {
-            this.selectedViewPointSelector.next(value);
+            this.selectedViewPointSelector$.next(value);
         })
         this.getSelectedDailyTrip(this._store).subscribe((value) => {
-            this.selectedDailyTripSelector.next(value);
+            this.selectedDailyTripSelector$.next(value);
         })
         this.getSelectedTravelAgenda(this._store).subscribe((value) => {
-            this.selectedTravelAgendaSelector.next(value);
+            this.selectedTravelAgendaSelector$.next(value);
         })
         this.getViewMode(this._store).subscribe((value) => {
-            this.viewModeSelector.next(value);
+            this.viewModeSelector$.next(value);
         })
-        this.getCurrentFilters(this._store).subscribe((value) => this.currentFiltersSelector.next(value));
+        this.getCurrentFilters(this._store).subscribe((value) => this.currentFiltersSelector$.next(value));
         this.getFilteredViewPoints(this._store).subscribe((value) => {
-            this.filteredViewPointsSelector.next(value);
+            this.filteredViewPointsSelector$.next(value);
         })
-        this.getViewPointSearchKey(this._store).subscribe(value => this.viewPointSearchKeySelector.next(value));
-        this.getSelectedViewPoint(this._store).subscribe(value => this.selectedViewPointSelector.next(value));
+        this.getViewPointSearchKey(this._store).subscribe(value => this.viewPointSearchKeySelector$.next(value));
+        this.getSelectedViewPoint(this._store).subscribe(value => this.selectedViewPointSelector$.next(value));
     }
 
     //#region Entities Selector
@@ -135,6 +142,10 @@ export class SelectorService {
                 ret.forEach(ta => {
                     ta.dailyTrips.forEach(dt => {
                         caculateDistance(dt);
+                        dt.travelAgenda = ta;
+                        dt.travelViewPoints.forEach(tvp => {
+                            tvp.dailyTrip = dt;
+                        });
                     })
                 })
 
@@ -160,7 +171,7 @@ export class SelectorService {
     }
 
     private getSelectedCity(store: NgRedux<IAppState>): Observable<ICityBiz> {
-        return this.getSelectedCityId(store).combineLatest(this.cities, (v1, v2) => {
+        return this.getSelectedCityId(store).combineLatest(this.cities$, (v1, v2) => {
             return this.getCityById(v1, v2);
         });
     }
@@ -184,7 +195,7 @@ export class SelectorService {
     }
 
     private getSelectedDailyTrip(store: NgRedux<IAppState>): Observable<IDailyTripBiz> {
-        return this.getSelectedDailyTripId(store).combineLatest(this.travelAgendas, (v1, v2) => {
+        return this.getSelectedDailyTripId(store).combineLatest(this.travelAgendas$, (v1, v2) => {
             return this.getDailyTripById(v1, v2);
         });
     }
@@ -200,7 +211,7 @@ export class SelectorService {
     }
 
     private getSelectedTravelAgenda(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz> {
-        return this.getSelectedTravelAgendaId(store).combineLatest(this.travelAgendas, (v1, v2) => {
+        return this.getSelectedTravelAgendaId(store).combineLatest(this.travelAgendas$, (v1, v2) => {
             return this.getTravelAgendaById(v1, v2);
         });
     }
@@ -222,7 +233,7 @@ export class SelectorService {
     }
 
     private getSelectedViewPoint(store: NgRedux<IAppState>): Observable<IViewPointBiz> {
-        return this.getSelectedViewPointId(store).combineLatest(this.viewPoints, (v1, v2) => {
+        return this.getSelectedViewPointId(store).combineLatest(this.viewPoints$, (v1, v2) => {
             return this.getViewPointById(v1, v2);
         });
     }
@@ -236,7 +247,7 @@ export class SelectorService {
 
     //#region Filtered ViewPoints
     private getCurrentFilters(store: NgRedux<IAppState>): Observable<IFilterCategoryBiz[]> {
-        return this.getFilterCriteriaIds(store).combineLatest(this.filterCategories, (v1, v2) => {
+        return this.getFilterCriteriaIds(store).combineLatest(this.filterCategories$, (v1, v2) => {
             return this.buildCurrentFilterCategories(v1, v2);
         });
     }
@@ -256,7 +267,7 @@ export class SelectorService {
     }
 
     private getFilteredViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
-        return this.getCurrentFilters(store).combineLatest(this.viewPoints, (filterCategories, viewPoints) => {
+        return this.getCurrentFilters(store).combineLatest(this.viewPoints$, (filterCategories, viewPoints) => {
             return viewPoints.filter(viewPoint => {
                 return filterCategories.every(category => {
                     return category.criteries.every(criteria => {

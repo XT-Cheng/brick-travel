@@ -16,10 +16,12 @@ export interface ITravelAgenda {
 export interface IDailyTrip {
     id: string,
     travelViewPoints:  string[],
+    travelAgenda: string
 }
 
 export interface ITravelViewPoint {
     id: string,
     viewPoint: string,
-    transportationToNext: TransportationCategory
+    transportationToNext: TransportationCategory,
+    dailyTrip: string
 }

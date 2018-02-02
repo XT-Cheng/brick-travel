@@ -10,19 +10,19 @@
 </ion-header>
 <ion-content no-padding>
     <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' 
-            [viewPoints]='viewPoints$ | async'
-            [dailyTrip]='selectedDailyTrip$ | async'
-            [travelAgenda]='selectedTravelAgenda$ | async'
-            [selectedViewPoint]='selectedViewPoint$ | async'
-            [viewMode]='viewMode$ | async'
+            [viewPoints]='selector.viewPoints$ | async'
+            [dailyTrip]='selector.selectedDailyTrip$ | async'
+            [travelAgenda]='selector.selectedTravelAgenda$ | async'
+            [selectedViewPoint]='selector.selectedViewPoint$ | async'
+            [viewMode]='selector.viewMode$ | async'
             (viewPointClickedEvent)='viewPointClicked($event)'
             (viewPointAddedToDailyTrip)='viewPointAdded($event)'
             (viewPointRemovedFromDailyTrip)='viewPointRemoved($event)'></a-map>
     <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)'
-                    [dailyTrip]='selectedDailyTrip$ | async'
-                    [travelAgenda]='selectedTravelAgenda$ | async'
-                    [viewPoints]='viewPoints$ | async'
-                    [viewMode]='viewMode$ | async'
+                    [dailyTrip]='selector.selectedDailyTrip$ | async'
+                    [travelAgenda]='selector.selectedTravelAgenda$ | async'
+                    [viewPoints]='selector.viewPoints$ | async'
+                    [viewMode]='selector.viewMode$ | async'
                     (viewPointClickedEvent)='viewPointClicked($event)'
                     (viewPointAddedToDailyTrip)='viewPointAdded($event)'
                     (viewPointRemovedFromDailyTrip)='viewPointRemoved($event)'></viewpoint-list>
@@ -42,10 +42,10 @@
 </ion-content>
 
 <viewpoint-search *ngIf='showSearchBar' 
-                  [searchKey]='currentSearch$ | async' 
+                  [searchKey]='selector.viewPointSearchKey$ | async' 
                   (searchEvent)='searchViewPoint($event)' 
                   (backGroundClickedEvent)='dismissSearchBar()'></viewpoint-search>
 <viewpoint-filter *ngIf='showFilterBar' 
-                  [filterCategories]='currentFilterCategories$ | async' 
+                  [filterCategories]='selector.currentFilters$ | async' 
                   (criteriaClickedEvent)='criteriaClicked($event)'
                   (backGroundClickedEvent)='dismissFilterBar()'></viewpoint-filter>

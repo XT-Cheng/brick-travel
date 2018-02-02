@@ -19,13 +19,15 @@ export interface ITravelAgendaBiz {
 export interface IDailyTripBiz {
     id: string,
     travelViewPoints: ITravelViewPointBiz[],
-    lastViewPoint: string
+    lastViewPoint: string,
+    travelAgenda: ITravelAgendaBiz
 }
 
 export interface ITravelViewPointBiz {
     id: string,
     viewPoint: IViewPointBiz,
     distanceToNext: number,
+    dailyTrip: IDailyTripBiz,
     transportationToNext: TransportationCategory
 }
 
@@ -63,19 +65,21 @@ export function createTravelAgenda(): ITravelAgendaBiz {
     }
 }
 
-export function createDailiyTrip(): IDailyTripBiz {
+export function createDailiyTrip(travelAgenda : ITravelAgendaBiz): IDailyTripBiz {
     return {
         id: new ObjectID().toHexString(),
         travelViewPoints: [],
-        lastViewPoint: ''
+        lastViewPoint: '',
+        travelAgenda: travelAgenda
     }
 }
 
-export function createTravelViewPoint(viewPoint: IViewPointBiz): ITravelViewPointBiz {
+export function createTravelViewPoint(viewPoint: IViewPointBiz,dailyTrip : IDailyTripBiz): ITravelViewPointBiz {
     return {
         id: new ObjectID().toHexString(),
         viewPoint: viewPoint,
         distanceToNext: -1,
+        dailyTrip: dailyTrip,
         transportationToNext: null
     };
 }
@@ -83,6 +87,7 @@ export function createTravelViewPoint(viewPoint: IViewPointBiz): ITravelViewPoin
 export function translateDailyTripFromBiz(dailyTrip: IDailyTripBiz): IDailyTrip {
     return {
         id: dailyTrip.id,
+        travelAgenda: dailyTrip.travelAgenda.id,
         travelViewPoints: dailyTrip.travelViewPoints.map(tvp => tvp.id)
     };
 }
@@ -91,6 +96,7 @@ export function translateTravelViewPointFromBiz(travelViewPoint: ITravelViewPoin
     return {
         id: travelViewPoint.id,
         viewPoint: travelViewPoint.viewPoint.id,
+        dailyTrip: travelViewPoint.dailyTrip.id,
         transportationToNext: travelViewPoint.transportationToNext
     };
 }

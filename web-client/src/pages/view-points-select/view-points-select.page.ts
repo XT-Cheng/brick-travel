@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { Content, FabContainer, NavController } from 'ionic-angular';
-import { Observable } from 'rxjs/Rx';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
@@ -25,13 +24,13 @@ export class ViewPointsSelectPage implements AfterViewInit {
 
   //#region Protected member
 
-  protected viewPoints$: Observable<Array<IViewPointBiz>>;
-  protected selectedViewPoint$: Observable<IViewPointBiz>;
-  protected viewMode$: Observable<boolean>;
-  protected selectedDailyTrip$: Observable<IDailyTripBiz>;
-  protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
-  protected currentSearch$: Observable<string>;
-  protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
+  // protected viewPoints$: Observable<Array<IViewPointBiz>>;
+  // protected selectedViewPoint$: Observable<IViewPointBiz>;
+  // protected viewMode$: Observable<boolean>;
+  // protected selectedDailyTrip$: Observable<IDailyTripBiz>;
+  // protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
+  // protected currentSearch$: Observable<string>;
+  // protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
 
   protected displayModeEnum = DisplayModeEnum;
   protected displayMode: DisplayModeEnum;
@@ -42,20 +41,20 @@ export class ViewPointsSelectPage implements AfterViewInit {
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _selector : SelectorService,
     private _viewPointService: ViewPointService,
     private _cityService: CityService,
     private _travelAgendaService: TravelAgendaService,
-    private _filterCategoryService: FilterCategoryService) {
+    private _filterCategoryService: FilterCategoryService,
+    protected selector : SelectorService,) {
     this.displayMode = DisplayModeEnum.Map;
 
-    this.viewPoints$ = this._selector.viewPoints;
-    this.selectedViewPoint$ = this._selector.selectedViewPoint;
-    this.selectedTravelAgenda$ = this._selector.selectedTravelAgenda;
-    this.viewMode$ = this._selector.viewMode;
-    this.selectedDailyTrip$ = this._selector.selectedDailyTrip;
-    this.currentFilterCategories$ = this._selector.currentFilters;
-    this.currentSearch$ = this._selector.viewPointSearchKey;
+    // this.viewPoints$ = this._selector.viewPoints$;
+    // this.selectedViewPoint$ = this._selector.selectedViewPoint$;
+    // this.selectedTravelAgenda$ = this._selector.selectedTravelAgenda$;
+    // this.viewMode$ = this._selector.viewMode$;
+    // this.selectedDailyTrip$ = this._selector.selectedDailyTrip$;
+    // this.currentFilterCategories$ = this._selector.currentFilters$;
+    // this.currentSearch$ = this._selector.viewPointSearchKey$;
   }
   //#endregion
 
@@ -65,10 +64,6 @@ export class ViewPointsSelectPage implements AfterViewInit {
     this._viewPointService.load();
     this._travelAgendaService.load();
     this._filterCategoryService.load();
-
-    this.currentFilterCategories$.subscribe(categories => {
-      console.log('Categories:' + categories);
-    });
   }
   //#endregion
 

@@ -2,7 +2,6 @@ import 'rxjs/add/operator/combineLatest';
 
 import { AfterViewInit, Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { Observable } from 'rxjs/Observable';
 
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
@@ -22,20 +21,13 @@ export class TravelAgendaPage implements AfterViewInit {
 
   //#region Protected member
 
-  protected selectedDailyTrip$: Observable<IDailyTripBiz>;
-  protected selectedViewPoint$: Observable<IViewPointBiz>;
-  protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
-
   //#endregion
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _selector:SelectorService,
-    private _viewPointService:ViewPointService,
-    private _travelAgendaService: TravelAgendaService) {
-    this.selectedDailyTrip$ = this._selector.selectedDailyTrip;
-    this.selectedViewPoint$ = this._selector.selectedViewPoint; 
-    this.selectedTravelAgenda$ =  this._selector.selectedTravelAgenda;
+    private _viewPointService: ViewPointService,
+    private _travelAgendaService: TravelAgendaService,
+    protected selector: SelectorService) {
   }
   //#endregion
 
@@ -70,19 +62,21 @@ export class TravelAgendaPage implements AfterViewInit {
     this._nav.push(ViewPointsSelectPage);
   }
 
-  travelViewPointRemoved(value: { removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz }) {
-    this._travelAgendaService.removeTravelViewPoint(value.removed,value.dailyTrip);
+  travelViewPointRemoved(travelViewPoint: ITravelViewPointBiz) {
+    this._travelAgendaService.removeTravelViewPoint(travelViewPoint);
   }
 
-  dailyTripAdded(value: { added: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }) {
-    this._travelAgendaService.selectDailyTrip(this._travelAgendaService.addDailyTrip(value.travelAgenda));
+  dailyTripAdded(travelAgenda: ITravelAgendaBiz) {
+    this._travelAgendaService.selectDailyTrip(this._travelAgendaService.addDailyTrip(travelAgenda));
   }
 
-  dailyTripRemoved(value: { removed: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }) {
-    this._travelAgendaService.removeDailyTrip(value.removed,value.travelAgenda);
+  dailyTripRemoved(value: { dailyTrip: IDailyTripBiz, isCurrentSelect: boolean }) {
+    let travelAgenda = this._travelAgendaService.removeDailyTrip(value.dailyTrip);
 
-    if (value.travelAgenda.dailyTrips.length > 0)
-      this._travelAgendaService.selectDailyTrip(value.travelAgenda.dailyTrips[0]);
+    if (travelAgenda.dailyTrips.length == 0)
+      this._travelAgendaService.selectDailyTrip(null);
+    else if (value.isCurrentSelect)
+      this._travelAgendaService.selectDailyTrip(travelAgenda.dailyTrips[0]);
   }
   //#endregion
 

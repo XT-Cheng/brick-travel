@@ -11,6 +11,7 @@ import * as Immutable from 'seamless-immutable';
 import {
     createDailiyTrip,
     createTravelAgenda,
+    createTravelViewPoint,
     IDailyTripBiz,
     ITravelAgendaBiz,
     ITravelViewPointBiz,
@@ -18,6 +19,7 @@ import {
     translateTravelAgendaFromBiz,
     translateTravelViewPointFromBiz,
 } from '../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -45,15 +47,13 @@ interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {
 
 interface IUITravelAgendaActionPayload extends IActionPayload {
     selectedTravelAgendaId: string,
-    selectedDailyTripId: string,
-    updateTravelAgenda: { [id: string]: ITravelAgendaBiz }
+    selectedDailyTripId: string
 }
 
 const defaultAgendaActionPayload = {
     selectedTravelAgendaId: '',
     selectedDailyTripId: '',
     error: null,
-    updateTravelAgenda: { '': null }
 }
 
 type UITravelAgendaAction = FluxStandardAction<IUITravelAgendaActionPayload, IUITravelAgendaActionMetaInfo>;
@@ -216,41 +216,42 @@ export class TravelAgendaService {
     }
 
     public selectDailyTrip(dailyTrip: IDailyTripBiz) {
-        this.selectDailyTripAction(dailyTrip.id);
+        this.selectDailyTripAction(dailyTrip?dailyTrip.id:'');
     }
 
     public addTravelAgenda(): ITravelAgendaBiz {
         let added = createTravelAgenda();
-        let ta = translateTravelAgendaFromBiz(added);
-        this.insertTravelAgenda(ta.id, ta);
-        added.dailyTrips.forEach(value => {
-            value.travelViewPoints.forEach(value => {
-                let tvp = translateTravelViewPointFromBiz(value);
-                this.insertTravelViewPoint(tvp.id, tvp);
-            })
-            let dt = translateDailyTripFromBiz(value);
-            this.insertDailyTrip(dt.id, dt);
-        })
-
+        this.insertTravelAgenda(added.id, translateTravelAgendaFromBiz(added));
         return added;
     }
 
     public addDailyTrip(travelAgenda: ITravelAgendaBiz): IDailyTripBiz {
-        let added = createDailiyTrip();
+        let added = createDailiyTrip(travelAgenda);
+        travelAgenda.dailyTrips.push(added);
         this.insertDailyTrip(added.id, translateDailyTripFromBiz(added));
         this.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
 
         return added;
     }
 
-    public removeDailyTrip(dailyTrip : IDailyTripBiz, travelAgenda: ITravelAgendaBiz) {
-        this.deleteDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
-        this.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
-        this.selectDailyTripAction('');
+    public addTravelViewPoint(viewPoint : IViewPointBiz,dailyTrip: IDailyTripBiz): ITravelViewPointBiz {
+        let added = createTravelViewPoint(viewPoint,dailyTrip);
+        dailyTrip.travelViewPoints.push(added);
+        this.insertTravelViewPoint(added.id, translateTravelViewPointFromBiz(added));
+        this.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+
+        return added;
     }
 
-    public removeTravelViewPoint(removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz) {
-        this.deleteTravelViewPoint(removed.id, translateTravelViewPointFromBiz(removed));
-        this.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+    public removeDailyTrip(dailyTrip : IDailyTripBiz) : ITravelAgendaBiz {
+        dailyTrip.travelAgenda.dailyTrips = dailyTrip.travelAgenda.dailyTrips.filter(trip => trip.id !== dailyTrip.id);
+        this.deleteDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+        this.updateTravelAgenda(dailyTrip.travelAgenda.id, translateTravelAgendaFromBiz(dailyTrip.travelAgenda));
+        return dailyTrip.travelAgenda;
+    }
+
+    public removeTravelViewPoint(travelViewPoint: ITravelViewPointBiz) {
+        this.deleteTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
+        this.updateDailyTrip(travelViewPoint.dailyTrip.id, translateDailyTripFromBiz(travelViewPoint.dailyTrip));
     }
 }

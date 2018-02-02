@@ -103,6 +103,12 @@ export var TravelAgendaModel = new TravelAgenda().getModelForClass(TravelAgenda,
         toJSON: {
             virtuals: true,
             transform: (doc, ret, options) => {
+                ret.dailyTrips.forEach(dt => {
+                    dt.travelViewPoints.forEach(tvp => {
+                        tvp.dailyTrip = dt.id;
+                    });
+                    dt.travelAgenda = ret.id;
+                });
                 delete ret.__v;
                 delete ret._id;
                 return ret;

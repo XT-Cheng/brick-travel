@@ -1,7 +1,11 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
-import * as uuid from 'uuid';
 
-import { IDailyTripBiz, ITravelViewPointBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import {
+  createTravelViewPoint,
+  IDailyTripBiz,
+  ITravelAgendaBiz,
+  ITravelViewPointBiz,
+} from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map/a-map.component';
 
@@ -63,12 +67,7 @@ export class ViewPointListComponent implements AfterViewInit, OnDestroy {
   protected addOrRemove(viewPoint: IViewPointBiz) {
     if (this.actionAllowed(viewPoint) == ActionAllowed.ADD) {
       //Create travel viewPoint
-      let travelViewPoint: ITravelViewPointBiz = {
-        id: uuid.v1(),
-        viewPoint: viewPoint,
-        distanceToNext: -1,
-        transportationToNext: null
-      };
+      let travelViewPoint = createTravelViewPoint(viewPoint,this.dailyTrip);
       this.dailyTrip.travelViewPoints.push(travelViewPoint);
       this.viewPointAddedToDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,added: travelViewPoint})
     }

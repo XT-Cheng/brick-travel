@@ -17,7 +17,6 @@ import {
   IDailyTripBiz,
   ITravelAgendaBiz,
   ITravelViewPointBiz,
-  createDailiyTrip,
 } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
@@ -68,10 +67,10 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   @Output() protected dailyTripSelectedEvent: EventEmitter<IDailyTripBiz>;
   @Output() protected viewPointSelectedEvent: EventEmitter<IViewPointBiz>;
 
-  @Output() protected dailyTripAddedEvent: EventEmitter<{ added: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
-  @Output() protected dailyTripRemovedEvent: EventEmitter<{ removed: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
+  @Output() protected dailyTripAddedEvent: EventEmitter<ITravelAgendaBiz>;
+  @Output() protected dailyTripRemovedEvent: EventEmitter<{dailyTrip:IDailyTripBiz,isCurrentSelect: boolean}>;
 
-  @Output() protected travelViewPointRemovedEvent: EventEmitter<{ removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz }>;
+  @Output() protected travelViewPointRemovedEvent: EventEmitter<ITravelViewPointBiz>;
   @Output() protected travelViewPointAddRequestEvent: EventEmitter<void>;
 
   @Output() protected travelAgendaChangedEvent: EventEmitter<{ dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
@@ -91,10 +90,10 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
     this.dailyTripSelectedEvent = new EventEmitter<IDailyTripBiz>();
     this.viewPointSelectedEvent = new EventEmitter<IViewPointBiz>();
 
-    this.dailyTripAddedEvent = new EventEmitter<{ added: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>();
-    this.dailyTripRemovedEvent = new EventEmitter<{ removed: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>();
+    this.dailyTripAddedEvent = new EventEmitter<ITravelAgendaBiz>();
+    this.dailyTripRemovedEvent = new EventEmitter<{dailyTrip:IDailyTripBiz,isCurrentSelect: boolean}>();
 
-    this.travelViewPointRemovedEvent = new EventEmitter<{ removed: ITravelViewPointBiz, dailyTrip: IDailyTripBiz }>();
+    this.travelViewPointRemovedEvent = new EventEmitter<  ITravelViewPointBiz>();
 
     this.travelViewPointAddRequestEvent = new EventEmitter<void>();
 
@@ -185,10 +184,10 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  protected removeTravelViewPoint(travelViewPoint: ITravelViewPointBiz) {
+  protected deleteTravelViewPoint(travelViewPoint: ITravelViewPointBiz) {
     this.selectedDailyTrip.travelViewPoints = this.selectedDailyTrip.travelViewPoints.
                                                 filter(tvp => tvp.id != travelViewPoint.id);
-    this.travelViewPointRemovedEvent.emit({ removed: travelViewPoint, dailyTrip: this.selectedDailyTrip });
+    this.travelViewPointRemovedEvent.emit(travelViewPoint);
   }
 
   protected addTravelViewPointReq() {
@@ -196,16 +195,11 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   }
 
   protected addDay() {
-    //Create daily trip
-    let dailyTrip: IDailyTripBiz = createDailiyTrip();
-    this.travelAgenda.dailyTrips.push(dailyTrip);
-
-    this.dailyTripAddedEvent.emit({ added: dailyTrip, travelAgenda: this.travelAgenda });
+    this.dailyTripAddedEvent.emit(this.travelAgenda);
   }
 
   protected deleteDay(dailyTrip: IDailyTripBiz) {
-    this.travelAgenda.dailyTrips = this.travelAgenda.dailyTrips.filter(trip => trip.id !== dailyTrip.id);
-    this.dailyTripRemovedEvent.emit({ removed: dailyTrip, travelAgenda: this.travelAgenda });
+    this.dailyTripRemovedEvent.emit( {dailyTrip:dailyTrip,isCurrentSelect: this.selectedDailyTrip.id == dailyTrip.id} );
   }
 
   //#endregion

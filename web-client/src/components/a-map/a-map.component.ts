@@ -310,7 +310,7 @@ export class AMapComponent implements AfterViewInit {
       this._markers.get(viewPoint.id).window.close();
       //Add viewpoint
       //Create travel viewPoint
-      let travelViewPoint = createTravelViewPoint(viewPoint);
+      let travelViewPoint = createTravelViewPoint(viewPoint,this.dailyTrip);
     
       this.dailyTrip.travelViewPoints.push(travelViewPoint);
       caculateDistance(this.dailyTrip);

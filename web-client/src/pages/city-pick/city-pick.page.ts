@@ -1,6 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { Observable } from 'rxjs/Observable';
 
 import { ICityBiz } from '../../bizModel/model/city.biz.model';
 import { CityService } from '../../providers/city.service';
@@ -13,15 +12,13 @@ import { HomePage } from '../home/home.page';
 })
 export class CityPickPage implements AfterViewInit {
   //#region Private member
-  protected readonly cities$: Observable<ICityBiz[]>;
 
   //#endregion
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _selector: SelectorService,
-    private _cityService : CityService,) {
-      this.cities$ = this._selector.cities;
+    private _cityService : CityService,
+    protected selector: SelectorService) {
   }
   //#endregion
 

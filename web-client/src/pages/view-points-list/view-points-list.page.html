@@ -10,13 +10,13 @@
 </ion-header>
 <ion-content no-padding>
     <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' 
-            [viewPoints]='viewPoints$ | async'
-            [selectedViewPoint]='selectedViewPoint$ | async'
-            [viewMode]='viewMode$ | async'
+            [viewPoints]='selector.filteredViewPoints$ | async'
+            [selectedViewPoint]='selector.selectedViewPoint$ | async'
+            [viewMode]='selector.viewMode$ | async'
             (viewPointClickedEvent)='viewPointClicked($event)'></a-map>
     <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)'
-                    [viewPoints]='viewPoints$ | async'
-                    [viewMode]='viewMode$ | async'
+                    [viewPoints]='selector.filteredViewPoints$ | async'
+                    [viewMode]='selector.viewMode$ | async'
                     (viewPointClickedEvent)='viewPointClicked($event)'></viewpoint-list>
   <ion-fab right edge #fab>
     <button ion-fab mini>
@@ -34,10 +34,10 @@
 </ion-content>
 
 <viewpoint-search *ngIf='showSearchBar' 
-                  [searchKey]='currentSearch$ | async' 
+                  [searchKey]='selector.viewPointSearchKey$ | async' 
                   (searchEvent)='searchViewPoint($event)' 
                   (backGroundClickedEvent)='dismissSearchBar()'></viewpoint-search>
 <viewpoint-filter *ngIf='showFilterBar' 
-                  [filterCategories]='currentFilterCategories$ | async' 
+                  [filterCategories]='selector.currentFilters$ | async' 
                   (criteriaClickedEvent)='criteriaClicked($event)'
                   (backGroundClickedEvent)='dismissFilterBar()'></viewpoint-filter>

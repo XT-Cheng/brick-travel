@@ -1,11 +1,9 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Content, FabContainer, NavController } from 'ionic-angular';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Subject } from 'rxjs/Subject';
 
-import { ICityBiz } from '../../bizModel/model/city.biz.model';
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
 import { FilterCategoryService } from '../../providers/filterCategory.service';
@@ -23,20 +21,13 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   //#region Private member
   @ViewChild(Content) _content : Content;
   @ViewChild(AMapComponent) _aMap : AMapComponent;
+  
+  private _stop$ = new Subject();
+
   //#endregion
 
   //#region Protected member
   
-  protected viewPoints$: Observable<Array<IViewPointBiz>>;
-  protected selectedViewPoint$: Observable<IViewPointBiz>;
-  protected viewMode$: Observable<boolean>;
-  protected selectedDailyTrip$: Observable<IDailyTripBiz>;
-  protected currentSearch$: Observable<string>;
-  protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
-  protected selectedCity$ : Observable<ICityBiz>;
-  
-  protected subscriptions : Array<Subscription>;
-
   protected displayModeEnum = DisplayModeEnum;
   protected displayMode: DisplayModeEnum;
 
@@ -46,37 +37,27 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
 
   //#region Constructor
   constructor(private _nav: NavController,
-    private _selector : SelectorService,
     private _viewPointService: ViewPointService,
     private _travelAgendaService: TravelAgendaService,
-    private _filterCategoryService: FilterCategoryService) {
+    private _filterCategoryService: FilterCategoryService,
+    protected selector : SelectorService) {
     this.displayMode = DisplayModeEnum.Map;
-
-    this.viewPoints$ = this._selector.filteredViewPoints;
-    this.selectedViewPoint$ = this._selector.selectedViewPoint;
-    this.viewMode$ = this._selector.viewMode;
-    this.selectedDailyTrip$ = this._selector.selectedDailyTrip;
-    this.currentFilterCategories$ = this._selector.currentFilters;
-    this.selectedCity$ = this._selector.selectedCity;
-    this.currentSearch$ = this._selector.viewPointSearchKey;
-
-    this.subscriptions = new Array<Subscription>();
   }
   //#endregion
 
   //#region Implements interface
   ngAfterViewInit(): void {
-    //this._viewPointActionGenerator.loadViewPoints();
     this._travelAgendaService.load();
     this._filterCategoryService.load();
-
-    this.subscriptions.push(this.selectedCity$.subscribe(city => {
+    
+    this.selector.selectedCity$.takeUntil(this._stop$).subscribe(city => {
       this._viewPointService.load({cityId: city.id});
-    }));
+    });
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this._stop$.next();
+    this._stop$.complete();
   }
 
   //#endregion

@@ -2,35 +2,21 @@ import 'rxjs/add/operator/combineLatest';
 
 import { AfterViewInit, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
-import { Observable } from 'rxjs/Observable';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import {
-  IDailyTripBiz,
-  ITravelAgendaBiz
-} from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { SelectorService } from '../../providers/selector.service';
 import { CityService } from '../../providers/city.service';
 import { FilterCategoryService } from '../../providers/filterCategory.service';
-import { ViewPointService } from '../../providers/viewPoint.service';
+import { SelectorService } from '../../providers/selector.service';
 import { TravelAgendaService } from '../../providers/travelAgenda.service';
+import { ViewPointService } from '../../providers/viewPoint.service';
 
 @Component({
   selector: 'page-test',
   templateUrl: 'test.page.html'
 })
 export class TestPage implements AfterViewInit {
-  protected viewPoints$: Observable<Array<IViewPointBiz>>;
-  protected travelAgendas$: Observable<Array<ITravelAgendaBiz>>;
-  protected filterCategories$: Observable<Array<IFilterCategoryBiz>>;
-  protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
-  protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
-  protected selectedDailyTrip$: Observable<IDailyTripBiz>;
-  protected selectedViewPoint$: Observable<IViewPointBiz>;
-  protected search$: Observable<string>;
-
-  //protected dayTripSelected$: Subject<IDailyTripBiz> = new Subject<IDailyTripBiz>();
 
   protected showSearchBar: boolean = false;
   protected showFilterBar: boolean = false;
@@ -40,21 +26,11 @@ export class TestPage implements AfterViewInit {
   private firstDailyTrip: boolean = true;
   protected displayMode: DisplayModeEnum;
 
-  constructor(private _selector: SelectorService,
-        private _viewPointService: ViewPointService, 
+  constructor(private _viewPointService: ViewPointService, 
         private _cityService: CityService,
         private _travelAgendaService: TravelAgendaService, 
-        private _filterCategoryService: FilterCategoryService) {
-
-    this.viewPoints$ = this._selector.viewPoints;
-    this.travelAgendas$ =  this._selector.travelAgendas;
-    this.filterCategories$ = this. _selector.filterCategories;
-    this.search$ =  this._selector.viewPointSearchKey;
-    this.selectedTravelAgenda$ =  this._selector.selectedTravelAgenda;
-    this.selectedDailyTrip$ =  this._selector.selectedDailyTrip
-    this.selectedViewPoint$ =  this._selector.selectedViewPoint;
-    this.currentFilterCategories$ = this._selector.currentFilters;
-
+        private _filterCategoryService: FilterCategoryService,
+        protected selector: SelectorService,) {
     this.displayMode = DisplayModeEnum.Agenda;
   }
 
@@ -63,8 +39,6 @@ export class TestPage implements AfterViewInit {
     this._viewPointService.load();
     this._travelAgendaService.load();
     this._filterCategoryService.load();
-
-    this.selectedDailyTrip$.subscribe(x => console.log(x));
   }
 
   dismissSearchBar(): void {

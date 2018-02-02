@@ -7,7 +7,6 @@ export const INIT_UI_VIEWPOINT_STATE = {
 }
 
 export interface IViewPointUI {
-  viewMode: boolean,
   searchKey: string,
   selectedViewPointId: string,
   filterCriteriaIds: string[],
