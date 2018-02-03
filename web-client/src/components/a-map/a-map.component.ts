@@ -5,18 +5,18 @@ import {
   ComponentFactoryResolver,
   ComponentRef,
   ElementRef,
+  EventEmitter,
   Injector,
   Input,
-  ViewChild,
   Output,
-  EventEmitter,
+  ViewChild,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz, createTravelViewPoint, caculateDistance } from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { InformationWindowComponent } from './information-window/information-window.component';
 import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'a-map',
@@ -37,24 +37,9 @@ export class AMapComponent implements AfterViewInit {
 
   //#endregion
 
-  //#region Constructor
-
-  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
-    this._markers = new Map<string, MarkerInfor>();
-    this._travelLines = new Array<AMap.Polyline>();
-    this._viewPointMarkerFactory = this._resolver.resolveComponentFactory(ViewPointMarkerComponent);
-    this._informationWindowFactory = this._resolver.resolveComponentFactory(InformationWindowComponent);
-
-    this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
-    this.viewPointAddedToDailyTrip = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,added: ITravelViewPointBiz}>();
-    this.viewPointRemovedFromDailyTrip = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>();
-  }
-
-  //#endregion Constructor
-
   //#region Event
   @Output() viewPointClickedEvent: EventEmitter<IViewPointBiz>;
-  @Output() viewPointAddedToDailyTrip: EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,added: ITravelViewPointBiz}>;
+  @Output() viewPointAddedToDailyTrip: EventEmitter<{ dailyTrip: IDailyTripBiz, added: IViewPointBiz }>;
   @Output() viewPointRemovedFromDailyTrip: EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>;
   
   //#endregion
@@ -112,6 +97,21 @@ export class AMapComponent implements AfterViewInit {
   @Input() protected travelAgenda : ITravelAgendaBiz;
 
   //#endregion Public property
+
+  //#region Constructor
+
+  constructor(private _resolver: ComponentFactoryResolver, private _injector: Injector) {
+    this._markers = new Map<string, MarkerInfor>();
+    this._travelLines = new Array<AMap.Polyline>();
+    this._viewPointMarkerFactory = this._resolver.resolveComponentFactory(ViewPointMarkerComponent);
+    this._informationWindowFactory = this._resolver.resolveComponentFactory(InformationWindowComponent);
+
+    this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
+    this.viewPointAddedToDailyTrip = new EventEmitter<{ dailyTrip: IDailyTripBiz, added: IViewPointBiz }>();
+    this.viewPointRemovedFromDailyTrip = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>();
+  }
+
+  //#endregion Constructor
 
   //#region Implements interface
   ngAfterViewInit(): void {
@@ -308,13 +308,7 @@ export class AMapComponent implements AfterViewInit {
     }));
     subscriptions.push(crWindow.instance.viewPointAddedEvent.subscribe(viewPoint => {
       this._markers.get(viewPoint.id).window.close();
-      //Add viewpoint
-      //Create travel viewPoint
-      let travelViewPoint = createTravelViewPoint(viewPoint,this.dailyTrip);
-    
-      this.dailyTrip.travelViewPoints.push(travelViewPoint);
-      caculateDistance(this.dailyTrip);
-      this.viewPointAddedToDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,added: travelViewPoint})
+      this.viewPointAddedToDailyTrip.emit({dailyTrip: this.dailyTrip,added : viewPoint})
     }));
     subscriptions.push(crWindow.instance.viewPointRemovedEvent.subscribe(viewPoint => {
       this._markers.get(viewPoint.id).window.close();

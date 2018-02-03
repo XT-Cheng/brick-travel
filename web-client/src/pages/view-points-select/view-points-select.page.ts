@@ -24,14 +24,6 @@ export class ViewPointsSelectPage implements AfterViewInit {
 
   //#region Protected member
 
-  // protected viewPoints$: Observable<Array<IViewPointBiz>>;
-  // protected selectedViewPoint$: Observable<IViewPointBiz>;
-  // protected viewMode$: Observable<boolean>;
-  // protected selectedDailyTrip$: Observable<IDailyTripBiz>;
-  // protected selectedTravelAgenda$: Observable<ITravelAgendaBiz>;
-  // protected currentSearch$: Observable<string>;
-  // protected currentFilterCategories$: Observable<Array<IFilterCategoryBiz>>;
-
   protected displayModeEnum = DisplayModeEnum;
   protected displayMode: DisplayModeEnum;
 
@@ -47,14 +39,6 @@ export class ViewPointsSelectPage implements AfterViewInit {
     private _filterCategoryService: FilterCategoryService,
     protected selector : SelectorService,) {
     this.displayMode = DisplayModeEnum.Map;
-
-    // this.viewPoints$ = this._selector.viewPoints$;
-    // this.selectedViewPoint$ = this._selector.selectedViewPoint$;
-    // this.selectedTravelAgenda$ = this._selector.selectedTravelAgenda$;
-    // this.viewMode$ = this._selector.viewMode$;
-    // this.selectedDailyTrip$ = this._selector.selectedDailyTrip$;
-    // this.currentFilterCategories$ = this._selector.currentFilters$;
-    // this.currentSearch$ = this._selector.viewPointSearchKey$;
   }
   //#endregion
 
@@ -136,19 +120,8 @@ export class ViewPointsSelectPage implements AfterViewInit {
     return (this.displayMode === DisplayModeEnum.Map) ? 'list' : 'map';
   }
 
-  protected viewPointAdded(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, added: ITravelViewPointBiz }) {
-    // let dailyTrip = value.dailyTrip;
-    // let travelAgenda = value.travelAgenda;
-    // let travelViewPoint = value.added;
-
-    // this._travelAgendaActionGenerator.insertTravelViewPoint(travelViewPoint.id, translateTravelViewPointFromBiz(travelViewPoint));
-
-    // dailyTrip.travelViewPoints.forEach(tvp => {
-    //   this._travelAgendaActionGenerator.updateTravelViewPoint(tvp.id,translateTravelViewPointFromBiz(tvp));
-    // })
-    
-    // this._travelAgendaActionGenerator.updateDailyTrip(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
-    // this._travelAgendaActionGenerator.updateTravelAgenda(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
+  protected viewPointAdded(value: { dailyTrip: IDailyTripBiz, added: IViewPointBiz }) {
+    this._travelAgendaService.addTravelViewPoint(value.added,value.dailyTrip);
   }
 
   protected viewPointRemoved(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, removed: ITravelViewPointBiz }) {

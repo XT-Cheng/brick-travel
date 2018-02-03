@@ -10,11 +10,17 @@ import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { ICity } from '../modules/store/entity/city/city.model';
-import { city, filterCategory, travelAgenda, viewPoint } from '../modules/store/entity/entity.schema';
+import { STORE_ENTITIES_KEY } from '../modules/store/entity/entity.model';
+import { city, filterCategory, travelAgenda, viewPoint, dailyTrip } from '../modules/store/entity/entity.schema';
 import { IFilterCategory } from '../modules/store/entity/filterCategory/filterCategory.model';
-import { ITravelAgenda } from '../modules/store/entity/travelAgenda/travelAgenda.model';
+import { ITravelAgenda, IDailyTrip } from '../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IViewPoint } from '../modules/store/entity/viewPoint/viewPoint.model';
 import { IAppState } from '../modules/store/store.model';
+import { STORE_KEY } from '../modules/store/store.model';
+import { STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
+import { STORE_UI_TRAVELAGENDA_KEY } from '../modules/store/ui/travelAgenda/travelAgenda.model';
+import { STORE_UI_KEY } from '../modules/store/ui/ui.model';
+import { STORE_UI_VIEWPOINT_KEY } from '../modules/store/ui/viewPoint/viewPoint.model';
 import { ViewPointFilterEx } from '../utils/viewPointFilterEx';
 
 @Injectable()
@@ -32,10 +38,25 @@ export class SelectorService {
     private travelAgendasSelector$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
     private filterCategoriesSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
 
-    private _selectedCity :  ICityBiz;
+    private _selectedCity: ICityBiz;
+    private _selectedDailyTrip: IDailyTripBiz;
+    private _selectedTravelAgenda: ITravelAgendaBiz;
+    private _selectedViewPoint: IViewPointBiz;
 
-    public get selectedCity() : ICityBiz {
+    public get selectedCity(): ICityBiz {
         return this._selectedCity;
+    }
+
+    public get selectedTravelAgenda(): ITravelAgendaBiz {
+        return this._selectedTravelAgenda;
+    }
+
+    public get selectedViewPoint(): IViewPointBiz {
+        return this._selectedViewPoint;
+    }
+
+    public get selectedDailyTrip(): IDailyTripBiz {
+        return this._selectedDailyTrip;
     }
 
     public get currentFilters$(): Observable<IFilterCategoryBiz[]> {
@@ -65,9 +86,6 @@ export class SelectorService {
     public get filterCategories$(): Observable<IFilterCategoryBiz[]> {
         return this.filterCategoriesSelector$.asObservable();
     }
-    public get viewPoints$(): Observable<IViewPointBiz[]> {
-        return this.viewPointsSelector$.asObservable();
-    }
     public get travelAgendas$(): Observable<ITravelAgendaBiz[]> {
         return this.travelAgendasSelector$.asObservable();
     }
@@ -93,12 +111,15 @@ export class SelectorService {
             this.selectedCitySelector$.next(value);
         })
         this.getSelectedViewPoint(this._store).subscribe((value) => {
+            this._selectedViewPoint = value;
             this.selectedViewPointSelector$.next(value);
         })
         this.getSelectedDailyTrip(this._store).subscribe((value) => {
+            this._selectedDailyTrip = value;
             this.selectedDailyTripSelector$.next(value);
         })
         this.getSelectedTravelAgenda(this._store).subscribe((value) => {
+            this._selectedTravelAgenda = value;
             this.selectedTravelAgendaSelector$.next(value);
         })
         this.getViewMode(this._store).subscribe((value) => {
@@ -114,134 +135,116 @@ export class SelectorService {
 
     //#region Entities Selector
     private getCities(store: NgRedux<IAppState>): Observable<ICityBiz[]> {
-        return store.select<{ [id: string]: ICity }>(['entities', 'cities'])
+        return store.select<{ [id: string]: ICity }>([STORE_KEY.entities, STORE_ENTITIES_KEY.cities])
             .map((data) => {
                 return denormalize(Object.keys(data), [city], Immutable(store.getState().entities).asMutable({ deep: true }));
             });
     }
 
     private getFilterCategories(store: NgRedux<IAppState>): Observable<IFilterCategoryBiz[]> {
-        return store.select<{ [id: string]: IFilterCategory }>(['entities', 'filterCategories'])
+        return store.select<{ [id: string]: IFilterCategory }>([STORE_KEY.entities, 'filterCategories'])
             .map((data) => {
                 return denormalize(Object.keys(data), [filterCategory], Immutable(store.getState().entities).asMutable({ deep: true }));
             });
     }
 
     private getViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
-        return store.select<{ [id: string]: IViewPoint }>(['entities', 'viewPoints'])
+        return store.select<{ [id: string]: IViewPoint }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints])
             .map((data) => {
                 return denormalize(Object.keys(data), [viewPoint], Immutable(store.getState().entities).asMutable({ deep: true }));
             })
     }
 
     private getTravelAgendas(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz[]> {
-        return store.select<{ [id: string]: ITravelAgenda }>(['entities', 'travelAgendas'])
+        return store.select<{ [id: string]: ITravelAgenda }>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas])
             .map((data) => {
                 let ret = denormalize(Object.keys(data), [travelAgenda], Immutable(store.getState().entities).asMutable({ deep: true }));
 
                 ret.forEach(ta => {
                     ta.dailyTrips.forEach(dt => {
                         caculateDistance(dt);
-                        dt.travelAgenda = ta;
-                        dt.travelViewPoints.forEach(tvp => {
-                            tvp.dailyTrip = dt;
-                        });
                     })
                 })
 
                 return ret;
             })
     }
+    
     //#endregion
 
     //#region UI Selector
+
     //#region Selected City
     private getSelectedCityId(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>(['ui', 'city', 'selectedCityId']);
-    }
-
-    private getCityById(cityId: string, cities: ICityBiz[]): ICityBiz {
-        let found = null;
-        cities.forEach(city => {
-            if (city.id === cityId) {
-                found = city;
-            }
-        })
-        return found;
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.city, STORE_UI_CITY_KEY.selectedCityId]);
     }
 
     private getSelectedCity(store: NgRedux<IAppState>): Observable<ICityBiz> {
-        return this.getSelectedCityId(store).combineLatest(this.cities$, (v1, v2) => {
-            return this.getCityById(v1, v2);
-        });
+        return this.getSelectedCityId(store)
+            .map(id => {
+                return store.select<ICity>([STORE_KEY.entities, STORE_ENTITIES_KEY.cities, id]);
+            })
+            .switch()
+            .map(ct => {
+                return ct?denormalize(ct.id, city, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+            })
     }
     //#endregion
 
     //#region Selected DailyTrip
     private getSelectedDailyTripId(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>(['ui', 'travelAgenda', 'selectedDailyTripId']);
-    }
-
-    private getDailyTripById(dailyTripId: string, travelAgendas: ITravelAgendaBiz[]): IDailyTripBiz {
-        let found = null;
-        travelAgendas.forEach(agenda => {
-            agenda.dailyTrips.forEach(dailyTrip => {
-                if (dailyTrip.id === dailyTripId) {
-                    found = dailyTrip;
-                }
-            })
-        })
-        return found;
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.travelAgenda, STORE_UI_TRAVELAGENDA_KEY.selectedDailyTripId]);
     }
 
     private getSelectedDailyTrip(store: NgRedux<IAppState>): Observable<IDailyTripBiz> {
-        return this.getSelectedDailyTripId(store).combineLatest(this.travelAgendas$, (v1, v2) => {
-            return this.getDailyTripById(v1, v2);
-        });
+        return this.getSelectedDailyTripId(store)
+            .map(id => {
+                return store.select<IDailyTrip>([STORE_KEY.entities, STORE_ENTITIES_KEY.dailyTrips, id]);
+            })
+            .switch()
+            .map(dt => {
+                return dt?denormalize(dt.id, dailyTrip, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+            })
     }
     //#endregion
 
     //#region Selected TravelAgenda
     private getSelectedTravelAgendaId(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>(['ui', 'travelAgenda', 'selectedTravelAgendaId']);
-    }
-
-    private getTravelAgendaById(agendaId: string, agendas: ITravelAgendaBiz[]) {
-        return agendas.find(agenda => agenda.id === agendaId);
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.travelAgenda, STORE_UI_TRAVELAGENDA_KEY.selectedTravelAgendaId]);
     }
 
     private getSelectedTravelAgenda(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz> {
-        return this.getSelectedTravelAgendaId(store).combineLatest(this.travelAgendas$, (v1, v2) => {
-            return this.getTravelAgendaById(v1, v2);
-        });
+        return this.getSelectedTravelAgendaId(store)
+        .map(id => {
+            return store.select<ITravelAgenda>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas, id]);
+        })
+        .switch()
+        .map(ta => {
+            return ta?denormalize(ta.id, travelAgenda, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+        })
     }
     //#endregion
 
     //#region Selected ViewPoint
     private getSelectedViewPointId(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>(['ui', 'viewPoint', 'selectedViewPointId']);
-    }
-
-    private getViewPointById(viewPointId: string, viewPoints: IViewPointBiz[]): IViewPointBiz {
-        let found = null;
-        viewPoints.forEach(viewPoint => {
-            if (viewPoint.id === viewPointId) {
-                found = viewPoint;
-            }
-        })
-        return found;
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.selectedViewPointId]);
     }
 
     private getSelectedViewPoint(store: NgRedux<IAppState>): Observable<IViewPointBiz> {
-        return this.getSelectedViewPointId(store).combineLatest(this.viewPoints$, (v1, v2) => {
-            return this.getViewPointById(v1, v2);
-        });
+        return this.getSelectedViewPointId(store)
+        .map(id => {
+            return store.select<IViewPoint>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints, id]);
+        })
+        .switch()
+        .map(vp => {
+            return vp?denormalize(vp.id, viewPoint, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+        })
     }
     //#endregion
 
     //#region ViewMode
     private getViewMode(store: NgRedux<IAppState>): Observable<boolean> {
-        return store.select<boolean>(['ui', 'viewMode']);
+        return store.select<boolean>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.viewMode]);
     }
     //#endregion
 
@@ -253,7 +256,7 @@ export class SelectorService {
     }
 
     private getFilterCriteriaIds(store: NgRedux<IAppState>): Observable<string[]> {
-        return store.select<string[]>(['ui', 'viewPoint', 'filterCriteriaIds'])
+        return store.select<string[]>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.filterCriteriaIds])
     }
 
     private buildCurrentFilterCategories(checkIds: string[], categories: IFilterCategoryBiz[]) {
@@ -267,7 +270,7 @@ export class SelectorService {
     }
 
     private getFilteredViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
-        return this.getCurrentFilters(store).combineLatest(this.viewPoints$, (filterCategories, viewPoints) => {
+        return this.getCurrentFilters(store).combineLatest(this.viewPointsSelector$, (filterCategories, viewPoints) => {
             return viewPoints.filter(viewPoint => {
                 return filterCategories.every(category => {
                     return category.criteries.every(criteria => {
@@ -283,7 +286,7 @@ export class SelectorService {
 
     //#region ViewPoint Search Key
     private getViewPointSearchKey(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>(['ui', 'viewPoint', 'searchKey']);
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.searchKey]);
     }
     //#endregion
 

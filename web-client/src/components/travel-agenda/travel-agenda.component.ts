@@ -68,7 +68,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   @Output() protected viewPointSelectedEvent: EventEmitter<IViewPointBiz>;
 
   @Output() protected dailyTripAddedEvent: EventEmitter<ITravelAgendaBiz>;
-  @Output() protected dailyTripRemovedEvent: EventEmitter<{dailyTrip:IDailyTripBiz,isCurrentSelect: boolean}>;
+  @Output() protected dailyTripRemovedEvent: EventEmitter<IDailyTripBiz>;
 
   @Output() protected travelViewPointRemovedEvent: EventEmitter<ITravelViewPointBiz>;
   @Output() protected travelViewPointAddRequestEvent: EventEmitter<void>;
@@ -91,7 +91,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
     this.viewPointSelectedEvent = new EventEmitter<IViewPointBiz>();
 
     this.dailyTripAddedEvent = new EventEmitter<ITravelAgendaBiz>();
-    this.dailyTripRemovedEvent = new EventEmitter<{dailyTrip:IDailyTripBiz,isCurrentSelect: boolean}>();
+    this.dailyTripRemovedEvent = new EventEmitter<IDailyTripBiz>();
 
     this.travelViewPointRemovedEvent = new EventEmitter<  ITravelViewPointBiz>();
 
@@ -199,7 +199,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   }
 
   protected deleteDay(dailyTrip: IDailyTripBiz) {
-    this.dailyTripRemovedEvent.emit( {dailyTrip:dailyTrip,isCurrentSelect: this.selectedDailyTrip.id == dailyTrip.id} );
+    this.dailyTripRemovedEvent.emit(dailyTrip);
   }
 
   //#endregion

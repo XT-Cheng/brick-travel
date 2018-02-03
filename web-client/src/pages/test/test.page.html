@@ -14,9 +14,7 @@
 <ion-content no-padding>
   <div style="display: flex;flex-direction:column; height:100%;" class='column'>
     <a-map style="height: 40%;" [dailyTrip]='selector.selectedDailyTrip$ | async' 
-            [viewPoints]='selector.viewPoints$ | async' [selectedViewPoint]='selector.selectedViewPoint$ | async'></a-map>
-    <!-- <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='dayTripSelected$ | async' [viewPoints]='viewPoints$ | async'
-    [viewMode]='true'></viewpoint-list> -->
+            [viewPoints]='selector.filteredViewPoints$ | async' [selectedViewPoint]='selector.selectedViewPoint$ | async'></a-map>
     <travel-agenda style="flex:1;" [selectedDailyTrip]='selector.selectedDailyTrip$ | async' 
               [selectedViewPoint]='selector.selectedViewPoint$ | async'
               [travelAgenda]='selector.selectedTravelAgenda$ | async' 

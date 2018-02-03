@@ -41,6 +41,7 @@ import { IDailyTrip, ITravelAgenda, ITravelViewPoint } from '../modules/store/en
 import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
 import { INIT_UI_TRAVELAGENDA_STATE,STORE_UI_TRAVELAGENDA_KEY, ITravelAgendaUI } from '../modules/store/ui/travelAgenda/travelAgenda.model';
+import { SelectorService } from './selector.service';
 
 interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {
 }
@@ -78,7 +79,8 @@ export function travelAgendaReducer(state = INIT_UI_TRAVELAGENDA_STATE, action: 
 @Injectable()
 export class TravelAgendaService {
     //#region Constructor
-    constructor(private _http: HttpClient) {
+    constructor(private _http: HttpClient,
+        private _selectorService : SelectorService) {
     }
     //#endregion
 
@@ -101,37 +103,37 @@ export class TravelAgendaService {
     //#region update actions
 
     @dispatch()
-    private updateTravelAgendaAction = entityUpdateAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
+    private updateTravelAgendaAction = entityUpdateAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA);
 
     @dispatch()
-    private updateTravelViewPointAction = entityUpdateAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
+    private updateTravelViewPointAction = entityUpdateAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT);
 
     @dispatch()
-    private updateDailyTripAction = entityUpdateAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
+    private updateDailyTripAction = entityUpdateAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP);
    
     //#endregion
 
     //#region insert actions
     @dispatch()
-    private insertDailyTripAction = entityInsertAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
+    private insertDailyTripAction = entityInsertAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP);
 
     @dispatch()
-    private insertTravelAgendaAction = entityInsertAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
+    private insertTravelAgendaAction = entityInsertAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA);
     
     @dispatch()
-    private insertTravelViewPointAction = entityInsertAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
+    private insertTravelViewPointAction = entityInsertAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT);
     
     //#endregion
 
     //#region delete actions
     @dispatch()
-    private deleteDailyTripAction = entityDeleteAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP, 'dailyTrips');
+    private deleteDailyTripAction = entityDeleteAction<IDailyTrip>(EntityTypeEnum.DAILYTRIP);
 
     @dispatch()
-    private deleteTravelViewPointAction = entityDeleteAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT, 'travelViewPoints');
+    private deleteTravelViewPointAction = entityDeleteAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT);
 
      @dispatch()
-    private deleteTravelAgendaAction = entityDeleteAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA, 'travelAgendas');
+    private deleteTravelAgendaAction = entityDeleteAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA);
 
     //#endregion
 
@@ -229,26 +231,38 @@ export class TravelAgendaService {
     public addDailyTrip(travelAgenda: ITravelAgendaBiz): IDailyTripBiz {
         let added = createDailiyTrip(travelAgenda);
         travelAgenda.dailyTrips.push(added);
+        
         this.insertDailyTripAction(added.id, translateDailyTripFromBiz(added));
         this.updateTravelAgendaAction(travelAgenda.id, translateTravelAgendaFromBiz(travelAgenda));
         this.selectDailyTrip(added);
+        
         return added;
+    }
+
+    public removeDailyTrip(dailyTrip : IDailyTripBiz) : ITravelAgendaBiz {
+        let isCurrentSelect = (this._selectorService.selectedDailyTrip && this._selectorService.selectedDailyTrip.id == dailyTrip.id)
+
+        dailyTrip.travelAgenda.dailyTrips = dailyTrip.travelAgenda.dailyTrips.filter(trip => trip.id !== dailyTrip.id);
+
+        this.deleteDailyTripAction(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
+        this.updateTravelAgendaAction(dailyTrip.travelAgenda.id, translateTravelAgendaFromBiz(dailyTrip.travelAgenda));
+
+        if (dailyTrip.travelAgenda.dailyTrips.length == 0)
+            this.selectDailyTrip(null);
+        else if (isCurrentSelect)
+            this.selectDailyTrip(dailyTrip.travelAgenda.dailyTrips[0]);
+
+        return dailyTrip.travelAgenda;
     }
 
     public addTravelViewPoint(viewPoint : IViewPointBiz,dailyTrip: IDailyTripBiz): ITravelViewPointBiz {
         let added = createTravelViewPoint(viewPoint,dailyTrip);
         dailyTrip.travelViewPoints.push(added);
+        
         this.insertTravelViewPointAction(added.id, translateTravelViewPointFromBiz(added));
         this.updateDailyTripAction(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
 
         return added;
-    }
-
-    public removeDailyTrip(dailyTrip : IDailyTripBiz) : ITravelAgendaBiz {
-        dailyTrip.travelAgenda.dailyTrips = dailyTrip.travelAgenda.dailyTrips.filter(trip => trip.id !== dailyTrip.id);
-        this.deleteDailyTripAction(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
-        this.updateTravelAgendaAction(dailyTrip.travelAgenda.id, translateTravelAgendaFromBiz(dailyTrip.travelAgenda));
-        return dailyTrip.travelAgenda;
     }
 
     public removeTravelViewPoint(travelViewPoint: ITravelViewPointBiz) {

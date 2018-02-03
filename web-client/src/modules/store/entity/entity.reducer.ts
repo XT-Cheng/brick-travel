@@ -1,7 +1,7 @@
 import * as Immutable from 'seamless-immutable';
 
 import { EntityAction, EntityActionTypeEnum } from './entity.action';
-import { IEntities, INIT_ENTITY_STATE } from './entity.model';
+import { IEntities, INIT_ENTITY_STATE, STORE_ENTITIES_KEY } from './entity.model';
 
 export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: EntityAction): IEntities {
   if (action.payload && action.payload.entities) {
@@ -21,13 +21,13 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
       }
       case EntityActionTypeEnum.APPEND_COMMENTS: {
         let key = Object.keys(action.payload.entities.viewPoints)[0];
-        let oldViewPoint = state['viewPoints'][key];
+        let oldViewPoint = state[STORE_ENTITIES_KEY.viewPoints][key];
         let newViewPointcomments = oldViewPoint.comments.concat(Object.keys(action.payload.entities.viewPointComments));
         //Update ViewPoint
-        state = Immutable(state).setIn(['viewPoints',key,'comments'],newViewPointcomments);
+        state = Immutable(state).setIn([STORE_ENTITIES_KEY.viewPoints,key,'comments'],newViewPointcomments);
         //Update ViewPointComments
         let newViewPointComments = Immutable(state.viewPointComments).merge(action.payload.entities.viewPointComments);
-        state = Immutable(state).set('viewPointComments',newViewPointComments);
+        state = Immutable(state).set(STORE_ENTITIES_KEY.viewPointComments,newViewPointComments);
 
         return state;
       }

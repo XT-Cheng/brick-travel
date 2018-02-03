@@ -3,6 +3,18 @@ import { IViewPoint, IViewPointComment } from "./viewPoint/viewPoint.model";
 import { ITravelViewPoint, IDailyTrip, ITravelAgenda } from "./travelAgenda/travelAgenda.model";
 import { IFilterCategory, IFilterCriteria } from "./filterCategory/filterCategory.model";
 
+export enum STORE_ENTITIES_KEY {
+  cities = 'cities',
+  travelAgendas = 'travelAgendas',
+  dailyTrips = 'dailyTrips',
+  travelViewPoints = 'travelViewPoints',
+  viewPoints = 'viewPoints',
+  viewPointComments = 'viewPointComments',
+  filterCategories = 'filterCategories',
+  filterCriteries = 'filterCriteries',
+  users = 'users'
+}
+
 export const INIT_ENTITY_STATE = {
   cities: {},
   viewPoints: {},

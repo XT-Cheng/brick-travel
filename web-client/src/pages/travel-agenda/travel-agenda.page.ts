@@ -59,6 +59,7 @@ export class TravelAgendaPage implements AfterViewInit {
   }
 
   travelViewPointAddRequest() {
+    this._viewPointService.setViewMode(false);
     this._nav.push(ViewPointsSelectPage);
   }
 
@@ -70,13 +71,10 @@ export class TravelAgendaPage implements AfterViewInit {
     this._travelAgendaService.addDailyTrip(travelAgenda);
   }
 
-  dailyTripRemoved(value: { dailyTrip: IDailyTripBiz, isCurrentSelect: boolean }) {
-    let travelAgenda = this._travelAgendaService.removeDailyTrip(value.dailyTrip);
+  dailyTripRemoved(dailyTrip: IDailyTripBiz) {
+    let travelAgenda = this._travelAgendaService.removeDailyTrip(dailyTrip);
 
-    if (travelAgenda.dailyTrips.length == 0)
-      this._travelAgendaService.selectDailyTrip(null);
-    else if (value.isCurrentSelect)
-      this._travelAgendaService.selectDailyTrip(travelAgenda.dailyTrips[0]);
+    
   }
   //#endregion
 

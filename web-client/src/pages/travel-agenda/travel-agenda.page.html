@@ -10,7 +10,9 @@
 
 <ion-content no-padding>
   <div style="display: flex;flex-direction:column; height:100%;" class='column'>
-    <a-map style="height: 40%;" 
+    <a-map style="height: 40%;"
+          [viewPoints]='selector.filteredViewPoints$ | async'
+          [travelAgenda]='selector.selectedTravelAgenda$ | async'
           [dailyTrip]='selector.selectedDailyTrip$ | async'
           [selectedViewPoint]='selector.selectedViewPoint$ | async'></a-map>
     <travel-agenda  style="flex:1;" 

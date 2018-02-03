@@ -10,7 +10,7 @@
 </ion-header>
 <ion-content no-padding>
     <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' 
-            [viewPoints]='selector.viewPoints$ | async'
+            [viewPoints]='selector.filteredViewPoints$ | async'
             [dailyTrip]='selector.selectedDailyTrip$ | async'
             [travelAgenda]='selector.selectedTravelAgenda$ | async'
             [selectedViewPoint]='selector.selectedViewPoint$ | async'
@@ -21,7 +21,7 @@
     <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)'
                     [dailyTrip]='selector.selectedDailyTrip$ | async'
                     [travelAgenda]='selector.selectedTravelAgenda$ | async'
-                    [viewPoints]='selector.viewPoints$ | async'
+                    [viewPoints]='selector.filteredViewPoints$ | async'
                     [viewMode]='selector.viewMode$ | async'
                     (viewPointClickedEvent)='viewPointClicked($event)'
                     (viewPointAddedToDailyTrip)='viewPointAdded($event)'
