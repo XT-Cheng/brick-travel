@@ -25,6 +25,7 @@ import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
 import { INIT_UI_CITY_STATE, ICityUI, STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
 import * as Immutable from 'seamless-immutable'
+import { Action } from 'redux';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 
@@ -89,7 +90,7 @@ export class CityService {
     //#endregion
 
     //#region Epic
-    public createEpic() {
+    public createEpic(): Epic<Action, IAppState> {
         return this.createEpicInternal(EntityTypeEnum.CITY);
     }
 

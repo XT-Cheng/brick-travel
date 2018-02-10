@@ -1,0 +1,2 @@
+1. drag not work for desktop mode
+2. 

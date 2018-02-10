@@ -85,6 +85,15 @@ export class TravelAgenda extends Typegoose {
         return this.create(create);
     }
     @staticMethod
+    static updateTravelAgenda(this: ModelType<TravelAgenda> & typeof TravelAgenda,update: any) {
+        return  this.findByIdAndUpdate(update.id,update);
+    }
+    @staticMethod
+    static deleteTravelAgenda(this: ModelType<TravelAgenda> & typeof TravelAgenda,id: string) {
+        return this.findByIdAndRemove(id);
+    }
+
+    @staticMethod
     static findTravelAgendas(this: ModelType<TravelAgenda> & typeof TravelAgenda) {
         return this.find().populate({
             path: 'dailyTrips.travelViewPoints.viewPoint',
@@ -93,7 +102,7 @@ export class TravelAgenda extends Typegoose {
                     'comments': [0,ViewPoint.commentsFirstLoad],
                 }
              }
-        });
+        }).exec();
     }
 };
 

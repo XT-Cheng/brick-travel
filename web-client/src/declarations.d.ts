@@ -8,6 +8,7 @@ declare namespace AMap {
     setZoomAndCenter(zoomLevel:Number,center:LngLat): void;
     setCenter(center:LngLat): void;
     setFitView() : void;
+    setCity(code:string) : void;
   }
 
   class MarkerClusterer {

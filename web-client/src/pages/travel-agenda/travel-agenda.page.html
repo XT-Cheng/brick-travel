@@ -4,6 +4,7 @@
       Travel Agenda
     </ion-title>
     <ion-buttons end>
+      <button ion-button (click)='publish()'>Publish!</button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -11,8 +12,8 @@
 <ion-content no-padding>
   <div style="display: flex;flex-direction:column; height:100%;" class='column'>
     <a-map style="height: 40%;"
-          [viewPoints]='selector.filteredViewPoints$ | async'
-          [travelAgenda]='selector.selectedTravelAgenda$ | async'
+    [city]='selector.selectedCity$ | async'
+    [travelAgenda]='selector.selectedTravelAgenda$ | async'
           [dailyTrip]='selector.selectedDailyTrip$ | async'
           [selectedViewPoint]='selector.selectedViewPoint$ | async'></a-map>
     <travel-agenda  style="flex:1;" 
@@ -20,8 +21,10 @@
                     [selectedViewPoint]='selector.selectedViewPoint$ | async'
                     [travelAgenda]='selector.selectedTravelAgenda$ | async'
                     (dailyTripSelectedEvent)='dailyTripSelected($event)'
+                    (tranportationChangedEvent)='tranportationChanged($event)'
                     (viewPointSelectedEvent)='viewPointSelected($event)'
-                    (travelAgendaChangedEvent)='travelAgendaChanged($event)'
+                    (swithTravelViewPointEvent)='travelViewPointSwitched($event)'
+                    (swithDailyTripEvent)='dailyTripSwitched($event)'
                     (dailyTripAddedEvent)='dailyTripAdded($event)'
                     (dailyTripRemovedEvent)='dailyTripRemoved($event)'
                     (travelViewPointAddRequestEvent)='travelViewPointAddRequest()'

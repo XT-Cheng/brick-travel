@@ -12,12 +12,7 @@ import {
 import { List } from 'ionic-angular';
 import { Observable, Subscription } from 'rxjs';
 
-import {
-  caculateDistance,
-  IDailyTripBiz,
-  ITravelAgendaBiz,
-  ITravelViewPointBiz,
-} from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { DragulaService } from '../../providers/dragula.service';
@@ -73,7 +68,10 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   @Output() protected travelViewPointRemovedEvent: EventEmitter<ITravelViewPointBiz>;
   @Output() protected travelViewPointAddRequestEvent: EventEmitter<void>;
 
-  @Output() protected travelAgendaChangedEvent: EventEmitter<{ dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>;
+  @Output() protected swithTravelViewPointEvent: EventEmitter<IDailyTripBiz>;
+  @Output() protected swithDailyTripEvent: EventEmitter<ITravelAgendaBiz>;
+
+  @Output() protected tranportationChangedEvent: EventEmitter<ITravelViewPointBiz>;
 
   //#endregion
 
@@ -97,15 +95,22 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
 
     this.travelViewPointAddRequestEvent = new EventEmitter<void>();
 
-    this.travelAgendaChangedEvent = new EventEmitter<{ dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }>();
+    this.swithTravelViewPointEvent = new EventEmitter<IDailyTripBiz>();
+    this.swithDailyTripEvent = new EventEmitter<ITravelAgendaBiz>();
+
+    this.tranportationChangedEvent = new EventEmitter<ITravelViewPointBiz>();
   }
   //#endregion
 
   //#region Interface implementation
   ngAfterViewInit(): void {
     this._dragulaService.dropModel.subscribe((value: any) => {
-      if (this.selectedDailyTrip !== null) caculateDistance(this.selectedDailyTrip);
-      this.travelAgendaChangedEvent.emit({ dailyTrip: this.selectedDailyTrip, travelAgenda: this.travelAgenda });
+      if (value[0] == 'vp-bag') {
+        this.swithTravelViewPointEvent.emit(this.selectedDailyTrip);
+      }
+      else {
+        this.swithDailyTripEvent.emit(this.travelAgenda);
+      }
     });
 
     this._dragulaService.drag.subscribe((value: any) => {
@@ -157,6 +162,10 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
       return that.moves(el, source, handle, sibling);
     };
     return { moves: that_moves };
+  }
+
+  protected onTransportChange(travelViewPoint: any) {
+    this.tranportationChangedEvent.emit(travelViewPoint);
   }
 
   protected dayClicked(dailyTrip: IDailyTripBiz): void {

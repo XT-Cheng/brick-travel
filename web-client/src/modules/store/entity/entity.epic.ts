@@ -15,7 +15,7 @@ export class EntityEpics {
     return combineEpics(
       this._cityService.createEpic(),
       ...this._viewPointService.createEpic(),
-      ...this._travelAgendaService.createEpic(),
+      this._travelAgendaService.createLoadEpic(),
       this._filterCategoryService.createEpic()
     );
   }

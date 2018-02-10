@@ -1,5 +1,6 @@
 export interface ICity {
-    id: string,
-    name: string,
-    thumbnail: string,
+    id: string
+    name: string
+    thumbnail: string
+    adressCode: string
 }

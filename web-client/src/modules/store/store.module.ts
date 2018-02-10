@@ -13,6 +13,7 @@ import { RootEpics } from './store.epic';
 import { IAppState } from './store.model';
 import { rootReducer } from './store.reducer';
 import { TravelAgendaService } from '../../providers/travelAgenda.service';
+import { DirtyEpics } from './dirty/drity.epic';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -22,7 +23,7 @@ import { TravelAgendaService } from '../../providers/travelAgenda.service';
 // The top-level reducers and epics that make up our app's logic.
 @NgModule({
     imports: [NgReduxModule,HttpModule],
-    providers: [RootEpics,EntityEpics,
+    providers: [RootEpics,EntityEpics,DirtyEpics,
                 CityService,
                 ViewPointService,
                 TravelAgendaService,
@@ -33,6 +34,7 @@ export class StoreModule {
         this._store.configureStore(
             rootReducer,
             <IAppState>{},
-            [createLogger({stateTransformer: stateTransformer}), createEpicMiddleware(this._rootEpics.createEpics())]);
+            [createLogger({stateTransformer: stateTransformer}), 
+                createEpicMiddleware(this._rootEpics.createEpics())]);
     }
 }

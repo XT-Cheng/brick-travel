@@ -68,7 +68,7 @@ const defaultEntityActionMeta = {
     progressing: false
 }
 
-function getEntityKey(typeEnum : EntityTypeEnum ) : string {
+export function getEntityKey(typeEnum : EntityTypeEnum ) : string {
     switch(typeEnum) {
         case EntityTypeEnum.CITY: {
             return STORE_ENTITIES_KEY.cities;

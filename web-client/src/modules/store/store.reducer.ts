@@ -5,6 +5,7 @@ import { entityReducer } from './entity/entity.reducer';
 import { IActionMetaInfo, IActionPayload } from './store.action';
 import { IAppState, IError, IProgress } from './store.model';
 import { uiReducer } from './ui/ui.reducer';
+import { dirtyReducer } from './dirty/dirty.reducer';
 
 // Define the global store shape by combining our application's
 // reducers together into a given structure.
@@ -12,6 +13,7 @@ export const rootReducer =
   combineReducers<IAppState>({
     entities: entityReducer,
     ui: uiReducer,
+    dirties: dirtyReducer,
     progress: progressReducer,
     error: errorReducer
   });

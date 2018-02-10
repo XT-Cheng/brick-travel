@@ -17,6 +17,7 @@ import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizM
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { InformationWindowComponent } from './information-window/information-window.component';
 import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
+import { ICityBiz } from '../../bizModel/model/city.biz.model';
 
 @Component({
   selector: 'a-map',
@@ -57,6 +58,9 @@ export class AMapComponent implements AfterViewInit {
   protected get viewMode(): boolean {
     return this._viewMode;
   }
+
+  @Input()
+  protected city : ICityBiz;
 
   @Input()
   protected set viewPoints(viewPoints: Array<IViewPointBiz>) {
@@ -129,7 +133,11 @@ export class AMapComponent implements AfterViewInit {
 
   //#region Public methods
   public setFitView() {
-    this._map.setFitView();
+      this._map.setFitView();
+  }
+
+  public setCity() {
+    this._map.setCity(this.city.adressCode);
   }
   //#endregion
 
@@ -172,7 +180,7 @@ export class AMapComponent implements AfterViewInit {
 
     this.generateLines();
 
-    this._map.setFitView();
+    this.setFitView();
   }
 
   private generateViewPoints() {
@@ -194,12 +202,7 @@ export class AMapComponent implements AfterViewInit {
       }
     });
 
-    //TODO: remove this
-    // if (viewPoints.length > 0)
-    //   this._map.setZoomAndCenter(14, this._markers.get(viewPoints[0].id).marker.getPosition());
-    //TODO
-
-    this._map.setFitView();
+    this.setFitView();
   }
 
   private loadPlugin() {

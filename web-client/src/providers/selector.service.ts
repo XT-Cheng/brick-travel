@@ -203,7 +203,9 @@ export class SelectorService {
             })
             .switch()
             .map(dt => {
-                return dt?denormalize(dt.id, dailyTrip, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+                let ret =  dt?denormalize(dt.id, dailyTrip, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+                if (ret) caculateDistance(ret);
+                return ret;
             })
     }
     //#endregion

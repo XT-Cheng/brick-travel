@@ -1,10 +1,11 @@
 import 'rxjs/add/operator/combineLatest';
 
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { AMapComponent } from '../../components/a-map/a-map.component';
 import { SelectorService } from '../../providers/selector.service';
 import { TravelAgendaService } from '../../providers/travelAgenda.service';
 import { ViewPointService } from '../../providers/viewPoint.service';
@@ -16,7 +17,7 @@ import { ViewPointsSelectPage } from '../view-points-select/view-points-select.p
 })
 export class TravelAgendaPage implements AfterViewInit {
   //#region Private member
-
+  @ViewChild(AMapComponent) private _map: AMapComponent;
   //#endregion
 
   //#region Protected member
@@ -35,15 +36,34 @@ export class TravelAgendaPage implements AfterViewInit {
   ngAfterViewInit(): void {
   }
 
+  ionViewDidLoad() :void {
+    this._map.setCity();
+  }
   //#endregion
 
   //#region Protected method
+  publish() {
+    this._travelAgendaService.publish();
+  }
+
+  tranportationChanged(travelViewPoint : ITravelViewPointBiz) {
+    this._travelAgendaService.updateTraveViewPoint(travelViewPoint);
+  }
+
   dailyTripSelected(dailyTrip: IDailyTripBiz) {
     this._travelAgendaService.selectDailyTrip(dailyTrip);
   }
 
   viewPointSelected(viewPoint: IViewPointBiz) {
     this._viewPointService.select(viewPoint);
+  }
+
+  travelViewPointSwitched(dailyTrip : IDailyTripBiz) {
+    this._travelAgendaService.switchTravelViewPoint(dailyTrip);
+  }
+
+  dailyTripSwitched(travelAgenda : ITravelAgendaBiz) {
+    this._travelAgendaService.swtichDailyTrip(travelAgenda);
   }
 
   travelAgendaChanged(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz }) {
@@ -72,9 +92,7 @@ export class TravelAgendaPage implements AfterViewInit {
   }
 
   dailyTripRemoved(dailyTrip: IDailyTripBiz) {
-    let travelAgenda = this._travelAgendaService.removeDailyTrip(dailyTrip);
-
-    
+   this._travelAgendaService.removeDailyTrip(dailyTrip);
   }
   //#endregion
 

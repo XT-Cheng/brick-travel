@@ -10,7 +10,8 @@
 </ion-header>
 <ion-content no-padding>
     <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' 
-            [viewPoints]='selector.filteredViewPoints$ | async'
+    [city]='selector.selectedCity$ | async'
+    [viewPoints]='selector.filteredViewPoints$ | async'
             [selectedViewPoint]='selector.selectedViewPoint$ | async'
             [viewMode]='selector.viewMode$ | async'
             (viewPointClickedEvent)='viewPointClicked($event)'></a-map>

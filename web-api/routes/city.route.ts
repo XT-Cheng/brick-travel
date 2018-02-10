@@ -8,8 +8,8 @@ export class CityRoute {
         console.log('City route create');
 
         //Load Cities
-        router.get('/cities', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
-            await CityRoute.load(req, res, next);
+        router.get('/cities', asyncMiddleware(async(req: Request, res: Response, next: NextFunction) => {
+            CityRoute.load(req, res, next);
         }));
 
         //Insert City

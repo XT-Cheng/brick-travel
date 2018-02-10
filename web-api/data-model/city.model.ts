@@ -13,6 +13,8 @@ export class City extends Typegoose {
     @prop()
     name: string;
     @prop()
+    adressCode: string;
+    @prop()
     thumbnail: string;
     @staticMethod
     static findCities(this: ModelType<City> & typeof City) {
