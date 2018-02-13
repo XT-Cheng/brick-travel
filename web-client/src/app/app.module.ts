@@ -29,6 +29,8 @@ import { SelectorService } from '../providers/selector.service';
 import { CityService } from '../providers/city.service';
 import { ViewPointService } from '../providers/viewPoint.service';
 import { TravelAgendaService } from '../providers/travelAgenda.service';
+import { TravelAgendaListComponent } from '../components/travel-agenda-list/travel-agenda-list.component';
+import { TravelAgendaListPage } from '../pages/travel-agenda-list/travel-agenda-list.page';
 
 @NgModule({
   declarations: [
@@ -45,8 +47,10 @@ import { TravelAgendaService } from '../providers/travelAgenda.service';
     ViewPointListComponent,
     ViewPointDetailComponent,
     TravelAgendaComponent,
+    TravelAgendaListComponent,
     DragulaDirective,
     ViewPointsListPage,
+    TravelAgendaListPage,
     ViewPointsSelectPage,
     TravelAgendaPage,
     CityPickPage
@@ -67,6 +71,7 @@ import { TravelAgendaService } from '../providers/travelAgenda.service';
     ViewPointsSelectPage,
     TravelAgendaPage,
     CityPickPage,
+    TravelAgendaListPage,
     ViewPointMarkerComponent,
     InformationWindowComponent
   ],

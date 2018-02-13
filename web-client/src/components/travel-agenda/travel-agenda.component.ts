@@ -13,7 +13,6 @@ import { List } from 'ionic-angular';
 import { Observable, Subscription } from 'rxjs';
 
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { TransportationCategory } from '../../modules/store/entity/travelAgenda/travelAgenda.model';
 import { DragulaService } from '../../providers/dragula.service';
 import { EnumEx } from '../../utils/enumEx';
@@ -25,9 +24,6 @@ import { EnumEx } from '../../utils/enumEx';
 })
 export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   //#region Private member
-
-  private _viewPointDragHandle: any;
-  private _dayDragHandle: any;
 
   private _vpScrollRect: any;
   private _dayScrollRect: any;
@@ -243,14 +239,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   }
 
   private moves(el: any, source: any, handle: any, sibling: any): boolean {
-    let valid = (handle.tagName === 'I');
-    if (valid) {
-      if (el.children[0].classList.contains('vp-item'))
-        this._viewPointDragHandle = handle;
-      else
-        this._dayDragHandle = handle;
-    }
-    return valid;
+    return (handle.tagName === 'I');
   }
 
   private onViewPointDrag(el: any, source: any) {

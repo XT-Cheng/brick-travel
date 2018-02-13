@@ -1,0 +1,10 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>TravelAgenda List</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content no-padding>
+    <travel-agenda-list 
+                    [travelAgendas]='_selector.travelAgendas$ | async'
+                    (travelAgendaClickedEvent)='travelAgendaClicked($event)'></travel-agenda-list>
+</ion-content>

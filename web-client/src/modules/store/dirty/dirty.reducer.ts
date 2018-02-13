@@ -1,6 +1,6 @@
 import * as Immutable from 'seamless-immutable';
 
-import { EntityTypeEnum, getEntityKey } from '../entity/entity.action';
+import { getEntityKey } from '../entity/entity.action';
 import { DirtyAction, DirtyActionTypeEnum, DirtyTypeEnum } from './dirty.action';
 import { IDirties, INIT_DIRTY_STATE } from './dirty.model';
 

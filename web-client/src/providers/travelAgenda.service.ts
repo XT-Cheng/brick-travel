@@ -1,13 +1,14 @@
 import { dispatch, NgRedux } from '@angular-redux/store';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
-import { normalize, denormalize } from 'normalizr';
+import { denormalize, normalize } from 'normalizr';
+import { MiddlewareAPI } from 'redux';
 import { Epic } from 'redux-observable';
+import * as Rx from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
-import * as Rx from 'rxjs'
 
 import {
     caculateDistance,
@@ -28,8 +29,8 @@ import {
     DirtyActionTypeEnum,
     dirtyAddAction,
     dirtyFlushAction,
-    dirtyFlushActionFailed,
-    dirtyFlushActionStarted,
+    //dirtyFlushActionFailed,
+    //dirtyFlushActionStarted,
     dirtyFlushActionSucceeded,
     dirtyRemoveAction,
     DirtyTypeEnum,
@@ -50,7 +51,7 @@ import {
     IQueryCondition,
 } from '../modules/store/entity/entity.action';
 import { IEntities } from '../modules/store/entity/entity.model';
-import { travelAgenda, travelViewPoint } from '../modules/store/entity/entity.schema';
+import { travelAgenda } from '../modules/store/entity/entity.schema';
 import { IDailyTrip, ITravelAgenda, ITravelViewPoint } from '../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
@@ -60,9 +61,6 @@ import {
     STORE_UI_TRAVELAGENDA_KEY,
 } from '../modules/store/ui/travelAgenda/travelAgenda.model';
 import { SelectorService } from './selector.service';
-import { ForkJoinObservable } from 'rxjs/observable/ForkJoinObservable';
-import { RequestOptions } from '@angular/http';
-import { MiddlewareAPI } from 'redux';
 
 interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {
 }
@@ -160,8 +158,8 @@ export class TravelAgendaService {
     @dispatch()
     private deleteTravelViewPointAction = entityDeleteAction<ITravelViewPoint>(EntityTypeEnum.TRAVELVIEWPOINT);
 
-    @dispatch()
-    private deleteTravelAgendaAction = entityDeleteAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA);
+    // @dispatch()
+    // private deleteTravelAgendaAction = entityDeleteAction<ITravelAgenda>(EntityTypeEnum.TRAVELAGENDA);
 
     //#endregion
 
@@ -211,11 +209,11 @@ export class TravelAgendaService {
 
     private removeDirtyAction = dirtyRemoveAction(EntityTypeEnum.TRAVELAGENDA);
 
-    private flushDirtyStartedAction = dirtyFlushActionStarted(EntityTypeEnum.TRAVELAGENDA);
+    //private flushDirtyStartedAction = dirtyFlushActionStarted(EntityTypeEnum.TRAVELAGENDA);
 
     private flushDirtySucceededAction = dirtyFlushActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
 
-    private flushDirtyFailedAction = dirtyFlushActionFailed(EntityTypeEnum.TRAVELAGENDA)
+    //private flushDirtyFailedAction = dirtyFlushActionFailed(EntityTypeEnum.TRAVELAGENDA)
 
     @dispatch()
     private flushDirtyAction = dirtyFlushAction(EntityTypeEnum.TRAVELAGENDA);
@@ -281,16 +279,6 @@ export class TravelAgendaService {
     }
 
     private flushTravelAgenda(store: MiddlewareAPI<IAppState>): Observable<any> {
-        // let created = denormalize(this._store.getState().dirties.travelAgendas.created, [travelAgenda],
-        //     Immutable(this._store.getState().entities).asMutable({ deep: true }));
-        // let updated = denormalize(this._store.getState().dirties.travelAgendas.updated, [travelAgenda],
-        //     Immutable(this._store.getState().entities).asMutable({ deep: true }));
-        // let deleted = denormalize(this._store.getState().dirties.travelAgendas.deleted, [travelAgenda],
-        //     Immutable(this._store.getState().entities).asMutable({ deep: true }));
-        //return Rx.Observable.forkJoin([this.insertTravelAgenda(), this.updateTravelAgenda(), ...this.deleteTravelAgenda()])
-        // .map(records => {
-        //     return normalize(records, [travelAgenda]).entities;
-        // })
         let ret: { type: DirtyTypeEnum, id: string }[] = [];
 
         Object.keys(store.getState().dirties.travelAgendas).forEach(key => {
@@ -299,8 +287,6 @@ export class TravelAgendaService {
             });
         })
         return Rx.Observable.of(...ret);
-        //return Rx.Observable.forkJoin([this.insertTravelAgenda(),Rx.Observable.empty()]);
-        //throw new Error('Not implemented!')
     }
 
     private insertTravelAgenda(id: string) {

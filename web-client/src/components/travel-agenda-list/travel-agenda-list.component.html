@@ -1,0 +1,6 @@
+<ion-list>
+  <ion-card ripple-effect *ngFor="let ta of travelAgendas" (click)='clicked(ta)'>
+    <img [src]="ta.cover"/>
+    <div class="card-title">{{ta.name}}</div>
+  </ion-card>
+</ion-list>

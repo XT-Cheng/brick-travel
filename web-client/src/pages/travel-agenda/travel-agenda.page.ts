@@ -4,7 +4,6 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
 import { SelectorService } from '../../providers/selector.service';
 import { TravelAgendaService } from '../../providers/travelAgenda.service';

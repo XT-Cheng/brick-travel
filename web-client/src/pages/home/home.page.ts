@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { App } from 'ionic-angular';
 
 import { TravelAgendaService } from '../../providers/travelAgenda.service';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 import { ViewPointsListPage } from '../view-points-list/view-points-list.page';
-import { NavController, App } from 'ionic-angular';
 
 @Component({
   selector: 'page-home',
@@ -23,7 +23,7 @@ export class HomePage implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _travelAgendaService: TravelAgendaService,private _nav : NavController,private _app : App) {
+  constructor(private _travelAgendaService: TravelAgendaService,private _app : App) {
   }
   //#endregion
 

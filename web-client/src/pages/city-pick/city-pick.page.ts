@@ -18,7 +18,7 @@ export class CityPickPage implements AfterViewInit {
   //#region Constructor
   constructor(private _nav: NavController,
     private _cityService : CityService,
-    protected selector: SelectorService) {
+    protected _selector: SelectorService) {
   }
   //#endregion
 
