@@ -238,7 +238,7 @@ export class ViewPointService {
         this.loadViewPointCommentsAction(queryCondition,page,limit);
     }
 
-    public select(viewPoint: IViewPointBiz) {
+    public selectViewPoint(viewPoint: IViewPointBiz) {
         this.selectViewPointAction(viewPoint?viewPoint.id:'');
     }
 

@@ -90,10 +90,10 @@ export class AMapComponent implements AfterViewInit {
     this._markers.forEach(marker => {
       if (marker.viewPoint.id === vp.id) {
         this._map.setCenter(marker.marker.getPosition());
-        marker.marker.setAnimation("AMAP_ANIMATION_BOUNCE");
-        setTimeout(() => {
-          marker.marker.setAnimation("AMAP_ANIMATION_NONE");
-        }, 2000);
+        // marker.marker.setAnimation("AMAP_ANIMATION_BOUNCE");
+        // setTimeout(() => {
+        //   marker.marker.setAnimation("AMAP_ANIMATION_NONE");
+        // }, 2000);
       }
     })
   }

@@ -7,13 +7,13 @@ import * as Immutable from 'seamless-immutable';
 
 import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
-import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz } from '../bizModel/model/travelAgenda.biz.model';
+import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { ICity } from '../modules/store/entity/city/city.model';
 import { STORE_ENTITIES_KEY } from '../modules/store/entity/entity.model';
-import { city, filterCategory, travelAgenda, viewPoint, dailyTrip } from '../modules/store/entity/entity.schema';
+import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint } from '../modules/store/entity/entity.schema';
 import { IFilterCategory } from '../modules/store/entity/filterCategory/filterCategory.model';
-import { ITravelAgenda, IDailyTrip } from '../modules/store/entity/travelAgenda/travelAgenda.model';
+import { ITravelAgenda, IDailyTrip, ITravelViewPoint } from '../modules/store/entity/travelAgenda/travelAgenda.model';
 import { IViewPoint } from '../modules/store/entity/viewPoint/viewPoint.model';
 import { IAppState } from '../modules/store/store.model';
 import { STORE_KEY } from '../modules/store/store.model';
@@ -31,6 +31,7 @@ export class SelectorService {
     private selectedViewPointSelector$: BehaviorSubject<IViewPointBiz> = new BehaviorSubject(null);
     private selectedDailyTripSelector$: BehaviorSubject<IDailyTripBiz> = new BehaviorSubject(null);
     private selectedTravelAgendaSelector$: BehaviorSubject<ITravelAgendaBiz> = new BehaviorSubject(null);
+    private selectedTravelViewPointSelector$: BehaviorSubject<ITravelViewPointBiz> = new BehaviorSubject(null);
     private filteredViewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
     private currentFiltersSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
     private viewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
@@ -41,6 +42,7 @@ export class SelectorService {
     private _selectedCity: ICityBiz;
     private _selectedDailyTrip: IDailyTripBiz;
     private _selectedTravelAgenda: ITravelAgendaBiz;
+    private _selectedTravelViewPoint: ITravelViewPointBiz;
     private _selectedViewPoint: IViewPointBiz;
 
     public get selectedCity(): ICityBiz {
@@ -57,6 +59,10 @@ export class SelectorService {
 
     public get selectedDailyTrip(): IDailyTripBiz {
         return this._selectedDailyTrip;
+    }
+
+    public get selectedTravelViewPoint(): ITravelViewPointBiz {
+        return this._selectedTravelViewPoint;
     }
 
     public get currentFilters$(): Observable<IFilterCategoryBiz[]> {
@@ -76,6 +82,9 @@ export class SelectorService {
     }
     public get selectedDailyTrip$(): Observable<IDailyTripBiz> {
         return this.selectedDailyTripSelector$.asObservable();
+    }
+    public get selectedTravelViewPoint$(): Observable<ITravelViewPointBiz> {
+        return this.selectedTravelViewPointSelector$.asObservable()
     }
     public get selectedCity$(): Observable<ICityBiz> {
         return this.selectedCitySelector$.asObservable();
@@ -121,6 +130,10 @@ export class SelectorService {
         this.getSelectedTravelAgenda(this._store).subscribe((value) => {
             this._selectedTravelAgenda = value;
             this.selectedTravelAgendaSelector$.next(value);
+        })
+        this.getSelectedTravelViewPoint(this._store).subscribe((value) => {
+            this._selectedTravelViewPoint = value;
+            this.selectedTravelViewPointSelector$.next(value);
         })
         this.getViewMode(this._store).subscribe((value) => {
             this.viewModeSelector$.next(value);
@@ -169,7 +182,7 @@ export class SelectorService {
                 return ret;
             })
     }
-    
+
     //#endregion
 
     //#region UI Selector
@@ -186,7 +199,7 @@ export class SelectorService {
             })
             .switch()
             .map(ct => {
-                return ct?denormalize(ct.id, city, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+                return ct ? denormalize(ct.id, city, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
             })
     }
     //#endregion
@@ -203,7 +216,7 @@ export class SelectorService {
             })
             .switch()
             .map(dt => {
-                let ret =  dt?denormalize(dt.id, dailyTrip, Immutable(store.getState().entities).asMutable({ deep: true })):null;
+                let ret = dt ? denormalize(dt.id, dailyTrip, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
                 if (ret) caculateDistance(ret);
                 return ret;
             })
@@ -217,13 +230,30 @@ export class SelectorService {
 
     private getSelectedTravelAgenda(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz> {
         return this.getSelectedTravelAgendaId(store)
-        .map(id => {
-            return store.select<ITravelAgenda>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas, id]);
-        })
-        .switch()
-        .map(ta => {
-            return ta?denormalize(ta.id, travelAgenda, Immutable(store.getState().entities).asMutable({ deep: true })):null;
-        })
+            .map(id => {
+                return store.select<ITravelAgenda>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas, id]);
+            })
+            .switch()
+            .map(ta => {
+                return ta ? denormalize(ta.id, travelAgenda, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            })
+    }
+    //#endregion
+
+    //#region Selected TravelViewPoint
+    private getSelectedTravelViewPointId(store: NgRedux<IAppState>): Observable<string> {
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.travelAgenda, STORE_UI_TRAVELAGENDA_KEY.selectedTravelViewPointId]);
+    }
+
+    private getSelectedTravelViewPoint(store: NgRedux<IAppState>): Observable<ITravelViewPointBiz> {
+        return this.getSelectedTravelViewPointId(store)
+            .map(id => {
+                return store.select<ITravelViewPoint>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelViewPoints, id]);
+            })
+            .switch()
+            .map(ta => {
+                return ta ? denormalize(ta.id, travelViewPoint, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            })
     }
     //#endregion
 
@@ -234,13 +264,13 @@ export class SelectorService {
 
     private getSelectedViewPoint(store: NgRedux<IAppState>): Observable<IViewPointBiz> {
         return this.getSelectedViewPointId(store)
-        .map(id => {
-            return store.select<IViewPoint>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints, id]);
-        })
-        .switch()
-        .map(vp => {
-            return vp?denormalize(vp.id, viewPoint, Immutable(store.getState().entities).asMutable({ deep: true })):null;
-        })
+            .map(id => {
+                return store.select<IViewPoint>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints, id]);
+            })
+            .switch()
+            .map(vp => {
+                return vp ? denormalize(vp.id, viewPoint, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            })
     }
     //#endregion
 

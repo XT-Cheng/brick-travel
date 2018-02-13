@@ -80,7 +80,7 @@ export class TestPage implements AfterViewInit {
   }
 
   viewPointSelected(viewPoint : IViewPointBiz) {
-    this._viewPointService.select(viewPoint);
+    this._viewPointService.selectViewPoint(viewPoint);
   }
 
   dailyTripChanged(value : {dailyTrip : IDailyTripBiz, travelAgenda : ITravelAgendaBiz}) {

@@ -16,7 +16,7 @@
     <a-map style="height: 40%;" [dailyTrip]='selector.selectedDailyTrip$ | async' [city]='selector.selectedCity$ | async'
             [viewPoints]='selector.filteredViewPoints$ | async' [selectedViewPoint]='selector.selectedViewPoint$ | async'></a-map>
     <travel-agenda style="flex:1;" [selectedDailyTrip]='selector.selectedDailyTrip$ | async' 
-              [selectedViewPoint]='selector.selectedViewPoint$ | async'
+              [selectedTravelViewPoint]='selector.selectedTravelAgenda$ | async'
               [travelAgenda]='selector.selectedTravelAgenda$ | async' 
               (dailyTripSelectedEvent)='dailyTripSelected($event)'
               (viewPointSelectedEvent)='viewPointSelected($event)'

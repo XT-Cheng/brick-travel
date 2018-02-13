@@ -69,12 +69,14 @@ interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {
 
 interface IUITravelAgendaActionPayload extends IActionPayload {
     selectedTravelAgendaId: string,
-    selectedDailyTripId: string
+    selectedDailyTripId: string,
+    selectedTravelViewPointId: string
 }
 
 const defaultUIAgendaActionPayload = {
     selectedTravelAgendaId: '',
     selectedDailyTripId: '',
+    selectedTravelViewPointId: '',
     error: null,
 }
 
@@ -82,16 +84,20 @@ type UITravelAgendaAction = FluxStandardAction<IUITravelAgendaActionPayload, IUI
 
 enum UITravelAgendaActionTypeEnum {
     SELECT_TRAVELADENDA = "UI:TRAVELAGENDA:SELECT_TRAVELADENDA",
-    SELECT_DAILYTRIP = "UI:TRAVELAGENDA:SELECT_DAILYTRIP"
+    SELECT_DAILYTRIP = "UI:TRAVELAGENDA:SELECT_DAILYTRIP",
+    SELECT_TRAVELVIEWPOINT = "UI:TRAVELAGENDA:SELECT_TRAVELVIEWPOINT"
 }
 
 export function travelAgendaReducer(state = INIT_UI_TRAVELAGENDA_STATE, action: UITravelAgendaAction): ITravelAgendaUI {
     switch (action.type) {
         case UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA: {
-            return Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedTravelAgendaId, action.payload.selectedTravelAgendaId);
+            return Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedTravelAgendaId, action.payload.selectedTravelAgendaId)
         }
         case UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP: {
             return Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedDailyTripId, action.payload.selectedDailyTripId);
+        }
+        case UITravelAgendaActionTypeEnum.SELECT_TRAVELVIEWPOINT: {
+            return Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedTravelViewPointId, action.payload.selectedTravelViewPointId);
         }
     }
     return <any>state;
@@ -163,23 +169,34 @@ export class TravelAgendaService {
 
     //#region UI Actions
     @dispatch()
-    private selectTravelAgendaAction(selectedTravelAgenda: ITravelAgendaBiz | string): UITravelAgendaAction {
+    private selectTravelAgendaAction(selectedTravelAgendaId: string): UITravelAgendaAction {
         return {
             type: UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA,
             meta: { progressing: false },
             payload: Object.assign({}, defaultUIAgendaActionPayload, {
-                selectedTravelAgendaId: typeof selectedTravelAgenda === 'string' ? selectedTravelAgenda : selectedTravelAgenda.id
+                selectedTravelAgendaId: selectedTravelAgendaId
             })
         };
     }
 
     @dispatch()
-    private selectDailyTripAction(selectedDailyTrip: IDailyTripBiz | string): UITravelAgendaAction {
+    private selectDailyTripAction(selectedDailyTripId: string): UITravelAgendaAction {
         return {
             type: UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP,
             meta: { progressing: false },
             payload: Object.assign({}, defaultUIAgendaActionPayload, {
-                selectedDailyTripId: typeof selectedDailyTrip === 'string' ? selectedDailyTrip : selectedDailyTrip.id
+                selectedDailyTripId: selectedDailyTripId
+            })
+        };
+    }
+
+    @dispatch()
+    private selectTravelViewPointAction(selectedTravelViewPointId: string): UITravelAgendaAction {
+        return {
+            type: UITravelAgendaActionTypeEnum.SELECT_TRAVELVIEWPOINT,
+            meta: { progressing: false },
+            payload: Object.assign({}, defaultUIAgendaActionPayload, {
+                selectedTravelViewPointId: selectedTravelViewPointId
             })
         };
     }
@@ -190,7 +207,8 @@ export class TravelAgendaService {
     @dispatch()
     private addDirtyAction = dirtyAddAction(EntityTypeEnum.TRAVELAGENDA);
 
-    @dispatch()
+    private restoreDirtyAction = dirtyAddAction(EntityTypeEnum.TRAVELAGENDA);
+
     private removeDirtyAction = dirtyRemoveAction(EntityTypeEnum.TRAVELAGENDA);
 
     private flushDirtyStartedAction = dirtyFlushActionStarted(EntityTypeEnum.TRAVELAGENDA);
@@ -229,12 +247,14 @@ export class TravelAgendaService {
             .ofType(DirtyActionTypeEnum.FLUSH)
             .filter(action => action.meta.entityType === EntityTypeEnum.TRAVELAGENDA && action.meta.phaseType == DirtyActionPhaseEnum.TRIGGER)
             .switchMap(action => this.flushTravelAgenda(store)
-                .map((value: { type: string, id: string }) => this.requestFlush(value))
-                .map(data => this.flushDirtySucceededAction())
-                .catch(response =>
-                    of(this.flushDirtyFailedAction(response))
+                .mergeMap((value: { type: DirtyTypeEnum, id: string }) => this.requestFlush(value)
+                .map(data => {
+                   return this.flushDirtySucceededAction();
+                })
+                .catch(error =>
+                    of(this.restoreDirtyAction(value.id,value.type))
                 )
-                .startWith(this.flushDirtyStartedAction()));
+                .startWith(this.removeDirtyAction(value.id,value.type))));
     }
     //#endregion
 
@@ -271,14 +291,14 @@ export class TravelAgendaService {
         // .map(records => {
         //     return normalize(records, [travelAgenda]).entities;
         // })
-        let ret: { type: string, id: string }[] = [];
+        let ret: { type: DirtyTypeEnum, id: string }[] = [];
 
         Object.keys(store.getState().dirties.travelAgendas).forEach(key => {
             store.getState().dirties.travelAgendas[key].forEach(id => {
-                ret.push({ type: key, id: store.getState().dirties.travelAgendas[key] })
+                ret.push({ type: DirtyTypeEnum[key.toUpperCase()], id: id })
             });
         })
-        return Rx.Observable.of(ret);
+        return Rx.Observable.of(...ret);
         //return Rx.Observable.forkJoin([this.insertTravelAgenda(),Rx.Observable.empty()]);
         //throw new Error('Not implemented!')
     }
@@ -324,19 +344,37 @@ export class TravelAgendaService {
         this.loadTravelAgendasAction(queryCondition);
     }
 
-    public select(travelAgenda: ITravelAgendaBiz) {
-        this.selectTravelAgendaAction(travelAgenda.id);
+    public selectTravelAgenda(travelAgenda: ITravelAgendaBiz) {
+        let id = (travelAgenda ? travelAgenda.id : '');
+        let previous = (this._selectorService.selectedTravelAgenda ? this._selectorService.selectedTravelAgenda.id : '');
+        if (id != previous) {
+            this.selectTravelAgendaAction(id);
+            this.selectDailyTripAction('');
+        }
     }
 
     public selectDailyTrip(dailyTrip: IDailyTripBiz) {
-        this.selectDailyTripAction(dailyTrip ? dailyTrip.id : '');
+        let id = (dailyTrip ? dailyTrip.id : '');
+        let previous = (this._selectorService.selectedDailyTrip ? this._selectorService.selectedDailyTrip.id : '');
+        if (id != previous) {
+            this.selectDailyTripAction(id);
+            this.selectTravelViewPointAction('');
+        }
+    }
+    
+    public selectTravlViewPoint(travelViewPoint: ITravelViewPointBiz) {
+        let id = (travelViewPoint ? travelViewPoint.id : '');
+        let previous = (this._selectorService.selectedTravelViewPoint ? this._selectorService.selectedTravelViewPoint.id : '');
+        if (id != previous) {
+            this.selectTravelViewPointAction(id);
+        }
     }
 
     public addTravelAgenda(): ITravelAgendaBiz {
         let added = createTravelAgenda();
         this.insertTravelAgendaAction(added.id, translateTravelAgendaFromBiz(added));
         this.addDirtyAction(added.id, DirtyTypeEnum.CREATED);
-        this.select(added);
+        this.selectTravelAgenda(added);
         return added;
     }
 
@@ -390,6 +428,7 @@ export class TravelAgendaService {
                 translateTravelViewPointFromBiz(dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 2]));
         this.updateDailyTripAction(dailyTrip.id, translateDailyTripFromBiz(dailyTrip));
         this.updateTravelAgendaAction(dailyTrip.travelAgenda.id, translateTravelAgendaFromBiz(dailyTrip.travelAgenda));
+        this.selectTravlViewPoint(added);
         this.addDirtyAction(dailyTrip.travelAgenda.id, DirtyTypeEnum.UPDATED);
 
         return added;

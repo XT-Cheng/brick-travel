@@ -30,10 +30,10 @@
         <ion-item-sliding class='vp-item'>
           <ion-item [ngClass]='getTravelViewPointItemClass(travelViewPoint)' (click)='travelViewPointClicked(travelViewPoint)'>
             <ion-grid>
-              <ion-row>
+              <ion-row style="justify-content: space-between;">
                 <h2 col-2 col-2-md>{{i+1}}</h2>
                 <h3 class='title' col-8 col-10-md>{{travelViewPoint.viewPoint.name}}</h3>
-                <i col-2 style="align-self: center; text-align:right;" class="icon iconfont icon-liebiao2"></i>
+                <i style="flex: none;width: auto;" class="icon iconfont icon-liebiao2"></i>
               </ion-row>
             </ion-grid>
           </ion-item>

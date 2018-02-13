@@ -18,13 +18,13 @@
           [selectedViewPoint]='selector.selectedViewPoint$ | async'></a-map>
     <travel-agenda  style="flex:1;" 
                     [selectedDailyTrip]='selector.selectedDailyTrip$ | async' 
-                    [selectedViewPoint]='selector.selectedViewPoint$ | async'
+                    [selectedTravelViewPoint]='selector.selectedTravelViewPoint$ | async'
                     [travelAgenda]='selector.selectedTravelAgenda$ | async'
                     (dailyTripSelectedEvent)='dailyTripSelected($event)'
                     (tranportationChangedEvent)='tranportationChanged($event)'
-                    (viewPointSelectedEvent)='viewPointSelected($event)'
-                    (swithTravelViewPointEvent)='travelViewPointSwitched($event)'
-                    (swithDailyTripEvent)='dailyTripSwitched($event)'
+                    (travelViewPointSelectedEvent)='travelViewPointSelected($event)'
+                    (switchTravelViewPointEvent)='travelViewPointSwitched($event)'
+                    (switchDailyTripEvent)='dailyTripSwitched($event)'
                     (dailyTripAddedEvent)='dailyTripAdded($event)'
                     (dailyTripRemovedEvent)='dailyTripRemoved($event)'
                     (travelViewPointAddRequestEvent)='travelViewPointAddRequest()'

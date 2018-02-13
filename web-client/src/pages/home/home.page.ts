@@ -4,6 +4,7 @@ import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { TravelAgendaService } from '../../providers/travelAgenda.service';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 import { ViewPointsListPage } from '../view-points-list/view-points-list.page';
+import { NavController, App } from 'ionic-angular';
 
 @Component({
   selector: 'page-home',
@@ -22,7 +23,7 @@ export class HomePage implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _travelAgendaService: TravelAgendaService) {
+  constructor(private _travelAgendaService: TravelAgendaService,private _nav : NavController,private _app : App) {
   }
   //#endregion
 
@@ -34,6 +35,7 @@ export class HomePage implements AfterViewInit {
   //#region Protected method
   protected onNewAgenda(event) {
     this._travelAgendaService.addTravelAgenda();
+    this._app.getRootNav().push(TravelAgendaPage);
   }
   //#endregion
 }

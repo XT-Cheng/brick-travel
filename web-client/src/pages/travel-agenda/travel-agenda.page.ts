@@ -54,8 +54,9 @@ export class TravelAgendaPage implements AfterViewInit {
     this._travelAgendaService.selectDailyTrip(dailyTrip);
   }
 
-  viewPointSelected(viewPoint: IViewPointBiz) {
-    this._viewPointService.select(viewPoint);
+  travelViewPointSelected(travelViewPoint: ITravelViewPointBiz) {
+    this._travelAgendaService.selectTravlViewPoint(travelViewPoint);
+    this._viewPointService.selectViewPoint(travelViewPoint?travelViewPoint.viewPoint:null);
   }
 
   travelViewPointSwitched(dailyTrip : IDailyTripBiz) {

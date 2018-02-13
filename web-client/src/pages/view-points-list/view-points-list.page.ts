@@ -123,7 +123,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   }
 
   protected viewPointClicked(viewPoint : IViewPointBiz) {
-    this._viewPointService.select(viewPoint);
+    this._viewPointService.selectViewPoint(viewPoint);
     this._nav.push(ViewPointPage);
   }
 

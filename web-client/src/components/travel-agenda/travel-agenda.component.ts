@@ -38,6 +38,10 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   private _dayDragSub: Subscription;
   private _viewPointDragSub: Subscription;
 
+  private _dropModelSub: any;
+  private _dragSub: any;
+  private _dragEndSub: any;
+
   @ViewChild('vpList', { read: List }) private _vpListCmp: List;
   @ViewChild('dayList', { read: List }) private _dayListCmp: List;
 
@@ -51,16 +55,16 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Protected property
-  @Input() protected travelAgenda : ITravelAgendaBiz;
+  @Input() protected travelAgenda: ITravelAgendaBiz;
   @Input() protected selectedDailyTrip: IDailyTripBiz;
-  @Input() protected selectedViewPoint: IViewPointBiz;
+  @Input() protected selectedTravelViewPoint: ITravelViewPointBiz;
 
   protected get transCategoryNameAndValues(): { name: string, value: any }[] {
     return EnumEx.getNamesAndValues(TransportationCategory)
   }
 
   @Output() protected dailyTripSelectedEvent: EventEmitter<IDailyTripBiz>;
-  @Output() protected viewPointSelectedEvent: EventEmitter<IViewPointBiz>;
+  @Output() protected travelViewPointSelectedEvent: EventEmitter<ITravelViewPointBiz>;
 
   @Output() protected dailyTripAddedEvent: EventEmitter<ITravelAgendaBiz>;
   @Output() protected dailyTripRemovedEvent: EventEmitter<IDailyTripBiz>;
@@ -68,8 +72,8 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   @Output() protected travelViewPointRemovedEvent: EventEmitter<ITravelViewPointBiz>;
   @Output() protected travelViewPointAddRequestEvent: EventEmitter<void>;
 
-  @Output() protected swithTravelViewPointEvent: EventEmitter<IDailyTripBiz>;
-  @Output() protected swithDailyTripEvent: EventEmitter<ITravelAgendaBiz>;
+  @Output() protected switchTravelViewPointEvent: EventEmitter<IDailyTripBiz>;
+  @Output() protected switchDailyTripEvent: EventEmitter<ITravelAgendaBiz>;
 
   @Output() protected tranportationChangedEvent: EventEmitter<ITravelViewPointBiz>;
 
@@ -86,17 +90,17 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   //#region Constructor
   constructor(private _dragulaService: DragulaService, private _renderer: Renderer2) {
     this.dailyTripSelectedEvent = new EventEmitter<IDailyTripBiz>();
-    this.viewPointSelectedEvent = new EventEmitter<IViewPointBiz>();
+    this.travelViewPointSelectedEvent = new EventEmitter<ITravelViewPointBiz>();
 
     this.dailyTripAddedEvent = new EventEmitter<ITravelAgendaBiz>();
     this.dailyTripRemovedEvent = new EventEmitter<IDailyTripBiz>();
 
-    this.travelViewPointRemovedEvent = new EventEmitter<  ITravelViewPointBiz>();
+    this.travelViewPointRemovedEvent = new EventEmitter<ITravelViewPointBiz>();
 
     this.travelViewPointAddRequestEvent = new EventEmitter<void>();
 
-    this.swithTravelViewPointEvent = new EventEmitter<IDailyTripBiz>();
-    this.swithDailyTripEvent = new EventEmitter<ITravelAgendaBiz>();
+    this.switchTravelViewPointEvent = new EventEmitter<IDailyTripBiz>();
+    this.switchDailyTripEvent = new EventEmitter<ITravelAgendaBiz>();
 
     this.tranportationChangedEvent = new EventEmitter<ITravelViewPointBiz>();
   }
@@ -104,16 +108,16 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
 
   //#region Interface implementation
   ngAfterViewInit(): void {
-    this._dragulaService.dropModel.subscribe((value: any) => {
+    this._dropModelSub = this._dragulaService.dropModel.subscribe((value: any) => {
       if (value[0] == 'vp-bag') {
-        this.swithTravelViewPointEvent.emit(this.selectedDailyTrip);
+        this.switchTravelViewPointEvent.emit(this.selectedDailyTrip);
       }
       else {
-        this.swithDailyTripEvent.emit(this.travelAgenda);
+        this.switchDailyTripEvent.emit(this.travelAgenda);
       }
     });
 
-    this._dragulaService.drag.subscribe((value: any) => {
+    this._dragSub = this._dragulaService.drag.subscribe((value: any) => {
       let bagName = value[0];
       let el = value[1];
       let source = value[2];
@@ -126,7 +130,7 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
       }
     });
 
-    this._dragulaService.dragend.subscribe((value: any) => {
+    this._dragEndSub = this._dragulaService.dragend.subscribe((value: any) => {
       let bagName = value[0];
       let el = value[1];
 
@@ -143,6 +147,9 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this._dragSub.unsubscribe();
+    this._dragEndSub.unsubscribe();
+    this._dropModelSub.unsubscribe();
   }
   //#endregion
 
@@ -169,12 +176,14 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   }
 
   protected dayClicked(dailyTrip: IDailyTripBiz): void {
-    this.dailyTripSelectedEvent.emit(dailyTrip);
-    this.viewPointSelectedEvent.emit(null);
+    if (!this.selectedDailyTrip || dailyTrip.id != this.selectedDailyTrip.id) {
+      this.dailyTripSelectedEvent.emit(dailyTrip);
+      this.travelViewPointSelectedEvent.emit(null);
+    }
   }
 
   protected travelViewPointClicked(travelViewPoint: ITravelViewPointBiz) {
-    this.viewPointSelectedEvent.emit(travelViewPoint.viewPoint);
+    this.travelViewPointSelectedEvent.emit(travelViewPoint);
   }
 
   protected isSelectedDailyTrip(dailyTrip: IDailyTripBiz) {
@@ -189,13 +198,13 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
 
   protected getTravelViewPointItemClass(travelViewPoint: ITravelViewPointBiz) {
     return {
-      'active': travelViewPoint && this.selectedViewPoint && travelViewPoint.viewPoint.id === this.selectedViewPoint.id
+      'active': travelViewPoint && this.selectedTravelViewPoint && travelViewPoint.id === this.selectedTravelViewPoint.id
     }
   }
 
   protected deleteTravelViewPoint(travelViewPoint: ITravelViewPointBiz) {
     this.selectedDailyTrip.travelViewPoints = this.selectedDailyTrip.travelViewPoints.
-                                                filter(tvp => tvp.id != travelViewPoint.id);
+      filter(tvp => tvp.id != travelViewPoint.id);
     this.travelViewPointRemovedEvent.emit(travelViewPoint);
   }
 
@@ -214,28 +223,23 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   //#region Private method
-  private touchMoveViewPoint(e: any) {
+  private moveViewPoint(e: any) {
     this._vpScrollRect = this._vpScrollContent.getBoundingClientRect();
-
-    if (e.touches[0].clientY < this._vpScrollRect.top)
+    if (e.clientY < (this._vpScrollRect.top + 10))
       this._vpScrollContent.scrollTop -= 10;
-    //this._vpScroll.scrollTo(0,this._vpScrollContent.scrollTop - 10);
 
-    if (e.touches[0].clientY > this._vpScrollRect.bottom)
+    if (e.clientY > (this._vpScrollRect.bottom - 10))
       this._vpScrollContent.scrollTop += 10;
-    //this._vpContent.scrollTo(0,this._vpScrollContent.scrollTop + 10);
   }
 
-  private touchMoveDay(e: any) {
+  private moveDay(e: any) {
     this._dayScrollRect = this._dayScrollContent.getBoundingClientRect();
 
     if (e.touches[0].clientY < this._dayScrollRect.top)
       this._dayScrollContent.scrollTop -= 10;
-    //this._dayContent.scrollTo(0,this._dayScrollContent.scrollTop - 10);
 
     if (e.touches[0].clientY > this._dayScrollRect.bottom)
       this._dayScrollContent.scrollTop += 10;
-    //this._dayContent.scrollTo(0,this._dayScrollContent.scrollTop + 10);
   }
 
   private moves(el: any, source: any, handle: any, sibling: any): boolean {
@@ -252,17 +256,27 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   private onViewPointDrag(el: any, source: any) {
     this._vpListCmp.sliding = false;
     this._renderer.removeClass(this._vpScroll.nativeElement, 'scroll-y');
-    this._viewPointDragSub = Observable.fromEvent(this._viewPointDragHandle, 'touchmove').subscribe(e => {
-      this.touchMoveViewPoint(e);
-    });
+    this._viewPointDragSub = Observable.interval(100).withLatestFrom(Observable.merge(
+      Observable.fromEvent<Event>(this._vpScroll.nativeElement, 'mousemove')
+        .map(e => { e.preventDefault(); return e; }),
+      Observable.fromEvent<TouchEvent>(this._vpScroll.nativeElement, 'touchmove')
+        .map(e => e.touches[0])),(count,e) => e)
+      .subscribe(e => {
+        this.moveViewPoint(e);
+      });
   }
 
   private onDayDrag(el: any, source: any) {
     this._dayListCmp.sliding = false;
     this._renderer.removeClass(this._dayScroll.nativeElement, 'scroll-y');
-    this._dayDragSub = Observable.fromEvent(this._dayDragHandle, 'touchmove').subscribe(e => {
-      this.touchMoveDay(e);
-    });
+    this._dayDragSub = Observable.interval(100).withLatestFrom(Observable.merge(
+      Observable.fromEvent<Event>(this._dayScroll.nativeElement, 'mousemove')
+        .map(e => { e.preventDefault(); return e; }),
+      Observable.fromEvent<TouchEvent>(this._dayScroll.nativeElement, 'touchmove')
+        .map(e => e.touches[0])),(count,e) => e)
+      .subscribe(e => {
+        this.moveDay(e);
+      });
   }
 
   private onViewPointDragEnd(el: any) {

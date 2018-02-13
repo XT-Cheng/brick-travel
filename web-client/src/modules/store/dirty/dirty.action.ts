@@ -92,9 +92,8 @@ export function dirtyFlushActionStarted(entityType: EntityTypeEnum) {
     return (): DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
         meta: Object.assign({}, defaultDirtyActionMeta, {
-            progressing: true,
             entityType: entityType,
-            phaseType: EntityActionPhaseEnum.START
+            phaseType: EntityActionPhaseEnum.START,
         }),
         payload: defaultDirtyActionPayload,
     })
