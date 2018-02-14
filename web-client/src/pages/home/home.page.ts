@@ -3,6 +3,7 @@ import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { App } from 'ionic-angular';
 
 import { TravelAgendaService } from '../../providers/travelAgenda.service';
+import { TravelAgendaListPage } from '../travel-agenda-list/travel-agenda-list.page';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 import { ViewPointsListPage } from '../view-points-list/view-points-list.page';
 
@@ -18,7 +19,7 @@ export class HomePage implements AfterViewInit {
   //#region Protected member
 
   protected viewPointsListPage = ViewPointsListPage;
-  protected travelAgendaPage = TravelAgendaPage;
+  protected travelAgendaListPage = TravelAgendaListPage;
   
   //#endregion
 

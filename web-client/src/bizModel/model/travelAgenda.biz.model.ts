@@ -58,9 +58,9 @@ export function caculateDistance(dailyTrip: IDailyTripBiz) {
 export function createTravelAgenda(): ITravelAgendaBiz {
     return {
         id: new ObjectID().toHexString(),
-        name: '',
-        user: '',
-        cover: '',
+        name: '黄山',
+        user: 'whoiscxt',
+        cover: 'assets/img/IMG_4201.jpg',
         dailyTrips: []
     }
 }

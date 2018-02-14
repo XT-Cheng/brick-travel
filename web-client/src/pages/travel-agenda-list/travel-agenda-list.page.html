@@ -3,7 +3,7 @@
     <ion-title>TravelAgenda List</ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content no-padding>
+<ion-content class="card-background-page" [fullscreen]="false" no-padding>
     <travel-agenda-list 
                     [travelAgendas]='_selector.travelAgendas$ | async'
                     (travelAgendaClickedEvent)='travelAgendaClicked($event)'></travel-agenda-list>
