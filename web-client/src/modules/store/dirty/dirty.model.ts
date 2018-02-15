@@ -3,13 +3,23 @@ export enum STORE_DIRTIES_KEY {
 }
 
 export const INIT_DIRTY_STATE = {
-  travelAgendas: {
-    created: [],
-    updated: [],
-    deleted: []
+  lastSynced: null,
+  lastError: null,
+  syncing: false,
+  dirtyIds: {
+    travelAgendas: {
+      created: [],
+      updated: [],
+      deleted: []
+    }
   }
 }
 
 export interface IDirties {
-  travelAgendas?: {created: string[], updated: string[],deleted: string[]}
+  lastError: Error,
+  lastSynced: Date,
+  syncing: boolean,
+  dirtyIds: {
+    travelAgendas: { created: string[], updated: string[], deleted: string[] }
+  }
 }

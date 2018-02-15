@@ -1,6 +1,6 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
-import { EntityActionPhaseEnum, EntityTypeEnum } from '../entity/entity.action';
+import { EntityTypeEnum } from '../entity/entity.action';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 
 export interface IDirtyActionMetaInfo extends IActionMetaInfo {
@@ -16,7 +16,7 @@ export interface IDirtyActionPayload extends IActionPayload {
 export enum DirtyActionPhaseEnum {
     TRIGGER = "TRIGGER",
     START = "START",
-    SUCCEED = "SUCCEED",
+    FINISHED = "FINISHED",
     FAIL = "FAIL",
     EXECUTE = "EXECUTE"
 }
@@ -42,6 +42,7 @@ const defaultDirtyActionPayload = {
 }
 
 const defaultDirtyActionMeta = {
+    entityType: null,
     phaseType: DirtyActionPhaseEnum.EXECUTE,
     progressing: false
 }
@@ -77,34 +78,31 @@ export function dirtyRemoveAction(entityType: EntityTypeEnum) {
 //#endregion
 
 //#region Flush action
-export function dirtyFlushAction(entityType: EntityTypeEnum) {
-    return (): DirtyAction => ({
+export function dirtyFlushAction() {
+    return () : DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
         meta: Object.assign({}, defaultDirtyActionMeta, {
-            entityType: entityType,
             phaseType: DirtyActionPhaseEnum.TRIGGER
         }),
         payload: defaultDirtyActionPayload
     })
 }
 
-export function dirtyFlushActionStarted(entityType: EntityTypeEnum) {
-    return (): DirtyAction => ({
+export function dirtyFlushActionStarted() {
+    return () : DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
         meta: Object.assign({}, defaultDirtyActionMeta, {
-            entityType: entityType,
-            phaseType: EntityActionPhaseEnum.START,
+            phaseType: DirtyActionPhaseEnum.START,
         }),
         payload: defaultDirtyActionPayload,
     })
 }
 
-export function dirtyFlushActionFailed(entityType: EntityTypeEnum) {
-    return (error: Error): DirtyAction => ({
+export function dirtyFlushActionFailed() {
+    return (error) : DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
         meta: Object.assign({}, defaultDirtyActionMeta, {
-            entityType: entityType, 
-            phaseType: EntityActionPhaseEnum.FAIL
+            phaseType: DirtyActionPhaseEnum.FAIL
         }),
         payload: Object.assign({}, defaultDirtyActionPayload, {
             error: error
@@ -112,12 +110,11 @@ export function dirtyFlushActionFailed(entityType: EntityTypeEnum) {
     })
 }
 
-export function dirtyFlushActionSucceeded(entityType: EntityTypeEnum) {
-    return (): DirtyAction => ({
+export function dirtyFlushActionFinished() {
+    return () : DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
         meta: Object.assign({}, defaultDirtyActionMeta, {
-            entityType: entityType,
-            phaseType: EntityActionPhaseEnum.SUCCEED
+            phaseType: DirtyActionPhaseEnum.FINISHED
         }),
         payload: defaultDirtyActionPayload
     })

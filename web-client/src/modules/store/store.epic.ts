@@ -10,8 +10,8 @@ export class RootEpics {
 
   public createEpics() {
     return combineEpics(
-      this._entityEpic.createEpics(),
-      this._dirtyEpic.createEpics()
+      ...this._entityEpic.createEpics(),
+      ...this._dirtyEpic.createEpics()
     );
   }
 }

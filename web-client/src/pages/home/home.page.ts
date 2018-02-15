@@ -6,6 +6,7 @@ import { TravelAgendaService } from '../../providers/travelAgenda.service';
 import { TravelAgendaListPage } from '../travel-agenda-list/travel-agenda-list.page';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 import { ViewPointsListPage } from '../view-points-list/view-points-list.page';
+import { DataSyncService } from '../../providers/dataSync.service';
 
 @Component({
   selector: 'page-home',
@@ -24,12 +25,14 @@ export class HomePage implements AfterViewInit {
   //#endregion
 
   //#region Constructor
-  constructor(private _travelAgendaService: TravelAgendaService,private _app : App) {
+  constructor(private _travelAgendaService: TravelAgendaService,private _app : App,
+        private _dataSyncService : DataSyncService) {
   }
   //#endregion
 
   //#region Implements interface
   ngAfterViewInit(): void {
+    this._dataSyncService.startSync();
   }
   //#endregion
 

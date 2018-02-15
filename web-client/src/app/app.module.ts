@@ -31,6 +31,7 @@ import { ViewPointService } from '../providers/viewPoint.service';
 import { TravelAgendaService } from '../providers/travelAgenda.service';
 import { TravelAgendaListComponent } from '../components/travel-agenda-list/travel-agenda-list.component';
 import { TravelAgendaListPage } from '../pages/travel-agenda-list/travel-agenda-list.page';
+import { DataSyncService } from '../providers/dataSync.service';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { TravelAgendaListPage } from '../pages/travel-agenda-list/travel-agenda-
     SelectorService,
     CityService,
     ViewPointService,
-    TravelAgendaService
+    TravelAgendaService,
+    DataSyncService
   ]
 })
 export class AppModule {}

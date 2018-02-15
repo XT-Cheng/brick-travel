@@ -6,6 +6,7 @@ import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs/observable/of';
+import * as Immutable from 'seamless-immutable';
 
 import { ICityBiz } from '../bizModel/model/city.biz.model';
 import {
@@ -23,9 +24,7 @@ import { IEntities } from '../modules/store/entity/entity.model';
 import { city } from '../modules/store/entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
-import { INIT_UI_CITY_STATE, ICityUI, STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
-import * as Immutable from 'seamless-immutable'
-import { Action } from 'redux';
+import { ICityUI, INIT_UI_CITY_STATE, STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 
@@ -90,8 +89,8 @@ export class CityService {
     //#endregion
 
     //#region Epic
-    public createEpic(): Epic<Action, IAppState> {
-        return this.createEpicInternal(EntityTypeEnum.CITY);
+    public createEpic() {
+        return [this.createEpicInternal(EntityTypeEnum.CITY)];
     }
 
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {

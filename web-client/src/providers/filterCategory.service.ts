@@ -49,7 +49,7 @@ export class FilterCategoryService {
 
     //#region Epic
     public createEpic() {
-        return this.createEpicInternal(EntityTypeEnum.FILTERCATEGORY);
+        return [this.createEpicInternal(EntityTypeEnum.FILTERCATEGORY)];
     }
 
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {

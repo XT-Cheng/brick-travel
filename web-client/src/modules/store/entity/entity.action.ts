@@ -90,6 +90,28 @@ export function getEntityKey(typeEnum : EntityTypeEnum ) : string {
     }
 }
 
+export function getEntityType(type : string ) : EntityTypeEnum {
+    switch(type) {
+        case STORE_ENTITIES_KEY.cities: {
+            return EntityTypeEnum.CITY;
+        }
+        case STORE_ENTITIES_KEY.dailyTrips: {
+            return  EntityTypeEnum.DAILYTRIP;
+        }
+        case STORE_ENTITIES_KEY.travelAgendas: {
+            return  EntityTypeEnum.TRAVELAGENDA;
+        }
+        case STORE_ENTITIES_KEY.travelViewPoints: {
+            return  EntityTypeEnum.TRAVELVIEWPOINT;
+        }
+        case STORE_ENTITIES_KEY.filterCategories: {
+            return EntityTypeEnum.FILTERCATEGORY;
+        }
+        default:
+            return null;
+    }
+}
+
 //#region Load Actions
 export function entityLoadAction(entityType: EntityTypeEnum) {
     return (queryCondition: IQueryCondition = {}, page: number = 0, limit: number = 50): EntityAction => ({

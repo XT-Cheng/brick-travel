@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { TravelAgendaService } from '../../../providers/travelAgenda.service';
+import { DataSyncService } from '../../../providers/dataSync.service';
 
 @Injectable()
 export class DirtyEpics {
-  constructor(private _travelAgendaService: TravelAgendaService) {}
+  constructor(private _dataSyncService: DataSyncService) {}
 
-  public createEpics() {
-    return this._travelAgendaService.createFlushEpic();
+  public createEpics() : any[] {
+    return [this._dataSyncService.createEpic()];
   }
 }

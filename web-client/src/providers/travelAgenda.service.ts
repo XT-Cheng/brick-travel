@@ -3,9 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
 import { denormalize, normalize } from 'normalizr';
-import { MiddlewareAPI } from 'redux';
 import { Epic } from 'redux-observable';
-import * as Rx from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
@@ -23,18 +21,7 @@ import {
     translateTravelViewPointFromBiz,
 } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
-import {
-    DirtyAction,
-    DirtyActionPhaseEnum,
-    DirtyActionTypeEnum,
-    dirtyAddAction,
-    dirtyFlushAction,
-    //dirtyFlushActionFailed,
-    //dirtyFlushActionStarted,
-    dirtyFlushActionSucceeded,
-    dirtyRemoveAction,
-    DirtyTypeEnum,
-} from '../modules/store/dirty/dirty.action';
+import { dirtyAddAction, DirtyTypeEnum } from '../modules/store/dirty/dirty.action';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -205,27 +192,13 @@ export class TravelAgendaService {
     @dispatch()
     private addDirtyAction = dirtyAddAction(EntityTypeEnum.TRAVELAGENDA);
 
-    private restoreDirtyAction = dirtyAddAction(EntityTypeEnum.TRAVELAGENDA);
-
-    private removeDirtyAction = dirtyRemoveAction(EntityTypeEnum.TRAVELAGENDA);
-
-    //private flushDirtyStartedAction = dirtyFlushActionStarted(EntityTypeEnum.TRAVELAGENDA);
-
-    private flushDirtySucceededAction = dirtyFlushActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
-
-    //private flushDirtyFailedAction = dirtyFlushActionFailed(EntityTypeEnum.TRAVELAGENDA)
-
-    @dispatch()
-    private flushDirtyAction = dirtyFlushAction(EntityTypeEnum.TRAVELAGENDA);
-
     //#endregion
 
     //#endregion
 
     //#region Epic
     public createEpic() {
-        return [this.createLoadEpic(),
-        this.createFlushEpic()];
+        return [this.createLoadEpic()];
     }
 
     public createLoadEpic(): Epic<EntityAction, IAppState> {
@@ -240,20 +213,6 @@ export class TravelAgendaService {
                 .startWith(this.loadTravelAgendaStartedAction()));
     }
 
-    public createFlushEpic(): Epic<DirtyAction, IAppState> {
-        return (action$, store) => action$
-            .ofType(DirtyActionTypeEnum.FLUSH)
-            .filter(action => action.meta.entityType === EntityTypeEnum.TRAVELAGENDA && action.meta.phaseType == DirtyActionPhaseEnum.TRIGGER)
-            .switchMap(action => this.flushTravelAgenda(store)
-                .mergeMap((value: { type: DirtyTypeEnum, id: string }) => this.requestFlush(value)
-                .map(data => {
-                   return this.flushDirtySucceededAction();
-                })
-                .catch(error =>
-                    of(this.restoreDirtyAction(value.id,value.type))
-                )
-                .startWith(this.removeDirtyAction(value.id,value.type))));
-    }
     //#endregion
 
     //#region Private methods
@@ -264,32 +223,11 @@ export class TravelAgendaService {
             })
     }
 
-    private requestFlush(value: { type: string, id: string }) {
-        switch (value.type) {
-            case DirtyTypeEnum.CREATED: {
-                return this.insertTravelAgenda(value.id);
-            }
-            case DirtyTypeEnum.UPDATED: {
-                return this.updateTravelAgenda(value.id);
-            }
-            case DirtyTypeEnum.DELETED: {
-                return this.deleteTravelAgenda(value.id);
-            }
-        }
-    }
+    //#endregion
 
-    private flushTravelAgenda(store: MiddlewareAPI<IAppState>): Observable<any> {
-        let ret: { type: DirtyTypeEnum, id: string }[] = [];
-
-        Object.keys(store.getState().dirties.travelAgendas).forEach(key => {
-            store.getState().dirties.travelAgendas[key].forEach(id => {
-                ret.push({ type: DirtyTypeEnum[key.toUpperCase()], id: id })
-            });
-        })
-        return Rx.Observable.of(...ret);
-    }
-
-    private insertTravelAgenda(id: string) {
+    //#region Public methods
+    //#region CRUD methods
+    public insertTravelAgenda(id: string) {
         let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
         let created = denormalize(id, travelAgenda, entities);
 
@@ -304,7 +242,7 @@ export class TravelAgendaService {
         return this._http.post(`http://localhost:3000/travelAgendas/`, created);
     }
 
-    private updateTravelAgenda(id: string) {
+    public updateTravelAgenda(id: string) {
         let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
         let updated = denormalize(id, travelAgenda, entities);
 
@@ -319,13 +257,11 @@ export class TravelAgendaService {
         return this._http.put('http://localhost:3000/travelAgendas', updated);
     }
 
-    private deleteTravelAgenda(id: string) {
+    public deleteTravelAgenda(id: string) {
         return this._http.delete(`http://localhost:3000/travelAgendas/${id}`);
     }
-
     //#endregion
 
-    //#region Public methods
     public load(queryCondition?: IQueryCondition) {
         this.loadTravelAgendasAction(queryCondition);
     }
@@ -446,7 +382,7 @@ export class TravelAgendaService {
     }
 
     public publish() {
-        this.flushDirtyAction();
+        
     }
 
     //#endregion

@@ -12,11 +12,11 @@ export class EntityEpics {
     private _travelAgendaService: TravelAgendaService,private _filterCategoryService: FilterCategoryService) {}
 
   public createEpics() {
-    return combineEpics(
-      this._cityService.createEpic(),
+    return [combineEpics(
+      ...this._cityService.createEpic(),
       ...this._viewPointService.createEpic(),
-      this._travelAgendaService.createLoadEpic(),
-      this._filterCategoryService.createEpic()
-    );
+      ...this._travelAgendaService.createEpic(),
+      ...this._filterCategoryService.createEpic()
+    )];
   }
 }

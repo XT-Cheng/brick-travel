@@ -1,34 +1,56 @@
 import * as Immutable from 'seamless-immutable';
 
 import { getEntityKey } from '../entity/entity.action';
-import { DirtyAction, DirtyActionTypeEnum, DirtyTypeEnum } from './dirty.action';
+import { DirtyAction, DirtyActionTypeEnum, DirtyTypeEnum, DirtyActionPhaseEnum } from './dirty.action';
 import { IDirties, INIT_DIRTY_STATE } from './dirty.model';
 
 export function dirtyReducer(state: IDirties = INIT_DIRTY_STATE, action: DirtyAction): IDirties {
-  if (action.payload && action.payload.dirtyId) {
+  if (action.payload) {
     let newDirtyIds: Array<string>
 
     let key1 = getEntityKey(action.meta.entityType);
     let key2 = action.meta.dirtyType;
 
+    let dirtyIds = state.dirtyIds;
+
     switch (action.type) {
       case DirtyActionTypeEnum.ADD: {
-        if (state[key1][DirtyTypeEnum.CREATED].find(id => id == action.payload.dirtyId))
+        if (dirtyIds[key1][DirtyTypeEnum.CREATED].find(id => id == action.payload.dirtyId))
           return state;
-        state = Immutable(state).set(key1, clear(Immutable(state[key1]).asMutable(), action.payload.dirtyId));
-        newDirtyIds = state[key1][key2].concat(action.payload.dirtyId);
+        state = Immutable(state).setIn(['dirtyIds',key1], clear(Immutable(state.dirtyIds[key1]).asMutable(), action.payload.dirtyId));
+        newDirtyIds = state.dirtyIds[key1][key2].concat(action.payload.dirtyId);
         break;
       }
       case DirtyActionTypeEnum.REMOVE: {
-        newDirtyIds = state[key1][key2].filter((id) => action.payload.dirtyId != id);
+        newDirtyIds = state.dirtyIds[key1][key2].filter((id) => action.payload.dirtyId != id);
         break;
       }
       case DirtyActionTypeEnum.FLUSH: {
-        newDirtyIds = [];
+        switch (action.meta.phaseType) {
+          case DirtyActionPhaseEnum.START: {
+            state = Immutable(state).set('syncing',true);
+            state = Immutable(state).set('lastError',null);
+            break;
+          }
+          case DirtyActionPhaseEnum.TRIGGER: {
+            break;
+          }
+          case DirtyActionPhaseEnum.FINISHED: {
+            state = Immutable(state).set('lastSynced',new Date());
+            state = Immutable(state).set('syncing',false);
+            break;
+          }
+          case DirtyActionPhaseEnum.FAIL: {
+            state = Immutable(state).set('lastError',action.payload.error);
+            break;
+          }
+        }
         break;
       }
     }
-    state = Immutable(state).setIn([key1, key2], newDirtyIds);
+
+    if (newDirtyIds)
+      state = Immutable(state).setIn(['dirtyIds',key1, key2], newDirtyIds);
   }
   return state;
 };
