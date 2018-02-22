@@ -1,5 +1,6 @@
-import { dispatch } from '@angular-redux/store';
+import { dispatch, NgRedux } from '@angular-redux/store';
 import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
 import { MiddlewareAPI } from 'redux';
 import { Epic } from 'redux-observable';
 import { Subscription } from 'rxjs';
@@ -40,7 +41,8 @@ export class DataSyncService {
     //#endregion
 
     //#region Constructor
-    constructor(private _travelAgendaService: TravelAgendaService) {
+    constructor(private _travelAgendaService: TravelAgendaService,
+        private _storage: Storage, private _store: NgRedux<IAppState>) {
     }
     //#endregion
 
@@ -66,7 +68,7 @@ export class DataSyncService {
                         )
                         .startWith(dirtyRemoveAction(value.entityType)(value.id, value.type)))
                 .startWith(this.flushDirtyStartedAction())
-                .concat(of(this.flushDirtyFinishedAction())));
+                .concat(Observable.fromPromise(this.saveToLocal()).map(() => this.flushDirtyFinishedAction())));
     }
     //#endregion
 
@@ -81,6 +83,10 @@ export class DataSyncService {
 
     //#endregion
     //#region Private methods
+    private saveToLocal() {
+        return this._storage.set('state', this._store.getState())
+    }
+
     private flush(store: MiddlewareAPI<IAppState>): Observable<any> {
         let ret: { entityType: EntityTypeEnum, type: DirtyTypeEnum, id: string }[] = [];
 

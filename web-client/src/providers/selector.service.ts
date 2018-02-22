@@ -32,7 +32,7 @@ export class SelectorService {
     private selectedDailyTripSelector$: BehaviorSubject<IDailyTripBiz> = new BehaviorSubject(null);
     private selectedTravelAgendaSelector$: BehaviorSubject<ITravelAgendaBiz> = new BehaviorSubject(null);
     private selectedTravelViewPointSelector$: BehaviorSubject<ITravelViewPointBiz> = new BehaviorSubject(null);
-    private filteredViewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
+    private filterAndSearchedViewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
     private currentFiltersSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
     private viewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
     private citiesSelector$: BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
@@ -98,8 +98,8 @@ export class SelectorService {
     public get travelAgendas$(): Observable<ITravelAgendaBiz[]> {
         return this.travelAgendasSelector$.asObservable();
     }
-    public get filteredViewPoints$(): Observable<IViewPointBiz[]> {
-        return this.filteredViewPointsSelector$.asObservable();
+    public get filterAndSearchedViewPoints$(): Observable<IViewPointBiz[]> {
+        return this.filterAndSearchedViewPointsSelector$.asObservable();
     }
 
     constructor(private _store: NgRedux<IAppState>) {
@@ -139,8 +139,8 @@ export class SelectorService {
             this.viewModeSelector$.next(value);
         })
         this.getCurrentFilters(this._store).subscribe((value) => this.currentFiltersSelector$.next(value));
-        this.getFilteredViewPoints(this._store).subscribe((value) => {
-            this.filteredViewPointsSelector$.next(value);
+        this.getFilterAndSearchedViewPoints(this._store).subscribe((value) => {
+            this.filterAndSearchedViewPointsSelector$.next(value);
         })
         this.getViewPointSearchKey(this._store).subscribe(value => this.viewPointSearchKeySelector$.next(value));
         this.getSelectedViewPoint(this._store).subscribe(value => this.selectedViewPointSelector$.next(value));
@@ -301,16 +301,23 @@ export class SelectorService {
         return categories;
     }
 
-    private getFilteredViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
-        return this.getCurrentFilters(store).combineLatest(this.viewPointsSelector$, (filterCategories, viewPoints) => {
+    private getFilterAndSearchedViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
+        return this.currentFiltersSelector$.combineLatest(this.viewPointsSelector$,this.viewPointSearchKey$, (filterCategories, viewPoints,searchKey) => {
             return viewPoints.filter(viewPoint => {
-                return filterCategories.every(category => {
+                let isFiltered = filterCategories.every(category => {
                     return category.criteries.every(criteria => {
                         if (criteria.isChecked && ViewPointFilterEx[category.filterFunction])
                             return ViewPointFilterEx[category.filterFunction](viewPoint, criteria);
                         return true;
                     })
-                })
+                });
+
+                let matchSearchKey = true;
+                if (searchKey != '')
+                    matchSearchKey = viewPoint.name.indexOf(searchKey) != -1 ||
+                                    viewPoint.tags.findIndex((value) => value == searchKey) != -1;
+
+                return isFiltered && matchSearchKey;
             });
         });
     }

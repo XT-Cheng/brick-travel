@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { AMapComponent } from '../components/a-map/a-map.component';
 import { InformationWindowComponent } from '../components/a-map/information-window/information-window.component';
@@ -60,7 +61,8 @@ import { DataSyncService } from '../providers/dataSync.service';
     BrowserModule,
     HttpClientModule,
     StoreModule,
-    IonicModule.forRoot(App)
+    IonicModule.forRoot(App),
+    IonicStorageModule.forRoot(),
   ],
   bootstrap: [IonicApp],
   entryComponents: [

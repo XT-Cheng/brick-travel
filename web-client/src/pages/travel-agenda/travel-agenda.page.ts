@@ -42,7 +42,8 @@ export class TravelAgendaPage implements AfterViewInit {
 
   //#region Protected method
   publish() {
-    this._travelAgendaService.publish();
+    //this._travelAgendaService.publish();
+    //this._dataSyncService.saveToLocal();
   }
 
   tranportationChanged(travelViewPoint : ITravelViewPointBiz) {

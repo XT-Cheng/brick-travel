@@ -16,7 +16,7 @@ import { CityPickPage } from '../pages/city-pick/city-pick.page';
 export class App {
   //rootPage:any = ViewPointsPage;
   //rootPage:any =  TestPage;
-  rootPage:any = CityPickPage;
+  rootPage: any = CityPickPage;
   //rootPage:any =  HomePage;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {

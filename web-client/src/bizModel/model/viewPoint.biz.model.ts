@@ -17,6 +17,7 @@ export interface IViewPointBiz {
     rank: number,
     countOfComments: number,
     images : string[],
+    tags: string[],
     comments: IViewPointCommentBiz[]
 }
 

@@ -11,12 +11,12 @@
 <ion-content no-padding>
     <a-map  [ngStyle]='getStyle(displayModeEnum.Map)' 
     [city]='selector.selectedCity$ | async'
-    [viewPoints]='selector.filteredViewPoints$ | async'
+    [viewPoints]='selector.filterAndSearchedViewPoints$ | async'
             [selectedViewPoint]='selector.selectedViewPoint$ | async'
             [viewMode]='selector.viewMode$ | async'
             (viewPointClickedEvent)='viewPointClicked($event)'></a-map>
     <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)'
-                    [viewPoints]='selector.filteredViewPoints$ | async'
+                    [viewPoints]='selector.filterAndSearchedViewPoints$ | async'
                     [viewMode]='selector.viewMode$ | async'
                     (viewPointClickedEvent)='viewPointClicked($event)'></viewpoint-list>
   <ion-fab right edge #fab>
