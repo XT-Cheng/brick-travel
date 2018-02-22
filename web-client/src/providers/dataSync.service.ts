@@ -74,7 +74,7 @@ export class DataSyncService {
 
     //#region Public methods
     public startSync() {
-        this._sub = Observable.interval(10000).subscribe(() => this.flushDirtyAction());
+        this._sub = Observable.interval(1000000).subscribe(() => this.flushDirtyAction());
     }
 
     public stopSync() {

@@ -10,6 +10,7 @@ import {
   Input,
   Output,
   ViewChild,
+  HostListener,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -100,7 +101,7 @@ export class AMapComponent implements AfterViewInit {
 
   @Input() protected travelAgenda : ITravelAgendaBiz;
 
-  //#endregion Public property
+  //#endregion 
 
   //#region Constructor
 
@@ -142,6 +143,11 @@ export class AMapComponent implements AfterViewInit {
   //#endregion
 
   //#region Private method
+  @HostListener('transitionend', ['$event.target'])
+  private transitionEnd(target : any) {
+    this._map.setFitView();
+  }
+
   private generateDailyTrip() {
     //Update all of markers as viewPoint 
     for (let [, markerInfor] of this._markers.entries()) {
