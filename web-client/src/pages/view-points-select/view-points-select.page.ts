@@ -45,7 +45,7 @@ export class ViewPointsSelectPage implements AfterViewInit {
   //#region Implements interface
   ngAfterViewInit(): void {
     this._cityService.load();
-    this._viewPointService.load();
+    this._viewPointService.load({cityId: this.selector.selectedCity.id});
     this._travelAgendaService.load();
     this._filterCategoryService.load();
   }

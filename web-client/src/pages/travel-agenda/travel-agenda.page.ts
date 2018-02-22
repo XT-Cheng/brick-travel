@@ -20,6 +20,7 @@ export class TravelAgendaPage implements AfterViewInit {
   //#endregion
 
   //#region Protected member
+  isMapHide : boolean = false;
 
   //#endregion
 
@@ -41,6 +42,10 @@ export class TravelAgendaPage implements AfterViewInit {
   //#endregion
 
   //#region Protected method
+  hideMap() {
+    this.isMapHide = !this.isMapHide;
+  }
+
   publish() {
     //this._travelAgendaService.publish();
     //this._dataSyncService.saveToLocal();

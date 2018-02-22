@@ -3,6 +3,15 @@ page-travel-agenda {
         text-align: center;
     }
 
+    a-map {
+        height: 40%;
+        transition: height .5s linear;
+    }
+
+    a-map.hideMe {
+        height: 0;
+    }
+
     button.map {
         border-color: #488aff;
         color: #488aff;

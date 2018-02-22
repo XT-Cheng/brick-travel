@@ -5,13 +5,14 @@
     </ion-title>
     <ion-buttons end>
       <button ion-button (click)='publish()'>Publish!</button>
+      <button ion-button (click)='hideMap()'>Hide Map!</button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content no-padding>
   <div style="display: flex;flex-direction:column; height:100%;" class='column'>
-    <a-map style="height: 40%;"
+    <a-map [class.hideMe] = 'isMapHide'
     [city]='selector.selectedCity$ | async'
     [travelAgenda]='selector.selectedTravelAgenda$ | async'
           [dailyTrip]='selector.selectedDailyTrip$ | async'
@@ -31,3 +32,5 @@
                     (travelViewPointRemovedEvent)='travelViewPointRemoved($event)'></travel-agenda>
   </div>
 </ion-content>
+
+<!-- style="height: 40%;" -->

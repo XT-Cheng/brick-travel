@@ -19,15 +19,15 @@ import { ViewPointPage } from '../view-point/view-point.page';
 export class ViewPointsListPage implements AfterViewInit, OnDestroy {
 
   //#region Private member
-  @ViewChild(Content) _content : Content;
-  @ViewChild(AMapComponent) _aMap : AMapComponent;
-  
+  @ViewChild(Content) _content: Content;
+  @ViewChild(AMapComponent) _aMap: AMapComponent;
+
   private _stop$ = new Subject();
 
   //#endregion
 
   //#region Protected member
-  
+
   protected displayModeEnum = DisplayModeEnum;
   protected displayMode: DisplayModeEnum;
 
@@ -40,7 +40,7 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
     private _viewPointService: ViewPointService,
     private _travelAgendaService: TravelAgendaService,
     private _filterCategoryService: FilterCategoryService,
-    protected selector : SelectorService) {
+    protected selector: SelectorService) {
     this.displayMode = DisplayModeEnum.Map;
   }
   //#endregion
@@ -49,10 +49,8 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this._travelAgendaService.load();
     this._filterCategoryService.load();
-    
-    this.selector.selectedCity$.takeUntil(this._stop$).subscribe(city => {
-      this._viewPointService.load({cityId: city.id});
-    });
+
+    this._viewPointService.load({ cityId: this.selector.selectedCity.id });
   }
 
   ngOnDestroy(): void {
@@ -122,13 +120,13 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
     }
   }
 
-  protected viewPointClicked(viewPoint : IViewPointBiz) {
+  protected viewPointClicked(viewPoint: IViewPointBiz) {
     this._viewPointService.selectViewPoint(viewPoint);
     this._nav.push(ViewPointPage);
   }
 
-  protected getIconName() :string {
-    return (this.displayMode === DisplayModeEnum.Map) ? 'list':'map'; 
+  protected getIconName(): string {
+    return (this.displayMode === DisplayModeEnum.Map) ? 'list' : 'map';
   }
 
   //#region Private metohds
