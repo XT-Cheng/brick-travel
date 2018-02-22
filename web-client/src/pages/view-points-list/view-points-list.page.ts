@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
-import { Content, FabContainer, NavController } from 'ionic-angular';
+import { Content, NavController } from 'ionic-angular';
 import { Subject } from 'rxjs/Subject';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
@@ -91,18 +91,16 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
     this.showSearchBar = false;
   }
 
-  displaySearchBar(fab: FabContainer): void {
+  displaySearchBar(): void {
     this.showSearchBar = true;
-    fab.close();
   }
 
   dismissFilterBar(): void {
     this.showFilterBar = false;
   }
 
-  displayFilterBar(fab: FabContainer): void {
+  displayFilterBar(): void {
     this.showFilterBar = true;
-    fab.close();
   }
 
   protected getStyle(expect) {
@@ -125,8 +123,17 @@ export class ViewPointsListPage implements AfterViewInit, OnDestroy {
     this._nav.push(ViewPointPage);
   }
 
-  protected getIconName(): string {
+  protected getDisplayModeIcon(): string {
     return (this.displayMode === DisplayModeEnum.Map) ? 'list' : 'map';
+  }
+
+  protected getSearchIconColor(): string {
+    return (this.selector.viewPointSearchKey != '') ? 'red' : '';
+  }
+
+  protected getFilterIconColor(): string {
+    return (this.selector.isViewPointFiltered) ? 'red' : '';
+    
   }
 
   //#region Private metohds

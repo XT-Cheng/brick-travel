@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { Content, FabContainer, NavController } from 'ionic-angular';
+import { Content, NavController } from 'ionic-angular';
 
 import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
@@ -82,18 +82,16 @@ export class ViewPointsSelectPage implements AfterViewInit {
     this.showSearchBar = false;
   }
 
-  displaySearchBar(fab: FabContainer): void {
+  displaySearchBar(): void {
     this.showSearchBar = true;
-    fab.close();
   }
 
   dismissFilterBar(): void {
     this.showFilterBar = false;
   }
 
-  displayFilterBar(fab: FabContainer): void {
+  displayFilterBar(): void {
     this.showFilterBar = true;
-    fab.close();
   }
 
   protected getStyle(expect) {
@@ -116,12 +114,21 @@ export class ViewPointsSelectPage implements AfterViewInit {
     this._nav.push(ViewPointPage);
   }
 
-  protected getIconName(): string {
+  protected getDisplayModeIcon(): string {
     return (this.displayMode === DisplayModeEnum.Map) ? 'list' : 'map';
   }
 
   protected viewPointAdded(value: { dailyTrip: IDailyTripBiz, added: IViewPointBiz }) {
     this._travelAgendaService.addTravelViewPoint(value.added,value.dailyTrip);
+  }
+
+  protected getSearchIconColor(): string {
+    return (this.selector.viewPointSearchKey != '') ? 'red' : '';
+  }
+
+  protected getFilterIconColor(): string {
+    return (this.selector.isViewPointFiltered) ? 'red' : '';
+    
   }
 
   protected viewPointRemoved(value: { dailyTrip: IDailyTripBiz, travelAgenda: ITravelAgendaBiz, removed: ITravelViewPointBiz }) {

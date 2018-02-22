@@ -45,6 +45,17 @@ export class SelectorService {
     private _selectedTravelViewPoint: ITravelViewPointBiz;
     private _selectedViewPoint: IViewPointBiz;
 
+    private _currentViewPointSearchKey : string;
+    private _isViewPointFiltered : boolean;
+
+    public get isViewPointFiltered() : boolean {
+        return this._isViewPointFiltered;
+    }
+
+    public get viewPointSearchKey() : string {
+        return this._currentViewPointSearchKey;
+    }
+
     public get selectedCity(): ICityBiz {
         return this._selectedCity;
     }
@@ -138,11 +149,25 @@ export class SelectorService {
         this.getViewMode(this._store).subscribe((value) => {
             this.viewModeSelector$.next(value);
         })
-        this.getCurrentFilters(this._store).subscribe((value) => this.currentFiltersSelector$.next(value));
+        this.getCurrentFilters(this._store).subscribe((value) => {
+            let isFiltered = false;
+            value.forEach(category => {
+                category.criteries.forEach(criteria => {
+                    if (criteria.isChecked) 
+                    isFiltered = true;
+                })
+            });
+    
+            this._isViewPointFiltered = isFiltered;
+            this.currentFiltersSelector$.next(value)
+        });
         this.getFilterAndSearchedViewPoints(this._store).subscribe((value) => {
             this.filterAndSearchedViewPointsSelector$.next(value);
         })
-        this.getViewPointSearchKey(this._store).subscribe(value => this.viewPointSearchKeySelector$.next(value));
+        this.getViewPointSearchKey(this._store).subscribe(value => {
+            this._currentViewPointSearchKey = value;
+            this.viewPointSearchKeySelector$.next(value)
+        });
         this.getSelectedViewPoint(this._store).subscribe(value => this.selectedViewPointSelector$.next(value));
     }
 
