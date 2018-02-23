@@ -25,6 +25,7 @@ import { city } from '../modules/store/entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
 import { ICityUI, INIT_UI_CITY_STATE, STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
+import { WEBAPI_HOST } from '../utils/constants';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 
@@ -108,7 +109,7 @@ export class CityService {
 
     //#region Private methods
     private getCities(pagination: IPagination): Observable<IEntities> {
-        return this._http.get('http://localhost:3000/cities')
+        return this._http.get(`${WEBAPI_HOST}/cities`)
             .map(records => {
                 return normalize(records, [city]).entities;
             })

@@ -20,6 +20,7 @@ import {
 import { IEntities } from '../modules/store/entity/entity.model';
 import { filterCategory } from '../modules/store/entity/entity.schema';
 import { IAppState } from '../modules/store/store.model';
+import { WEBAPI_HOST } from '../utils/constants';
 
 @Injectable()
 export class FilterCategoryService {
@@ -69,7 +70,7 @@ export class FilterCategoryService {
 
     //#region Private methods
     private getFilterCategory(pagination: IPagination): Observable<IEntities> {
-        return this._http.get('http://localhost:3000/filterCategories')
+        return this._http.get(`${WEBAPI_HOST}/filterCategories`)
             .map(records => {
                 return normalize(records, [filterCategory]).entities;
             })

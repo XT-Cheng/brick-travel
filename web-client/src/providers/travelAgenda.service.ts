@@ -48,6 +48,7 @@ import {
     STORE_UI_TRAVELAGENDA_KEY,
 } from '../modules/store/ui/travelAgenda/travelAgenda.model';
 import { SelectorService } from './selector.service';
+import { WEBAPI_HOST } from '../utils/constants';
 
 interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {
 }
@@ -217,7 +218,7 @@ export class TravelAgendaService {
 
     //#region Private methods
     private getTravelAgenda(pagination: IPagination): Observable<IEntities> {
-        return this._http.get('http://localhost:3000/travelAgendas')
+        return this._http.get(`${WEBAPI_HOST}/travelAgendas`)
             .map(records => {
                 return normalize(records, [travelAgenda]).entities;
             })
@@ -239,7 +240,7 @@ export class TravelAgendaService {
             })
         });
 
-        return this._http.post(`http://localhost:3000/travelAgendas/`, created);
+        return this._http.post(`${WEBAPI_HOST}/travelAgendas/`, created);
     }
 
     public updateTravelAgenda(id: string) {
@@ -254,11 +255,11 @@ export class TravelAgendaService {
             })
         });
 
-        return this._http.put('http://localhost:3000/travelAgendas', updated);
+        return this._http.put(`${WEBAPI_HOST}/travelAgendas`, updated);
     }
 
     public deleteTravelAgenda(id: string) {
-        return this._http.delete(`http://localhost:3000/travelAgendas/${id}`);
+        return this._http.delete(`${WEBAPI_HOST}/travelAgendas/${id}`);
     }
     //#endregion
 

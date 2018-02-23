@@ -26,6 +26,7 @@ import { viewPoint } from '../modules/store/entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
 import { IAppState } from '../modules/store/store.model';
 import { INIT_UI_VIEWPOINT_STATE, STORE_UI_VIEWPOINT_KEY,IViewPointUI } from '../modules/store/ui/viewPoint/viewPoint.model';
+import { WEBAPI_HOST } from '../utils/constants';
 
 interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
 
@@ -204,7 +205,7 @@ export class ViewPointService {
 
     //#region Private methods
     private getViewPoints(pagination : IPagination, queryCondition : IQueryCondition): Observable<IEntities> {
-        let url = 'http://localhost:3000/';
+        let url = `${WEBAPI_HOST}/`;
         if (queryCondition) {
           url += queryCondition['cityId'];
           url += '/viewPoints';;
@@ -220,7 +221,7 @@ export class ViewPointService {
       }
     
       private getViewPointComments(pagination : IPagination, queryCondition : IQueryCondition): Observable<IEntities> {
-        let url = `http://localhost:3000/viewPoints/${queryCondition['viewPointId']}/comments?skip=${pagination.page}&&limit=${pagination.limit}`;
+        let url = `${WEBAPI_HOST}/viewPoints/${queryCondition['viewPointId']}/comments?skip=${pagination.page}&&limit=${pagination.limit}`;
         
         return this._http.get(url)
         .map(records => {
