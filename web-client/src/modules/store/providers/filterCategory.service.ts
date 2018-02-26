@@ -16,10 +16,10 @@ import {
     entityLoadActionSucceeded,
     EntityTypeEnum,
     IPagination,
-} from '../modules/store/entity/entity.action';
-import { IEntities } from '../modules/store/entity/entity.model';
-import { filterCategory } from '../modules/store/entity/entity.schema';
-import { IAppState } from '../modules/store/store.model';
+} from '../entity/entity.action';
+import { IEntities } from '../entity/entity.model';
+import { filterCategory } from '../entity/entity.schema';
+import { IAppState } from '../store.model';
 import { WEBAPI_HOST } from '../utils/constants';
 
 @Injectable()

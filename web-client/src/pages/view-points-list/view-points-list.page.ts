@@ -3,13 +3,13 @@ import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Content, NavController } from 'ionic-angular';
 import { Subject } from 'rxjs/Subject';
 
-import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/model/filterCategory.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { FilterCategoryService } from '../../providers/filterCategory.service';
+import { FilterCategoryService } from '../../modules/store/providers/filterCategory.service';
 import { SelectorService } from '../../providers/selector.service';
-import { TravelAgendaService } from '../../providers/travelAgenda.service';
-import { ViewPointService } from '../../providers/viewPoint.service';
+import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
+import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
 import { ViewPointPage } from '../view-point/view-point.page';
 
 @Component({

@@ -3,11 +3,11 @@ import 'rxjs/add/operator/combineLatest';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../modules/store/bizModel/model/travelAgenda.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
 import { SelectorService } from '../../providers/selector.service';
-import { TravelAgendaService } from '../../providers/travelAgenda.service';
-import { ViewPointService } from '../../providers/viewPoint.service';
+import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
+import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
 import { ViewPointsSelectPage } from '../view-points-select/view-points-select.page';
 
 @Component({

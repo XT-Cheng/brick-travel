@@ -5,10 +5,10 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import * as Immutable from 'seamless-immutable';
 
-import { ICityBiz } from '../bizModel/model/city.biz.model';
-import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
-import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
+import { ICityBiz } from '../modules/store/bizModel/model/city.biz.model';
+import { IFilterCategoryBiz } from '../modules/store/bizModel/model/filterCategory.biz.model';
+import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../modules/store/bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../modules/store/bizModel/model/viewPoint.biz.model';
 import { ICity } from '../modules/store/entity/city/city.model';
 import { STORE_ENTITIES_KEY } from '../modules/store/entity/entity.model';
 import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint } from '../modules/store/entity/entity.schema';

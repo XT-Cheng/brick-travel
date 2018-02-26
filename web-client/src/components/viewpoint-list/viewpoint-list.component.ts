@@ -5,8 +5,8 @@ import {
   IDailyTripBiz,
   ITravelAgendaBiz,
   ITravelViewPointBiz,
-} from '../../bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+} from '../../modules/store/bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map/a-map.component';
 
 @Component({

@@ -5,14 +5,14 @@ import { createLogger } from 'redux-logger';
 import { createEpicMiddleware } from 'redux-observable';
 import { stateTransformer } from 'redux-seamless-immutable';
 
-import { CityService } from '../../providers/city.service';
-import { FilterCategoryService } from '../../providers/filterCategory.service';
-import { ViewPointService } from '../../providers/viewPoint.service';
+import { CityService } from './providers/city.service';
+import { FilterCategoryService } from './providers/filterCategory.service';
+import { ViewPointService } from './providers/viewPoint.service';
 import { EntityEpics } from './entity/entity.epic';
 import { RootEpics } from './store.epic';
 import { IAppState } from './store.model';
 import { rootReducer } from './store.reducer';
-import { TravelAgendaService } from '../../providers/travelAgenda.service';
+import { TravelAgendaService } from './providers/travelAgenda.service';
 import { DirtyEpics } from './dirty/drity.epic';
 
 // Angular-redux ecosystem stuff.

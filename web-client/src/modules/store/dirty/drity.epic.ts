@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { DataSyncService } from '../../../providers/dataSync.service';
+import { DataSyncService } from '../providers/dataSync.service';
 
 @Injectable()
 export class DirtyEpics {

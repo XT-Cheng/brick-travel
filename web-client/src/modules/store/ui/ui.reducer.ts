@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
 
-import { cityReducer } from '../../../providers/city.service';
-import { viewPointReducer } from '../../../providers/viewPoint.service';
+import { cityReducer } from '../providers/city.service';
+import { viewPointReducer } from '../providers/viewPoint.service';
 import { IUIState } from './ui.model';
-import { travelAgendaReducer } from '../../../providers/travelAgenda.service';
+import { travelAgendaReducer } from '../providers/travelAgenda.service';
 
 export const uiReducer =
     combineReducers<IUIState>({

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { combineEpics } from 'redux-observable';
 
-import { CityService } from '../../../providers/city.service';
-import { ViewPointService } from '../../../providers/viewPoint.service';
-import { FilterCategoryService } from '../../../providers/filterCategory.service';
-import { TravelAgendaService } from '../../../providers/travelAgenda.service';
+import { CityService } from '../providers/city.service';
+import { ViewPointService } from '../providers/viewPoint.service';
+import { FilterCategoryService } from '../providers/filterCategory.service';
+import { TravelAgendaService } from '../providers/travelAgenda.service';
 
 @Injectable()
 export class EntityEpics {

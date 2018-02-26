@@ -21,7 +21,7 @@ import {
     translateTravelViewPointFromBiz,
 } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
-import { dirtyAddAction, DirtyTypeEnum } from '../modules/store/dirty/dirty.action';
+import { dirtyAddAction, DirtyTypeEnum } from '../dirty/dirty.action';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -36,18 +36,18 @@ import {
     entityUpdateAction,
     IPagination,
     IQueryCondition,
-} from '../modules/store/entity/entity.action';
-import { IEntities } from '../modules/store/entity/entity.model';
-import { travelAgenda } from '../modules/store/entity/entity.schema';
-import { IDailyTrip, ITravelAgenda, ITravelViewPoint } from '../modules/store/entity/travelAgenda/travelAgenda.model';
-import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
-import { IAppState } from '../modules/store/store.model';
+} from '../entity/entity.action';
+import { IEntities } from '../entity/entity.model';
+import { travelAgenda } from '../entity/entity.schema';
+import { IDailyTrip, ITravelAgenda, ITravelViewPoint } from '../entity/travelAgenda/travelAgenda.model';
+import { IActionMetaInfo, IActionPayload } from '../store.action';
+import { IAppState } from '../store.model';
 import {
     INIT_UI_TRAVELAGENDA_STATE,
     ITravelAgendaUI,
     STORE_UI_TRAVELAGENDA_KEY,
-} from '../modules/store/ui/travelAgenda/travelAgenda.model';
-import { SelectorService } from './selector.service';
+} from '../ui/travelAgenda/travelAgenda.model';
+import { SelectorService } from '../../../providers/selector.service';
 import { WEBAPI_HOST } from '../utils/constants';
 
 interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {

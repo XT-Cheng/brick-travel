@@ -27,12 +27,12 @@ import { ViewPointPage } from '../pages/view-point/view-point.page';
 import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
 import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
 import { SelectorService } from '../providers/selector.service';
-import { CityService } from '../providers/city.service';
-import { ViewPointService } from '../providers/viewPoint.service';
-import { TravelAgendaService } from '../providers/travelAgenda.service';
+import { CityService } from '../modules/store/providers/city.service';
+import { ViewPointService } from '../modules/store/providers/viewPoint.service';
+import { TravelAgendaService } from '../modules/store/providers/travelAgenda.service';
 import { TravelAgendaListComponent } from '../components/travel-agenda-list/travel-agenda-list.component';
 import { TravelAgendaListPage } from '../pages/travel-agenda-list/travel-agenda-list.page';
-import { DataSyncService } from '../providers/dataSync.service';
+import { DataSyncService } from '../modules/store/providers/dataSync.service';
 
 @NgModule({
   declarations: [

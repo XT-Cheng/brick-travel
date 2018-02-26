@@ -18,9 +18,9 @@ import {
     dirtyFlushActionStarted,
     dirtyRemoveAction,
     DirtyTypeEnum,
-} from '../modules/store/dirty/dirty.action';
-import { EntityTypeEnum, getEntityType } from '../modules/store/entity/entity.action';
-import { IAppState } from '../modules/store/store.model';
+} from '../dirty/dirty.action';
+import { EntityTypeEnum, getEntityType } from '../entity/entity.action';
+import { IAppState } from '../store.model';
 import { TravelAgendaService } from './travelAgenda.service';
 
 @Injectable()

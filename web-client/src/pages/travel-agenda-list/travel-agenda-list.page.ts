@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { App } from 'ionic-angular';
 
-import { ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
+import { ITravelAgendaBiz } from '../../modules/store/bizModel/model/travelAgenda.biz.model';
 import { SelectorService } from '../../providers/selector.service';
-import { TravelAgendaService } from '../../providers/travelAgenda.service';
+import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 
 @Component({

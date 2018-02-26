@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { App } from 'ionic-angular';
 
-import { TravelAgendaService } from '../../providers/travelAgenda.service';
+import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
 import { TravelAgendaListPage } from '../travel-agenda-list/travel-agenda-list.page';
 import { TravelAgendaPage } from '../travel-agenda/travel-agenda.page';
 import { ViewPointsListPage } from '../view-points-list/view-points-list.page';
-import { DataSyncService } from '../../providers/dataSync.service';
+import { DataSyncService } from '../../modules/store/providers/dataSync.service';
 
 @Component({
   selector: 'page-home',

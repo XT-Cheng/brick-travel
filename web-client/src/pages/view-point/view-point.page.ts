@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
 import { SelectorService } from '../../providers/selector.service';
-import { ViewPointService } from '../../providers/viewPoint.service';
+import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
 
 @Component({
   selector: 'page-view-point',

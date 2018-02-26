@@ -20,12 +20,12 @@ import {
     EntityTypeEnum,
     IPagination,
     IQueryCondition,
-} from '../modules/store/entity/entity.action';
-import { IEntities } from '../modules/store/entity/entity.model';
-import { viewPoint } from '../modules/store/entity/entity.schema';
-import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
-import { IAppState } from '../modules/store/store.model';
-import { INIT_UI_VIEWPOINT_STATE, STORE_UI_VIEWPOINT_KEY,IViewPointUI } from '../modules/store/ui/viewPoint/viewPoint.model';
+} from '../entity/entity.action';
+import { IEntities } from '../entity/entity.model';
+import { viewPoint } from '../entity/entity.schema';
+import { IActionMetaInfo, IActionPayload } from '../store.action';
+import { IAppState } from '../store.model';
+import { INIT_UI_VIEWPOINT_STATE, STORE_UI_VIEWPOINT_KEY,IViewPointUI } from '../ui/viewPoint/viewPoint.model';
 import { WEBAPI_HOST } from '../utils/constants';
 
 interface IUIViewPointActionMetaInfo extends IActionMetaInfo {

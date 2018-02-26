@@ -5,7 +5,7 @@ import {
     ITravelAgenda,
     ITravelViewPoint,
     TransportationCategory,
-} from '../../modules/store/entity/travelAgenda/travelAgenda.model';
+} from '../../entity/travelAgenda/travelAgenda.model';
 import { IViewPointBiz } from './viewPoint.biz.model';
 
 export interface ITravelAgendaBiz {

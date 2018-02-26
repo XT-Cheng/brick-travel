@@ -3,14 +3,14 @@ import 'rxjs/add/operator/combineLatest';
 import { AfterViewInit, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
 
-import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz } from '../../bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../bizModel/model/viewPoint.biz.model';
-import { CityService } from '../../providers/city.service';
-import { FilterCategoryService } from '../../providers/filterCategory.service';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/model/filterCategory.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz } from '../../modules/store/bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
+import { CityService } from '../../modules/store/providers/city.service';
+import { FilterCategoryService } from '../../modules/store/providers/filterCategory.service';
 import { SelectorService } from '../../providers/selector.service';
-import { TravelAgendaService } from '../../providers/travelAgenda.service';
-import { ViewPointService } from '../../providers/viewPoint.service';
+import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
+import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
 
 @Component({
   selector: 'page-test',

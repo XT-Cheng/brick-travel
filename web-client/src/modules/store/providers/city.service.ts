@@ -19,12 +19,12 @@ import {
     entityLoadActionSucceeded,
     EntityTypeEnum,
     IPagination,
-} from '../modules/store/entity/entity.action';
-import { IEntities } from '../modules/store/entity/entity.model';
-import { city } from '../modules/store/entity/entity.schema';
-import { IActionMetaInfo, IActionPayload } from '../modules/store/store.action';
-import { IAppState } from '../modules/store/store.model';
-import { ICityUI, INIT_UI_CITY_STATE, STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
+} from '../entity/entity.action';
+import { IEntities } from '../entity/entity.model';
+import { city } from '../entity/entity.schema';
+import { IActionMetaInfo, IActionPayload } from '../store.action';
+import { IAppState } from '../store.model';
+import { ICityUI, INIT_UI_CITY_STATE, STORE_UI_CITY_KEY } from '../ui/city/city.model';
 import { WEBAPI_HOST } from '../utils/constants';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
