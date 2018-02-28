@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { Content, NavController } from 'ionic-angular';
 
-import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../modules/store/bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/filterCategory.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../modules/store/bizModel/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
 import { CityService } from '../../modules/store/providers/city.service';
 import { FilterCategoryService } from '../../modules/store/providers/filterCategory.service';

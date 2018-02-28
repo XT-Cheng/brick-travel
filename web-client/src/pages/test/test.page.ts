@@ -3,9 +3,9 @@ import 'rxjs/add/operator/combineLatest';
 import { AfterViewInit, Component } from '@angular/core';
 import { FabContainer } from 'ionic-angular';
 
-import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/model/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz } from '../../modules/store/bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/filterCategory.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz } from '../../modules/store/bizModel/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/viewPoint.biz.model';
 import { CityService } from '../../modules/store/providers/city.service';
 import { FilterCategoryService } from '../../modules/store/providers/filterCategory.service';
 import { SelectorService } from '../../modules/store/providers/selector.service';

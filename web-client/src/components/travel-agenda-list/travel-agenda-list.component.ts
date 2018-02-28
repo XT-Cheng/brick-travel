@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { ITravelAgendaBiz } from '../../modules/store/bizModel/model/travelAgenda.biz.model';
+import { ITravelAgendaBiz } from '../../modules/store/bizModel/travelAgenda.biz.model';
 
 @Component({
   selector: 'travel-agenda-list',

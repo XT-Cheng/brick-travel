@@ -19,8 +19,8 @@ import {
     translateDailyTripFromBiz,
     translateTravelAgendaFromBiz,
     translateTravelViewPointFromBiz,
-} from '../bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
+} from '../bizModel/travelAgenda.biz.model';
+import { IViewPointBiz } from '../bizModel/viewPoint.biz.model';
 import { dirtyAddAction, DirtyTypeEnum } from '../dirty/dirty.action';
 import {
     EntityAction,

@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
 
-import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
+import { IViewPointBiz } from '../bizModel/viewPoint.biz.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,

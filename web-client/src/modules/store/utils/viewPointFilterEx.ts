@@ -1,5 +1,5 @@
-import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
-import { IFilterCriteriaBiz } from '../bizModel/model/filterCategory.biz.model';
+import { IViewPointBiz } from '../bizModel/viewPoint.biz.model';
+import { IFilterCriteriaBiz } from '../bizModel/filterCategory.biz.model';
 
 export class ViewPointFilterEx {
     static filterByCategory(viewPoint : IViewPointBiz, criteria : IFilterCriteriaBiz) : boolean {

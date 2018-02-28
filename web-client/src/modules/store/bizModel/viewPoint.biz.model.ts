@@ -1,5 +1,5 @@
-import { ViewPointCategory } from "../../entity/viewPoint/viewPoint.model";
-import { ICity } from "../../entity/city/city.model";
+import { ViewPointCategory } from "../entity/viewPoint/viewPoint.model";
+import { ICity } from "../entity/city/city.model";
 
 
 export interface IViewPointBiz {

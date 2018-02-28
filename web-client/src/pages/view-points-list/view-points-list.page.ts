@@ -3,8 +3,8 @@ import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { Content, NavController } from 'ionic-angular';
 import { Subject } from 'rxjs/Subject';
 
-import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/model/filterCategory.biz.model';
-import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/filterCategory.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
 import { FilterCategoryService } from '../../modules/store/providers/filterCategory.service';
 import { SelectorService } from '../../modules/store/providers/selector.service';

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { InfiniteScroll } from 'ionic-angular/components/infinite-scroll/infinite-scroll';
 
-import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/viewPoint.biz.model';
 
 @Component({
   selector: 'viewpoint-detail',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
+import { IViewPointBiz } from '../../modules/store/bizModel/viewPoint.biz.model';
 import { SelectorService } from '../../modules/store/providers/selector.service';
 import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
 

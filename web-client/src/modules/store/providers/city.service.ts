@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
 
-import { ICityBiz } from '../bizModel/model/city.biz.model';
+import { ICityBiz } from '../bizModel/city.biz.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,

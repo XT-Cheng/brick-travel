@@ -1,7 +1,7 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
-import { ICityBiz } from '../../modules/store/bizModel/model/city.biz.model';
+import { ICityBiz } from '../../modules/store/bizModel/city.biz.model';
 import { CityService } from '../../modules/store/providers/city.service';
 import { SelectorService } from '../../modules/store/providers/selector.service';
 import { HomePage } from '../home/home.page';
