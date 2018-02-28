@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 
 import { PagesComponent } from './pages.component';
-import { DashboardModule } from './dashboard/dashboard.module';
 import { PagesRoutingModule } from './pages-routing.module';
 import { ThemeModule } from '../@theme/theme.module';
+import { CityComponent } from './city/city.component';
 
 const PAGES_COMPONENTS = [
   PagesComponent,
+  CityComponent
 ];
 
 @NgModule({
   imports: [
     PagesRoutingModule,
-    ThemeModule,
-    DashboardModule,
+    ThemeModule
   ],
   declarations: [
     ...PAGES_COMPONENTS,

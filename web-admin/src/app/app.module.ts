@@ -10,6 +10,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { ThemeModule } from './@theme/theme.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
+import { StoreModule } from './store/store.module';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,6 +19,8 @@ import { RouterModule } from '@angular/router';
     BrowserModule,
     BrowserAnimationsModule,
     HttpModule,
+    IonicStorageModule.forRoot(),
+    StoreModule.forRoot(),
     AppRoutingModule,
     NgbModule.forRoot(),
     ThemeModule.forRoot(),
