@@ -8,7 +8,7 @@ import { IDailyTripBiz, ITravelAgendaBiz } from '../../modules/store/bizModel/mo
 import { IViewPointBiz } from '../../modules/store/bizModel/model/viewPoint.biz.model';
 import { CityService } from '../../modules/store/providers/city.service';
 import { FilterCategoryService } from '../../modules/store/providers/filterCategory.service';
-import { SelectorService } from '../../providers/selector.service';
+import { SelectorService } from '../../modules/store/providers/selector.service';
 import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
 import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
 

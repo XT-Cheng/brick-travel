@@ -47,7 +47,7 @@ import {
     ITravelAgendaUI,
     STORE_UI_TRAVELAGENDA_KEY,
 } from '../ui/travelAgenda/travelAgenda.model';
-import { SelectorService } from '../../../providers/selector.service';
+import { SelectorService } from './selector.service';
 import { WEBAPI_HOST } from '../utils/constants';
 
 interface IUITravelAgendaActionMetaInfo extends IActionMetaInfo {

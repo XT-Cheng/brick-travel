@@ -5,7 +5,7 @@ import { NavController } from 'ionic-angular';
 
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../modules/store/bizModel/model/travelAgenda.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { SelectorService } from '../../providers/selector.service';
+import { SelectorService } from '../../modules/store/providers/selector.service';
 import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
 import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
 import { ViewPointsSelectPage } from '../view-points-select/view-points-select.page';

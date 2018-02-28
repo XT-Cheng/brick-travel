@@ -39,7 +39,7 @@ export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): I
             return Immutable(state).set(STORE_UI_CITY_KEY.selectedCityId, action.payload.selectedCityId);
         }
     }
-    return state;
+    return <any>state;
 };
 
 interface IUICityActionMetaInfo extends IActionMetaInfo {
@@ -80,7 +80,7 @@ export class CityService {
         return {
             type: UICityActionTypeEnum.SELECT_CITY,
             meta: { progressing: false },
-            payload: Object.assign({}, defaultUICityActionPayload, {
+            payload: <any>Object.assign({}, defaultUICityActionPayload, {
                 [STORE_UI_CITY_KEY.selectedCityId]: city ? city.id : ''
             })
         };

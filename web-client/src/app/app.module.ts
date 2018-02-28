@@ -26,7 +26,7 @@ import { HomePage } from '../pages/home/home.page';
 import { ViewPointPage } from '../pages/view-point/view-point.page';
 import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
 import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
-import { SelectorService } from '../providers/selector.service';
+import { SelectorService } from '../modules/store/providers/selector.service';
 import { CityService } from '../modules/store/providers/city.service';
 import { ViewPointService } from '../modules/store/providers/viewPoint.service';
 import { TravelAgendaService } from '../modules/store/providers/travelAgenda.service';

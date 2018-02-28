@@ -5,22 +5,20 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import * as Immutable from 'seamless-immutable';
 
-import { ICityBiz } from '../modules/store/bizModel/model/city.biz.model';
-import { IFilterCategoryBiz } from '../modules/store/bizModel/model/filterCategory.biz.model';
-import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../modules/store/bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../modules/store/bizModel/model/viewPoint.biz.model';
-import { ICity } from '../modules/store/entity/city/city.model';
-import { STORE_ENTITIES_KEY } from '../modules/store/entity/entity.model';
-import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint } from '../modules/store/entity/entity.schema';
-import { IFilterCategory } from '../modules/store/entity/filterCategory/filterCategory.model';
-import { ITravelAgenda, IDailyTrip, ITravelViewPoint } from '../modules/store/entity/travelAgenda/travelAgenda.model';
-import { IViewPoint } from '../modules/store/entity/viewPoint/viewPoint.model';
-import { IAppState } from '../modules/store/store.model';
-import { STORE_KEY } from '../modules/store/store.model';
-import { STORE_UI_CITY_KEY } from '../modules/store/ui/city/city.model';
-import { STORE_UI_TRAVELAGENDA_KEY } from '../modules/store/ui/travelAgenda/travelAgenda.model';
-import { STORE_UI_KEY } from '../modules/store/ui/ui.model';
-import { STORE_UI_VIEWPOINT_KEY } from '../modules/store/ui/viewPoint/viewPoint.model';
+import { ICityBiz } from '../bizModel/model/city.biz.model';
+import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
+import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
+import { ICity } from '../entity/city/city.model';
+import { STORE_ENTITIES_KEY } from '../entity/entity.model';
+import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint } from '../entity/entity.schema';
+import { IFilterCategory } from '../entity/filterCategory/filterCategory.model';
+import { ITravelAgenda, IDailyTrip, ITravelViewPoint } from '../entity/travelAgenda/travelAgenda.model';
+import { IViewPoint } from '../entity/viewPoint/viewPoint.model';
+import { IAppState } from '../store.model';
+import { STORE_KEY } from '../store.model';
+import { STORE_UI_TRAVELAGENDA_KEY } from '../ui/travelAgenda/travelAgenda.model';
+import { STORE_UI_KEY } from '../ui/ui.model';
 import { ViewPointFilterEx } from '../utils/viewPointFilterEx';
 
 @Injectable()
@@ -214,7 +212,7 @@ export class SelectorService {
 
     //#region Selected City
     private getSelectedCityId(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.city, STORE_UI_CITY_KEY.selectedCityId]);
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.city, 'selectedCityId']);
     }
 
     private getSelectedCity(store: NgRedux<IAppState>): Observable<ICityBiz> {
@@ -284,7 +282,7 @@ export class SelectorService {
 
     //#region Selected ViewPoint
     private getSelectedViewPointId(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.selectedViewPointId]);
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, 'selectedViewPointId']);
     }
 
     private getSelectedViewPoint(store: NgRedux<IAppState>): Observable<IViewPointBiz> {
@@ -301,7 +299,7 @@ export class SelectorService {
 
     //#region ViewMode
     private getViewMode(store: NgRedux<IAppState>): Observable<boolean> {
-        return store.select<boolean>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.viewMode]);
+        return store.select<boolean>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, 'viewMode']);
     }
     //#endregion
 
@@ -313,7 +311,7 @@ export class SelectorService {
     }
 
     private getFilterCriteriaIds(store: NgRedux<IAppState>): Observable<string[]> {
-        return store.select<string[]>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.filterCriteriaIds])
+        return store.select<string[]>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, 'filterCriteriaIds'])
     }
 
     private buildCurrentFilterCategories(checkIds: string[], categories: IFilterCategoryBiz[]) {
@@ -350,7 +348,7 @@ export class SelectorService {
 
     //#region ViewPoint Search Key
     private getViewPointSearchKey(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_VIEWPOINT_KEY.searchKey]);
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, 'searchKey']);
     }
     //#endregion
 

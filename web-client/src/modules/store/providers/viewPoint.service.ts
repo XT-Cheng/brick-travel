@@ -75,9 +75,9 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
         state = Immutable(state).set(STORE_UI_VIEWPOINT_KEY.selectedViewPointId, action.payload.selectedViewPointId);
   
         let select = action.payload.selectCriteria;
-  
+
         if (select) {
-          let filterCriteriaIds = state.filterCriteriaIds
+          let filterCriteriaIds = (<any[]>state[STORE_UI_VIEWPOINT_KEY.filterCriteriaIds])
             .filter(id => !select.unSelectedCriteriaIds.find(removed => removed === id));
   
           if (action.payload.selectCriteria.selectedCriteriaId)
@@ -87,7 +87,7 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
         }
       }
     }
-    return state;
+    return <any>state;
   };
 
 @Injectable()
