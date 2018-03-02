@@ -9,6 +9,7 @@ import { ViewPointRoute } from './routes/viewPoint.route';
 import { CityRoute } from './routes/city.route';
 import { FilterCategoryRoute } from './routes/filterCategory.route';
 import { TravelAgendaRoute } from './routes/travelAgenda.route';
+import { AuthRoute } from './routes/auth.route';
 
 /**
  * The server.
@@ -103,6 +104,8 @@ export class RestfulServer {
 
         return Observable.create(observer => {
             router = express.Router();
+
+            AuthRoute.create(router);
 
             //Route create
             ViewPointRoute.create(router);
