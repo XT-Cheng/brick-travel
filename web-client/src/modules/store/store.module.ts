@@ -5,6 +5,8 @@ import { createLogger } from 'redux-logger';
 import { createEpicMiddleware } from 'redux-observable';
 import { stateTransformer } from 'redux-seamless-immutable';
 
+import * as Immutable from 'seamless-immutable';
+
 import { CityService } from './providers/city.service';
 import { FilterCategoryService } from './providers/filterCategory.service';
 import { ViewPointService } from './providers/viewPoint.service';
@@ -16,6 +18,7 @@ import { TravelAgendaService } from './providers/travelAgenda.service';
 import { DirtyEpics } from './dirty/drity.epic';
 import { SelectorService } from './providers/selector.service';
 import { DataSyncService } from './providers/dataSync.service';
+import { INIT_ENTITY_STATE } from './entity/entity.model';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -35,7 +38,7 @@ export class StoreModule {
     constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics) {
         this._store.configureStore(
             rootReducer,
-            <IAppState>{},
+            <any>Immutable({}),
             [createLogger({stateTransformer: stateTransformer}), 
                 createEpicMiddleware(this._rootEpics.createEpics())]);
     }

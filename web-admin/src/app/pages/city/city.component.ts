@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: 'page-city',
+  selector: 'bricktravel-city',
   templateUrl: 'city.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./city.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CityComponent {
 }
