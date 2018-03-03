@@ -5,6 +5,7 @@ import { asyncMiddleware } from '../utils/utility';
 
 import * as jwt from 'jsonwebtoken';
 import * as fs from "fs";
+import { UserModel } from '../data-model/user.model';
 
 const RSA_PRIVATE_KEY = fs.readFileSync('./jwtRS256.key');
 
@@ -12,7 +13,7 @@ export class AuthRoute {
     public static create(router: Router) {
         console.log('Auth route create');
 
-        router.post('/auth/login', asyncMiddleware(async(req: Request, res: Response, next: NextFunction) => {
+        router.post('/auth/login', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             AuthRoute.login(req, res, next);
         }));
     }
@@ -21,19 +22,19 @@ export class AuthRoute {
         const email = req.body.email;
         const password = req.body.password;
 
-        //if (validateEmailAndPassword()) {
-        //    const userId = findUserIdForEmail(email);
-            const userId = 'test';
-            const jwtBearerToken = jwt.sign({}, RSA_PRIVATE_KEY, {
-                algorithm: 'RS256',
-                expiresIn: 120,
-                subject: userId
-            });
-
-          // send the JWT back to the user
-          // TODO - multiple options available         
-          
-          res.cookie("SESSIONID", jwtBearerToken);
-          res.json(true);
+        const user = await UserModel.findByName(email);
+        const jwtBearerToken = jwt.sign({
+            name: user.name,
+            nick: user.nick,
+            picture: user.picture,
+            id: user.id
+        }, RSA_PRIVATE_KEY, {
+            algorithm: 'RS256',
+            expiresIn: 120,
+            subject: user.name
+        });
+        res.json({
+            idToken: jwtBearerToken
+        });
     }
 }

@@ -24,7 +24,7 @@ export class CityRoute {
     }
 
     private static async insert(req: Request, res: Response, next: NextFunction) {
-        await CityModel.createCity(req.body);
+        await CityModel.createCities(req.body);
         res.json(true);
     }
 }

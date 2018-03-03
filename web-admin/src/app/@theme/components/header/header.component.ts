@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { NbMenuService, NbSidebarService } from '@nebular/theme';
-import { UserService } from '../../../@core/data/users.service';
+import { SelectorService } from '../../../store/providers/selector.service';
+import { IUserBiz } from '../../../store/bizModel/user.biz.model';
 
 @Component({
   selector: 'ngx-header',
@@ -19,12 +20,12 @@ export class HeaderComponent implements OnInit {
 
   constructor(private sidebarService: NbSidebarService,
               private menuService: NbMenuService,
-              private userService: UserService) {
+              protected selectorService: SelectorService) {
   }
 
   ngOnInit() {
-    this.userService.getUsers()
-      .subscribe((users: any) => this.user = users.nick);
+    this.selectorService.userLoggedIn$
+      .subscribe((user: IUserBiz) => this.user = user);
   }
 
   toggleSidebar(): boolean {

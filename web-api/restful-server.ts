@@ -10,6 +10,7 @@ import { CityRoute } from './routes/city.route';
 import { FilterCategoryRoute } from './routes/filterCategory.route';
 import { TravelAgendaRoute } from './routes/travelAgenda.route';
 import { AuthRoute } from './routes/auth.route';
+import { UserRoute } from './routes/user.route';
 
 /**
  * The server.
@@ -112,7 +113,8 @@ export class RestfulServer {
             CityRoute.create(router);
             FilterCategoryRoute.create(router);
             TravelAgendaRoute.create(router);
-
+            UserRoute.create(router);
+            
             //use router middleware
             this.app.use(router);
             observer.complete();

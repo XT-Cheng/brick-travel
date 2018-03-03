@@ -2,6 +2,7 @@ import { ICity } from "./city/city.model";
 import { IViewPoint, IViewPointComment } from "./viewPoint/viewPoint.model";
 import { ITravelViewPoint, IDailyTrip, ITravelAgenda } from "./travelAgenda/travelAgenda.model";
 import { IFilterCategory, IFilterCriteria } from "./filterCategory/filterCategory.model";
+import { IUser } from "./user/user.model";
 
 export enum STORE_ENTITIES_KEY {
   cities = 'cities',
@@ -37,9 +38,4 @@ export interface IEntities {
   travelAgendas?: { [id : string] : ITravelAgenda },
   filterCategories?: {[id : string] : IFilterCategory},
   filterCriteries?: {[id : string] : IFilterCriteria}
-}
-
-export interface IUser {
-  id: string,
-  name: string
 }

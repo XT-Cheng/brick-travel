@@ -42,7 +42,8 @@ export enum EntityTypeEnum {
     TRAVELAGENDA = "TRAVELAGENDA",
     DAILYTRIP = "DAILYTRIP",
     FILTERCATEGORY = "FILTERCATEGORY",
-    TRAVELVIEWPOINT = "TRAVELVIEWPOINT"
+    TRAVELVIEWPOINT = "TRAVELVIEWPOINT",
+    USER = "USER"
 }
 
 export enum EntityActionTypeEnum {
@@ -85,6 +86,9 @@ export function getEntityKey(typeEnum : EntityTypeEnum ) : string {
         case EntityTypeEnum.FILTERCATEGORY: {
             return STORE_ENTITIES_KEY.filterCategories
         }
+        case EntityTypeEnum.USER: {
+            return STORE_ENTITIES_KEY.users
+        }
         default:
             return '';
     }
@@ -94,6 +98,9 @@ export function getEntityType(type : string ) : EntityTypeEnum {
     switch(type) {
         case STORE_ENTITIES_KEY.cities: {
             return EntityTypeEnum.CITY;
+        }
+        case STORE_ENTITIES_KEY.users: {
+            return EntityTypeEnum.USER;
         }
         case STORE_ENTITIES_KEY.dailyTrips: {
             return  EntityTypeEnum.DAILYTRIP;
@@ -208,56 +215,3 @@ export function entityDeleteAction<T>(entityType: EntityTypeEnum) {
     })
 }
 //#endregion
-
-//#region Flush action
-// export function entityFlushAction(entityType: EntityTypeEnum) {
-//     return (id: string): EntityAction => ({
-//         type: EntityActionTypeEnum.FLUSH,
-//         meta: Object.assign({}, defaultEntityActionMeta, {
-//             entityType: entityType,
-//             phaseType: EntityActionPhaseEnum.TRIGGER
-//         }),
-//         payload: Object.assign({}, defaultEntityActionPayload, {
-//            objectId: id
-//         })
-//     })
-// }
-
-// export function entityFlushActionStarted(entityType: EntityTypeEnum) {
-//     return (): EntityAction => ({
-//         type: EntityActionTypeEnum.FLUSH,
-//         meta: Object.assign({}, defaultEntityActionMeta, {
-//             progressing: true,
-//             entityType: entityType,
-//             phaseType: EntityActionPhaseEnum.START
-//         }),
-//         payload: defaultEntityActionPayload,
-//     })
-// }
-
-// export function entityFlushActionFailed(entityType: EntityTypeEnum) {
-//     return (error: Error): EntityAction => ({
-//         type: EntityActionTypeEnum.FLUSH,
-//         meta: Object.assign({}, defaultEntityActionMeta, {
-//             entityType: entityType,
-//             phaseType: EntityActionPhaseEnum.FAIL
-//         }),
-//         payload: Object.assign({}, defaultEntityActionPayload, {
-//             error: error
-//         })
-//     })
-// }
-
-// export function entityFlushActionSucceeded(entityType: EntityTypeEnum) {
-//     return (): EntityAction => ({
-//         type: EntityActionTypeEnum.FLUSH,
-//         meta: Object.assign({}, defaultEntityActionMeta, {
-//             entityType: entityType,
-//             phaseType: EntityActionPhaseEnum.SUCCEED
-//         }),
-//         payload: defaultEntityActionPayload
-//     })
-// }
-
-//#endregion
-

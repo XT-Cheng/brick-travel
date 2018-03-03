@@ -4,6 +4,7 @@ import { NbAuthModule, NbDummyAuthProvider, NbEmailPassAuthProvider } from '@neb
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { DataModule } from './data/data.module';
+import { HttpResponse } from '@angular/common/http';
 
 const NB_CORE_PROVIDERS = [
   ...DataModule.forRoot().providers,
@@ -18,6 +19,9 @@ const NB_CORE_PROVIDERS = [
             rememberMe: true,
             endpoint: '/auth/login',
             method: 'post'
+          },
+          token: {
+            key: 'idToken'
           },
         },
       },

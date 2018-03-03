@@ -11,7 +11,7 @@ import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz 
 import { IViewPointBiz } from '../bizModel/viewPoint.biz.model';
 import { ICity } from '../entity/city/city.model';
 import { STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint } from '../entity/entity.schema';
+import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint, user } from '../entity/entity.schema';
 import { IFilterCategory } from '../entity/filterCategory/filterCategory.model';
 import { ITravelAgenda, IDailyTrip, ITravelViewPoint } from '../entity/travelAgenda/travelAgenda.model';
 import { IViewPoint } from '../entity/viewPoint/viewPoint.model';
@@ -20,12 +20,14 @@ import { STORE_KEY } from '../store.model';
 import { STORE_UI_TRAVELAGENDA_KEY } from '../ui/travelAgenda/travelAgenda.model';
 import { STORE_UI_KEY } from '../ui/ui.model';
 import { ViewPointFilterEx } from '../utils/viewPointFilterEx';
+import { IUserBiz } from '../bizModel/user.biz.model';
 
 @Injectable()
 export class SelectorService {
     private viewPointSearchKeySelector$: BehaviorSubject<string> = new BehaviorSubject('');
     private viewModeSelector$: BehaviorSubject<boolean> = new BehaviorSubject(true);
     private selectedCitySelector$: BehaviorSubject<ICityBiz> = new BehaviorSubject(null);
+    private userLoggedInSelector$: BehaviorSubject<IUserBiz> = new BehaviorSubject(null);
     private selectedViewPointSelector$: BehaviorSubject<IViewPointBiz> = new BehaviorSubject(null);
     private selectedDailyTripSelector$: BehaviorSubject<IDailyTripBiz> = new BehaviorSubject(null);
     private selectedTravelAgendaSelector$: BehaviorSubject<ITravelAgendaBiz> = new BehaviorSubject(null);
@@ -42,6 +44,7 @@ export class SelectorService {
     private _selectedTravelAgenda: ITravelAgendaBiz;
     private _selectedTravelViewPoint: ITravelViewPointBiz;
     private _selectedViewPoint: IViewPointBiz;
+    private _userLoggedIn : IUserBiz;
 
     private _currentViewPointSearchKey : string;
     private _isViewPointFiltered : boolean;
@@ -56,6 +59,10 @@ export class SelectorService {
 
     public get selectedCity(): ICityBiz {
         return this._selectedCity;
+    }
+
+    public get loggedInUser(): IUserBiz {
+        return this._userLoggedIn;
     }
 
     public get selectedTravelAgenda(): ITravelAgendaBiz {
@@ -98,6 +105,9 @@ export class SelectorService {
     public get selectedCity$(): Observable<ICityBiz> {
         return this.selectedCitySelector$.asObservable();
     }
+    public get userLoggedIn$() : Observable<IUserBiz> {
+        return this.userLoggedInSelector$.asObservable();
+    }
     public get cities$(): Observable<ICityBiz[]> {
         return this.citiesSelector$.asObservable();
     }
@@ -127,6 +137,10 @@ export class SelectorService {
         this.getSelectedCity(this._store).subscribe((value) => {
             this._selectedCity = value;
             this.selectedCitySelector$.next(value);
+        })
+        this.getUserLoggedIn(this._store).subscribe((value) => {
+            this._userLoggedIn = value;
+            this.userLoggedInSelector$.next(value);
         })
         this.getSelectedViewPoint(this._store).subscribe((value) => {
             this._selectedViewPoint = value;
@@ -209,6 +223,23 @@ export class SelectorService {
     //#endregion
 
     //#region UI Selector
+
+    //#region User Logged In
+    private getUserLoggedInId(store : NgRedux<IAppState>) : Observable<string> {
+        return store.select<string>([STORE_KEY.ui,STORE_UI_KEY.user,'userLoggedIn'])
+    }
+
+    private getUserLoggedIn(store : NgRedux<IAppState>) : Observable<IUserBiz> {
+        return this.getUserLoggedInId(store)
+            .map(id => {
+                return store.select<ICity>([STORE_KEY.entities, STORE_ENTITIES_KEY.users, id]);
+            })
+            .switch()
+            .map(ct => {
+                return ct ? denormalize(ct.id, user, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            })
+    }
+    //#endregion
 
     //#region Selected City
     private getSelectedCityId(store: NgRedux<IAppState>): Observable<string> {

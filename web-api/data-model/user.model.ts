@@ -1,6 +1,6 @@
 import { ModelType, prop, staticMethod, Typegoose } from '../typegoose/typegoose';
 
-export class City extends Typegoose {
+export class User extends Typegoose {
     @prop()
     _id: string;
     @prop()
@@ -13,20 +13,26 @@ export class City extends Typegoose {
     @prop()
     name: string;
     @prop()
-    adressCode: string;
+    nick: string;
     @prop()
-    thumbnail: string;
+    picture: string;
+    @prop()
+    password: string;
     @staticMethod
-    static findCities(this: ModelType<City> & typeof City) {
+    static findUsers(this: ModelType<User> & typeof User) {
         return this.find();
     }
     @staticMethod
-    static createCities(this: ModelType<City> & typeof City,create: any) {
+    static findByName(this: ModelType<User> & typeof User, name : string) {
+        return this.findOne({name: name});
+    }
+    @staticMethod
+    static createUser(this: ModelType<User> & typeof User,create: any) {
         return this.create(create);
     }
 }
 
-export var CityModel = new City().getModelForClass(City, {
+export var UserModel = new User().getModelForClass(User, {
     schemaOptions: {
         timestamps: true,
         toJSON: {
@@ -34,6 +40,7 @@ export var CityModel = new City().getModelForClass(City, {
             transform: (doc, ret, options) => {
                 delete ret.__v;
                 delete ret._id;
+                delete ret.password;
                 return ret;
             }
         }

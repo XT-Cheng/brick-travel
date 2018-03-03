@@ -18,6 +18,7 @@ import { TravelAgendaService } from './providers/travelAgenda.service';
 import { DirtyEpics } from './dirty/drity.epic';
 import { SelectorService } from './providers/selector.service';
 import { DataSyncService } from './providers/dataSync.service';
+import { UserService } from './providers/user.service';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -50,6 +51,7 @@ export class StoreModule {
             CityService,
             ViewPointService,
             TravelAgendaService,
+            UserService,
             DataSyncService
           ]
         };

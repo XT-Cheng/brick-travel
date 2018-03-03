@@ -21,11 +21,11 @@ import { NB_AUTH_TOKEN_CLASS, NbAuthJWTToken } from '@nebular/auth';
     BrowserAnimationsModule,
     HttpModule,
     IonicStorageModule.forRoot(),
-    StoreModule.forRoot(),
     AppRoutingModule,
     NgbModule.forRoot(),
     ThemeModule.forRoot(),
     CoreModule.forRoot(),
+    StoreModule.forRoot(),
   ],
   bootstrap: [AppComponent],
   providers: [
