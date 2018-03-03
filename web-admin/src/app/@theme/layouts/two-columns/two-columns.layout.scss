@@ -4,7 +4,11 @@
 
 @include nb-install-component() {
   nb-layout-column.small {
-    flex: 0.15 !important;
+    flex: 0.5 0 auto !important;
+  }
+
+  nb-layout-column.ext-small {
+    flex: 0.1 0 !important;
   }
 
   nb-sidebar.settings-sidebar {
