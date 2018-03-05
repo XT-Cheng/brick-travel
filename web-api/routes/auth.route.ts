@@ -19,22 +19,34 @@ export class AuthRoute {
     }
 
     private static async login(req: Request, res: Response, next: NextFunction) {
+        let errorMsg : string = '';
         const email = req.body.email;
         const password = req.body.password;
 
         const user = await UserModel.findByName(email);
-        const jwtBearerToken = jwt.sign({
-            name: user.name,
-            nick: user.nick,
-            picture: user.picture,
-            id: user.id
-        }, RSA_PRIVATE_KEY, {
-            algorithm: 'RS256',
-            expiresIn: 120,
-            subject: user.name
-        });
-        res.json({
-            idToken: jwtBearerToken
-        });
+
+        if (!user) {
+            errorMsg = `User ${email} not exist`;
+            res.status(403).json({errors: errorMsg})
+        }
+        else if (user.password != password) {
+            errorMsg = `Password not correct`;
+            res.status(403).json({errors: errorMsg})
+        }
+        else {
+            const jwtBearerToken = jwt.sign({
+                name: user.name,
+                nick: user.nick,
+                picture: user.picture,
+                id: user.id
+            }, RSA_PRIVATE_KEY, {
+                algorithm: 'RS256',
+                expiresIn: 120,
+                subject: user.name
+            });
+            res.status(200).json({
+                idToken: jwtBearerToken
+            });
+        }
     }
 }

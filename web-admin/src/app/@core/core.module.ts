@@ -23,6 +23,9 @@ const NB_CORE_PROVIDERS = [
           token: {
             key: 'idToken'
           },
+          errors: {
+            key: 'errors'
+          }
         },
       },
     },

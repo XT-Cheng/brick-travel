@@ -68,23 +68,24 @@ export class DataSyncService {
                         )
                         .startWith(dirtyRemoveAction(value.entityType)(value.id, value.type)))
                 .startWith(this.flushDirtyStartedAction())
-                .concat(Observable.fromPromise(this.saveToLocal()).map(() => this.flushDirtyFinishedAction())));
+                .concat(Observable.fromPromise(this.persistantState()).map(() => this.flushDirtyFinishedAction())));
     }
     //#endregion
 
     //#region Public methods
-    public startSync() {
-        this._sub = Observable.interval(1000000).subscribe(() => this.flushDirtyAction());
+    public async restoreState() {
+        let value = await this._storage.get('state');
+        return value ? value : {};
     }
 
-    public stopSync() {
-        this._sub.unsubscribe();
+    public syncData() {
+        this.flushDirtyAction();
     }
-
+    
     //#endregion
-    //#region Private methods
-    private saveToLocal() {
-        return this._storage.set('state', this._store.getState())
+    //#region Private methods    
+    private async persistantState() {
+        return await this._storage.set('state', this._store.getState())
     }
 
     private flush(store: MiddlewareAPI<IAppState>): Observable<any> {

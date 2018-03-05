@@ -1,0 +1,17 @@
+1. 处理"Expression has changed"异常
+    NbMenuItemComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.subMenu.changes
+            .pipe(takeWhile(function () { return _this.alive; }),delay(0))
+            .subscribe(function () {
+            _this.updateSubmenuHeight();
+            _this.updateMaxHeight();
+        });
+        this.menuService.onSubmenuToggle()
+            .pipe(takeWhile(function () { return _this.alive; }),delay(0))
+            .subscribe(function () { return _this.updateMaxHeight(); });
+        setTimeout(function () {
+            _this.updateSubmenuHeight();
+            _this.updateMaxHeight();
+        });
+    };

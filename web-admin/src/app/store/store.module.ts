@@ -19,6 +19,7 @@ import { DirtyEpics } from './dirty/drity.epic';
 import { SelectorService } from './providers/selector.service';
 import { DataSyncService } from './providers/dataSync.service';
 import { UserService } from './providers/user.service';
+import { IonicStorageModule , Storage } from '@ionic/storage';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -27,20 +28,29 @@ import { UserService } from './providers/user.service';
 // Redux ecosystem stuff.
 // The top-level reducers and epics that make up our app's logic.
 @NgModule({
-    imports: [NgReduxModule,HttpModule],
+    imports: [NgReduxModule,HttpModule,IonicStorageModule],
     providers: [RootEpics,EntityEpics,DirtyEpics,
                 CityService,
+                DataSyncService,
                 ViewPointService,
                 TravelAgendaService,
                 FilterCategoryService],
 })
 export class StoreModule {
-    constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics) {
-        this._store.configureStore(
-            rootReducer,
-            <any>Immutable({}),
-            [createLogger({stateTransformer: stateTransformer}), 
-                createEpicMiddleware(this._rootEpics.createEpics())]);
+    constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics
+        ,private _dataSync : DataSyncService) {
+        
+        this._dataSync.restoreState().then((restoredState) => {
+            this._store.configureStore(
+                rootReducer,
+                <any>Immutable(restoredState),
+                [createLogger({stateTransformer: stateTransformer}), 
+                    createEpicMiddleware(this._rootEpics.createEpics())]);
+    
+            this._store.select('entities').subscribe(() => {
+                this._dataSync.syncData();
+            })
+        });
     }
 
     static forRoot(): ModuleWithProviders {

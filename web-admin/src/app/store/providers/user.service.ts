@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
 import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
+import { Storage } from '@ionic/storage'
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
@@ -25,8 +26,9 @@ import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { INIT_UI_USER_STATE, IUserUI, STORE_UI_USER_KEY } from '../ui/user/user.model';
 import { WEBAPI_HOST } from '../utils/constants';
-import { NbAuthService, NbAuthToken, NbAuthJWTToken } from '@nebular/auth';
+import { NbAuthService, NbAuthToken, NbAuthJWTToken, NbTokenStorage, NbTokenService } from '@nebular/auth';
 import { IUserBiz } from '../bizModel/user.biz.model';
+import { TokenCustomLocalStorage } from '../../@core/tokenLocalStorage';
 
 interface IUIUserActionMetaInfo extends IActionMetaInfo {
 }
@@ -58,19 +60,25 @@ export function userReducer(state = INIT_UI_USER_STATE, action: UIUserAction): I
 
 @Injectable()
 export class UserService {
+    
     //#region Constructor
-    constructor(private _http: HttpClient,private _auth : NbAuthService) {
+    constructor(private _http: HttpClient, private _auth: NbAuthService,
+        private _tokenService: NbTokenService,private _storage : Storage) {
+        this._storage.get(TokenCustomLocalStorage.TOKEN_KEY).then((value)=>{
+            this._tokenService.setRaw(value);
+        });
+
         this._auth.onTokenChange().delay(0).subscribe((token: NbAuthJWTToken) => {
             if (token.isValid()) {
-                let {id,name,nick,picture} = token.getPayload();
+                let { id, name, nick, picture } = token.getPayload();
                 let userBiz = {
-                    id,name,nick,picture
+                    id, name, nick, picture
                 };
                 this.addLoggedInUserAction({
-                    users: { [userBiz.id] : userBiz }
+                    users: { [userBiz.id]: userBiz }
                 });
                 this.userLoggedInAction(userBiz);
-              }
+            }
         });
     }
     //#endregion

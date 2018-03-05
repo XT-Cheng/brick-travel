@@ -21,6 +21,7 @@ import { STORE_UI_TRAVELAGENDA_KEY } from '../ui/travelAgenda/travelAgenda.model
 import { STORE_UI_KEY } from '../ui/ui.model';
 import { ViewPointFilterEx } from '../utils/viewPointFilterEx';
 import { IUserBiz } from '../bizModel/user.biz.model';
+import { IUser } from '../entity/user/user.model';
 
 @Injectable()
 export class SelectorService {
@@ -232,7 +233,7 @@ export class SelectorService {
     private getUserLoggedIn(store : NgRedux<IAppState>) : Observable<IUserBiz> {
         return this.getUserLoggedInId(store)
             .map(id => {
-                return store.select<ICity>([STORE_KEY.entities, STORE_ENTITIES_KEY.users, id]);
+                return store.select<IUser>([STORE_KEY.entities, STORE_ENTITIES_KEY.users, id]);
             })
             .switch()
             .map(ct => {

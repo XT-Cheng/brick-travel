@@ -12,7 +12,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
 import { StoreModule } from './store/store.module';
 import { IonicStorageModule } from '@ionic/storage';
-import { NB_AUTH_TOKEN_CLASS, NbAuthJWTToken } from '@nebular/auth';
+import { NB_AUTH_TOKEN_CLASS, NbAuthJWTToken, NbTokenStorage } from '@nebular/auth';
+import { TokenCustomLocalStorage } from './@core/tokenLocalStorage';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,7 +31,8 @@ import { NB_AUTH_TOKEN_CLASS, NbAuthJWTToken } from '@nebular/auth';
   bootstrap: [AppComponent],
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
-    { provide: NB_AUTH_TOKEN_CLASS, useValue: NbAuthJWTToken }
+    { provide: NB_AUTH_TOKEN_CLASS, useValue: NbAuthJWTToken },
+    { provide: NbTokenStorage, useClass: TokenCustomLocalStorage },
   ],
 })
 export class AppModule {
