@@ -7,8 +7,8 @@
     </nb-card-body>
     <nb-card-footer>
       <nb-actions [fullWidth]='true'>
-        <nb-action icon='nb-compose'></nb-action>
-        <nb-action icon='nb-close'></nb-action>
+        <nb-action icon='nb-compose' (click)='edit(city)'></nb-action>
+        <nb-action icon='nb-close' (click)='delete(city)'></nb-action>
       </nb-actions>
     </nb-card-footer>
   </nb-card>

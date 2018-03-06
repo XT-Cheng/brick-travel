@@ -145,10 +145,10 @@ export class DataSyncService {
                 return this._cityService.insertCity(id);
             }
             case DirtyTypeEnum.UPDATED: {
-                return this._cityService.updateCity(id);
+                return this._cityService.update(id);
             }
             case DirtyTypeEnum.DELETED: {
-                return this._cityService.deleteCity(id);
+                return this._cityService.delete(id);
             }
         }
     }

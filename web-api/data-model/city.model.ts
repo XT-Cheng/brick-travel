@@ -24,6 +24,14 @@ export class City extends Typegoose {
     static createCities(this: ModelType<City> & typeof City,create: any) {
         return this.create(create);
     }
+    @staticMethod
+    static updateCity(this: ModelType<City> & typeof City,update: any) {
+        return  this.findByIdAndUpdate(update.id,update);
+    }
+    @staticMethod
+    static deleteCity(this: ModelType<City> & typeof City,id: string) {
+        return this.findByIdAndRemove(id);
+    }
 }
 
 export var CityModel = new City().getModelForClass(City, {

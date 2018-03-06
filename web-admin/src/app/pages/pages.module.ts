@@ -6,11 +6,13 @@ import { PagesRoutingModule } from './pages-routing.module';
 import { ThemeModule } from '../@theme/theme.module';
 import { CityListComponent } from './city/list/city.list.component';
 import { CityFormComponent } from './city/form/city.form.component';
+import { ModalComponent } from './modal.component';
 
 const PAGES_COMPONENTS = [
   PagesComponent,
   CityListComponent,
-  CityFormComponent
+  CityFormComponent,
+  ModalComponent
 ];
 
 @NgModule({
@@ -22,7 +24,7 @@ const PAGES_COMPONENTS = [
   declarations: [
     ...PAGES_COMPONENTS,
   ],
-  entryComponents: [CityFormComponent]
+  entryComponents: [CityFormComponent,ModalComponent]
 })
 export class PagesModule {
 }

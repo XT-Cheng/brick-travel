@@ -1,6 +1,6 @@
 <nb-card>
   <nb-card-header>
-    Create City
+    {{title}}
   </nb-card-header>
   <nb-card-body>
     <form #form="ngForm" autocomplete="nope">
@@ -9,7 +9,7 @@
         <input #focus #name='ngModel' autofocus type="text" id='input-name' placeholder="Name"
          class="form-control" [(ngModel)] = "city.name" name='name' required
          [class.form-control-danger]="name.invalid" autofocus/>
-         <small class="form-text error" *ngIf="name.invalid && name.errors?.required">
+         <small class="form-text error" *ngIf="name.invalid && name?.errors?.required">
           Name is required!
         </small>
         </div>

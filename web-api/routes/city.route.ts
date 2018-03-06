@@ -16,6 +16,21 @@ export class CityRoute {
         router.post('/cities', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             await CityRoute.insert(req, res, next);
         }));
+
+        //Update City
+        router.put('/cities', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+            await CityRoute.update(req, res, next);
+        }));
+
+        //Delete City
+        router.delete('/cities/:id', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+            await CityRoute.delete(req, res, next);
+        }));
+    }
+
+    private static async update(req: Request, res: Response, next: NextFunction) {
+        await CityModel.updateCity(req.body);
+        res.json(true);
     }
 
     private static async load(req: Request, res: Response, next: NextFunction) {
@@ -27,4 +42,10 @@ export class CityRoute {
         await CityModel.createCities(req.body);
         res.json(true);
     }
+
+    private static async delete(req: Request, res: Response, next: NextFunction) {
+        await CityModel.deleteCity(req.params.id);
+        res.json(true);
+    }
+
 }

@@ -20,6 +20,8 @@ import {
     EntityTypeEnum,
     IPagination,
     entityInsertAction,
+    entityUpdateAction,
+    entityDeleteAction,
 } from '../entity/entity.action';
 import { IEntities } from '../entity/entity.model';
 import { city } from '../entity/entity.schema';
@@ -80,12 +82,26 @@ export class CityService {
 
     private loadCityFailedAction = entityLoadActionFailed(EntityTypeEnum.CITY)
 //#endregion
+
+//#region update actions
+
+@dispatch()
+private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
+
+//#endregion
+
     //#region insert actions
 
     @dispatch()
     private insertCityAction = entityInsertAction<ICity>(EntityTypeEnum.CITY);
 
     //#endregion
+
+     //#region delete actions
+     @dispatch()
+     private deleteCityAction = entityDeleteAction<ICity>(EntityTypeEnum.CITY);
+ 
+     //#endregion
 
     //#region UI Actions
     @dispatch()
@@ -149,6 +165,16 @@ export class CityService {
         this.addDirtyAction(added.id, DirtyTypeEnum.CREATED);
         return added;
     }
+
+    public updateCity(update: ICityBiz) {
+        this.updateCityAction(update.id, translateCityFromBiz(update));
+       this.addDirtyAction(update.id, DirtyTypeEnum.UPDATED);
+    }
+
+    public deleteCity(del: ICityBiz) {
+        this.deleteCityAction(del.id, translateCityFromBiz(del));
+       this.addDirtyAction(del.id, DirtyTypeEnum.DELETED);
+    }
     //#endregion
 
     //#region CRUD methods
@@ -159,14 +185,14 @@ export class CityService {
         return this._http.post(`${WEBAPI_HOST}/cities/`, created);
     }
 
-    public updateCity(id: string) {
+    public update(id: string) {
         let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
         let updated = denormalize(id, city, entities);
 
         return this._http.put(`${WEBAPI_HOST}/cities`, updated);
     }
 
-    public deleteCity(id: string) {
+    public delete(id: string) {
         return this._http.delete(`${WEBAPI_HOST}/cities/${id}`);
     }
     //#endregion
