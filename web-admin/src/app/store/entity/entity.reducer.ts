@@ -6,7 +6,12 @@ import { IEntities, INIT_ENTITY_STATE, STORE_ENTITIES_KEY } from './entity.model
 export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: EntityAction): IEntities {
   if (action.payload && action.payload.entities) {
     switch (action.type) {
-      case EntityActionTypeEnum.LOAD:
+      case EntityActionTypeEnum.LOAD: {
+        Object.keys(action.payload.entities).forEach(key => {
+            state = Immutable(state).set(key,(<any>Immutable(state[key])).replace(action.payload.entities[key],{ deep: true }));
+          });
+        return state;
+      }
       case EntityActionTypeEnum.INSERT:
       case EntityActionTypeEnum.UPDATE: {
         return Immutable(state).merge(action.payload.entities, { deep: true });

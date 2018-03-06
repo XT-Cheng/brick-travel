@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { MiddlewareAPI } from 'redux';
 import { Epic } from 'redux-observable';
-import { Subscription } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
@@ -22,10 +22,12 @@ import {
 import { EntityTypeEnum, getEntityType } from '../entity/entity.action';
 import { IAppState } from '../store.model';
 import { TravelAgendaService } from './travelAgenda.service';
+import { CityService } from './city.service';
 
 @Injectable()
 export class DataSyncService {
     private _sub: Subscription;
+    private _stateRestored$ : BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
 
     //#region Actions
 
@@ -41,7 +43,7 @@ export class DataSyncService {
     //#endregion
 
     //#region Constructor
-    constructor(private _travelAgendaService: TravelAgendaService,
+    constructor(private _travelAgendaService: TravelAgendaService,private _cityService : CityService,
         private _storage: Storage, private _store: NgRedux<IAppState>) {
     }
     //#endregion
@@ -75,14 +77,23 @@ export class DataSyncService {
     //#region Public methods
     public async restoreState() {
         let value = await this._storage.get('state');
+        
         return value ? value : {};
     }
 
+    public stateRestored() {
+        this._stateRestored$.next(true);
+    }
     public syncData() {
         this.flushDirtyAction();
     }
     
+    public isStateRestored() : Observable<boolean> {
+        return this._stateRestored$.filter(value => !!value).share();
+    }
+
     //#endregion
+
     //#region Private methods    
     private async persistantState() {
         return await this._storage.set('state', this._store.getState())
@@ -108,6 +119,9 @@ export class DataSyncService {
             case EntityTypeEnum.TRAVELAGENDA: {
                 return this.requestFlushTravelAgenda(type, id);
             }
+            case EntityTypeEnum.CITY: {
+                return this.requestFlushCity(type, id);
+            }
         }
     }
 
@@ -121,6 +135,20 @@ export class DataSyncService {
             }
             case DirtyTypeEnum.DELETED: {
                 return this._travelAgendaService.deleteTravelAgenda(id);
+            }
+        }
+    }
+
+    private requestFlushCity(type: string, id: string) {
+        switch (type) {
+            case DirtyTypeEnum.CREATED: {
+                return this._cityService.insertCity(id);
+            }
+            case DirtyTypeEnum.UPDATED: {
+                return this._cityService.updateCity(id);
+            }
+            case DirtyTypeEnum.DELETED: {
+                return this._cityService.deleteCity(id);
             }
         }
     }

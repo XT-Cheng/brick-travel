@@ -1,0 +1,15 @@
+
+<div class="row">
+  <nb-card *ngFor='let city of (_selector?.cities$ | async)' class='city-card' style="float: left;">
+    <nb-card-body>
+      <img [src]="city.thumbnail" />
+      <div class="card-title">{{city.name}}</div>
+    </nb-card-body>
+    <nb-card-footer>
+      <nb-actions [fullWidth]='true'>
+        <nb-action icon='nb-compose'></nb-action>
+        <nb-action icon='nb-close'></nb-action>
+      </nb-actions>
+    </nb-card-footer>
+  </nb-card>
+</div>

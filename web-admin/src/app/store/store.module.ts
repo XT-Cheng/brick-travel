@@ -19,7 +19,7 @@ import { DirtyEpics } from './dirty/drity.epic';
 import { SelectorService } from './providers/selector.service';
 import { DataSyncService } from './providers/dataSync.service';
 import { UserService } from './providers/user.service';
-import { IonicStorageModule , Storage } from '@ionic/storage';
+import { IonicStorageModule, Storage } from '@ionic/storage';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -28,26 +28,28 @@ import { IonicStorageModule , Storage } from '@ionic/storage';
 // Redux ecosystem stuff.
 // The top-level reducers and epics that make up our app's logic.
 @NgModule({
-    imports: [NgReduxModule,HttpModule,IonicStorageModule],
-    providers: [RootEpics,EntityEpics,DirtyEpics,
-                CityService,
-                DataSyncService,
-                ViewPointService,
-                TravelAgendaService,
-                FilterCategoryService],
+    imports: [NgReduxModule, HttpModule, IonicStorageModule],
+    providers: [RootEpics, EntityEpics, DirtyEpics,
+        CityService,
+        DataSyncService,
+        ViewPointService,
+        TravelAgendaService,
+        FilterCategoryService],
 })
 export class StoreModule {
-    constructor(private _store: NgRedux<IAppState>,private _rootEpics: RootEpics
-        ,private _dataSync : DataSyncService) {
-        
+    constructor(private _store: NgRedux<IAppState>, private _rootEpics: RootEpics
+        , private _dataSync: DataSyncService) {
+
         this._dataSync.restoreState().then((restoredState) => {
             this._store.configureStore(
                 rootReducer,
                 <any>Immutable(restoredState),
-                [createLogger({stateTransformer: stateTransformer}), 
-                    createEpicMiddleware(this._rootEpics.createEpics())]);
-    
-            this._store.select('entities').subscribe(() => {
+                [createLogger({ stateTransformer: stateTransformer }),
+                createEpicMiddleware(this._rootEpics.createEpics())]);
+
+            this._dataSync.stateRestored();
+
+            this._store.select(['dirties','dirtyIds']).subscribe(() => {
                 this._dataSync.syncData();
             })
         });
@@ -55,15 +57,15 @@ export class StoreModule {
 
     static forRoot(): ModuleWithProviders {
         return {
-          ngModule: StoreModule,
-          providers: [
-            SelectorService,
-            CityService,
-            ViewPointService,
-            TravelAgendaService,
-            UserService,
-            DataSyncService
-          ]
+            ngModule: StoreModule,
+            providers: [
+                SelectorService,
+                CityService,
+                ViewPointService,
+                TravelAgendaService,
+                UserService,
+                DataSyncService
+            ]
         };
-      }
+    }
 }

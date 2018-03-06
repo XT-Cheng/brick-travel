@@ -1,12 +1,16 @@
 .city-card {
-    background: transparent;
+    //background: transparent;
+    //box-shadow: none;
+    
+    margin: 0 1.5rem 1.5rem 1.5rem;
 
     nb-card-body {
-    
-    img {
-        width: 10rem;
-        height: 15rem;
-    }
+        padding: 0;
+
+        img {
+            width: 10rem;
+            height: 15rem;
+        }
     
         .card-title {
             color: white;
@@ -17,6 +21,10 @@
             font-size: 2rem;
             transform: translate(-50%, -50%);
         }
-}
+    }
+
+    nb-card-footer {
+        padding: 0.28rem;
+    }
 }
 

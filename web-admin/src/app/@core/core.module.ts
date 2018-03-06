@@ -5,6 +5,7 @@ import { NbAuthModule, NbDummyAuthProvider, NbEmailPassAuthProvider } from '@neb
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { DataModule } from './data/data.module';
 import { HttpResponse } from '@angular/common/http';
+import { WEBAPI_HOST } from '../store/utils/constants';
 
 const NB_CORE_PROVIDERS = [
   ...DataModule.forRoot().providers,
@@ -14,7 +15,7 @@ const NB_CORE_PROVIDERS = [
         service: NbEmailPassAuthProvider,
         config: {
           delay: 3000,
-          baseEndpoint: 'http://localhost:3000',
+          baseEndpoint: WEBAPI_HOST,
           login: {
             rememberMe: true,
             endpoint: '/auth/login',

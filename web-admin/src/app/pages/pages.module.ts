@@ -1,23 +1,28 @@
 import { NgModule } from '@angular/core';
+import { FormsModule }   from '@angular/forms';
 
 import { PagesComponent } from './pages.component';
 import { PagesRoutingModule } from './pages-routing.module';
 import { ThemeModule } from '../@theme/theme.module';
-import { CityComponent } from './city/city.component';
+import { CityListComponent } from './city/list/city.list.component';
+import { CityFormComponent } from './city/form/city.form.component';
 
 const PAGES_COMPONENTS = [
   PagesComponent,
-  CityComponent
+  CityListComponent,
+  CityFormComponent
 ];
 
 @NgModule({
   imports: [
     PagesRoutingModule,
-    ThemeModule
+    ThemeModule,
+    FormsModule
   ],
   declarations: [
     ...PAGES_COMPONENTS,
   ],
+  entryComponents: [CityFormComponent]
 })
 export class PagesModule {
 }

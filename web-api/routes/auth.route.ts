@@ -41,7 +41,7 @@ export class AuthRoute {
                 id: user.id
             }, RSA_PRIVATE_KEY, {
                 algorithm: 'RS256',
-                expiresIn: 120,
+                expiresIn: 12000,
                 subject: user.name
             });
             res.status(200).json({

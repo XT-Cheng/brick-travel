@@ -1,0 +1,21 @@
+<nb-card>
+  <nb-card-header>
+    Create City
+  </nb-card-header>
+  <nb-card-body>
+    <form #form="ngForm" autocomplete="nope">
+      <div class="form-group">
+        <label for="input-name" class="sr-only">Name</label>
+        <input #focus #name='ngModel' autofocus type="text" id='input-name' placeholder="Name"
+         class="form-control" [(ngModel)] = "city.name" name='name' required
+         [class.form-control-danger]="name.invalid" autofocus/>
+         <small class="form-text error" *ngIf="name.invalid && name.errors?.required">
+          Name is required!
+        </small>
+        </div>
+      <button (click)='create()' type="button" [disabled]="submitted || !form.valid" class="btn btn-primary">Submit</button>
+      <button (click)='close()' type="button" class="btn btn-danger">Close</button>
+    </form>
+    
+  </nb-card-body>
+</nb-card>

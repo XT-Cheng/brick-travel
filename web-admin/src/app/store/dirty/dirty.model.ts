@@ -11,6 +11,11 @@ export const INIT_DIRTY_STATE = {
       created: [],
       updated: [],
       deleted: []
+    },
+    cities: {
+      created: [],
+      updated: [],
+      deleted: []
     }
   }
 }
@@ -20,6 +25,7 @@ export interface IDirties {
   lastSynced: Date,
   syncing: boolean,
   dirtyIds: {
-    travelAgendas: { created: string[], updated: string[], deleted: string[] }
+    travelAgendas: { created: string[], updated: string[], deleted: string[] },
+    cities: { created: string[], updated: string[], deleted: string[] }
   }
 }

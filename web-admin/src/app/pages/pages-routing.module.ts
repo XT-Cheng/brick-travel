@@ -2,7 +2,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 
 import { PagesComponent } from './pages.component';
-import { CityComponent } from './city/city.component';
+import { CityListComponent } from './city/list/city.list.component';
 import { RoutingGuard } from './pages-routing-guard';
 
 const routes: Routes = [{
@@ -15,7 +15,7 @@ const routes: Routes = [{
       children: [
         {
           path: 'city',
-          component: CityComponent,
+          component: CityListComponent,
         },
         {
           path: '',

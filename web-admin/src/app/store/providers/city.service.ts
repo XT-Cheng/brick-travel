@@ -1,14 +1,14 @@
-import { dispatch } from '@angular-redux/store';
+import { dispatch, NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
-import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
+import { denormalize, normalize } from 'normalizr';
 
-import { ICityBiz } from '../bizModel/city.biz.model';
+import { ICityBiz, translateCityFromBiz } from '../bizModel/city.biz.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -19,6 +19,7 @@ import {
     entityLoadActionSucceeded,
     EntityTypeEnum,
     IPagination,
+    entityInsertAction,
 } from '../entity/entity.action';
 import { IEntities } from '../entity/entity.model';
 import { city } from '../entity/entity.schema';
@@ -26,6 +27,9 @@ import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { ICityUI, INIT_UI_CITY_STATE, STORE_UI_CITY_KEY } from '../ui/city/city.model';
 import { WEBAPI_HOST } from '../utils/constants';
+import { ICity } from '../entity/city/city.model';
+import { DirtyTypeEnum, dirtyAddAction } from '../dirty/dirty.action';
+import { SelectorService } from './selector.service';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 
@@ -57,13 +61,16 @@ const defaultUICityActionPayload = {
 @Injectable()
 export class CityService {
     //#region Constructor
-    constructor(private _http: HttpClient) {
+    constructor(private _http: HttpClient,
+        private _selectorService: SelectorService,
+        private _store: NgRedux<IAppState>) {
     }
     //#endregion
 
     //#region Actions
 
     //#region Entity Actions
+    //#region load actions
     private loadCityStartedAction = entityLoadActionStarted(EntityTypeEnum.CITY);
 
     @dispatch()
@@ -72,6 +79,12 @@ export class CityService {
     private loadCitySucceededAction = entityLoadActionSucceeded(EntityTypeEnum.CITY);
 
     private loadCityFailedAction = entityLoadActionFailed(EntityTypeEnum.CITY)
+//#endregion
+    //#region insert actions
+
+    @dispatch()
+    private insertCityAction = entityInsertAction<ICity>(EntityTypeEnum.CITY);
+
     //#endregion
 
     //#region UI Actions
@@ -85,6 +98,12 @@ export class CityService {
             })
         };
     }
+    //#region Dirty Actions
+    @dispatch()
+    private addDirtyAction = dirtyAddAction(EntityTypeEnum.CITY);
+
+    //#endregion
+    
     //#endregion
 
     //#endregion
@@ -124,4 +143,31 @@ export class CityService {
     public selectCity(city: ICityBiz) {
         this.selectCityAction(city);
     }
+
+    public addCity(added : ICityBiz): ICityBiz {
+        this.insertCityAction(added.id, translateCityFromBiz(added));
+        this.addDirtyAction(added.id, DirtyTypeEnum.CREATED);
+        return added;
+    }
+    //#endregion
+
+    //#region CRUD methods
+    public insertCity(id: string) {
+        let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+        let created = denormalize(id, city, entities);
+
+        return this._http.post(`${WEBAPI_HOST}/cities/`, created);
+    }
+
+    public updateCity(id: string) {
+        let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+        let updated = denormalize(id, city, entities);
+
+        return this._http.put(`${WEBAPI_HOST}/cities`, updated);
+    }
+
+    public deleteCity(id: string) {
+        return this._http.delete(`${WEBAPI_HOST}/cities/${id}`);
+    }
+    //#endregion
 }
