@@ -6,13 +6,23 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
 import { DataModule } from './data/data.module';
 import { HttpResponse } from '@angular/common/http';
 import { WEBAPI_HOST } from '../store/utils/constants';
+import { CustomAuthProvider } from './custom-auth.provider';
+
+const formSetting: any = {
+  provider: 'custom',
+  redirectDelay: 0,
+  showMessages: {
+    success: true,
+  },
+};
 
 const NB_CORE_PROVIDERS = [
+  CustomAuthProvider,
   ...DataModule.forRoot().providers,
   ...NbAuthModule.forRoot({
     providers: {
-      email: {
-        service: NbEmailPassAuthProvider,
+      custom: {
+        service: CustomAuthProvider,
         config: {
           delay: 3000,
           baseEndpoint: WEBAPI_HOST,
@@ -30,6 +40,13 @@ const NB_CORE_PROVIDERS = [
         },
       },
     },
+    forms: {
+      login: formSetting,
+      register: formSetting,
+      requestPassword: formSetting,
+      resetPassword: formSetting,
+      logout: formSetting
+    }
   }).providers
 ];
 
