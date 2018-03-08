@@ -3,7 +3,7 @@
     {{title}}
   </nb-card-header>
   <nb-card-body>
-    <form #form="ngForm" autocomplete="nope">
+    <form #form="ngForm" class='city-form' autocomplete="nope">
       <div class="form-group">
         <label for="input-name" class="sr-only">Name</label>
         <input #focus #name='ngModel' autofocus type="text" id='input-name' placeholder="Name"
@@ -12,6 +12,14 @@
          <small class="form-text error" *ngIf="name.invalid && name?.errors?.required">
           Name is required!
         </small>
+        </div>
+        <div ng2FileDrop
+                 [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+                 (fileOver)="fileOverBase($event)"
+                 (onFileDrop)= "fileDropped($event)"
+                 [uploader]="uploader"
+                 class="my-drop-zone">
+          <img [src]= 'src'/>
         </div>
       <button (click)='create()' type="button" [disabled]="submitted || !form.valid" class="btn btn-primary">Submit</button>
       <button (click)='close()' type="button" class="btn btn-danger">Close</button>

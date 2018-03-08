@@ -7,6 +7,7 @@ import { ThemeModule } from '../@theme/theme.module';
 import { CityListComponent } from './city/list/city.list.component';
 import { CityFormComponent } from './city/form/city.form.component';
 import { ModalComponent } from './modal.component';
+import { FileUploadModule } from 'ng2-file-upload';
 
 const PAGES_COMPONENTS = [
   PagesComponent,
@@ -19,7 +20,8 @@ const PAGES_COMPONENTS = [
   imports: [
     PagesRoutingModule,
     ThemeModule,
-    FormsModule
+    FormsModule,
+    FileUploadModule,
   ],
   declarations: [
     ...PAGES_COMPONENTS,

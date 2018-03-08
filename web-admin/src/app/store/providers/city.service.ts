@@ -32,6 +32,7 @@ import { WEBAPI_HOST } from '../utils/constants';
 import { ICity } from '../entity/city/city.model';
 import { DirtyTypeEnum, dirtyAddAction } from '../dirty/dirty.action';
 import { SelectorService } from './selector.service';
+import { map, catchError, tap } from 'rxjs/operators';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 
@@ -160,10 +161,15 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
         this.selectCityAction(city);
     }
 
-    public addCity(added : ICityBiz): ICityBiz {
-        this.insertCityAction(added.id, translateCityFromBiz(added));
-        this.addDirtyAction(added.id, DirtyTypeEnum.CREATED);
-        return added;
+    public addCity(added : ICityBiz): Observable<{} | ICityBiz> {
+        return this.insertCity(added).pipe(tap((city) => {
+            this.insertCityAction(added.id, translateCityFromBiz(added));
+        }),
+        catchError((err) => {
+            this.insertCityAction(added.id, translateCityFromBiz(added));
+            this.addDirtyAction(added.id, DirtyTypeEnum.CREATED);
+            throw err;
+        }));
     }
 
     public updateCity(update: ICityBiz) {
@@ -178,11 +184,13 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
     //#endregion
 
     //#region CRUD methods
-    public insertCity(id: string) {
-        let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
-        let created = denormalize(id, city, entities);
-
-        return this._http.post(`${WEBAPI_HOST}/cities/`, created);
+    public insertCity(id: string | ICityBiz) : Observable<ICityBiz> {
+        let created = id;
+        if (typeof id == 'string') {
+            let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+            created = denormalize(id, city, entities);
+        }
+        return this._http.post<ICityBiz>(`${WEBAPI_HOST}/cities/`, created);
     }
 
     public update(id: string) {

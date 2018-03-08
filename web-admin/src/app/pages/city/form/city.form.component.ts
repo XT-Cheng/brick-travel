@@ -4,6 +4,8 @@ import { CityService } from '../../../store/providers/city.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ICityBiz } from '../../../store/bizModel/city.biz.model';
 import { ObjectID } from 'bson';
+import { FileUploader } from 'ng2-file-upload';
+import { WEBAPI_HOST } from '../../../store/utils/constants';
 
 export enum EntityFormMode {
   create,
@@ -23,6 +25,11 @@ export class CityFormComponent {
     id: ''
   };
   submitted: boolean = false;
+  hasBaseDropZoneOver:boolean = false;
+  src : string = 'assets/img/alan.png';
+
+  uploader:FileUploader = new FileUploader({url: `${WEBAPI_HOST}/fileUpload`});
+
   constructor(private _cityService: CityService,
     private activeModal: NgbActiveModal) {
     this.city = this.init;
@@ -46,20 +53,52 @@ export class CityFormComponent {
   create() {
     this.submitted = true;
     if (this.mode == EntityFormMode.create) {
+      // this.uploader.onBuildItemForm = (item, form) => {
+      //   form.append('city',JSON.stringify({
+      //     id: new ObjectID().toHexString(),
+      //     name: this.city.name,
+      //     thumbnail: 'assets/img/IMG_4202.jpg',
+      //     adressCode: 'address'
+      //   }));
+      // };
+
+      // this.uploader.queue.forEach((item)=> {
+      //   item.upload();
+      // })
+
       this._cityService.addCity({
         id: new ObjectID().toHexString(),
         name: this.city.name,
         thumbnail: 'assets/img/IMG_4202.jpg',
         adressCode: 'address'
+      }).subscribe((city) => {
+        this.activeModal.close()
+      },
+      (err) => {
+        this.activeModal.close()
       });
     }
     else {
       this._cityService.updateCity(this.city);
     }
-    this.activeModal.close();
+    //this.activeModal.close();
   }
 
   close() {
     this.activeModal.close();
+  }
+
+  fileOverBase(e:boolean):void {
+    this.hasBaseDropZoneOver = e;
+  }
+
+  fileDropped(files: File[]) : void {
+    let reader = new FileReader();
+
+    reader.onloadend = (e : any) =>{
+      this.src = e.target.result;
+    }
+
+    reader.readAsDataURL(files[0])
   }
 }

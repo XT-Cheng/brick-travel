@@ -1,6 +1,7 @@
 import * as bodyParser from 'body-parser';
 import errorHandler = require('errorhandler');
 import * as express from 'express';
+import * as multer from 'multer';
 import { createServer, Server } from 'http';
 import { connect, Schema, Mongoose } from 'mongoose';
 import * as logger from 'morgan';
@@ -11,6 +12,7 @@ import { FilterCategoryRoute } from './routes/filterCategory.route';
 import { TravelAgendaRoute } from './routes/travelAgenda.route';
 import { AuthRoute } from './routes/auth.route';
 import { UserRoute } from './routes/user.route';
+import { FileUploadRoute } from './routes/fileUpload.route';
 
 /**
  * The server.
@@ -82,11 +84,26 @@ export class RestfulServer {
             this.app.use(bodyParser.json());
             //CORS on ExpressJS
             this.app.use(function (req, res, next) {
-                res.header("Access-Control-Allow-Origin", "*");
+                res.header("Access-Control-Allow-Origin", "http://localhost:4200");
                 res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+               res.header('Access-Control-Allow-Credentials','true');
                 next();
             });
+            // //Multer
+            // this.app.use(multer({
+            //     dest: './uploads/',
+            //     rename: function (fieldname, filename) {
+            //       return filename + Date.now();
+            //     },
+            //     onFileUploadStart: function (file) {
+            //       console.log(file.originalname + ' is starting ...');
+            //     },
+            //     onFileUploadComplete: function (file) {
+            //       console.log(file.fieldname + ' uploaded to  ' + file.path);
+            //     }
+            //   }));
+
             console.log("preRoute");
             observer.complete();
         })
@@ -114,7 +131,8 @@ export class RestfulServer {
             FilterCategoryRoute.create(router);
             TravelAgendaRoute.create(router);
             UserRoute.create(router);
-            
+            FileUploadRoute.create(router);
+
             //use router middleware
             this.app.use(router);
             observer.complete();

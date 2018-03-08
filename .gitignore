@@ -9,8 +9,10 @@
 log.txt
 *.sublime-project
 *.sublime-workspace
-.vscode/
+#.vscode/
 npm-debug.log*
+web-api/uploads
+web-admin/.vscode/chrome
 
 .idea/
 .sourcemaps/
