@@ -1,6 +1,6 @@
 import { dispatch, NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs';
@@ -33,6 +33,8 @@ import { ICity } from '../entity/city/city.model';
 import { DirtyTypeEnum, dirtyAddAction } from '../dirty/dirty.action';
 import { SelectorService } from './selector.service';
 import { map, catchError, tap } from 'rxjs/operators';
+import { FILE_UPLOADER } from '../../@core/core.module';
+import { FileUploader } from 'ng2-file-upload';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 
@@ -65,6 +67,7 @@ const defaultUICityActionPayload = {
 export class CityService {
     //#region Constructor
     constructor(private _http: HttpClient,
+        @Inject(FILE_UPLOADER) private _uploader : FileUploader,
         private _selectorService: SelectorService,
         private _store: NgRedux<IAppState>) {
     }
@@ -166,8 +169,6 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
             this.insertCityAction(added.id, translateCityFromBiz(added));
         }),
         catchError((err) => {
-            this.insertCityAction(added.id, translateCityFromBiz(added));
-            this.addDirtyAction(added.id, DirtyTypeEnum.CREATED);
             throw err;
         }));
     }
@@ -190,7 +191,16 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
             created = denormalize(id, city, entities);
         }
-        return this._http.post<ICityBiz>(`${WEBAPI_HOST}/cities/`, created);
+
+      const formData: FormData = new FormData();
+
+      for (let i = 0; i < this._uploader.queue.length; i++) {
+        formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+      }
+      formData.append("city", JSON.stringify(created));
+      this._uploader.clearQueue();
+
+      return this._http.post<ICityBiz>(`${WEBAPI_HOST}/cities/`, formData);
     }
 
     public update(id: string) {

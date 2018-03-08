@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf, InjectionToken } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NbAuthModule, NbDummyAuthProvider, NbEmailPassAuthProvider } from '@nebular/auth';
 
@@ -7,6 +7,9 @@ import { DataModule } from './data/data.module';
 import { HttpResponse } from '@angular/common/http';
 import { WEBAPI_HOST } from '../store/utils/constants';
 import { CustomAuthProvider } from './custom-auth.provider';
+import { FileUploader } from 'ng2-file-upload';
+
+export const FILE_UPLOADER = new InjectionToken('Nebular Auth Options');
 
 const formSetting: any = {
   provider: 'custom',
@@ -47,8 +50,13 @@ const NB_CORE_PROVIDERS = [
       resetPassword: formSetting,
       logout: formSetting
     }
-  }).providers
+  }).providers,
+  { provide: FILE_UPLOADER, useFactory: fileUploaderFactory },
 ];
+
+export function fileUploaderFactory() {
+  return new FileUploader({url: `${WEBAPI_HOST}/fileUpload`});
+}
 
 @NgModule({
   imports: [

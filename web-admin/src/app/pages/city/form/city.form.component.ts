@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation, Input, Renderer2, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewEncapsulation, Input, Renderer2, ViewChild, ElementRef, ChangeDetectorRef, Inject } from '@angular/core';
 import { SelectorService } from '../../../store/providers/selector.service';
 import { CityService } from '../../../store/providers/city.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -6,6 +6,7 @@ import { ICityBiz } from '../../../store/bizModel/city.biz.model';
 import { ObjectID } from 'bson';
 import { FileUploader } from 'ng2-file-upload';
 import { WEBAPI_HOST } from '../../../store/utils/constants';
+import { FILE_UPLOADER } from '../../../@core/core.module';
 
 export enum EntityFormMode {
   create,
@@ -28,11 +29,15 @@ export class CityFormComponent {
   hasBaseDropZoneOver:boolean = false;
   src : string = 'assets/img/alan.png';
 
-  uploader:FileUploader = new FileUploader({url: `${WEBAPI_HOST}/fileUpload`});
-
   constructor(private _cityService: CityService,
+    @Inject(FILE_UPLOADER) protected uploader : FileUploader,
     private activeModal: NgbActiveModal) {
     this.city = this.init;
+    this.uploader.onAfterAddingFile = f => {
+      if (this.uploader.queue.length > 1) {
+        this.uploader.removeFromQueue(this.uploader.queue[0]);
+      }
+    };
   }
 
   @Input()

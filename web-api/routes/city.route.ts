@@ -3,6 +3,10 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { CityModel } from '../data-model/city.model';
 import { asyncMiddleware } from '../utils/utility';
 
+import * as multer from 'multer';
+
+var upload = multer({dest: './uploads/'})
+
 export class CityRoute {
     public static create(router: Router) {
         console.log('City route create');
@@ -13,7 +17,7 @@ export class CityRoute {
         }));
 
         //Insert City
-        router.post('/cities', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+        router.post('/cities', upload.any(), asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             await CityRoute.insert(req, res, next);
         }));
 
@@ -39,7 +43,9 @@ export class CityRoute {
     }
 
     private static async insert(req: Request, res: Response, next: NextFunction) {
-        await CityModel.createCities(req.body);
+        let city = JSON.parse(req.body.city);
+        city.thumbnail = `assets/img/${req.files[0].filename}`;
+        await CityModel.createCities(city);
         res.json(true);
     }
 
