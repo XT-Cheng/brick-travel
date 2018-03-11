@@ -142,7 +142,7 @@ export class DataSyncService {
     private requestFlushCity(type: string, id: string) {
         switch (type) {
             case DirtyTypeEnum.CREATED: {
-                return this._cityService.insertCity(id);
+                return this._cityService.insert(id);
             }
             case DirtyTypeEnum.UPDATED: {
                 return this._cityService.update(id);

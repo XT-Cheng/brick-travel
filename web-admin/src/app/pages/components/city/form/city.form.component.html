@@ -1,0 +1,26 @@
+<nb-card>
+  <nb-card-header>
+    {{title}}
+  </nb-card-header>
+  <nb-card-body>
+    <form #form="ngForm" class='city-form' autocomplete="nope">
+      <div class="form-group">
+        <label for="input-name">City Name</label>
+        <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="city.name"
+          name='name' required autofocus [class.form-control-danger]="name.invalid && name.touched"/>
+        <small class="form-text error" *ngIf="name.invalid && name.touched && name?.errors?.required">
+          Name is required!
+        </small>
+      </div>
+      <label for="input-name">City Image</label>
+      <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDropped($event)"
+        [uploader]="uploader" class="my-drop-zone">
+       <div *ngIf='!hasFile()'>Drop File</div>
+        <img *ngIf='hasFile()' [src]='city.thumbnail' />
+      </div>
+      <button (click)='create()' type="button" [disabled]="isSubmitDisAllowed(form)" class="btn btn-primary">Submit</button>
+      <button (click)='close()' type="button" class="btn btn-danger">Close</button>
+    </form>
+
+  </nb-card-body>
+</nb-card>

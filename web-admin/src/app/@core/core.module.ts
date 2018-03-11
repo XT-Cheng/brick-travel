@@ -7,9 +7,9 @@ import { DataModule } from './data/data.module';
 import { HttpResponse } from '@angular/common/http';
 import { WEBAPI_HOST } from '../store/utils/constants';
 import { CustomAuthProvider } from './custom-auth.provider';
-import { FileUploader } from 'ng2-file-upload';
+import { FileUploader } from '../pages/providers/file-uploader';
 
-export const FILE_UPLOADER = new InjectionToken('Nebular Auth Options');
+export const FILE_UPLOADER = new InjectionToken('File Uploader');
 
 const formSetting: any = {
   provider: 'custom',

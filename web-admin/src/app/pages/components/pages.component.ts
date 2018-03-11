@@ -1,11 +1,11 @@
 import { Component, ViewChild, AfterViewInit, ComponentRef } from '@angular/core';
 
-import { MENU_ITEMS } from './pages-menu';
+import { MENU_ITEMS } from '../pages-menu';
 import { Type } from '@angular/compiler/src/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 export interface ComponentType {
-  createComp : any;
+  createEntity();
 }
 
 @Component({
@@ -36,18 +36,18 @@ export interface ComponentType {
   styleUrls: [`./pages.component.scss`]
 })
 export class PagesComponent{
-  private createCmp;
+  private createCmp : ComponentType;
 
   constructor(private modalService: NgbModal) {
 
   }
 
   onActivate(comp : ComponentType) {
-    this.createCmp = comp.createComp;
+    this.createCmp = comp;
   }
   
   newEntity() {
-    const activeModal = this.modalService.open(this.createCmp, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
+    this.createCmp.createEntity();
   }
   
   menu = MENU_ITEMS;

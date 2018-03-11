@@ -34,7 +34,7 @@ import { DirtyTypeEnum, dirtyAddAction } from '../dirty/dirty.action';
 import { SelectorService } from './selector.service';
 import { map, catchError, tap } from 'rxjs/operators';
 import { FILE_UPLOADER } from '../../@core/core.module';
-import { FileUploader } from 'ng2-file-upload';
+import { FileUploader } from '../../pages/providers/file-uploader';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 
@@ -165,7 +165,7 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
     }
 
     public addCity(added : ICityBiz): Observable<{} | ICityBiz> {
-        return this.insertCity(added).pipe(tap((city) => {
+        return this.insert(added).pipe(tap((city) => {
             this.insertCityAction(added.id, translateCityFromBiz(added));
         }),
         catchError((err) => {
@@ -173,9 +173,13 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
         }));
     }
 
-    public updateCity(update: ICityBiz) {
-        this.updateCityAction(update.id, translateCityFromBiz(update));
-       this.addDirtyAction(update.id, DirtyTypeEnum.UPDATED);
+    public updateCity(update: ICityBiz) : Observable<{} | ICityBiz> {
+        return this.update(update).pipe(tap((city) => {
+            this.updateCityAction(update.id, translateCityFromBiz(update));
+        }),
+        catchError((err) => {
+            throw err;
+        }));
     }
 
     public deleteCity(del: ICityBiz) {
@@ -185,7 +189,7 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
     //#endregion
 
     //#region CRUD methods
-    public insertCity(id: string | ICityBiz) : Observable<ICityBiz> {
+    public insert(id: string | ICityBiz) : Observable<ICityBiz> {
         let created = id;
         if (typeof id == 'string') {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
@@ -203,11 +207,23 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
       return this._http.post<ICityBiz>(`${WEBAPI_HOST}/cities/`, formData);
     }
 
-    public update(id: string) {
-        let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
-        let updated = denormalize(id, city, entities);
+    public update(id: string | ICityBiz) {
+        let updated : any = id;
+        if (typeof id == 'string') {
+            let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+            updated = denormalize(id, city, entities);
+        }
 
-        return this._http.put(`${WEBAPI_HOST}/cities`, updated);
+        const formData: FormData = new FormData();
+
+        for (let i = 0; i < this._uploader.queue.length; i++) {
+          formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+        }
+        updated.thumbnail = '';
+        formData.append("city", JSON.stringify(updated));
+        this._uploader.clearQueue();
+
+        return this._http.put(`${WEBAPI_HOST}/cities`, formData);
     }
 
     public delete(id: string) {

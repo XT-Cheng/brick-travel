@@ -22,7 +22,7 @@ export class CityRoute {
         }));
 
         //Update City
-        router.put('/cities', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+        router.put('/cities', upload.any(), asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             await CityRoute.update(req, res, next);
         }));
 
@@ -33,7 +33,17 @@ export class CityRoute {
     }
 
     private static async update(req: Request, res: Response, next: NextFunction) {
-        await CityModel.updateCity(req.body);
+        let city : any;
+        if (req.is('application/json')) {
+            city = req.body;
+        }
+        else {
+            city = JSON.parse(req.body.city);
+            if (req.files[0])
+                city.thumbnail = `assets/img/${req.files[0].filename}`;
+        }
+       
+        await CityModel.updateCity(city);
         res.json(true);
     }
 

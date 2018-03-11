@@ -1,5 +1,8 @@
 .city-form {
     .my-drop-zone {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         border: dotted 3px lightgray;
         width:300px;
         height: 300px;

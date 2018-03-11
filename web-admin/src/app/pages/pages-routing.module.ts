@@ -1,8 +1,8 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 
-import { PagesComponent } from './pages.component';
-import { CityListComponent } from './city/list/city.list.component';
+import { PagesComponent } from './components/pages.component';
+import { CityListComponent } from './components/city/list/city.list.component';
 import { RoutingGuard } from './pages-routing-guard';
 
 const routes: Routes = [{

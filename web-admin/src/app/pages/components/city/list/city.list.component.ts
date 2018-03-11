@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
-import { SelectorService } from '../../../store/providers/selector.service';
-import { CityService } from '../../../store/providers/city.service';
+import { SelectorService } from '../../../../store/providers/selector.service';
+import { CityService } from '../../../../store/providers/city.service';
 import { ComponentType } from '../../pages.component';
 import { CityFormComponent, EntityFormMode } from '../form/city.form.component';
-import { ICityBiz } from '../../../store/bizModel/city.biz.model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ICityBiz } from '../../../../store/bizModel/city.biz.model';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../../modal.component';
 
 @Component({
@@ -14,10 +14,19 @@ import { ModalComponent } from '../../modal.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CityListComponent implements ComponentType {
-  createComp: any = CityFormComponent;
 
   constructor(protected _selector: SelectorService, private modalService: NgbModal, private _cityService: CityService) {
     this._cityService.load();
+  }
+
+  createEntity() {
+    const activeModal =this.modalService.open(CityFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
+    activeModal.componentInstance.city = {
+      name: '',
+      thumbnail: '',
+      adressCode: '',
+      id: ''
+    };
   }
 
   edit(city: ICityBiz) {
