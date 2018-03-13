@@ -33,6 +33,7 @@ import {
 } from './layouts';
 import { DEFAULT_THEME } from './styles/theme.default';
 import { COSMIC_THEME } from './styles/theme.cosmic';
+import { SearchComponent } from './components/search-input/search.component';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 
@@ -55,6 +56,7 @@ const COMPONENTS = [
   HeaderComponent,
   FooterComponent,
   SearchInputComponent,
+  SearchComponent,
   ThemeSettingsComponent,
   OneColumnLayoutComponent,
   SampleLayoutComponent,
@@ -84,6 +86,7 @@ const NB_THEME_PROVIDERS = [
   imports: [...BASE_MODULES, ...NB_MODULES],
   exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
+  entryComponents: [SearchInputComponent]
 })
 export class ThemeModule {
   static forRoot(): ModuleWithProviders {
