@@ -26,6 +26,8 @@ import { IUser } from '../entity/user/user.model';
 @Injectable()
 export class SelectorService {
     private viewPointSearchKeySelector$: BehaviorSubject<string> = new BehaviorSubject('');
+    private citySearchKeySelector$: BehaviorSubject<string> = new BehaviorSubject('');
+    
     private viewModeSelector$: BehaviorSubject<boolean> = new BehaviorSubject(true);
     private selectedCitySelector$: BehaviorSubject<ICityBiz> = new BehaviorSubject(null);
     private userLoggedInSelector$: BehaviorSubject<IUserBiz> = new BehaviorSubject(null);
@@ -39,6 +41,7 @@ export class SelectorService {
     private citiesSelector$: BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
     private travelAgendasSelector$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
     private filterCategoriesSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
+    private searchedCitiesSelector$ : BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
 
     private _selectedCity: ICityBiz;
     private _selectedDailyTrip: IDailyTripBiz;
@@ -49,6 +52,8 @@ export class SelectorService {
 
     private _currentViewPointSearchKey : string;
     private _isViewPointFiltered : boolean;
+
+    private _currentCitySearchKey : string;
 
     public get isViewPointFiltered() : boolean {
         return this._isViewPointFiltered;
@@ -91,6 +96,9 @@ export class SelectorService {
     public get viewPointSearchKey$(): Observable<string> {
         return this.viewPointSearchKeySelector$.asObservable();
     }
+    public get citySearchKey$(): Observable<string> {
+        return this.citySearchKeySelector$.asObservable();
+    }
     public get viewMode$(): Observable<boolean> {
         return this.viewModeSelector$.asObservable();
     }
@@ -120,6 +128,9 @@ export class SelectorService {
     }
     public get filterAndSearchedViewPoints$(): Observable<IViewPointBiz[]> {
         return this.filterAndSearchedViewPointsSelector$.asObservable();
+    }
+    public get searchedCities$(): Observable<ICityBiz[]> {
+        return this.searchedCitiesSelector$.asObservable();
     }
 
     constructor(private _store: NgRedux<IAppState>) {
@@ -177,9 +188,16 @@ export class SelectorService {
         this.getFilterAndSearchedViewPoints(this._store).subscribe((value) => {
             this.filterAndSearchedViewPointsSelector$.next(value);
         })
+        this.getSearchedCities(this._store).subscribe((value) => {
+            this.searchedCitiesSelector$.next(value);
+        })
         this.getViewPointSearchKey(this._store).subscribe(value => {
             this._currentViewPointSearchKey = value;
             this.viewPointSearchKeySelector$.next(value)
+        });
+        this.getCitySearchKey(this._store).subscribe(value => {
+            this._currentCitySearchKey = value;
+            this.citySearchKeySelector$.next(value)
         });
         this.getSelectedViewPoint(this._store).subscribe(value => this.selectedViewPointSelector$.next(value));
     }
@@ -356,6 +374,18 @@ export class SelectorService {
         return categories;
     }
 
+    private getSearchedCities(store: NgRedux<IAppState>): Observable<ICityBiz[]> {
+        return this.citiesSelector$.combineLatest(this.citySearchKeySelector$, (cities,searchKey) => {
+            return cities.filter(city => {
+                let matchSearchKey = true;
+                if (searchKey != '')
+                    matchSearchKey = city.name.indexOf(searchKey) != -1;
+
+                return matchSearchKey;
+            });
+        });
+    }
+
     private getFilterAndSearchedViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
         return this.currentFiltersSelector$.combineLatest(this.viewPointsSelector$,this.viewPointSearchKey$, (filterCategories, viewPoints,searchKey) => {
             return viewPoints.filter(viewPoint => {
@@ -383,7 +413,11 @@ export class SelectorService {
         return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, 'searchKey']);
     }
     //#endregion
-
+    //#region City Search Key
+    private getCitySearchKey(store: NgRedux<IAppState>): Observable<string> {
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.city, 'searchKey']);
+    }
+    //#endregion
     //#endregion
 
 }

@@ -40,6 +40,7 @@ type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaIn
 
 enum UICityActionTypeEnum {
     SELECT_CITY = "UI:CITY:SELECT_CITY",
+    SEARCH_CITY = "UI:CITY:SEARCH_CITY",
 }
 
 export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): ICityUI {
@@ -47,6 +48,9 @@ export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): I
         case UICityActionTypeEnum.SELECT_CITY: {
             return <any>Immutable(state).set(STORE_UI_CITY_KEY.selectedCityId, action.payload.selectedCityId);
         }
+        case UICityActionTypeEnum.SEARCH_CITY: {
+            return <any>Immutable(state).set(STORE_UI_CITY_KEY.searchKey, action.payload.searchKey);
+          }
     }
     return <any>state;
 };
@@ -55,11 +59,13 @@ interface IUICityActionMetaInfo extends IActionMetaInfo {
 }
 
 interface IUICityActionPayload extends IActionPayload {
-    selectedCityId: string
+    searchKey?: string,
+    selectedCityId?: string
 }
 
 const defaultUICityActionPayload = {
     [STORE_UI_CITY_KEY.selectedCityId]: '',
+    [STORE_UI_CITY_KEY.searchKey]: '',
     error: null,
 }
 
@@ -107,7 +113,18 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
  
      //#endregion
 
+     //#endregion
     //#region UI Actions
+    @dispatch()
+    private searchCityAction(searchKey: string): UICityAction {
+        return {
+            type: UICityActionTypeEnum.SEARCH_CITY,
+            meta: { progressing : false },
+            payload: Object.assign({},defaultUICityActionPayload,{
+                searchKey: searchKey
+            })
+        };
+    }
     @dispatch()
     private selectCityAction(city: ICityBiz): UICityAction {
         return {
@@ -156,6 +173,10 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
     //#endregion
 
     //#region Public methods
+    public search(searchKey : string) {
+        this.searchCityAction(searchKey);
+    }
+
     public load() {
         this.loadCitiesAction();
     }

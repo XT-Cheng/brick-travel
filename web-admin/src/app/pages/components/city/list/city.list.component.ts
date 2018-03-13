@@ -6,6 +6,7 @@ import { CityFormComponent, EntityFormMode } from '../form/city.form.component';
 import { ICityBiz } from '../../../../store/bizModel/city.biz.model';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../../modal.component';
+import { NbSearchService } from '@nebular/theme';
 
 @Component({
   selector: 'bricktravel-city-list',
@@ -15,8 +16,12 @@ import { ModalComponent } from '../../modal.component';
 })
 export class CityListComponent implements ComponentType {
 
-  constructor(protected _selector: SelectorService, private modalService: NgbModal, private _cityService: CityService) {
+  constructor(protected _selector: SelectorService, private _searchService : NbSearchService,
+     private modalService: NgbModal, private _cityService: CityService) {
     this._cityService.load();
+    this._searchService.onSearchSubmit().subscribe(value => {
+      this._cityService.search(value.term);
+    })
   }
 
   createEntity() {
