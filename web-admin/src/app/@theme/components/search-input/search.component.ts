@@ -19,7 +19,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, ActivatedRoute, UrlSegment } from '@angular/router';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs/Subscription';
@@ -31,6 +31,7 @@ import { delay } from 'rxjs/operators/delay';
 import { takeWhile } from 'rxjs/operators/takeWhile';
 import { SearchInputComponent } from '..';
 import { NbSearchService, NbThemeService } from '@nebular/theme';
+import { SearchService } from '../../providers/search.service';
 
 /**
  * Beautiful full-page search control.
@@ -92,7 +93,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private deactivateSearchSubscription: Subscription;
   private routerSubscription: Subscription;
 
-  constructor(private searchService: NbSearchService,
+  constructor(private searchService: SearchService,
               private themeService: NbThemeService,
               private router: Router) {
   }
@@ -113,7 +114,9 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
         takeWhile(() => this.alive),
         filter(event => event instanceof NavigationEnd),
       )
-      .subscribe(event => this.searchService.deactivateSearch(this.searchType, this.tag));
+      .subscribe(event => {
+        this.searchService.deactivateSearch(this.searchType, this.tag)
+      });
 
     this.activateSearchSubscription = combineLatest([
       this.searchFieldComponentRef$,
@@ -131,6 +134,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
           this.themeService.appendLayoutClass('with-search');
         });
         componentRef.instance.showSearch = true;
+        componentRef.instance.inputElement.nativeElement.value = this.searchService.currentSearchKey;
         componentRef.instance.inputElement.nativeElement.focus();
         componentRef.changeDetectorRef.detectChanges();
       });

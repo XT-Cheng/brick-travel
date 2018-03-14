@@ -63,6 +63,10 @@ export class SelectorService {
         return this._currentViewPointSearchKey;
     }
 
+    public get citySearchKey() : string {
+        return this._currentCitySearchKey;
+    }
+
     public get selectedCity(): ICityBiz {
         return this._selectedCity;
     }

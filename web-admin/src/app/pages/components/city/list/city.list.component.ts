@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit } from '@angular/core';
 import { SelectorService } from '../../../../store/providers/selector.service';
 import { CityService } from '../../../../store/providers/city.service';
 import { ComponentType } from '../../pages.component';
@@ -7,6 +7,8 @@ import { ICityBiz } from '../../../../store/bizModel/city.biz.model';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../../modal.component';
 import { NbSearchService } from '@nebular/theme';
+import { ActivatedRoute } from '@angular/router';
+import { SearchService } from '../../../../@theme/providers/search.service';
 
 @Component({
   selector: 'bricktravel-city-list',
@@ -14,14 +16,23 @@ import { NbSearchService } from '@nebular/theme';
   styleUrls: ['./city.list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CityListComponent implements ComponentType {
+export class CityListComponent implements ComponentType, OnInit {
 
-  constructor(protected _selector: SelectorService, private _searchService : NbSearchService,
+  constructor(private route : ActivatedRoute,protected _selector: SelectorService, 
+    private _searchService : SearchService,
      private modalService: NgbModal, private _cityService: CityService) {
     this._cityService.load();
     this._searchService.onSearchSubmit().subscribe(value => {
+      this._searchService.currentSearchKey = value.term;
       this._cityService.search(value.term);
     })
+  }
+
+  ngOnInit(): void {
+    this.route.data
+    .subscribe((data: { searchKey : string }) => {
+      this._searchService.currentSearchKey = this._selector.citySearchKey;
+    });
   }
 
   createEntity() {

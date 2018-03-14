@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NbMenuService, NbSidebarService } from '@nebular/theme';
 import { SelectorService } from '../../../store/providers/selector.service';
 import { IUserBiz } from '../../../store/bizModel/user.biz.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ngx-header',
@@ -19,8 +20,9 @@ export class HeaderComponent implements OnInit {
   userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
   constructor(private sidebarService: NbSidebarService,
-              private menuService: NbMenuService,
-              protected selectorService: SelectorService) {
+    private menuService: NbMenuService,
+    protected selectorService: SelectorService,
+    protected router: Router) {
   }
 
   ngOnInit() {
@@ -39,9 +41,6 @@ export class HeaderComponent implements OnInit {
   }
 
   goToHome() {
-    this.menuService.navigateHome();
-  }
-
-  startSearch() {
+    this.router.navigateByUrl('noexsit/1/2');
   }
 }

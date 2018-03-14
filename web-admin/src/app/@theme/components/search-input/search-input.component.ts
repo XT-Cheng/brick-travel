@@ -97,8 +97,6 @@ export class SearchInputComponent {
   }
 
   submitSearch(term) {
-    if (term) {
       this.search.emit(term);
-    }
   }
 }

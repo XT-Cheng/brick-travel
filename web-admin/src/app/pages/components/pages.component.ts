@@ -1,8 +1,11 @@
-import { Component, ViewChild, AfterViewInit, ComponentRef } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, ComponentRef, OnInit } from '@angular/core';
 
 import { MENU_ITEMS } from '../pages-menu';
 import { Type } from '@angular/compiler/src/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { NavigationEvent } from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-view-model';
+import { LOCATION_INITIALIZED } from '@angular/common';
 
 export interface ComponentType {
   createEntity();
@@ -21,12 +24,6 @@ export interface ComponentType {
                   <button type="button" (click)='newEntity()' class="btn btn-primary btn-icon">
                     <i class="nb-plus"></i>
                   </button>
-                  <button type="button" class="btn btn-success btn-icon">
-                    <i class="nb-skip-backward-outline"></i>
-                  </button>
-                  <button type="button" class="btn btn-danger btn-icon">
-                    <i class="nb-skip-forward-outline"></i>
-                  </button>
                 </div>
           </nb-card-body>
         </nb-card>
@@ -35,11 +32,11 @@ export interface ComponentType {
   `,
   styleUrls: [`./pages.component.scss`]
 })
-export class PagesComponent{
+export class PagesComponent {
+  
   private createCmp : ComponentType;
 
-  constructor(private modalService: NgbModal) {
-
+  constructor(private route : ActivatedRoute,private modalService: NgbModal,private router : Router) {
   }
 
   onActivate(comp : ComponentType) {

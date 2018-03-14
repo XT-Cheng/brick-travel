@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { PagesComponent } from './components/pages.component';
 import { CityListComponent } from './components/city/list/city.list.component';
 import { RoutingGuard } from './pages-routing-guard';
+import { CityResolver } from './providers/city-resolver';
 
 const routes: Routes = [{
   path: '',
@@ -16,6 +17,7 @@ const routes: Routes = [{
         {
           path: 'city',
           component: CityListComponent,
+          resolve: {searchKey: CityResolver}
         },
         {
           path: '',
@@ -30,7 +32,7 @@ const routes: Routes = [{
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [RoutingGuard]
+  providers: [RoutingGuard,CityResolver]
 })
 export class PagesRoutingModule {
 }
