@@ -12,7 +12,7 @@ import { FilterCategoryService } from './providers/filterCategory.service';
 import { ViewPointService } from './providers/viewPoint.service';
 import { EntityEpics } from './entity/entity.epic';
 import { RootEpics } from './store.epic';
-import { IAppState } from './store.model';
+import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
 import { TravelAgendaService } from './providers/travelAgenda.service';
 import { DirtyEpics } from './dirty/drity.epic';
@@ -20,6 +20,7 @@ import { SelectorService } from './providers/selector.service';
 import { DataSyncService } from './providers/dataSync.service';
 import { UserService } from './providers/user.service';
 import { IonicStorageModule, Storage } from '@ionic/storage';
+import { deepExtend } from '../@core/utils/helpers';
 
 // Angular-redux ecosystem stuff.
 // @angular-redux/form and @angular-redux/router are optional
@@ -43,7 +44,7 @@ export class StoreModule {
         this._dataSync.restoreState().then((restoredState) => {
             this._store.configureStore(
                 rootReducer,
-                <any>Immutable(restoredState),
+                <any>Immutable(deepExtend(INIT_APP_STATE,restoredState)),
                 [createLogger({ stateTransformer: stateTransformer }),
                 createEpicMiddleware(this._rootEpics.createEpics())]);
 
