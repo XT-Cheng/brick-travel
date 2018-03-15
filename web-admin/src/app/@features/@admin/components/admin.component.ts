@@ -1,6 +1,6 @@
 import { Component, ViewChild, AfterViewInit, ComponentRef, OnInit } from '@angular/core';
 
-import { MENU_ITEMS } from '../pages-menu';
+import { MENU_ITEMS } from './admin-menu';
 import { Type } from '@angular/compiler/src/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
@@ -30,9 +30,9 @@ export interface ComponentType {
         </div>
     </ngx-two-columns-layout>
   `,
-  styleUrls: [`./pages.component.scss`]
+  styleUrls: [`./admin.component.scss`]
 })
-export class PagesComponent {
+export class AdminComponent {
   
   private createCmp : ComponentType;
 

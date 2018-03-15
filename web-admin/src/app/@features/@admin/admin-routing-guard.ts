@@ -4,7 +4,7 @@ import { NbAuthService } from '@nebular/auth';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
-export class RoutingGuard implements CanActivate, CanActivateChild {
+export class AdminRoutingGuard implements CanActivate, CanActivateChild {
   constructor(private _authService: NbAuthService, private _router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -27,13 +27,5 @@ export class RoutingGuard implements CanActivate, CanActivateChild {
         return false;
       }
     });
-    //if (this._selectorService.loggedInUser) { return true; }
-
-    // Store the attempted URL for redirecting
-    //    this.authService.redirectUrl = url;
-
-    // Navigate to the login page with extras
-    //this._router.navigate(['/auth/login']);
-    //return false;
   }
 }

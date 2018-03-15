@@ -4,9 +4,9 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { RoutingGuard } from './app-routing-guard';
 
 const routes: Routes = [
-  { path: 'pages', loadChildren: 'app/pages/pages.module#PagesModule' ,canActivate: [RoutingGuard]},
-  { path: '', redirectTo: 'pages', pathMatch: 'full',canActivate: [RoutingGuard] },
-  { path: '**', redirectTo: 'pages', canActivate: [RoutingGuard] },
+  { path: 'admin', loadChildren: 'app/@features/@admin/admin.module#AdminModule' ,canActivate: [RoutingGuard]},
+  { path: '', redirectTo: 'admin', pathMatch: 'full',canActivate: [RoutingGuard] },
+  { path: '**', redirectTo: 'admin', canActivate: [RoutingGuard] },
 ];
 
 const config: ExtraOptions = {

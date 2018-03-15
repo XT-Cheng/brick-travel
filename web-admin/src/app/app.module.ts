@@ -10,7 +10,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthModule } from './@core/auth/auth.module';
 import { FileUploadModule } from './@core/fileUpload/fileUpload.module';
 import { WEBAPI_HOST } from './@core/utils/constants';
-import { ThemeModule } from './@theme/theme.module';
+import { UIModule } from './@ui/ui.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from './@core/store/store.module';
@@ -26,9 +26,9 @@ import { StoreModule } from './@core/store/store.module';
     AppRoutingModule,
     NbAuthModule,
     NgbModule.forRoot(),
-    ThemeModule.forRoot(),
+    UIModule.forRoot(),
     FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`}),
-    StoreModule.forRoot(),
+    StoreModule.forRoot()
   ],
   bootstrap: [AppComponent],
   providers: [

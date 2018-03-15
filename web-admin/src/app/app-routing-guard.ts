@@ -16,13 +16,5 @@ export class RoutingGuard implements CanActivate {
 
   checkStateRestored(): Observable<boolean> {
     return this._dataSyncService.isStateRestored().take(1);
-    //if (this._selectorService.loggedInUser) { return true; }
-
-    // Store the attempted URL for redirecting
-    //    this.authService.redirectUrl = url;
-
-    // Navigate to the login page with extras
-    //this._router.navigate(['/auth/login']);
-    //return false;
   }
 }

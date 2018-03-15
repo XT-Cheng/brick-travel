@@ -16,17 +16,17 @@ import {
 } from '@nebular/theme';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { FooterComponent, HeaderComponent, SearchInputComponent } from './components';
+import { FooterComponent } from './components/footer/footer.component';
+import { HeaderComponent } from './components/header/header.component';
+import { SearchInputComponent } from './components/search-input/search-input.component';
 import { SearchComponent } from './components/search-input/search.component';
-import { TwoColumnsLayoutComponent } from './layouts';
+import { TwoColumnsLayoutComponent } from './layouts/two-columns/two-columns.layout';
 import { CapitalizePipe, PluralPipe, RoundPipe, TimingPipe } from './pipes';
 import { SearchService } from './providers/search.service';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { DEFAULT_THEME } from './styles/theme.default';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
-
-const CORE_MODULES = [];
 
 const NB_MODULES = [
   NbCardModule,
@@ -57,7 +57,7 @@ const PIPES = [
   TimingPipe,
 ];
 
-const NB_THEME_PROVIDERS = [
+const PROVIDERS = [
   ...NbThemeModule.forRoot(
     {
       name: 'default',
@@ -70,16 +70,16 @@ const NB_THEME_PROVIDERS = [
 ];
 
 @NgModule({
-  imports: [...BASE_MODULES, ...NB_MODULES,...CORE_MODULES],
+  imports: [...BASE_MODULES, ...NB_MODULES],
   exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
   entryComponents: [SearchInputComponent]
 })
-export class ThemeModule {
+export class UIModule {
   static forRoot(): ModuleWithProviders {
     return <ModuleWithProviders>{
-      ngModule: ThemeModule,
-      providers: [...NB_THEME_PROVIDERS],
+      ngModule: UIModule,
+      providers: [...PROVIDERS],
     };
   }
 }

@@ -1,14 +1,14 @@
 import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit } from '@angular/core';
-import { SelectorService } from '../../../../@core/store/providers/selector.service';
-import { CityService } from '../../../../@core/store/providers/city.service';
-import { ComponentType } from '../../pages.component';
+import { SelectorService } from '../../../../../@core/store/providers/selector.service';
+import { CityService } from '../../../../../@core/store/providers/city.service';
+import { ComponentType } from '../../../components/admin.component';
 import { CityFormComponent, EntityFormMode } from '../form/city.form.component';
-import { ICityBiz } from '../../../../@core/store/bizModel/city.biz.model';
+import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from '../../modal.component';
+import { ModalComponent } from '../../../components/modal.component';
 import { NbSearchService } from '@nebular/theme';
 import { ActivatedRoute } from '@angular/router';
-import { SearchService } from '../../../../@theme/providers/search.service';
+import { SearchService } from '../../../../../@ui/providers/search.service';
 
 @Component({
   selector: 'bricktravel-city-list',

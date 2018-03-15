@@ -2,11 +2,11 @@ import { Component, Inject, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ObjectID } from 'bson';
 
-import { FILE_UPLOADER } from '../../../../@core/fileUpload/fileUpload.module';
-import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
-import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
-import { ICityBiz } from '../../../../@core/store/bizModel/city.biz.model';
-import { CityService } from '../../../../@core/store/providers/city.service';
+import { FILE_UPLOADER } from '../../../../../@core/fileUpload/fileUpload.module';
+import { FileItem } from '../../../../../@core/fileUpload/providers/file-item';
+import { FileUploader } from '../../../../../@core/fileUpload/providers/file-uploader';
+import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
+import { CityService } from '../../../../../@core/store/providers/city.service';
 
 export enum EntityFormMode {
   create,

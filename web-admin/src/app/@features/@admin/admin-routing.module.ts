@@ -1,15 +1,15 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 
-import { PagesComponent } from './components/pages.component';
-import { CityListComponent } from './components/city/list/city.list.component';
-import { RoutingGuard } from './pages-routing-guard';
-import { CityResolver } from './providers/city-resolver';
+import { AdminComponent } from './components/admin.component';
+import { CityListComponent } from './city/components/list/city.list.component';
+import { AdminRoutingGuard } from './admin-routing-guard';
+import { CityResolver } from './city/providers/city-resolver';
 
 const routes: Routes = [{
   path: '',
-  component: PagesComponent,
-  canActivate: [RoutingGuard],
+  component: AdminComponent,
+  canActivate: [AdminRoutingGuard],
   children: [
     {
       path: '',
@@ -32,7 +32,7 @@ const routes: Routes = [{
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [RoutingGuard,CityResolver]
+  providers: [AdminRoutingGuard,CityResolver]
 })
-export class PagesRoutingModule {
+export class AdminRoutingModule {
 }

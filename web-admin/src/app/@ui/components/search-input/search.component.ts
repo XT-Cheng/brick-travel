@@ -3,35 +3,31 @@
  * Copyright Akveo. All Rights Reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
-
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ComponentRef,
-  ElementRef,
-  EventEmitter,
   HostBinding,
   Input,
   OnDestroy,
   OnInit,
-  Output,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { NavigationEnd, Router, ActivatedRoute, UrlSegment } from '@angular/router';
-
+import { NavigationEnd, Router } from '@angular/router';
+import { NbThemeService } from '@nebular/theme';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Subscription } from 'rxjs/Subscription';
-import { filter } from 'rxjs/operators/filter';
-import { of as observableOf } from 'rxjs/observable/of';
 import { combineLatest } from 'rxjs/observable/combineLatest';
+import { of as observableOf } from 'rxjs/observable/of';
 import { delay } from 'rxjs/operators/delay';
-
+import { filter } from 'rxjs/operators/filter';
 import { takeWhile } from 'rxjs/operators/takeWhile';
-import { SearchInputComponent } from '..';
-import { NbSearchService, NbThemeService } from '@nebular/theme';
+import { Subscription } from 'rxjs/Subscription';
+
 import { SearchService } from '../../providers/search.service';
+import { SearchInputComponent } from './search-input.component';
+
 
 /**
  * Beautiful full-page search control.

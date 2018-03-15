@@ -22,12 +22,6 @@ import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
 import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
 
-// Angular-redux ecosystem stuff.
-// @angular-redux/form and @angular-redux/router are optional
-// extensions that sync form and route location state between
-// our store and Angular.
-// Redux ecosystem stuff.
-// The top-level reducers and epics that make up our app's logic.
 @NgModule({
     imports: [NgReduxModule, HttpModule, IonicStorageModule]
 })
