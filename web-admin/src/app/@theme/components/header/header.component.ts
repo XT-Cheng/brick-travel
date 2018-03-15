@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { NbMenuService, NbSidebarService } from '@nebular/theme';
-import { SelectorService } from '../../../store/providers/selector.service';
-import { IUserBiz } from '../../../store/bizModel/user.biz.model';
+import { SelectorService } from '../../../@core/store/providers/selector.service';
+import { IUserBiz } from '../../../@core/store/bizModel/user.biz.model';
 import { Router } from '@angular/router';
 
 @Component({
@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
-    protected selectorService: SelectorService,
+    public selectorService: SelectorService,
     protected router: Router) {
   }
 

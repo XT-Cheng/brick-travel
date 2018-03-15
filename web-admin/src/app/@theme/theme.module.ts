@@ -1,11 +1,10 @@
-import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 import {
   NbActionsModule,
   NbCardModule,
+  NbCheckboxModule,
   NbLayoutModule,
   NbMenuModule,
   NbRouteTabsetModule,
@@ -14,29 +13,20 @@ import {
   NbTabsetModule,
   NbThemeModule,
   NbUserModule,
-  NbCheckboxModule,
 } from '@nebular/theme';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import {
-  FooterComponent,
-  HeaderComponent,
-  SearchInputComponent,
-  ThemeSettingsComponent,
-  ThemeSwitcherComponent,
-} from './components';
-import { CapitalizePipe, PluralPipe, RoundPipe, TimingPipe } from './pipes';
-import {
-  OneColumnLayoutComponent,
-  SampleLayoutComponent,
-  ThreeColumnsLayoutComponent,
-  TwoColumnsLayoutComponent,
-} from './layouts';
-import { DEFAULT_THEME } from './styles/theme.default';
-import { COSMIC_THEME } from './styles/theme.cosmic';
+import { FooterComponent, HeaderComponent, SearchInputComponent } from './components';
 import { SearchComponent } from './components/search-input/search.component';
+import { TwoColumnsLayoutComponent } from './layouts';
+import { CapitalizePipe, PluralPipe, RoundPipe, TimingPipe } from './pipes';
 import { SearchService } from './providers/search.service';
+import { COSMIC_THEME } from './styles/theme.cosmic';
+import { DEFAULT_THEME } from './styles/theme.default';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
+
+const CORE_MODULES = [];
 
 const NB_MODULES = [
   NbCardModule,
@@ -53,15 +43,10 @@ const NB_MODULES = [
 ];
 
 const COMPONENTS = [
-  ThemeSwitcherComponent,
   HeaderComponent,
   FooterComponent,
   SearchInputComponent,
   SearchComponent,
-  ThemeSettingsComponent,
-  OneColumnLayoutComponent,
-  SampleLayoutComponent,
-  ThreeColumnsLayoutComponent,
   TwoColumnsLayoutComponent,
 ];
 
@@ -85,7 +70,7 @@ const NB_THEME_PROVIDERS = [
 ];
 
 @NgModule({
-  imports: [...BASE_MODULES, ...NB_MODULES],
+  imports: [...BASE_MODULES, ...NB_MODULES,...CORE_MODULES],
   exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
   entryComponents: [SearchInputComponent]

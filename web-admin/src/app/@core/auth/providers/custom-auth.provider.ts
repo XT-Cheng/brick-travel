@@ -8,8 +8,8 @@ import { map } from 'rxjs/operators/map';
 import { catchError } from 'rxjs/operators/catchError';
 import { NbAbstractAuthProvider, NbAuthResult } from '@nebular/auth';
 import { CustomAuthProviderConfig } from './custom-auth.options';
-import { WEBAPI_HOST } from '../store/utils/constants';
-import { getDeepFromObject } from './utils/helpers';
+import { WEBAPI_HOST } from '../../utils/constants';
+import { getDeepFromObject } from '../../utils/helpers';
 
 @Injectable()
 export class CustomAuthProvider extends NbAbstractAuthProvider {

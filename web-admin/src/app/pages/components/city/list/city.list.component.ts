@@ -1,9 +1,9 @@
 import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit } from '@angular/core';
-import { SelectorService } from '../../../../store/providers/selector.service';
-import { CityService } from '../../../../store/providers/city.service';
+import { SelectorService } from '../../../../@core/store/providers/selector.service';
+import { CityService } from '../../../../@core/store/providers/city.service';
 import { ComponentType } from '../../pages.component';
 import { CityFormComponent, EntityFormMode } from '../form/city.form.component';
-import { ICityBiz } from '../../../../store/bizModel/city.biz.model';
+import { ICityBiz } from '../../../../@core/store/bizModel/city.biz.model';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../../modal.component';
 import { NbSearchService } from '@nebular/theme';
@@ -18,7 +18,7 @@ import { SearchService } from '../../../../@theme/providers/search.service';
 })
 export class CityListComponent implements ComponentType, OnInit {
 
-  constructor(private route : ActivatedRoute,protected _selector: SelectorService, 
+  constructor(private route : ActivatedRoute,public selector: SelectorService, 
     private _searchService : SearchService,
      private modalService: NgbModal, private _cityService: CityService) {
     this._cityService.load();
@@ -31,7 +31,7 @@ export class CityListComponent implements ComponentType, OnInit {
   ngOnInit(): void {
     this.route.data
     .subscribe((data: { searchKey : string }) => {
-      this._searchService.currentSearchKey = this._selector.citySearchKey;
+      this._searchService.currentSearchKey = this.selector.citySearchKey;
     });
   }
 

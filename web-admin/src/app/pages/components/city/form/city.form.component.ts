@@ -1,13 +1,12 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation, Input, Renderer2, ViewChild, ElementRef, ChangeDetectorRef, Inject } from '@angular/core';
-import { SelectorService } from '../../../../store/providers/selector.service';
-import { CityService } from '../../../../store/providers/city.service';
+import { Component, Inject, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ICityBiz } from '../../../../store/bizModel/city.biz.model';
 import { ObjectID } from 'bson';
-import { WEBAPI_HOST } from '../../../../store/utils/constants';
-import { FILE_UPLOADER } from '../../../../@core/core.module';
-import { FileUploader } from '../../../providers/file-uploader';
-import { FileItem } from '../../../providers/file-item';
+
+import { FILE_UPLOADER } from '../../../../@core/fileUpload/fileUpload.module';
+import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
+import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
+import { ICityBiz } from '../../../../@core/store/bizModel/city.biz.model';
+import { CityService } from '../../../../@core/store/providers/city.service';
 
 export enum EntityFormMode {
   create,
@@ -24,7 +23,7 @@ export class CityFormComponent {
   hasBaseDropZoneOver: boolean = false;
 
   constructor(private _cityService: CityService,
-    @Inject(FILE_UPLOADER) protected uploader: FileUploader,
+    @Inject(FILE_UPLOADER) public uploader: FileUploader,
     private activeModal: NgbActiveModal) {
     this.uploader.clearQueue();
     this.uploader.setOptions({ allowedMimeType: ['image/png']});

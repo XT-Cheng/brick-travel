@@ -20,7 +20,7 @@ import {
 import { IEntities } from '../entity/entity.model';
 import { filterCategory } from '../entity/entity.schema';
 import { IAppState } from '../store.model';
-import { WEBAPI_HOST } from '../utils/constants';
+import { WEBAPI_HOST } from '../../utils/constants';
 
 @Injectable()
 export class FilterCategoryService {

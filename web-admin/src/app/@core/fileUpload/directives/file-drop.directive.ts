@@ -1,8 +1,8 @@
 import { Directive, EventEmitter, ElementRef, HostListener, Input, Output, OnInit } from '@angular/core';
-
 import { FileUploader, FileUploaderOptions } from '../providers/file-uploader';
 import { FileItem } from '../providers/file-item';
 import { FileLikeObject } from '../providers/file-like-object';
+
 
 @Directive({ selector: '[ng2FileDrop]' })
 export class FileDropDirective implements OnInit {

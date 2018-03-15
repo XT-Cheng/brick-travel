@@ -1,40 +1,40 @@
 import { dispatch, NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
+import { denormalize, normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs/observable/of';
+import { catchError, tap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
-import { denormalize, normalize } from 'normalizr';
 
+import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
+import { FileUploader } from '../../fileUpload/providers/file-uploader';
+import { WEBAPI_HOST } from '../../utils/constants';
 import { ICityBiz, translateCityFromBiz } from '../bizModel/city.biz.model';
+import { dirtyAddAction, DirtyTypeEnum } from '../dirty/dirty.action';
+import { ICity } from '../entity/city/city.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,
     EntityActionTypeEnum,
+    entityDeleteAction,
+    entityInsertAction,
     entityLoadAction,
     entityLoadActionFailed,
     entityLoadActionStarted,
     entityLoadActionSucceeded,
     EntityTypeEnum,
-    IPagination,
-    entityInsertAction,
     entityUpdateAction,
-    entityDeleteAction,
+    IPagination,
 } from '../entity/entity.action';
 import { IEntities } from '../entity/entity.model';
 import { city } from '../entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { ICityUI, INIT_UI_CITY_STATE, STORE_UI_CITY_KEY } from '../ui/city/city.model';
-import { WEBAPI_HOST } from '../utils/constants';
-import { ICity } from '../entity/city/city.model';
-import { DirtyTypeEnum, dirtyAddAction } from '../dirty/dirty.action';
 import { SelectorService } from './selector.service';
-import { map, catchError, tap } from 'rxjs/operators';
-import { FILE_UPLOADER } from '../../@core/core.module';
-import { FileUploader } from '../../pages/providers/file-uploader';
 
 type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
 

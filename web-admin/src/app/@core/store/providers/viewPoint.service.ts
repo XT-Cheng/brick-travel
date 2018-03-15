@@ -26,7 +26,7 @@ import { viewPoint } from '../entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { INIT_UI_VIEWPOINT_STATE, STORE_UI_VIEWPOINT_KEY,IViewPointUI } from '../ui/viewPoint/viewPoint.model';
-import { WEBAPI_HOST } from '../utils/constants';
+import { WEBAPI_HOST } from '../../utils/constants';
 
 interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
 

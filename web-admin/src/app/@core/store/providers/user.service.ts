@@ -25,10 +25,10 @@ import { user } from '../entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { INIT_UI_USER_STATE, IUserUI, STORE_UI_USER_KEY } from '../ui/user/user.model';
-import { WEBAPI_HOST } from '../utils/constants';
+import { WEBAPI_HOST } from '../../utils/constants';
 import { NbAuthService, NbAuthToken, NbAuthJWTToken, NbTokenStorage, NbTokenService } from '@nebular/auth';
 import { IUserBiz } from '../bizModel/user.biz.model';
-import { TokenCustomLocalStorage } from '../../@core/tokenLocalStorage';
+import { TokenCustomLocalStorage } from '../../auth/providers/tokenLocalStorage';
 
 interface IUIUserActionMetaInfo extends IActionMetaInfo {
 }

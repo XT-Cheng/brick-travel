@@ -4,15 +4,16 @@ import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicStorageModule } from '@ionic/storage';
-import { NB_AUTH_TOKEN_CLASS, NbAuthJWTToken, NbTokenStorage } from '@nebular/auth';
+import { NbAuthModule } from '@nebular/auth';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { CoreModule } from './@core/core.module';
-import { TokenCustomLocalStorage } from './@core/tokenLocalStorage';
+import { AuthModule } from './@core/auth/auth.module';
+import { FileUploadModule } from './@core/fileUpload/fileUpload.module';
+import { WEBAPI_HOST } from './@core/utils/constants';
 import { ThemeModule } from './@theme/theme.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { StoreModule } from './store/store.module';
+import { StoreModule } from './@core/store/store.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,17 +22,17 @@ import { StoreModule } from './store/store.module';
     BrowserAnimationsModule,
     HttpModule,
     IonicStorageModule.forRoot(),
+    AuthModule.forRoot(),
     AppRoutingModule,
+    NbAuthModule,
     NgbModule.forRoot(),
     ThemeModule.forRoot(),
-    CoreModule.forRoot(),
+    FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`}),
     StoreModule.forRoot(),
   ],
   bootstrap: [AppComponent],
   providers: [
-    { provide: APP_BASE_HREF, useValue: '/' },
-    { provide: NB_AUTH_TOKEN_CLASS, useValue: NbAuthJWTToken },
-    { provide: NbTokenStorage, useClass: TokenCustomLocalStorage },
+    { provide: APP_BASE_HREF, useValue: '/' }
   ],
 })
 export class AppModule {

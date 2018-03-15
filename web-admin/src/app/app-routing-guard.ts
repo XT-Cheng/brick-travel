@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { NbAuthService } from '@nebular/auth';
 import { Observable } from 'rxjs/Observable';
-import { DataSyncService } from './store/providers/dataSync.service';
+import { DataSyncService } from './@core/store/providers/dataSync.service';
 
 @Injectable()
 export class RoutingGuard implements CanActivate {
