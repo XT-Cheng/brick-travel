@@ -50,7 +50,7 @@ export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): I
         }
         case UICityActionTypeEnum.SEARCH_CITY: {
             return <any>Immutable(state).set(STORE_UI_CITY_KEY.searchKey, action.payload.searchKey);
-          }
+        }
     }
     return <any>state;
 };
@@ -73,7 +73,7 @@ const defaultUICityActionPayload = {
 export class CityService {
     //#region Constructor
     constructor(private _http: HttpClient,
-        @Inject(FILE_UPLOADER) private _uploader : FileUploader,
+        @Inject(FILE_UPLOADER) private _uploader: FileUploader,
         private _selectorService: SelectorService,
         private _store: NgRedux<IAppState>) {
     }
@@ -91,14 +91,14 @@ export class CityService {
     private loadCitySucceededAction = entityLoadActionSucceeded(EntityTypeEnum.CITY);
 
     private loadCityFailedAction = entityLoadActionFailed(EntityTypeEnum.CITY)
-//#endregion
+    //#endregion
 
-//#region update actions
+    //#region update actions
 
-@dispatch()
-private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
+    @dispatch()
+    private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
 
-//#endregion
+    //#endregion
 
     //#region insert actions
 
@@ -107,20 +107,20 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
 
     //#endregion
 
-     //#region delete actions
-     @dispatch()
-     private deleteCityAction = entityDeleteAction<ICity>(EntityTypeEnum.CITY);
- 
-     //#endregion
+    //#region delete actions
+    @dispatch()
+    private deleteCityAction = entityDeleteAction<ICity>(EntityTypeEnum.CITY);
 
-     //#endregion
+    //#endregion
+
+    //#endregion
     //#region UI Actions
     @dispatch()
     private searchCityAction(searchKey: string): UICityAction {
         return {
             type: UICityActionTypeEnum.SEARCH_CITY,
-            meta: { progressing : false },
-            payload: Object.assign({},defaultUICityActionPayload,{
+            meta: { progressing: false },
+            payload: Object.assign({}, defaultUICityActionPayload, {
                 searchKey: searchKey
             })
         };
@@ -140,7 +140,7 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
     private addDirtyAction = dirtyAddAction(EntityTypeEnum.CITY);
 
     //#endregion
-    
+
     //#endregion
 
     //#endregion
@@ -173,7 +173,7 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
     //#endregion
 
     //#region Public methods
-    public search(searchKey : string) {
+    public search(searchKey: string) {
         this.searchCityAction(searchKey);
     }
 
@@ -185,51 +185,52 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
         this.selectCityAction(city);
     }
 
-    public addCity(added : ICityBiz): Observable<{} | ICityBiz> {
+    public addCity(added: ICityBiz): Observable<Error | ICityBiz> {
         return this.insert(added).pipe(tap((city) => {
-            this.insertCityAction(added.id, translateCityFromBiz(added));
+            this.insertCityAction(added.id, translateCityFromBiz(city));
         }),
-        catchError((err) => {
-            throw err;
-        }));
+            catchError((err: Error) => {
+                return of(err);
+            }));
     }
 
-    public updateCity(update: ICityBiz) : Observable<{} | ICityBiz> {
+    public updateCity(update: ICityBiz): Observable<Error | ICityBiz> {
         return this.update(update).pipe(tap((city) => {
-            this.updateCityAction(update.id, translateCityFromBiz(update));
+            this.updateCityAction(update.id, translateCityFromBiz(city));
         }),
-        catchError((err) => {
-            throw err;
-        }));
+            catchError((err) => {
+                return of(err);
+            }));
     }
 
     public deleteCity(del: ICityBiz) {
         this.deleteCityAction(del.id, translateCityFromBiz(del));
-       this.addDirtyAction(del.id, DirtyTypeEnum.DELETED);
+        this.addDirtyAction(del.id, DirtyTypeEnum.DELETED);
     }
     //#endregion
 
     //#region CRUD methods
-    public insert(id: string | ICityBiz) : Observable<ICityBiz> {
+    public insert(id: string | ICityBiz): Observable<ICityBiz> {
         let created = id;
         if (typeof id == 'string') {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
             created = denormalize(id, city, entities);
         }
 
-      const formData: FormData = new FormData();
+        const formData: FormData = new FormData();
 
-      for (let i = 0; i < this._uploader.queue.length; i++) {
-        formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
-      }
-      formData.append("city", JSON.stringify(created));
-      this._uploader.clearQueue();
+        formData.append("city", JSON.stringify(created));
 
-      return this._http.post<ICityBiz>(`${WEBAPI_HOST}/cities/`, formData);
+        for (let i = 0; i < this._uploader.queue.length; i++) {
+            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+        }
+        this._uploader.clearQueue();
+
+        return this._http.post<ICityBiz>(`${WEBAPI_HOST}/cities/`, formData);
     }
 
     public update(id: string | ICityBiz) {
-        let updated : any = id;
+        let updated: any = id;
         if (typeof id == 'string') {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
             updated = denormalize(id, city, entities);
@@ -237,13 +238,13 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
 
         const formData: FormData = new FormData();
 
-        for (let i = 0; i < this._uploader.queue.length; i++) {
-          formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
-        }
         formData.append("city", JSON.stringify(updated));
+        for (let i = 0; i < this._uploader.queue.length; i++) {
+            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+        }
         this._uploader.clearQueue();
 
-        return this._http.put(`${WEBAPI_HOST}/cities`, formData);
+        return this._http.put<ICityBiz>(`${WEBAPI_HOST}/cities`, formData);
     }
 
     public delete(id: string) {

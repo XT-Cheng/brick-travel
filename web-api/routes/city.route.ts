@@ -44,7 +44,7 @@ export class CityRoute {
         }
        
         await CityModel.updateCity(city);
-        res.json(true);
+        res.json(city);
     }
 
     private static async load(req: Request, res: Response, next: NextFunction) {
@@ -56,7 +56,7 @@ export class CityRoute {
         let city = JSON.parse(req.body.city);
         city.thumbnail = `assets/img/${req.files[0].filename}`;
         await CityModel.createCities(city);
-        res.json(true);
+        res.json(city);
     }
 
     private static async delete(req: Request, res: Response, next: NextFunction) {
