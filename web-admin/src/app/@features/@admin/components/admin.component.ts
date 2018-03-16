@@ -6,6 +6,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { NavigationEvent } from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-view-model';
 import { LOCATION_INITIALIZED } from '@angular/common';
+import { ToasterConfig } from 'angular2-toaster';
 
 export interface ComponentType {
   createEntity();
@@ -16,6 +17,7 @@ export interface ComponentType {
   template: `
     <ngx-two-columns-layout>
       <nb-menu [items]="menu"></nb-menu>
+      <toaster-container [toasterconfig]="config"></toaster-container>
       <router-outlet (activate)="onActivate($event)"></router-outlet>
       <div style='position: fixed;'>
         <nb-card class='action-buttons-card'>
@@ -33,6 +35,15 @@ export interface ComponentType {
   styleUrls: [`./admin.component.scss`]
 })
 export class AdminComponent {
+  config : ToasterConfig = new ToasterConfig({
+    positionClass: 'toast-top-right',
+    timeout: 2000,
+    newestOnTop: true,
+    tapToDismiss: true,
+    preventDuplicates: true,
+    animation: 'fade',
+    limit: 5,
+  });
   
   private createCmp : ComponentType;
 

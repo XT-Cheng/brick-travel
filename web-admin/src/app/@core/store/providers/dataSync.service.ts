@@ -77,13 +77,13 @@ export class DataSyncService {
     //#region Public methods
     public async restoreState() {
         let value = await this._storage.get('state');
-        
         return value ? value : {};
     }
 
     public stateRestored() {
         this._stateRestored$.next(true);
     }
+
     public syncData() {
         this.flushDirtyAction();
     }

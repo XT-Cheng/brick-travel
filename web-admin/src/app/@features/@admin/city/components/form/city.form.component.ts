@@ -7,6 +7,8 @@ import { FileItem } from '../../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../../@core/fileUpload/providers/file-uploader';
 import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
 import { CityService } from '../../../../../@core/store/providers/city.service';
+import { ToasterService } from 'angular2-toaster';
+import { ICity } from '../../../../../@core/store/entity/city/city.model';
 
 export enum EntityFormMode {
   create,
@@ -21,69 +23,68 @@ export enum EntityFormMode {
 export class CityFormComponent {
   submitted: boolean = false;
   hasBaseDropZoneOver: boolean = false;
+  private _newCity : ICityBiz;
+  private _originalCity : ICityBiz;
 
   constructor(private _cityService: CityService,
-    @Inject(FILE_UPLOADER) public uploader: FileUploader,
+    @Inject(FILE_UPLOADER) public uploader: FileUploader,private toasterService: ToasterService,
     private activeModal: NgbActiveModal) {
     this.uploader.clearQueue();
     this.uploader.setOptions({ allowedMimeType: ['image/png']});
-    // this.uploader.onAfterAddingFile = f => {
-    //   if (this.uploader.queue.length > 1) {
-    //     this.uploader.removeFromQueue(this.uploader.queue[0]);
-    //   }
-    // };
   }
 
   @Input()
   mode: EntityFormMode = EntityFormMode.create;
 
   @Input()
-  city: ICityBiz;
+  set originalCity(city :ICityBiz) {
+    if (city.id == '') {
+      city.id = new ObjectID().toHexString();
+    }
+    this._originalCity = city;
+    this._newCity = Object.assign({},city);
+  }
+  get newCity() : ICityBiz {
+    return this._newCity;
+  }
 
   @Input()
   title: string = 'Create City';
 
   hasFile(): boolean {
-    return this.city.thumbnail != '';
+    return this._newCity.thumbnail != '';
   }
 
   isSubmitDisAllowed(form): boolean {
-    return this.submitted || !form.valid || (this.uploader.queue.length == 0 && this.city.thumbnail == '');
+    return this.submitted || !this.isChanged() || !form.valid || (this.uploader.queue.length == 0 && this._newCity.thumbnail == '');
+  }
+
+  isChanged() : boolean {
+    return !(this._newCity.name == this._originalCity.name &&
+            this._newCity.adressCode == this._originalCity.adressCode &&
+            this._newCity.thumbnail == this._originalCity.thumbnail)
   }
 
   create() {
     this.submitted = true;
     if (this.mode == EntityFormMode.create) {
-      // this.uploader.onBuildItemForm = (item, form) => {
-      //   form.append('city',JSON.stringify({
-      //     id: new ObjectID().toHexString(),
-      //     name: this.city.name,
-      //     thumbnail: 'assets/img/IMG_4202.jpg',
-      //     adressCode: 'address'
-      //   }));
-      // };
-
-      // this.uploader.queue.forEach((item)=> {
-      //   item.upload();
-      // })
-
-      this._cityService.addCity({
-        id: new ObjectID().toHexString(),
-        name: this.city.name,
-        thumbnail: 'assets/img/IMG_4202.jpg',
-        adressCode: 'address'
-      }).subscribe((city) => {
+      this._cityService.addCity(this._newCity)
+      .subscribe((city) => {
         this.activeModal.close()
       },
-        (err) => {
+      (err) => {
+          this.toasterService.pop('error', 'Args Title', 'Args Body');
           this.activeModal.close()
-        });
+      });
     }
     else {
-      this._cityService.updateCity(this.city).subscribe((city) => {
+      this._cityService.updateCity(this._newCity)
+      .subscribe((city) => {
+        this.toasterService.pop('success', 'Args Title', 'Args Body');
         this.activeModal.close()
       },
         (err) => {
+          this.toasterService.pop('error', 'Args Title', 'Args Body');
           this.activeModal.close()
         });;
     }
@@ -101,7 +102,7 @@ export class CityFormComponent {
     let reader = new FileReader();
 
     reader.onloadend = (e: any) => {
-      this.city.thumbnail = e.target.result;
+      this._newCity.thumbnail = e.target.result;
     }
 
     reader.readAsDataURL(fileItems[0]._file)

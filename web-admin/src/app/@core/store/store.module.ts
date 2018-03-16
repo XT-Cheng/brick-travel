@@ -40,8 +40,12 @@ export class StoreModule {
                 createEpicMiddleware(this._rootEpics.createEpics())]);
 
             this._dataSync.stateRestored();
-
-            this._store.select(['dirties', 'dirtyIds']).subscribe(() => {
+            
+            //TODO: When data sync should happen?
+            this._store.select<Error>(['dirties', 'lastError']).filter((err)=> {
+                return err !== null;
+            }).debounceTime(60000)
+            .subscribe(() => {
                 this._dataSync.syncData();
             })
         });

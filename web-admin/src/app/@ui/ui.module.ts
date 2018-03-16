@@ -15,7 +15,7 @@ import {
   NbUserModule,
 } from '@nebular/theme';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import { ToasterModule } from 'angular2-toaster';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { SearchInputComponent } from './components/search-input/search-input.component';
@@ -40,6 +40,7 @@ const NB_MODULES = [
   NbSidebarModule,
   NbCheckboxModule,
   NgbModule,
+  ToasterModule
 ];
 
 const COMPONENTS = [
@@ -66,6 +67,7 @@ const PROVIDERS = [
   ).providers,
   ...NbSidebarModule.forRoot().providers,
   ...NbMenuModule.forRoot().providers,
+  ...ToasterModule.forRoot().providers,
   SearchService
 ];
 

@@ -240,7 +240,6 @@ private updateCityAction = entityUpdateAction<ICity>(EntityTypeEnum.CITY);
         for (let i = 0; i < this._uploader.queue.length; i++) {
           formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
         }
-        updated.thumbnail = '';
         formData.append("city", JSON.stringify(updated));
         this._uploader.clearQueue();
 

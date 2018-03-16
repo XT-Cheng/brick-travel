@@ -37,7 +37,7 @@ export class CityListComponent implements ComponentType, OnInit {
 
   createEntity() {
     const activeModal =this.modalService.open(CityFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.city = {
+    activeModal.componentInstance.originalCity = {
       name: '',
       thumbnail: '',
       adressCode: '',
@@ -47,7 +47,7 @@ export class CityListComponent implements ComponentType, OnInit {
 
   edit(city: ICityBiz) {
     const activeModal = this.modalService.open(CityFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.city = Object.assign({}, city);
+    activeModal.componentInstance.originalCity = city;
     activeModal.componentInstance.title = 'Edit City';
     activeModal.componentInstance.mode = EntityFormMode.edit;
   }
