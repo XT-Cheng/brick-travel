@@ -13,7 +13,7 @@ import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { WEBAPI_HOST } from '../../utils/constants';
 import { ICityBiz, translateCityFromBiz } from '../bizModel/city.biz.model';
-import { dirtyAddAction, DirtyTypeEnum } from '../dirty/dirty.action';
+import { dirtyAddAction } from '../dirty/dirty.action';
 import { ICity } from '../entity/city/city.model';
 import {
     EntityAction,
@@ -204,8 +204,12 @@ export class CityService {
     }
 
     public deleteCity(del: ICityBiz) {
-        this.deleteCityAction(del.id, translateCityFromBiz(del));
-        this.addDirtyAction(del.id, DirtyTypeEnum.DELETED);
+        return this.delete(del.id).pipe(tap(() => {
+            this.deleteCityAction(del.id, translateCityFromBiz(del));
+        }),
+            catchError((err) => {
+                return of(err);
+            }));
     }
     //#endregion
 

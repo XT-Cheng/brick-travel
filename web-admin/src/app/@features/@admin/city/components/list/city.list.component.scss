@@ -1,7 +1,4 @@
 .city-card {
-    //background: transparent;
-    //box-shadow: none;
-    
     margin: 0 1.5rem 1.5rem 1.5rem;
 
     nb-card-body {
@@ -23,6 +20,9 @@
         }
     }
 
+    nb-action:hover {
+        cursor: pointer;
+    }
     nb-card-footer {
         padding: 0.28rem;
     }

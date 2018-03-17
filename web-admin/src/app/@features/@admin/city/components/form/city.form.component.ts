@@ -1,5 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'angular2-toaster';
 import { ObjectID } from 'bson';
 
 import { FILE_UPLOADER } from '../../../../../@core/fileUpload/fileUpload.module';
@@ -7,8 +8,6 @@ import { FileItem } from '../../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../../@core/fileUpload/providers/file-uploader';
 import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
 import { CityService } from '../../../../../@core/store/providers/city.service';
-import { ToasterService } from 'angular2-toaster';
-import { ICity } from '../../../../../@core/store/entity/city/city.model';
 
 export enum EntityFormMode {
   create,
@@ -16,23 +15,25 @@ export enum EntityFormMode {
 }
 
 @Component({
-  selector: 'bricktravel-city-form',
+  selector: 'bt-city-form',
   templateUrl: 'city.form.component.html',
   styleUrls: ['./city.form.component.scss']
 })
 export class CityFormComponent {
-  submitted: boolean = false;
-  hasBaseDropZoneOver: boolean = false;
+  //#region Private member
+
   private _newCity: ICityBiz;
   private _originalCity: ICityBiz;
 
-  constructor(private _cityService: CityService,
-    @Inject(FILE_UPLOADER) public uploader: FileUploader, private toasterService: ToasterService,
-    private activeModal: NgbActiveModal) {
-    this.uploader.clearQueue();
-    this.uploader.setOptions({ allowedMimeType: ['image/png'] });
-  }
+  //#endregion
 
+  //#region Public member
+
+   hasBaseDropZoneOver: boolean = false;
+
+  //#endregion
+
+  //#region Public property
   @Input()
   mode: EntityFormMode = EntityFormMode.create;
 
@@ -51,22 +52,44 @@ export class CityFormComponent {
   @Input()
   title: string = 'Create City';
 
+  //#endregion
+
+  //#region Constructor
+
+  constructor(private _cityService: CityService,
+    @Inject(FILE_UPLOADER) public uploader: FileUploader, private toasterService: ToasterService,
+    private activeModal: NgbActiveModal) {
+    this.uploader.clearQueue();
+    this.uploader.setOptions({ allowedMimeType: ['image/png'] });
+  }
+
+  //#endregion
+
+  //#region Public method  
+
   hasFile(): boolean {
     return this._newCity.thumbnail != '';
   }
 
   isSubmitDisAllowed(form): boolean {
-    return this.submitted || !this.isChanged() || !form.valid || (this.uploader.queue.length == 0 && this._newCity.thumbnail == '');
+    return !this.isChanged() || !form.valid || (this.uploader.queue.length == 0 && this._newCity.thumbnail == '');
   }
 
-  isChanged(): boolean {
-    return !(this._newCity.name == this._originalCity.name &&
-      this._newCity.adressCode == this._originalCity.adressCode &&
-      this._newCity.thumbnail == this._originalCity.thumbnail)
+  fileOverBase(e: boolean): void {
+    this.hasBaseDropZoneOver = e;
   }
 
-  create() {
-    this.submitted = true;
+  fileDropped(fileItems: FileItem[]): void {
+    let reader = new FileReader();
+
+    reader.onloadend = (e: any) => {
+      this._newCity.thumbnail = e.target.result;
+    }
+
+    reader.readAsDataURL(fileItems[0]._file)
+  }
+
+  action() {
     if (this.mode == EntityFormMode.create) {
       this._cityService.addCity(this._newCity)
         .subscribe((ret: Error | ICityBiz) => {
@@ -93,17 +116,13 @@ export class CityFormComponent {
     this.activeModal.close();
   }
 
-  fileOverBase(e: boolean): void {
-    this.hasBaseDropZoneOver = e;
-  }
+  //#endregion
 
-  fileDropped(fileItems: FileItem[]): void {
-    let reader = new FileReader();
+  //#region Private method  
 
-    reader.onloadend = (e: any) => {
-      this._newCity.thumbnail = e.target.result;
-    }
-
-    reader.readAsDataURL(fileItems[0]._file)
+  private isChanged(): boolean {
+    return !(this._newCity.name == this._originalCity.name &&
+      this._newCity.adressCode == this._originalCity.adressCode &&
+      this._newCity.thumbnail == this._originalCity.thumbnail)
   }
 }
