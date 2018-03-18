@@ -206,9 +206,9 @@ export class ViewPointService {
     //#region Private methods
     private getViewPoints(pagination : IPagination, queryCondition : IQueryCondition): Observable<IEntities> {
         let url = `${WEBAPI_HOST}/`;
-        if (queryCondition) {
+        if (!!queryCondition['cityId']) {
           url += queryCondition['cityId'];
-          url += '/viewPoints';;
+          url += '/viewPoints';
         }
         else {
           url += 'viewPoints';

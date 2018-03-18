@@ -8,11 +8,7 @@ import { FileItem } from '../../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../../@core/fileUpload/providers/file-uploader';
 import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
 import { CityService } from '../../../../../@core/store/providers/city.service';
-
-export enum EntityFormMode {
-  create,
-  edit
-}
+import { EntityFormMode } from '../../../components/admin.component';
 
 @Component({
   selector: 'bt-city-form',
@@ -94,9 +90,9 @@ export class CityFormComponent {
       this._cityService.addCity(this._newCity)
         .subscribe((ret: Error | ICityBiz) => {
           if (ret instanceof Error)
-            this.toasterService.pop('error', 'Args Title', 'Args Body');
+            this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);
           else
-            this.toasterService.pop('success', 'Args Title', 'Args Body');
+            this.toasterService.pop('success', 'Success', `City ${this._newCity.name} created`);
           this.activeModal.close()
         });
     }
@@ -104,9 +100,9 @@ export class CityFormComponent {
       this._cityService.updateCity(this._newCity)
         .subscribe((ret: Error | ICityBiz) => {
           if (ret instanceof Error)
-            this.toasterService.pop('error', 'Args Title', 'Args Body');
+            this.toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
           else
-            this.toasterService.pop('success', 'Args Title', 'Args Body');
+            this.toasterService.pop('success', 'Success', `City ${this._newCity.name} edited`);
           this.activeModal.close()
         })
     }

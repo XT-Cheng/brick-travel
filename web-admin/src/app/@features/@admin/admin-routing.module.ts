@@ -5,6 +5,8 @@ import { AdminComponent } from './components/admin.component';
 import { CityListComponent } from './city/components/list/city.list.component';
 import { AdminRoutingGuard } from './admin-routing-guard';
 import { CityResolver } from './city/providers/city-resolver';
+import { ViewPointListComponent } from './viewPoint/components/list/viewPoint.list.component';
+import { ViewPointResolver } from './viewPoint/providers/viewPoint-resolver';
 
 const routes: Routes = [{
   path: '',
@@ -20,6 +22,11 @@ const routes: Routes = [{
           resolve: {searchKey: CityResolver}
         },
         {
+          path: 'viewPoint',
+          component: ViewPointListComponent,
+          resolve: {searchKey: ViewPointResolver}
+        },
+        {
           path: '',
           redirectTo: 'city',
           pathMatch: 'full',
@@ -32,7 +39,7 @@ const routes: Routes = [{
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [AdminRoutingGuard,CityResolver]
+  providers: [AdminRoutingGuard,CityResolver,ViewPointResolver]
 })
 export class AdminRoutingModule {
 }

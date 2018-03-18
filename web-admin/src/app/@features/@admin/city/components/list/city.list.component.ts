@@ -7,9 +7,9 @@ import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
 import { CityService } from '../../../../../@core/store/providers/city.service';
 import { SelectorService } from '../../../../../@core/store/providers/selector.service';
 import { SearchService } from '../../../../../@ui/providers/search.service';
-import { ComponentType } from '../../../components/admin.component';
+import { ComponentType, EntityFormMode } from '../../../components/admin.component';
 import { ModalComponent } from '../../../components/modal.component';
-import { CityFormComponent, EntityFormMode } from '../form/city.form.component';
+import { CityFormComponent } from '../form/city.form.component';
 
 @Component({
   selector: 'bt-city-list',
@@ -65,9 +65,9 @@ export class CityListComponent implements ComponentType, OnInit {
     activeModal.result.then((result) => {
       this._cityService.deleteCity(city).subscribe((ret: Error | ICityBiz) => {
         if (ret instanceof Error)
-          this.toasterService.pop('error', 'Args Title', 'Args Body');
+          this.toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
         else
-          this.toasterService.pop('success', 'Args Title', 'Args Body');
+          this.toasterService.pop('success', 'Success', `City ${city.name} deleted`);
       });;
     },(cancel) => {
       //do nothing

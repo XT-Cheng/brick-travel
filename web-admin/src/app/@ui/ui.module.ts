@@ -13,6 +13,7 @@ import {
   NbTabsetModule,
   NbThemeModule,
   NbUserModule,
+  NbContextMenuModule,
 } from '@nebular/theme';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterModule } from 'angular2-toaster';
@@ -39,6 +40,7 @@ const NB_MODULES = [
   NbSearchModule,
   NbSidebarModule,
   NbCheckboxModule,
+  NbContextMenuModule,
   NgbModule,
   ToasterModule
 ];

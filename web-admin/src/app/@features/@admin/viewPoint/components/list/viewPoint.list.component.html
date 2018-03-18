@@ -1,0 +1,16 @@
+
+<div class="row">
+  <nb-card *ngFor='let vp of (selector?.filterAndSearchedViewPoints$ | async)' class='vp-card' >
+    <nb-card-body>
+      <img [src]="vp.images[0]" />
+      <div class="card-title">{{vp.name}}</div>
+    </nb-card-body>
+    <nb-card-footer>
+      <nb-actions [fullWidth]='true'>
+        <nb-action icon='nb-compose' (click)='edit(vp)'></nb-action>
+        <nb-action icon='nb-close' (click)='delete(vp)'></nb-action>
+      </nb-actions>
+    </nb-card-footer>
+  </nb-card>
+</div>
+<!-- style="float: left;" -->

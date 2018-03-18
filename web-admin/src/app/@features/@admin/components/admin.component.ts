@@ -12,6 +12,11 @@ export interface ComponentType {
   createEntity();
 }
 
+export enum EntityFormMode {
+  create,
+  edit
+}
+
 @Component({
   selector: 'ngx-pages',
   template: `

@@ -4,7 +4,13 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'City',
     icon: 'nb-home',
-    link: '/pages/city',
+    link: '/admin/city',
+    home: true,
+  },
+  {
+    title: 'View Point',
+    icon: 'nb-home',
+    link: '/admin/viewPoint',
     home: true,
   }
 ];

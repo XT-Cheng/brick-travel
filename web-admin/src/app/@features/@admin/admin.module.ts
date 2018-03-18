@@ -7,11 +7,15 @@ import { CityFormComponent } from './city/components/form/city.form.component';
 import { CityListComponent } from './city/components/list/city.list.component';
 import { AdminComponent } from './components/admin.component';
 import { ModalComponent } from './components/modal.component';
+import { ViewPointListComponent } from './viewPoint/components/list/viewPoint.list.component';
+import { ViewPointFormComponent } from './viewPoint/components/form/viewPoint.form.component';
 
 const ADMIN_COMPONENTS = [
   AdminComponent,
   CityListComponent,
   CityFormComponent,
+  ViewPointFormComponent,
+  ViewPointListComponent,
   ModalComponent
 ];
 
@@ -24,7 +28,7 @@ const ADMIN_COMPONENTS = [
   declarations: [
     ...ADMIN_COMPONENTS
   ],
-  entryComponents: [CityFormComponent,ModalComponent]
+  entryComponents: [CityFormComponent,ViewPointFormComponent,ModalComponent]
 })
 export class AdminModule {
 }
