@@ -12,8 +12,15 @@
           Name is required!
         </small>
       </div>
+      <div class="form-group">
+        <label for="input-city">City</label>
+        <select id='input-city' [(ngModel)] = 'newViewPoint.city' name='city' class="form-control">
+          <option *ngFor="let city of (selectorService?.cities$ | async)" [ngValue]="city">{{city.name}}</option>
+        </select>
+      </div>
       <label for="input-name">View Point Image</label>
-      <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDropped($event)"
+      <div ng2FileDrop [multiple]='true' [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)"
+        (onFileDrop)="fileDropped($event)"
         [uploader]="uploader" class="my-drop-zone">
         <div *ngIf='!hasFile()'>Drop File</div>
         <ng-container *ngIf='hasFile()'>

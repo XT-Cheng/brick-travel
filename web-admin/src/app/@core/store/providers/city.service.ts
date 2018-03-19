@@ -74,7 +74,6 @@ export class CityService {
     //#region Constructor
     constructor(private _http: HttpClient,
         @Inject(FILE_UPLOADER) private _uploader: FileUploader,
-        private _selectorService: SelectorService,
         private _store: NgRedux<IAppState>) {
     }
     //#endregion
@@ -185,7 +184,7 @@ export class CityService {
         this.selectCityAction(city);
     }
 
-    public addCity(added: ICityBiz): Observable<Error | ICityBiz> {
+    public insertCity(added: ICityBiz): Observable<Error | ICityBiz> {
         return this.insert(added).pipe(tap((city) => {
             this.insertCityAction(added.id, translateCityFromBiz(city));
         }),

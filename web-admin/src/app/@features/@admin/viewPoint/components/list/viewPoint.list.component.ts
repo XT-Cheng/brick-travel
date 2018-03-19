@@ -38,13 +38,25 @@ export class ViewPointListComponent implements ComponentType, OnInit {
   }
 
   createEntity() {
-    // const activeModal = this.modalService.open(CityFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    // activeModal.componentInstance.originalCity = {
-    //   name: '',
-    //   thumbnail: '',
-    //   adressCode: '',
-    //   id: ''
-    // };
+    const activeModal = this.modalService.open(ViewPointFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
+    activeModal.componentInstance.originalViewPoint = {
+      id: '',
+      name: '',
+      city: {id: ''},
+      description: '',
+      tips: '',
+      timeNeeded: '',
+      thumbnail: '',
+      address: '',
+      latitude: -1,
+      longtitude: -1,
+      category: null,
+      rank: -1,
+      countOfComments: 0,
+      images : [],
+      tags: [],
+      comments: []
+    };
   }
   //#endregion
 

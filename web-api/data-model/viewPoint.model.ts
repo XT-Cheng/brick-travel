@@ -132,6 +132,14 @@ export class ViewPoint extends Typegoose {
         return this.find({city: cityId }).slice('comments', [0, ViewPoint.commentsFirstLoad]);
     }
     @staticMethod
+    static updateViewPoint(this: ModelType<ViewPoint> & typeof ViewPoint,update: any) {
+        return  this.findByIdAndUpdate(update.id,update);
+    }
+    @staticMethod
+    static deleteViewPoint(this: ModelType<ViewPoint> & typeof ViewPoint,id: string) {
+        return this.findByIdAndRemove(id);
+    }
+    @staticMethod
     static createViewPoint(this: ModelType<ViewPoint> & typeof ViewPoint,create: any) {
         return this.create(create);
     }

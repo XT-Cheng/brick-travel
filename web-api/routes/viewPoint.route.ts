@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response, Router } from 'express';
+import { ViewPoint } from "./../data-model/viewPoint.model";
 
 import { ViewPointModel } from '../data-model/viewPoint.model';
 import { asyncMiddleware } from '../utils/utility';
+
+import * as multer from 'multer';
+
+var upload = multer({dest: './uploads/'})
 
 export class ViewPointRoute {
     public static create(router: Router) {
@@ -22,20 +27,40 @@ export class ViewPointRoute {
             await ViewPointRoute.loadByCity(req, res, next);
         }));
 
-        //Insert ViewPoint
-        router.post('/viewPoints', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
-            await ViewPointRoute.insert(req, res, next);
-        }));
-
         //Insert ViewPoint comment by ViewPoint id
         router.post('/viewPoints/:id/comment', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             await ViewPointRoute.addComment(req, res, next);
         }));
+
+        //Insert ViewPoint
+        router.post('/viewPoints', upload.any(), asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+            await ViewPointRoute.insert(req, res, next);
+        }));
+
+        //Update ViewPoint
+        router.put('/viewPoints', upload.any(), asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+            await ViewPointRoute.update(req, res, next);
+        }));
+
+        //Delete ViewPoint
+        router.delete('/viewPoints/:id', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
+            await ViewPointRoute.delete(req, res, next);
+        }));
+    }
+
+    private static async delete(req: Request, res: Response, next: NextFunction) {
+        await ViewPointModel.deleteViewPoint(req.params.id);
+        res.json(true);
     }
 
     private static async insert(req: Request, res: Response, next: NextFunction) {
-        await ViewPointModel.createViewPoint(req.body);
-        res.json(true);
+        let viewPoint = JSON.parse(req.body.viewPoint);
+        viewPoint.images = [];
+        (req.files as Express.Multer.File[]).forEach(file => {
+            viewPoint.images.push(file.filename);
+        });
+        await ViewPointModel.createViewPoint(viewPoint);
+        res.json(viewPoint);
     }
 
     private static async addComment(req: Request, res: Response, next: NextFunction) {
@@ -59,5 +84,21 @@ export class ViewPointRoute {
     private static async loadByCity(req: Request, res: Response, next: NextFunction) {
         let ret = await ViewPointModel.findViewPointsByCity(req.params.cityId);
         res.json(ret);
+    }
+
+    private static async update(req: Request, res: Response, next: NextFunction) {
+        let viewPoint : any;
+        if (req.is('application/json')) {
+            viewPoint = req.body;
+        }
+        else {
+            viewPoint = JSON.parse(req.body.viewPoint);
+            Object.keys(req.files).forEach(key=>{
+                viewPoint.images.push(`assets/img/${req.files[key].fileName}`);
+            })
+        }
+       
+        await ViewPointModel.updateViewPoint(viewPoint);
+        res.json(viewPoint);
     }
 }

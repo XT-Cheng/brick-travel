@@ -87,7 +87,7 @@ export class CityFormComponent {
 
   action() {
     if (this.mode == EntityFormMode.create) {
-      this._cityService.addCity(this._newCity)
+      this._cityService.insertCity(this._newCity)
         .subscribe((ret: Error | ICityBiz) => {
           if (ret instanceof Error)
             this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);

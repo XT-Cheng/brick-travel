@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, ViewChildren } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import { ObjectID } from 'bson';
@@ -11,7 +11,8 @@ import { CityService } from '../../../../../@core/store/providers/city.service';
 import { IViewPointBiz } from '../../../../../@core/store/bizModel/viewPoint.biz.model';
 import { ViewPointService } from '../../../../../@core/store/providers/viewPoint.service';
 import { EntityFormMode } from '../../../components/admin.component';
-import { NbMenuService, NbMenuItem } from '@nebular/theme';
+import { NbMenuService, NbMenuItem, NbContextMenuDirective } from '@nebular/theme';
+import { SelectorService } from '../../../../../@core/store/providers/selector.service';
 
 @Component({
   selector: 'bt-vp-form',
@@ -21,9 +22,8 @@ import { NbMenuService, NbMenuItem } from '@nebular/theme';
 export class ViewPointFormComponent {
   //#region Private member
 
-  private _newViewPoint: IViewPointBiz;
-  private _originalViewPoint: IViewPointBiz;
-
+  private _originalViewPoint: IViewPointBiz = null;
+  private _files: Map<string, FileItem>;
   //#endregion
 
   //#region Public member
@@ -36,6 +36,11 @@ export class ViewPointFormComponent {
   //#endregion
 
   //#region Public property
+  newViewPoint: IViewPointBiz = null;
+  selectedCity : any = null;
+  
+  @ViewChildren(NbContextMenuDirective) contextMenus;
+
   @Input()
   mode: EntityFormMode = EntityFormMode.create;
 
@@ -45,10 +50,7 @@ export class ViewPointFormComponent {
       viewPoint.id = new ObjectID().toHexString();
     }
     this._originalViewPoint = viewPoint;
-    this._newViewPoint = Object.assign({}, viewPoint);
-  }
-  get newViewPoint(): IViewPointBiz {
-    return this._newViewPoint;
+    this.newViewPoint = JSON.parse(JSON.stringify(this._originalViewPoint))
   }
 
   @Input()
@@ -59,32 +61,53 @@ export class ViewPointFormComponent {
   //#region Constructor
 
   constructor(private _viewPointService: ViewPointService,
-    @Inject(FILE_UPLOADER) public uploader: FileUploader, private toasterService: ToasterService,private menuService : NbMenuService,
+    @Inject(FILE_UPLOADER) public uploader: FileUploader, 
+    public selectorService : SelectorService,
+    private toasterService: ToasterService, private menuService: NbMenuService,
     private activeModal: NgbActiveModal) {
+    this._files = new Map<string, FileItem>();
+
     this.uploader.clearQueue();
     this.uploader.setOptions({ allowedMimeType: ['image/png'] });
 
     this.menuService.onItemClick().subscribe(menuBag => {
-      console.log(menuBag.item);
+      if (this.newViewPoint == null) return;
+
+      let { file, source } = menuBag.item.data;
+
+      if (file) {
+        this.uploader.removeFromQueue(file);
+      }
+      let index = this.newViewPoint.images.findIndex((img) => {
+        return img === source;
+      });
+      if (index !== -1)
+        this.newViewPoint.images.splice(index, 1);
+
+      this.contextMenus.forEach(element => {
+        element.hide();
+      });
     })
   }
 
   //#endregion
 
   //#region Public method  
-  getMenuItem(img : string) : NbMenuItem[] {
+  getMenuItem(img: string): NbMenuItem[] {
+    let fileItem = this._files.get(img);
+
     return [{
       title: 'Delete',
-      data: img
-    }]
+      data: { file: fileItem, source: img }
+    }];
   }
 
   hasFile(): boolean {
-    return this._newViewPoint.images.length > 0;
+    return this.newViewPoint.images.length > 0;
   }
 
   isSubmitDisAllowed(form): boolean {
-    return !this.isChanged() || !form.valid || (this.uploader.queue.length == 0 && this._newViewPoint.images.length >0);
+    return !this.isChanged() || !form.valid || (this.uploader.queue.length == 0 && this.newViewPoint.images.length > 0);
   }
 
   fileOverBase(e: boolean): void {
@@ -95,33 +118,36 @@ export class ViewPointFormComponent {
     let reader = new FileReader();
 
     reader.onloadend = (e: any) => {
-      this._newViewPoint.images.push(e.target.result);
+      this.newViewPoint.images.push(e.target.result);
+      fileItems.forEach(item => {
+        this._files.set(e.target.result, item);
+      })
     }
 
     reader.readAsDataURL(fileItems[0]._file)
   }
 
   action() {
-    // if (this.mode == EntityFormMode.create) {
-    //   this._cityService.addCity(this._newCity)
-    //     .subscribe((ret: Error | ICityBiz) => {
-    //       if (ret instanceof Error)
-    //         this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);
-    //       else
-    //         this.toasterService.pop('success', 'Success', `City ${this._newCity.name} created`);
-    //       this.activeModal.close()
-    //     });
-    // }
-    // else {
-    //   this._cityService.updateCity(this._newCity)
-    //     .subscribe((ret: Error | ICityBiz) => {
-    //       if (ret instanceof Error)
-    //         this.toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
-    //       else
-    //         this.toasterService.pop('success', 'Success', `City ${this._newCity.name} edited`);
-    //       this.activeModal.close()
-    //     })
-    // }
+    if (this.mode == EntityFormMode.create) {
+      this._viewPointService.addViewPoint(this.newViewPoint)
+        .subscribe((ret: Error | IViewPointBiz) => {
+          if (ret instanceof Error)
+            this.toasterService.pop('error', 'Error', `Can't create view point, pls try later`);
+          else
+            this.toasterService.pop('success', 'Success', `City ${this.newViewPoint.name} created`);
+          this.activeModal.close()
+        });
+    }
+    else {
+      // this._viewPointService.(this._newCity)
+      //   .subscribe((ret: Error | ICityBiz) => {
+      //     if (ret instanceof Error)
+      //       this.toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
+      //     else
+      //       this.toasterService.pop('success', 'Success', `City ${this._newCity.name} edited`);
+      //     this.activeModal.close()
+      //   })
+    }
   }
 
   close() {
@@ -133,9 +159,7 @@ export class ViewPointFormComponent {
   //#region Private method  
 
   private isChanged(): boolean {
-    return;
-    // return !(this._newCity.name == this._originalCity.name &&
-    //   this._newCity.adressCode == this._originalCity.adressCode &&
-    //   this._newCity.thumbnail == this._originalCity.thumbnail)
+    return !(this.newViewPoint.name == this._originalViewPoint.name &&
+      this.newViewPoint.city.id == this._originalViewPoint.city.id)
   }
 }

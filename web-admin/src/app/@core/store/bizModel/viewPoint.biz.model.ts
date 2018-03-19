@@ -1,4 +1,4 @@
-import { ViewPointCategory } from "../entity/viewPoint/viewPoint.model";
+import { ViewPointCategory, IViewPoint } from "../entity/viewPoint/viewPoint.model";
 import { ICity } from "../entity/city/city.model";
 
 
@@ -29,4 +29,25 @@ export interface IViewPointCommentBiz {
     publishedAt: Date,
     images: string[],
     rate: number
+}
+
+export function translateViewPointFromBiz(viewPoint: IViewPointBiz): IViewPoint {
+    return {
+        id: viewPoint.id,
+        city: viewPoint.city.id,
+        name: viewPoint.name,
+        description: viewPoint.description,
+        tips: viewPoint.tips,
+        timeNeeded:  viewPoint.timeNeeded,
+        thumbnail:  viewPoint.thumbnail,
+        address: viewPoint.address,
+        latitude: viewPoint.latitude,
+        longtitude: viewPoint.longtitude,
+        category: viewPoint.category,
+        rank:viewPoint.rank,
+        countOfComments: viewPoint.countOfComments,
+        images :viewPoint.images.map((image)=>image),
+        tags: viewPoint.images.map((tag)=>tag),
+        comments: viewPoint.comments.map((comment)=>comment.id)
+    };
 }

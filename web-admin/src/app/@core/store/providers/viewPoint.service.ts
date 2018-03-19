@@ -1,14 +1,14 @@
-import { dispatch } from '@angular-redux/store';
+import { dispatch, NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
-import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
+import { denormalize, normalize } from 'normalizr';
 
-import { IViewPointBiz } from '../bizModel/viewPoint.biz.model';
+import { IViewPointBiz, translateViewPointFromBiz } from '../bizModel/viewPoint.biz.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -20,6 +20,9 @@ import {
     EntityTypeEnum,
     IPagination,
     IQueryCondition,
+    entityUpdateAction,
+    entityInsertAction,
+    entityDeleteAction,
 } from '../entity/entity.action';
 import { IEntities } from '../entity/entity.model';
 import { viewPoint } from '../entity/entity.schema';
@@ -27,6 +30,11 @@ import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { INIT_UI_VIEWPOINT_STATE, STORE_UI_VIEWPOINT_KEY,IViewPointUI } from '../ui/viewPoint/viewPoint.model';
 import { WEBAPI_HOST } from '../../utils/constants';
+import { tap, catchError } from 'rxjs/operators';
+import { IViewPoint } from '../entity/viewPoint/viewPoint.model';
+import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
+import { FileUploader } from '../../fileUpload/providers/file-uploader';
+import { SelectorService } from './selector.service';
 
 interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
 
@@ -93,7 +101,9 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
 @Injectable()
 export class ViewPointService {
     //#region Constructor
-    constructor(private _http: HttpClient) {
+    constructor(private _http: HttpClient,
+        @Inject(FILE_UPLOADER) private _uploader: FileUploader,
+        private _store: NgRedux<IAppState>) {
     }
     //#endregion
 
@@ -118,6 +128,26 @@ export class ViewPointService {
     private loadViewPointCommentsFailedAction  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINTCOMMENT);
     //#endregion
 
+    //#region update actions
+
+    @dispatch()
+    private updateViewPointAction = entityUpdateAction<IViewPoint>(EntityTypeEnum.VIEWPOINT);
+
+    //#endregion
+
+    //#region insert actions
+
+    @dispatch()
+    private insertViewPointAction = entityInsertAction<IViewPoint>(EntityTypeEnum.VIEWPOINT);
+
+    //#endregion
+
+    //#region delete actions
+    @dispatch()
+    private deleteViewPointAction = entityDeleteAction<IViewPoint>(EntityTypeEnum.VIEWPOINT);
+
+    //#endregion
+    
     //#region UI Actions
     @dispatch()
     private searchViewPointAction(searchKey: string): UIViewPointAction {
@@ -253,6 +283,79 @@ export class ViewPointService {
 
     public setViewMode(viewMode : boolean) {
         this.setViewModeAction(viewMode);
+    }
+
+    public addViewPoint(added: IViewPointBiz): Observable<Error | IViewPointBiz> {
+        return this.insert(added).pipe(tap((vp) => {
+            this.insertViewPointAction(added.id, translateViewPointFromBiz(vp));
+        }),
+            catchError((err: Error) => {
+                return of(err);
+            }));
+    }
+
+    public updateViewPoint(update: IViewPointBiz): Observable<Error | IViewPointBiz> {
+        return this.update(update).pipe(tap((vp) => {
+            this.updateViewPointAction(update.id, translateViewPointFromBiz(vp));
+        }),
+            catchError((err) => {
+                return of(err);
+            }));
+    }
+
+    public deleteViewPoint(del: IViewPointBiz) {
+        return this.delete(del.id).pipe(tap(() => {
+            this.deleteViewPointAction(del.id, translateViewPointFromBiz(del));
+        }),
+            catchError((err) => {
+                return of(err);
+            }));
+    }
+    //#endregion
+
+    //#region CRUD methods
+    public insert(id: string | IViewPointBiz): Observable<IViewPointBiz> {
+        let created : any = id;
+        if (typeof id == 'string') {
+            let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+            created = denormalize(id, viewPoint, entities);
+        }
+        else {
+            created = translateViewPointFromBiz(created);
+        }
+
+        const formData: FormData = new FormData();
+
+        formData.append("viewPoint", JSON.stringify(created));
+
+        for (let i = 0; i < this._uploader.queue.length; i++) {
+            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+        }
+        this._uploader.clearQueue();
+
+        return this._http.post<IViewPointBiz>(`${WEBAPI_HOST}/viewPoints/`, formData);
+    }
+
+    public update(id: string | IViewPointBiz) {
+        let updated: any = id;
+        if (typeof id == 'string') {
+            let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+            updated = denormalize(id, viewPoint, entities);
+        }
+
+        const formData: FormData = new FormData();
+
+        formData.append("viewPoint", JSON.stringify(updated));
+        for (let i = 0; i < this._uploader.queue.length; i++) {
+            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+        }
+        this._uploader.clearQueue();
+
+        return this._http.put<IViewPointBiz>(`${WEBAPI_HOST}/viewPoints`, formData);
+    }
+
+    public delete(id: string) {
+        return this._http.delete(`${WEBAPI_HOST}/viewPoints/${id}`);
     }
     //#endregion
 }
