@@ -28,6 +28,7 @@ import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
 export class StoreModule {
     constructor(@Optional() @SkipSelf() parentModule: StoreModule,
         private _store: NgRedux<IAppState>, private _rootEpics: RootEpics,
+        private _cityService : CityService,
         private _dataSync: DataSyncService) {
 
         throwIfAlreadyLoaded(parentModule, 'StoreModule');
@@ -39,6 +40,7 @@ export class StoreModule {
                 [createLogger({ stateTransformer: stateTransformer }),
                 createEpicMiddleware(this._rootEpics.createEpics())]);
 
+            this._cityService.load();
             this._dataSync.stateRestored();
             
             //TODO: When data sync should happen?

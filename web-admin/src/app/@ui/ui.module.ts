@@ -26,6 +26,7 @@ import { CapitalizePipe, PluralPipe, RoundPipe, TimingPipe } from './pipes';
 import { SearchService } from './providers/search.service';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { DEFAULT_THEME } from './styles/theme.default';
+import { AutofocusDirective } from './directives/autofocus.directive';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 
@@ -51,6 +52,7 @@ const COMPONENTS = [
   SearchInputComponent,
   SearchComponent,
   TwoColumnsLayoutComponent,
+  AutofocusDirective
 ];
 
 const PIPES = [

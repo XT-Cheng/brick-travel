@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
-import { NbAuthService } from '@nebular/auth';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+
 import { DataSyncService } from './@core/store/providers/dataSync.service';
+import { SelectorService } from './@core/store/providers/selector.service';
+import { filter, map, take } from 'rxjs/operators';
 
 @Injectable()
 export class RoutingGuard implements CanActivate {
-  constructor(private _dataSyncService: DataSyncService, private _router: Router) { }
+  constructor(private _dataSyncService: DataSyncService, private _selectorService : SelectorService, private _router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     let url: string = state.url;
 
-    return this.checkStateRestored();
+    //TODO: We need refactor activate logic later
+    return Observable.forkJoin(this.checkStateRestored(),
+    this._selectorService.cities$.pipe(filter((cities => cities.length >0)),map(()=>true),take(1)))
+    .pipe(map(()=>true));
   }
 
   checkStateRestored(): Observable<boolean> {

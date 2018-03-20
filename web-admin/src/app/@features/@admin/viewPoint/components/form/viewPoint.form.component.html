@@ -7,7 +7,7 @@
       <div class="form-group">
         <label for="input-name">View Point Name</label>
         <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="newViewPoint.name" name='name'
-          required autofocus [class.form-control-danger]="name.invalid && name.touched" />
+          required [autofocus]='true' [class.form-control-danger]="name.invalid && name.touched" />
         <small class="form-text error" *ngIf="name.invalid && name.touched && name?.errors?.required">
           Name is required!
         </small>
