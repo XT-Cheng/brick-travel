@@ -57,7 +57,7 @@ export class ViewPointRoute {
         let viewPoint = JSON.parse(req.body.viewPoint);
         viewPoint.images = [];
         (req.files as Express.Multer.File[]).forEach(file => {
-            viewPoint.images.push(file.filename);
+            viewPoint.images.push(`assets/img/${file.filename}`);
         });
         await ViewPointModel.createViewPoint(viewPoint);
         res.json(viewPoint);
@@ -93,11 +93,11 @@ export class ViewPointRoute {
         }
         else {
             viewPoint = JSON.parse(req.body.viewPoint);
-            Object.keys(req.files).forEach(key=>{
-                viewPoint.images.push(`assets/img/${req.files[key].fileName}`);
+            (req.files as Express.Multer.File[]).forEach(file => {
+                viewPoint.images.push(`assets/img/${file.filename}`);
             })
         }
-       
+
         await ViewPointModel.updateViewPoint(viewPoint);
         res.json(viewPoint);
     }

@@ -9,6 +9,7 @@ import { FileUploader } from '../../../../../@core/fileUpload/providers/file-upl
 import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
 import { CityService } from '../../../../../@core/store/providers/city.service';
 import { EntityFormMode } from '../../../components/admin.component';
+import { ICity } from '../../../../../@core/store/entity/city/city.model';
 
 @Component({
   selector: 'bt-city-form',
@@ -88,7 +89,7 @@ export class CityFormComponent {
   action() {
     if (this.mode == EntityFormMode.create) {
       this._cityService.insertCity(this._newCity)
-        .subscribe((ret: Error | ICityBiz) => {
+        .subscribe((ret: Error | ICity) => {
           if (ret instanceof Error)
             this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);
           else
@@ -98,7 +99,7 @@ export class CityFormComponent {
     }
     else {
       this._cityService.updateCity(this._newCity)
-        .subscribe((ret: Error | ICityBiz) => {
+        .subscribe((ret: Error | ICity) => {
           if (ret instanceof Error)
             this.toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
           else

@@ -285,18 +285,18 @@ export class ViewPointService {
         this.setViewModeAction(viewMode);
     }
 
-    public addViewPoint(added: IViewPointBiz): Observable<Error | IViewPointBiz> {
+    public addViewPoint(added: IViewPointBiz): Observable<Error | IViewPoint> {
         return this.insert(added).pipe(tap((vp) => {
-            this.insertViewPointAction(added.id, translateViewPointFromBiz(vp));
+            this.insertViewPointAction(added.id, vp);
         }),
             catchError((err: Error) => {
                 return of(err);
             }));
     }
 
-    public updateViewPoint(update: IViewPointBiz): Observable<Error | IViewPointBiz> {
+    public updateViewPoint(update: IViewPointBiz): Observable<Error | IViewPoint> {
         return this.update(update).pipe(tap((vp) => {
-            this.updateViewPointAction(update.id, translateViewPointFromBiz(vp));
+            this.updateViewPointAction(update.id, vp);
         }),
             catchError((err) => {
                 return of(err);
@@ -314,7 +314,7 @@ export class ViewPointService {
     //#endregion
 
     //#region CRUD methods
-    public insert(id: string | IViewPointBiz): Observable<IViewPointBiz> {
+    public insert(id: string | IViewPointBiz): Observable<IViewPoint> {
         let created : any = id;
         if (typeof id == 'string') {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
@@ -333,7 +333,7 @@ export class ViewPointService {
         }
         this._uploader.clearQueue();
 
-        return this._http.post<IViewPointBiz>(`${WEBAPI_HOST}/viewPoints/`, formData);
+        return this._http.post<IViewPoint>(`${WEBAPI_HOST}/viewPoints/`, formData);
     }
 
     public update(id: string | IViewPointBiz) {
@@ -342,7 +342,9 @@ export class ViewPointService {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
             updated = denormalize(id, viewPoint, entities);
         }
-
+        else {
+            updated = translateViewPointFromBiz(updated);
+        }
         const formData: FormData = new FormData();
 
         formData.append("viewPoint", JSON.stringify(updated));
@@ -351,7 +353,7 @@ export class ViewPointService {
         }
         this._uploader.clearQueue();
 
-        return this._http.put<IViewPointBiz>(`${WEBAPI_HOST}/viewPoints`, formData);
+        return this._http.put<IViewPoint>(`${WEBAPI_HOST}/viewPoints`, formData);
     }
 
     public delete(id: string) {

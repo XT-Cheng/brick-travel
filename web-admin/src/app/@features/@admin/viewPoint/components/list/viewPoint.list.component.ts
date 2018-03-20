@@ -9,6 +9,8 @@ import { ViewPointService } from '../../../../../@core/store/providers/viewPoint
 import { SearchService } from '../../../../../@ui/providers/search.service';
 import { ComponentType, EntityFormMode } from '../../../components/admin.component';
 import { ViewPointFormComponent } from '../form/viewPoint.form.component';
+import { ModalComponent } from '../../../components/modal.component';
+import { IViewPoint } from '../../../../../@core/store/entity/viewPoint/viewPoint.model';
 
 @Component({
   selector: 'bt-vp-list',
@@ -69,20 +71,20 @@ export class ViewPointListComponent implements ComponentType, OnInit {
   }
 
   delete(viewPoint: IViewPointBiz) {
-    // const activeModal = this.modalService.open(ModalComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    // activeModal.componentInstance.modalHeader = `Confrim`;
-    // activeModal.componentInstance.modalContent = `Delete city : ${city.name} ?`;
+    const activeModal = this.modalService.open(ModalComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
+    activeModal.componentInstance.modalHeader = `Confrim`;
+    activeModal.componentInstance.modalContent = `Delete view point : ${viewPoint.name} ?`;
 
-    // activeModal.result.then((result) => {
-    //   this._viewPointService.deleteCity(city).subscribe((ret: Error | ICityBiz) => {
-    //     if (ret instanceof Error)
-    //       this.toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
-    //     else
-    //       this.toasterService.pop('success', 'Success', `City ${city.name} deleted`);
-    //   });;
-    // },(cancel) => {
-    //   //do nothing
-    // });
+    activeModal.result.then((result) => {
+      this._viewPointService.deleteViewPoint(viewPoint).subscribe((ret: Error | IViewPoint) => {
+        if (ret instanceof Error)
+          this.toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
+        else
+          this.toasterService.pop('success', 'Success', `View point ${viewPoint.name} deleted`);
+      });;
+    },(cancel) => {
+      //do nothing
+    });
   }
   //#endregion
 }

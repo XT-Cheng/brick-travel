@@ -86,6 +86,9 @@ export function getEntityKey(typeEnum : EntityTypeEnum ) : string {
         case EntityTypeEnum.FILTERCATEGORY: {
             return STORE_ENTITIES_KEY.filterCategories
         }
+        case EntityTypeEnum.VIEWPOINT: {
+            return STORE_ENTITIES_KEY.viewPoints
+        }
         case EntityTypeEnum.USER: {
             return STORE_ENTITIES_KEY.users
         }

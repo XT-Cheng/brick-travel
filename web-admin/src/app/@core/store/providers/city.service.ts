@@ -184,7 +184,7 @@ export class CityService {
         this.selectCityAction(city);
     }
 
-    public insertCity(added: ICityBiz): Observable<Error | ICityBiz> {
+    public insertCity(added: ICityBiz): Observable<Error | ICity> {
         return this.insert(added).pipe(tap((city) => {
             this.insertCityAction(added.id, translateCityFromBiz(city));
         }),
@@ -193,7 +193,7 @@ export class CityService {
             }));
     }
 
-    public updateCity(update: ICityBiz): Observable<Error | ICityBiz> {
+    public updateCity(update: ICityBiz): Observable<Error | ICity> {
         return this.update(update).pipe(tap((city) => {
             this.updateCityAction(update.id, translateCityFromBiz(city));
         }),
@@ -213,7 +213,7 @@ export class CityService {
     //#endregion
 
     //#region CRUD methods
-    public insert(id: string | ICityBiz): Observable<ICityBiz> {
+    public insert(id: string | ICityBiz): Observable<ICity> {
         let created = id;
         if (typeof id == 'string') {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
@@ -229,7 +229,7 @@ export class CityService {
         }
         this._uploader.clearQueue();
 
-        return this._http.post<ICityBiz>(`${WEBAPI_HOST}/cities/`, formData);
+        return this._http.post<ICity>(`${WEBAPI_HOST}/cities/`, formData);
     }
 
     public update(id: string | ICityBiz) {
@@ -247,7 +247,7 @@ export class CityService {
         }
         this._uploader.clearQueue();
 
-        return this._http.put<ICityBiz>(`${WEBAPI_HOST}/cities`, formData);
+        return this._http.put<ICity>(`${WEBAPI_HOST}/cities`, formData);
     }
 
     public delete(id: string) {
