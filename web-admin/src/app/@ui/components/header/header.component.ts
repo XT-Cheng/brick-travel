@@ -26,7 +26,9 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.selectorService.userLoggedIn$
-      .subscribe((user: IUserBiz) => this.user = user);
+      .subscribe((user: IUserBiz) =>{
+        this.user = user
+      });
   }
 
   toggleSidebar(): boolean {

@@ -7,7 +7,7 @@ import { SelectorService } from './@core/store/providers/selector.service';
 import { filter, map, take } from 'rxjs/operators';
 
 @Injectable()
-export class RoutingGuard implements CanActivate {
+export class AppRoutingGuard implements CanActivate {
   constructor(private _dataSyncService: DataSyncService, private _selectorService : SelectorService, private _router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {

@@ -4,7 +4,7 @@ import { NbAuthService } from '@nebular/auth';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
-export class AdminRoutingGuard implements CanActivate, CanActivateChild {
+export class PageRoutingGuard implements CanActivate, CanActivateChild {
   constructor(private _authService: NbAuthService, private _router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {

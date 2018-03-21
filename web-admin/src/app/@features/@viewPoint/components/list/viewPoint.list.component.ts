@@ -3,14 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 
-import { IViewPointBiz } from '../../../../../@core/store/bizModel/viewPoint.biz.model';
-import { SelectorService } from '../../../../../@core/store/providers/selector.service';
-import { ViewPointService } from '../../../../../@core/store/providers/viewPoint.service';
-import { SearchService } from '../../../../../@ui/providers/search.service';
-import { ComponentType, EntityFormMode } from '../../../components/admin.component';
+import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
+import { SelectorService } from '../../../../@core/store/providers/selector.service';
+import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
+import { SearchService } from '../../../../@ui/providers/search.service';
 import { ViewPointFormComponent } from '../form/viewPoint.form.component';
-import { ModalComponent } from '../../../components/modal.component';
-import { IViewPoint } from '../../../../../@core/store/entity/viewPoint/viewPoint.model';
+import { IViewPoint } from '../../../../@core/store/entity/viewPoint/viewPoint.model';
+import { ComponentType, EntityFormMode } from '../../../../app.component';
+import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
 
 @Component({
   selector: 'bt-vp-list',

@@ -3,13 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 
-import { ICityBiz } from '../../../../../@core/store/bizModel/city.biz.model';
-import { CityService } from '../../../../../@core/store/providers/city.service';
-import { SelectorService } from '../../../../../@core/store/providers/selector.service';
-import { SearchService } from '../../../../../@ui/providers/search.service';
-import { ComponentType, EntityFormMode } from '../../../components/admin.component';
-import { ModalComponent } from '../../../components/modal.component';
+import { ICityBiz } from '../../../../@core/store/bizModel/city.biz.model';
+import { CityService } from '../../../../@core/store/providers/city.service';
+import { SelectorService } from '../../../../@core/store/providers/selector.service';
+import { SearchService } from '../../../../@ui/providers/search.service';
 import { CityFormComponent } from '../form/city.form.component';
+import { ComponentType, EntityFormMode } from '../../../../app.component';
+import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
 
 @Component({
   selector: 'bt-city-list',

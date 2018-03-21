@@ -27,6 +27,7 @@ import { SearchService } from './providers/search.service';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { DEFAULT_THEME } from './styles/theme.default';
 import { AutofocusDirective } from './directives/autofocus.directive';
+import { ModalComponent } from './components/modal/modal.component';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 
@@ -52,6 +53,7 @@ const COMPONENTS = [
   SearchInputComponent,
   SearchComponent,
   TwoColumnsLayoutComponent,
+  ModalComponent,
   AutofocusDirective
 ];
 
@@ -79,7 +81,7 @@ const PROVIDERS = [
   imports: [...BASE_MODULES, ...NB_MODULES],
   exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
-  entryComponents: [SearchInputComponent]
+  entryComponents: [SearchInputComponent,ModalComponent]
 })
 export class UIModule {
   static forRoot(): ModuleWithProviders {

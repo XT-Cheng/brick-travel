@@ -14,9 +14,12 @@ import { UIModule } from './@ui/ui.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from './@core/store/store.module';
+import { PageComponent } from './page.component';
+import { PageRoutingGuard } from './page-routing-guard';
+import { AppRoutingGuard } from './app-routing-guard';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,PageComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -32,7 +35,7 @@ import { StoreModule } from './@core/store/store.module';
   ],
   bootstrap: [AppComponent],
   providers: [
-    { provide: APP_BASE_HREF, useValue: '/' }
+    { provide: APP_BASE_HREF, useValue: '/' },PageRoutingGuard,AppRoutingGuard
   ],
 })
 export class AppModule {
