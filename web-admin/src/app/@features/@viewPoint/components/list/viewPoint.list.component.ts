@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
@@ -11,6 +11,9 @@ import { ViewPointFormComponent } from '../form/viewPoint.form.component';
 import { IViewPoint } from '../../../../@core/store/entity/viewPoint/viewPoint.model';
 import { ComponentType, EntityFormMode } from '../../../../app.component';
 import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject, Subscription, Subject } from 'rxjs';
+import { combineLatest, map,takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'bt-vp-list',
@@ -18,23 +21,53 @@ import { ModalComponent } from '../../../../@ui/components/modal/modal.component
   styleUrls: ['./viewPoint.list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ViewPointListComponent implements ComponentType, OnInit {
+export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy{
+  //#region Private members
+  
+  viewPoints$: Observable<IViewPointBiz[]>;
+  
+  //#endregion
+
+  //#region Private members
+  
+  private destroyed$ : Subject<boolean> = new Subject();
+  private cityId$: BehaviorSubject<string> = new BehaviorSubject('');
+
+  //#endregion
+  
   //#region Constructor
   constructor(private route: ActivatedRoute, public selector: SelectorService,
     private _searchService: SearchService, private modalService: NgbModal, private _viewPointService: ViewPointService,
-    private toasterService: ToasterService,) {
+    private toasterService: ToasterService,private changeDet : ChangeDetectorRef ) {
+    this.viewPoints$ = this.selector.filterAndSearchedViewPoints$.pipe(
+      combineLatest(this.cityId$),map(([vps,cityId]) => {
+        let ret = vps.filter((vp) => {
+          if (cityId == '') return true;
+  
+          return vp.city.id == cityId;
+        });
+        return ret;
+      })
+    );
     this._viewPointService.load();
-    this._searchService.onSearchSubmit().subscribe(value => {
+    this._searchService.onSearchSubmit().pipe(takeUntil(this.destroyed$)).subscribe(value => {
       this._searchService.currentSearchKey = value.term;
       this._viewPointService.search(value.term);
     })
   }
+
   //#endregion
 
   //#region Interface implementation
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+  }
+
   ngOnInit(): void {
-    this.route.data
-      .subscribe((data: { searchKey: string }) => {
+    this.route.data.pipe(takeUntil(this.destroyed$))
+      .subscribe((data: { searchKey: string, city: string }) => {
+        this.cityId$.next(data.city);
         this._searchService.currentSearchKey = this.selector.viewPointSearchKey;
       });
   }
@@ -44,7 +77,7 @@ export class ViewPointListComponent implements ComponentType, OnInit {
     activeModal.componentInstance.originalViewPoint = {
       id: '',
       name: '',
-      city: {id: ''},
+      city: { id: '' },
       description: '',
       tips: '',
       timeNeeded: '',
@@ -55,7 +88,7 @@ export class ViewPointListComponent implements ComponentType, OnInit {
       category: null,
       rank: -1,
       countOfComments: 0,
-      images : [],
+      images: [],
       tags: [],
       comments: []
     };
@@ -82,7 +115,7 @@ export class ViewPointListComponent implements ComponentType, OnInit {
         else
           this.toasterService.pop('success', 'Success', `View point ${viewPoint.name} deleted`);
       });;
-    },(cancel) => {
+    }, (cancel) => {
       //do nothing
     });
   }

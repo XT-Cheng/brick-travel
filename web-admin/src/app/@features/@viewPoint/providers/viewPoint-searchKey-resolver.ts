@@ -8,7 +8,7 @@ import { CityService } from '../../../@core/store/providers/city.service';
 import { SelectorService } from '../../../@core/store/providers/selector.service';
 
 @Injectable()
-export class ViewPointResolver implements Resolve<string> {
+export class ViewPointSearchKeyResolver implements Resolve<string> {
   constructor(private selectorService: SelectorService, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<string> {

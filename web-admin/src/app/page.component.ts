@@ -74,6 +74,7 @@ export class PageComponent implements OnInit {
       cities.forEach((city) => {
         this.viewPointMenuItem.children.push({
           title: city.name,
+          link: `viewPoint/${city.id}`,
           icon: 'nb-home'
         })
       })

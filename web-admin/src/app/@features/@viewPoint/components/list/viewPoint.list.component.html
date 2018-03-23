@@ -1,6 +1,6 @@
 
 <div class="row">
-  <nb-card *ngFor='let vp of (selector?.filterAndSearchedViewPoints$ | async)' class='vp-card' >
+  <nb-card *ngFor='let vp of (viewPoints$ | async)' class='vp-card' >
     <nb-card-body>
       <img [src]="vp.images[0]" />
       <div class="card-title">{{vp.name}}</div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
@@ -10,6 +10,8 @@ import { SearchService } from '../../../../@ui/providers/search.service';
 import { CityFormComponent } from '../form/city.form.component';
 import { ComponentType, EntityFormMode } from '../../../../app.component';
 import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'bt-city-list',
@@ -17,22 +19,37 @@ import { ModalComponent } from '../../../../@ui/components/modal/modal.component
   styleUrls: ['./city.list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CityListComponent implements ComponentType, OnInit {
+export class CityListComponent implements ComponentType, OnInit, OnDestroy {
+  //#region Private members
+  
+  //#endregion
+
+  //#region Private members
+  
+  private destroyed$ : Subject<boolean> = new Subject();
+
+  //#endregion
   //#region Constructor
   constructor(private route: ActivatedRoute, public selector: SelectorService,
     private _searchService: SearchService, private modalService: NgbModal, private _cityService: CityService,
     private toasterService: ToasterService,) {
     this._cityService.load();
-    this._searchService.onSearchSubmit().subscribe(value => {
-      this._searchService.currentSearchKey = value.term;
-      this._cityService.search(value.term);
+    this._searchService.onSearchSubmit().pipe(takeUntil(this.destroyed$))
+      .subscribe(value => {
+        this._searchService.currentSearchKey = value.term;
+        this._cityService.search(value.term);
     })
   }
   //#endregion
 
   //#region Interface implementation
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+  }
+
   ngOnInit(): void {
-    this.route.data
+    this.route.data.pipe(takeUntil(this.destroyed$))
       .subscribe((data: { searchKey: string }) => {
         this._searchService.currentSearchKey = this.selector.citySearchKey;
       });

@@ -3,7 +3,7 @@
      [class.right]="position === 'inverse'">
   <div class="logo-containter">
     <a (click)="toggleSidebar()" href="#" class="navigation"><i class="nb-menu"></i></a>
-    <div class="logo" (click)="goToHome()">Brick<span>Travel</span></div>
+    <div class="logo">Brick<span>Travel</span></div>
   </div>
 </div>
 
@@ -16,7 +16,7 @@
     <nb-user [name]="(selectorService.userLoggedIn$ | async)?.name" 
     [picture]="(selectorService.userLoggedIn$ | async)?.picture"></nb-user>
   </nb-action>
-  <nb-action class="control-item">
+  <nb-action #search class="control-item">
     <bt-search type="rotate-layout"></bt-search>
   </nb-action>
 </nb-actions>
