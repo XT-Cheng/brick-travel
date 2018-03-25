@@ -36,7 +36,9 @@ export enum EntityFormMode {
 `,
   styleUrls: [`./page.component.scss`]
 })
-export class PageComponent implements OnInit {
+export class PageComponent {
+  //#region Private members
+
   private cityMenuItem = {
     title: 'City',
     icon: 'nb-home',
@@ -49,11 +51,13 @@ export class PageComponent implements OnInit {
     children: []
   }
 
+  private createCmp: ComponentType;
+
+  //#endregion
+
+  //#region Public members
+
   menu: NbMenuItem[] = [this.cityMenuItem, this.viewPointMenuItem];
-
-  ngOnInit(): void {
-
-  }
 
   config: ToasterConfig = new ToasterConfig({
     positionClass: 'toast-top-right',
@@ -65,7 +69,13 @@ export class PageComponent implements OnInit {
     limit: 5,
   });
 
-  private createCmp: ComponentType;
+  //#endregion
+
+  //#region Interface implementation
+
+  //#endregion
+
+  //#region Constructor  
 
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private router: Router, private _selectorService: SelectorService) {
@@ -81,6 +91,9 @@ export class PageComponent implements OnInit {
     })
   }
 
+  //#endregion
+
+  //#region Pubic methods
   onActivate(comp: ComponentType) {
     this.createCmp = comp;
   }
@@ -89,3 +102,4 @@ export class PageComponent implements OnInit {
     this.createCmp.createEntity();
   }
 }
+//#endregion

@@ -22,13 +22,10 @@ import { takeUntil } from 'rxjs/operators';
 export class CityListComponent implements ComponentType, OnInit, OnDestroy {
   //#region Private members
   
-  //#endregion
-
-  //#region Private members
-  
   private destroyed$ : Subject<boolean> = new Subject();
 
   //#endregion
+  
   //#region Constructor
   constructor(private route: ActivatedRoute, public selector: SelectorService,
     private _searchService: SearchService, private modalService: NgbModal, private _cityService: CityService,

@@ -1,9 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { ToasterConfig } from 'angular2-toaster';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SelectorService } from './@core/store/providers/selector.service';
-import { NbMenuItem } from '@nebular/theme';
+import { Component } from '@angular/core';
 
 export interface ComponentType {
   createEntity();

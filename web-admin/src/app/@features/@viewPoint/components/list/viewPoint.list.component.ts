@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { combineLatest, map, takeUntil } from 'rxjs/operators';
 
 import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
+import { IViewPoint } from '../../../../@core/store/entity/viewPoint/viewPoint.model';
 import { SelectorService } from '../../../../@core/store/providers/selector.service';
 import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
-import { SearchService } from '../../../../@ui/providers/search.service';
-import { ViewPointFormComponent } from '../form/viewPoint.form.component';
-import { IViewPoint } from '../../../../@core/store/entity/viewPoint/viewPoint.model';
-import { ComponentType, EntityFormMode } from '../../../../app.component';
 import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject, Subscription, Subject } from 'rxjs';
-import { combineLatest, map,takeUntil } from 'rxjs/operators';
+import { SearchService } from '../../../../@ui/providers/search.service';
+import { ComponentType, EntityFormMode } from '../../../../app.component';
+import { ViewPointFormComponent } from '../form/viewPoint.form.component';
 
 @Component({
   selector: 'bt-vp-list',
