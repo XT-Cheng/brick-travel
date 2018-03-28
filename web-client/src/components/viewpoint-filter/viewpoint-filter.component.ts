@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/filterCategory.biz.model';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../shared/@core/store/bizModel/filterCategory.biz.model';
 
 @Component({
   selector: 'viewpoint-filter',

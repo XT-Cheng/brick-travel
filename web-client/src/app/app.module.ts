@@ -17,7 +17,6 @@ import { ViewPointFilterComponent } from '../components/viewpoint-filter/viewpoi
 import { ViewPointListComponent } from '../components/viewpoint-list/viewpoint-list.component';
 import { ViewPointSearchComponent } from '../components/viewpoint-search/viewpoint-search.component';
 import { DragulaDirective } from '../directives/dragula.directive';
-import { StoreModule } from '../modules/store/store.module';
 import { CityPickPage } from '../pages/city-pick/city-pick.page';
 import { HomePage } from '../pages/home/home.page';
 import { TestPage } from '../pages/test/test.page';
@@ -27,6 +26,7 @@ import { ViewPointPage } from '../pages/view-point/view-point.page';
 import { ViewPointsListPage } from '../pages/view-points-list/view-points-list.page';
 import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
 import { App } from './app.component';
+import { StoreModule } from '../shared/@core/store/store.module';
 
 @NgModule({
   declarations: [

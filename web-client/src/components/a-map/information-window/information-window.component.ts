@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { IViewPointBiz } from '../../../modules/store/bizModel/viewPoint.biz.model';
+import { IViewPointBiz } from '../../../shared/@core/store/bizModel/viewPoint.biz.model';
 import { ActionAllowed } from '../a-map.component';
 
 @Component({

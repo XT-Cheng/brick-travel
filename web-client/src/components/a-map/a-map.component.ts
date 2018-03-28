@@ -14,11 +14,11 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../modules/store/bizModel/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../modules/store/bizModel/viewPoint.biz.model';
 import { InformationWindowComponent } from './information-window/information-window.component';
 import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
-import { ICityBiz } from '../../modules/store/bizModel/city.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../shared/@core/store/bizModel/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../shared/@core/store/bizModel/viewPoint.biz.model';
+import { ICityBiz } from '../../shared/@core/store/bizModel/city.biz.model';
 
 @Component({
   selector: 'a-map',

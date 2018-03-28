@@ -1,15 +1,15 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { Content, NavController } from 'ionic-angular';
 
-import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../modules/store/bizModel/filterCategory.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../modules/store/bizModel/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../modules/store/bizModel/viewPoint.biz.model';
+import { IFilterCategoryBiz, IFilterCriteriaBiz } from '../../shared/@core/store/bizModel/filterCategory.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../shared/@core/store/bizModel/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../shared/@core/store/bizModel/viewPoint.biz.model';
 import { AMapComponent } from '../../components/a-map/a-map.component';
-import { CityService } from '../../modules/store/providers/city.service';
-import { FilterCategoryService } from '../../modules/store/providers/filterCategory.service';
-import { SelectorService } from '../../modules/store/providers/selector.service';
-import { TravelAgendaService } from '../../modules/store/providers/travelAgenda.service';
-import { ViewPointService } from '../../modules/store/providers/viewPoint.service';
+import { CityService } from '../../shared/@core/store/providers/city.service';
+import { FilterCategoryService } from '../../shared/@core/store/providers/filterCategory.service';
+import { SelectorService } from '../../shared/@core/store/providers/selector.service';
+import { TravelAgendaService } from '../../shared/@core/store/providers/travelAgenda.service';
+import { ViewPointService } from '../../shared/@core/store/providers/viewPoint.service';
 import { ViewPointPage } from '../view-point/view-point.page';
 
 @Component({
