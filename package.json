@@ -33,10 +33,7 @@
     "seamless-immutable": "^7.1.2",
     "sw-toolbox": "3.6.0",
     "zone.js": "0.8.18",
-    "@ionic/app-scripts": "3.0.1",
-    "@types/seamless-immutable": "^7.1.1",
-    "awesome-typescript-loader": "^4.0.1",
-    "typescript": "2.7.2"
+    "@types/seamless-immutable": "^7.1.1"
   },
   "description": "Brick travel"
 }

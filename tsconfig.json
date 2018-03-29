@@ -11,15 +11,10 @@
     "module": "es2015",
     "moduleResolution": "node",
     "sourceMap": true,
-    "target": "es6",
-    "baseUrl": ".",
-    "paths": {
-      "shared/*": ["../shared/*"],
-      "rxjs/*": ["node_modules/rxjs/*"]
-    }
+    "target": "es6"
   },
   "include": [
-    "src/**/*.ts"
+    "shared/**/*.ts"
   ],
   "exclude": [
     "node_modules"

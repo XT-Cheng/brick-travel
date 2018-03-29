@@ -47,5 +47,9 @@
     "awesome-typescript-loader": "^4.0.1",
     "typescript": "2.7.2"
   },
+  "config": {
+    "ionic_watch": "config/watch.config.js",
+    "ionic_webpack": "config/webpack.config.js"
+  },
   "description": "Brick travel web client"
 }

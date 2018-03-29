@@ -12,11 +12,11 @@ import {
 import { List } from 'ionic-angular';
 import { Observable, Subscription } from 'rxjs';
 
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../shared/@core/store/bizModel/travelAgenda.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from 'shared/@core/store/bizModel/travelAgenda.biz.model';
 
 import { DragulaService } from '../../providers/dragula.service';
 import { EnumEx } from '../../utils/enumEx';
-import { TransportationCategory } from '../../shared/@core/store/entity/travelAgenda/travelAgenda.model';
+import { TransportationCategory } from 'shared/@core/store/entity/travelAgenda/travelAgenda.model';
 
 @Component({
   selector: 'travel-agenda',

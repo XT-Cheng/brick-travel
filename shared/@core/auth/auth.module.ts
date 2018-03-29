@@ -16,7 +16,7 @@ const CORE_PROVIDERS = [
     imports: [
         CommonModule
     ],
-    declarations: [],
+    declarations: []
 })
 export class AuthModule {
     constructor(@Optional() @SkipSelf() parentModule: AuthModule) {
