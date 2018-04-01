@@ -10,6 +10,7 @@ log.txt
 *.sublime-project
 *.sublime-workspace
 #.vscode/
+.vscode/chrome/
 npm-debug.log*
 web-api/uploads
 web-admin/.vscode/chrome
