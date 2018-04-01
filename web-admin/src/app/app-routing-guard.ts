@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
-import { DataSyncService } from './@core/store/providers/dataSync.service';
-import { SelectorService } from './@core/store/providers/selector.service';
+import { DataSyncService } from 'shared/@core/store/providers/dataSync.service';
+import { SelectorService } from 'shared/@core/store/providers/selector.service';
 import { filter, map, take } from 'rxjs/operators';
 
 @Injectable()

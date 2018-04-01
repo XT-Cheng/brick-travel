@@ -6,10 +6,10 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest, map, takeUntil } from 'rxjs/operators';
 
-import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
-import { IViewPoint } from '../../../../@core/store/entity/viewPoint/viewPoint.model';
-import { SelectorService } from '../../../../@core/store/providers/selector.service';
-import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
+import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
+import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model';
+import { SelectorService } from 'shared/@core/store/providers/selector.service';
+import { ViewPointService } from 'shared/@core/store/providers/viewPoint.service';
 import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
 import { SearchService } from '../../../../@ui/providers/search.service';
 import { ComponentType, EntityFormMode } from '../../../../app.component';

@@ -3,16 +3,16 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import { ObjectID } from 'bson';
 
-import { FILE_UPLOADER } from '../../../../@core/fileUpload/fileUpload.module';
-import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
-import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
-import { ICityBiz } from '../../../../@core/store/bizModel/city.biz.model';
-import { CityService } from '../../../../@core/store/providers/city.service';
-import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
-import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
+import { FILE_UPLOADER } from 'shared/@core/fileUpload/fileUpload.module';
+import { FileItem } from 'shared/@core/fileUpload/providers/file-item';
+import { FileUploader } from 'shared/@core/fileUpload/providers/file-uploader';
+import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
+import { CityService } from 'shared/@core/store/providers/city.service';
+import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
+import { ViewPointService } from 'shared/@core/store/providers/viewPoint.service';
 import { NbMenuService, NbMenuItem, NbContextMenuDirective } from '@nebular/theme';
-import { SelectorService } from '../../../../@core/store/providers/selector.service';
-import { IViewPoint } from '../../../../@core/store/entity/viewPoint/viewPoint.model';
+import { SelectorService } from 'shared/@core/store/providers/selector.service';
+import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model';
 import { EntityFormMode } from '../../../../app.component';
 
 @Component({

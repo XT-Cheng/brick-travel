@@ -7,7 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import * as fs from "fs";
 import { UserModel } from '../data-model/user.model';
 
-const RSA_PRIVATE_KEY = fs.readFileSync('./jwtRS256.key');
+const RSA_PRIVATE_KEY = fs.readFileSync('./web-api/jwtRS256.key');
 
 export class AuthRoute {
     public static create(router: Router) {
@@ -20,13 +20,13 @@ export class AuthRoute {
 
     private static async login(req: Request, res: Response, next: NextFunction) {
         let errorMsg : string = '';
-        const email = req.body.email;
+        const username = req.body.username;
         const password = req.body.password;
 
-        const user = await UserModel.findByName(email);
+        const user = await UserModel.findByName(username);
 
         if (!user) {
-            errorMsg = `User ${email} not exist`;
+            errorMsg = `User ${username} not exist`;
             res.status(403).json({errors: errorMsg})
         }
         else if (user.password != password) {
@@ -45,7 +45,7 @@ export class AuthRoute {
                 subject: user.name
             });
             res.status(200).json({
-                idToken: jwtBearerToken
+                auth_app_token: jwtBearerToken
             });
         }
     }

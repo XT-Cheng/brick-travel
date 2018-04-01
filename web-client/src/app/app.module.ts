@@ -27,6 +27,7 @@ import { ViewPointsListPage } from '../pages/view-points-list/view-points-list.p
 import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
 import { App } from './app.component';
 import { StoreModule } from 'shared/@core/store/store.module';
+import { FileUploadModule } from 'shared/@core/fileUpload/fileUpload.module';
 
 @NgModule({
   declarations: [

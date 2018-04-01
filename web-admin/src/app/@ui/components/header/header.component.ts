@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, ViewRef, ViewChild, AfterViewInit, ElementRef, ViewContainerRef, Renderer2 } from '@angular/core';
 
 import { NbMenuService, NbSidebarService } from '@nebular/theme';
-import { SelectorService } from '../../../@core/store/providers/selector.service';
-import { IUserBiz } from '../../../@core/store/bizModel/user.biz.model';
+import { SelectorService } from '../../../shared/@core/store/providers/selector.service';
+import { IUserBiz } from '../../../shared/@core/store/bizModel/user.biz.model';
 import { Router } from '@angular/router';
 import { SearchService } from '../../providers/search.service';
 
