@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'bricktravel-modal',
+  selector: 'bt-modal',
   templateUrl: 'modal.component.html',
   styleUrls: [`./modal.component.scss`]
 })

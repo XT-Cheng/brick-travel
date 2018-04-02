@@ -28,8 +28,12 @@ import { COSMIC_THEME } from './styles/theme.cosmic';
 import { DEFAULT_THEME } from './styles/theme.default';
 import { AutofocusDirective } from './directives/autofocus.directive';
 import { ModalComponent } from './components/modal/modal.component';
+import { LoginComponent } from './components/auth/login.component';
+import { RouterModule } from '@angular/router';
+import { NbAuthModule } from '@nebular/auth';
+import { AuthComponent } from './components/auth/auth.component';
 
-const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
+const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule,RouterModule];
 
 const NB_MODULES = [
   NbCardModule,
@@ -44,10 +48,13 @@ const NB_MODULES = [
   NbCheckboxModule,
   NbContextMenuModule,
   NgbModule,
+  NbAuthModule,
   ToasterModule
 ];
 
 const COMPONENTS = [
+  AuthComponent,
+  LoginComponent,
   HeaderComponent,
   FooterComponent,
   SearchInputComponent,
@@ -81,7 +88,7 @@ const PROVIDERS = [
   imports: [...BASE_MODULES, ...NB_MODULES],
   exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
-  entryComponents: [SearchInputComponent,ModalComponent]
+  entryComponents: [SearchInputComponent,ModalComponent,LoginComponent,AuthComponent]
 })
 export class UIModule {
   static forRoot(): ModuleWithProviders {

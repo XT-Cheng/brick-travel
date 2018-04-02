@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Output, ViewChild, Input, HostBinding, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'ngx-search-input',
+  selector: 'bt-search-input',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: [
     'styles/search.component.modal-zoomin.scss',

@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { NbAuthService } from '@nebular/auth';
 import { Observable } from 'rxjs/Observable';
+import { AuthService } from 'shared/@core/auth/providers/authService';
 
 @Injectable()
 export class PageRoutingGuard implements CanActivate, CanActivateChild {
-  constructor(private _authService: NbAuthService, private _router: Router) { }
+  constructor(private _authService: AuthService, private _router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     let url: string = state.url;

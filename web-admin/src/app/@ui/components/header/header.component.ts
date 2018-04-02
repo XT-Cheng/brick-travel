@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { SearchService } from '../../providers/search.service';
 
 @Component({
-  selector: 'ngx-header',
+  selector: 'bt-header',
   styleUrls: ['./header.component.scss'],
   templateUrl: './header.component.html',
 })

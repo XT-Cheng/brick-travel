@@ -1,7 +1,7 @@
 import { Directive, ElementRef, Input } from '@angular/core';
 
 @Directive({
-    selector: '[autofocus]'
+    selector: '[bt-autofocus]'
 })
 export class AutofocusDirective
 {

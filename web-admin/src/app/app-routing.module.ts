@@ -5,15 +5,26 @@ import { AppRoutingGuard } from './app-routing-guard';
 import { CityListComponent } from './@features/@city/components/list/city.list.component';
 import { PageComponent } from './page.component';
 import { PageRoutingGuard } from './page-routing-guard';
+import { LoginComponent } from './@ui/components/auth/login.component';
+import { AuthComponent } from './@ui/components/auth/auth.component';
 
 const routes: Routes = [
-  { path: 'pages', component: PageComponent, canActivate: [PageRoutingGuard,AppRoutingGuard], children: [
-    { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule'},
-    { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule'},  
-    { path: '', redirectTo: 'city', pathMatch: 'full'},
-  ]},
-  { path: '', redirectTo: 'pages', pathMatch: 'full'},
-  { path: '**', redirectTo: 'pages'},
+  {
+    path: 'pages', component: PageComponent, canActivate: [PageRoutingGuard, AppRoutingGuard], children: [
+      { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
+      { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
+      { path: '', redirectTo: 'city', pathMatch: 'full' },
+    ]
+  },
+  {
+    path: 'auth',component: AuthComponent,children: [
+      {
+        path: '', component: LoginComponent
+      }
+    ]
+  },
+  { path: '', redirectTo: 'pages', pathMatch: 'full' },
+  { path: '**', redirectTo: 'pages' },
 ];
 
 const config: ExtraOptions = {

@@ -8,3 +8,6 @@ export const AUTH_FAIL_REDIRECT = null;
 
 export const AUTH_MESSAGE_KEY = 'messages';
 export const AUTH_ERRORS_KEY = 'errors';
+
+export const REDIRECT_DELAY = 100;
+export const SOCIAL_LINKS = [];
