@@ -22,8 +22,6 @@ import { AppRoutingGuard } from './app-routing-guard';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    //HttpModule,
-    //NbAuthModule.forRoot(),
     IonicStorageModule.forRoot(),
     StoreModule.forRoot(),
     AuthModule.forRoot(),

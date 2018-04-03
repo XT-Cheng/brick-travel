@@ -49,7 +49,6 @@ const NB_MODULES = [
   NbCheckboxModule,
   NbContextMenuModule,
   NgbModule,
-  //NbAuthModule,
   ToasterModule
 ];
 
