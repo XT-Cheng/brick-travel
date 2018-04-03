@@ -22,15 +22,15 @@ import { AppRoutingGuard } from './app-routing-guard';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpModule,
-    AppRoutingModule,
-    NbAuthModule.forRoot(),
+    //HttpModule,
+    //NbAuthModule.forRoot(),
     IonicStorageModule.forRoot(),
     StoreModule.forRoot(),
     AuthModule.forRoot(),
     NgbModule.forRoot(),
     UIModule.forRoot(),
-    FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`})
+    FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`}),
+    AppRoutingModule
   ],
   bootstrap: [AppComponent],
   providers: [

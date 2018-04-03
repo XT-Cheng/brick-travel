@@ -72,6 +72,9 @@ export class AuthService {
             getDeepFromObject(res.body,
                          TokenStorage.TOKEN_KEY));
         }),
+        switchMap((ret : AuthResult) => {
+          return this.processResultToken(ret);
+        }),
         catchError((res : any) => {
           let errors = [];
           if (res instanceof HttpErrorResponse) {
@@ -101,5 +104,20 @@ export class AuthService {
       }
       return res;
     });
+  }
+
+  private processResultToken(result: AuthResult) {
+    if (result.isSuccess() && result.getRawToken()) {
+      return this.tokenService.setRaw(result.getRawToken())
+        .pipe(
+          switchMap(() => this.tokenService.get()),
+          map((token: AuthToken) => {
+            result.setToken(token);
+            return result;
+          }),
+        );
+    }
+
+    return observableOf(result);
   }
 }

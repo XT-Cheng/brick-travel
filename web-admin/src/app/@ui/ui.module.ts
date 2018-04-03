@@ -32,6 +32,7 @@ import { LoginComponent } from './components/auth/login.component';
 import { RouterModule } from '@angular/router';
 import { NbAuthModule } from '@nebular/auth';
 import { AuthComponent } from './components/auth/auth.component';
+import { AuthBlockComponent } from './components/auth/auth-block.component';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule,RouterModule];
 
@@ -48,11 +49,12 @@ const NB_MODULES = [
   NbCheckboxModule,
   NbContextMenuModule,
   NgbModule,
-  NbAuthModule,
+  //NbAuthModule,
   ToasterModule
 ];
 
 const COMPONENTS = [
+  AuthBlockComponent,
   AuthComponent,
   LoginComponent,
   HeaderComponent,

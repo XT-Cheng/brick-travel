@@ -21,36 +21,32 @@ export interface AuthSocialLink {
 @Component({
   selector: 'bt-login',
   template: `
-    <nb-auth-block>
+    <bt-auth-block>
       <h2 class="title">Sign In</h2>
-      <small class="form-text sub-title">Hello! Sign in with your username or email</small>
+      <small class="form-text sub-title">Hello! Sign in with your User Name</small>
 
       <form (ngSubmit)="login()" #form="ngForm" autocomplete="nope">
 
-        <div *ngIf="showMessages.error && errors && errors.length > 0 && !submitted"
+        <div *ngIf="errors && errors.length > 0 && !submitted"
              class="alert alert-danger" role="alert">
           <div><strong>Oh snap!</strong></div>
           <div *ngFor="let error of errors">{{ error }}</div>
         </div>
 
-        <div *ngIf="showMessages.success && messages && messages.length > 0 && !submitted"
+        <div *ngIf="messages && messages.length > 0 && !submitted"
              class="alert alert-success" role="alert">
           <div><strong>Hooray!</strong></div>
           <div *ngFor="let message of messages">{{ message }}</div>
         </div>
 
         <div class="form-group">
-          <label for="input-email" class="sr-only">Email address</label>
-          <input name="email" [(ngModel)]="user.email" id="input-email" pattern=".+@.+\..+"
-                 class="form-control" placeholder="Email address" #email="ngModel"
-                 [class.form-control-danger]="email.invalid && email.touched" bt-autofocus
+          <label for="input-username" class="sr-only">User name</label>
+          <input name="username" [(ngModel)]="user.username" id="input-username"
+                 class="form-control" placeholder="User name" #username="ngModel"
+                 [class.form-control-danger]="username.invalid && username.touched" bt-autofocus
                  required>
-          <small class="form-text error" *ngIf="email.invalid && email.touched && email?.errors?.required">
-            Email is required!
-          </small>
-          <small class="form-text error"
-                 *ngIf="email.invalid && email.touched && email?.errors?.pattern">
-            Email should be the real one!
+          <small class="form-text error" *ngIf="username.invalid && username.touched && username?.errors?.required">
+            User Name is required!
           </small>
         </div>
 
@@ -101,12 +97,11 @@ export interface AuthSocialLink {
           Don't have an account? <a routerLink="../register"><strong>Sign Up</strong></a>
         </small>
       </div>
-    </nb-auth-block>
+    </bt-auth-block>
   `,
 })
 export class LoginComponent {
   redirectDelay: number = 0;
-  showMessages: any = {};
   provider: string = '';
 
   errors: string[] = [];

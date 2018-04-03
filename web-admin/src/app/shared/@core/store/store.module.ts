@@ -1,6 +1,5 @@
 import { NgRedux, NgReduxModule } from '@angular-redux/store';
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
-import { HttpModule } from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { createLogger } from 'redux-logger';
 import { createEpicMiddleware } from 'redux-observable';
@@ -21,9 +20,10 @@ import { RootEpics } from './store.epic';
 import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
 import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-    imports: [NgReduxModule, HttpModule, IonicStorageModule]
+    imports: [NgReduxModule, HttpClientModule, IonicStorageModule]
 })
 export class StoreModule {
     constructor(@Optional() @SkipSelf() parentModule: StoreModule,
