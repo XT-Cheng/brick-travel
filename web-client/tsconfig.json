@@ -14,8 +14,7 @@
     "target": "es6",
     "baseUrl": ".",
     "paths": {
-      "shared/*": ["../shared/*"],
-      "rxjs/*": ["node_modules/rxjs/*"]
+      "shared/*": ["../shared/*"]
     }
   },
   "include": [

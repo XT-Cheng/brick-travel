@@ -27,7 +27,9 @@ import { ViewPointsListPage } from '../pages/view-points-list/view-points-list.p
 import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
 import { App } from './app.component';
 import { StoreModule } from 'shared/@core/store/store.module';
+import { AuthModule } from 'shared/@core/auth/auth.module';
 import { FileUploadModule } from 'shared/@core/fileUpload/fileUpload.module';
+import { WEBAPI_HOST } from 'shared/@core/utils/constants';
 
 @NgModule({
   declarations: [
@@ -55,6 +57,8 @@ import { FileUploadModule } from 'shared/@core/fileUpload/fileUpload.module';
   imports: [
     BrowserModule,
     HttpClientModule,
+    FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`}),
+    AuthModule.forRoot(),
     StoreModule.forRoot(),
     IonicModule.forRoot(App),
     IonicStorageModule.forRoot(),
