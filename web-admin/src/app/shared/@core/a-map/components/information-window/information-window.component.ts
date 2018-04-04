@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { IViewPointBiz } from '../../../store/bizModel/viewPoint.biz.model';
-import { ActionAllowed } from '../a-map.component';
+import { ActionAllowed } from 'shared/@core/utils/constants';
 
 @Component({
   selector: 'bt-information-window-a',

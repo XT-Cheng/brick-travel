@@ -23,7 +23,8 @@
         "../node_modules/ionicons/scss/ionicons.scss",
         "../node_modules/@nebular/theme/styles/prebuilt/default.css",
         "../node_modules/angular2-toaster/toaster.css",
-        "./app/@ui/styles/styles.scss"
+        "./app/@ui/styles/styles.scss",
+        "./app/shared/@core/assets/css/iconfont.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",

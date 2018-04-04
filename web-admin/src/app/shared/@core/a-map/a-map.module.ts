@@ -33,7 +33,6 @@ const ENTRY_COMPONENTS = [
     ]
 })
 export class AMapModule {
-    constructor(@Optional() @SkipSelf() parentModule: AMapModule) {
-        throwIfAlreadyLoaded(parentModule, 'AMapModule');
+    constructor() {
     }
 }

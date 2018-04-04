@@ -33,6 +33,7 @@ import { RouterModule } from '@angular/router';
 import { NbAuthModule } from '@nebular/auth';
 import { AuthComponent } from './components/auth/auth.component';
 import { AuthBlockComponent } from './components/auth/auth-block.component';
+import { AMapModule } from 'shared/@core/a-map/a-map.module';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule,RouterModule];
 
@@ -49,7 +50,8 @@ const NB_MODULES = [
   NbCheckboxModule,
   NbContextMenuModule,
   NgbModule,
-  ToasterModule
+  ToasterModule,
+  AMapModule
 ];
 
 const COMPONENTS = [

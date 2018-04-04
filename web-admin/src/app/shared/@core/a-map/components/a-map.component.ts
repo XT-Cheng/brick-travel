@@ -19,10 +19,12 @@ import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.co
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from 'shared/@core/store/bizModel/travelAgenda.biz.model';
 import { IViewPointBiz } from '../../store/bizModel/viewPoint.biz.model';
 import { ICityBiz } from '../../store/bizModel/city.biz.model';
+import { ActionAllowed } from 'shared/@core/utils/constants';
 
 @Component({
   selector: 'bt-a-map',
-  templateUrl: 'a-map.component.html'
+  templateUrl: 'a-map.component.html',
+  styleUrls: ['a-map.component.scss']
 })
 export class AMapComponent implements AfterViewInit {
   //#region Private member
@@ -150,8 +152,8 @@ export class AMapComponent implements AfterViewInit {
 
   private generateDailyTrip() {
     //Update all of markers as viewPoint 
-    for (let [, markerInfor] of this._markers.entries()) {
-      this.updateMarkerInfor(markerInfor, markerInfor.viewPoint, this.actionAllowed(markerInfor.viewPoint), false, -1);
+    for (let key of Array.from(this._markers.keys())) {
+      this.updateMarkerInfor(this._markers[key], this._markers[key].viewPoint, this.actionAllowed(this._markers[key].viewPoint), false, -1);
     }
 
     if (!this._dailyTrip) {
@@ -423,17 +425,6 @@ export class AMapComponent implements AfterViewInit {
     toBeRemoved.forEach(remove => this.destroyMarker(remove));
   }
   //#endregion Private method
-}
-
-export enum ActionAllowed {
-  ADD,
-  REMOVE,
-  NONE
-}
-
-export enum MapMode {
-  DailyTrip,
-  ViewPoint
 }
 
 export interface MarkerInfor {

@@ -13,6 +13,11 @@ import { ModalComponent } from '../../../../@ui/components/modal/modal.component
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+enum DisplayModeEnum {
+  Map,
+  List
+}
+
 @Component({
   selector: 'bt-city-list',
   templateUrl: 'city.list.component.html',
@@ -23,7 +28,7 @@ export class CityListComponent implements ComponentType, OnInit, OnDestroy {
   //#region Private members
   
   private destroyed$ : Subject<boolean> = new Subject();
-
+  
   //#endregion
   
   //#region Constructor

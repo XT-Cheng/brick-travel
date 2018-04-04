@@ -20,10 +20,18 @@
             "url": "http://localhost:4200",
             "webRoot": "${workspaceRoot}/web-admin",
             "sourceMaps": true,
+            "port": 9223,
             "sourceMapPathOverrides": {
                 "webpack:/*": "${webRoot}/*"
             },
             "userDataDir": "${workspaceRoot}/.vscode/chrome"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Mobile Client",
+            "url": "http://localhost:8100",
+            "webRoot": "${workspaceRoot}/web-client/www"
         }
     ]
 }

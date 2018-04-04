@@ -4,6 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { Platform } from 'ionic-angular';
 
 import { CityPickPage } from '../pages/city-pick/city-pick.page';
+import { DataSyncService } from 'shared/@core/store/providers/dataSync.service';
 
 //import { HomePage } from '../pages/home/home.page';
 //import { ViewPointsPage } from '../pages/view-points-list/view-points';
