@@ -28,7 +28,7 @@ import { HttpClientModule } from '@angular/common/http';
 export class StoreModule {
     constructor(@Optional() @SkipSelf() parentModule: StoreModule,
         private _store: NgRedux<IAppState>, private _rootEpics: RootEpics,
-        private _cityService : CityService,
+        private _cityService : CityService, private _viewPointService : ViewPointService,
         private _dataSync: DataSyncService) {
 
         throwIfAlreadyLoaded(parentModule, 'StoreModule');
@@ -41,6 +41,7 @@ export class StoreModule {
                 createEpicMiddleware(this._rootEpics.createEpics())]);
 
             this._cityService.load();
+            this._viewPointService.load();
             this._dataSync.stateRestored();
             
             //TODO: When data sync should happen?

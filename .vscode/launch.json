@@ -21,9 +21,6 @@
             "webRoot": "${workspaceRoot}/web-admin",
             "sourceMaps": true,
             "port": 9223,
-            "sourceMapPathOverrides": {
-                "webpack:/*": "${webRoot}/*"
-            },
             "userDataDir": "${workspaceRoot}/.vscode/chrome"
         },
         {

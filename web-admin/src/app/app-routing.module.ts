@@ -6,13 +6,15 @@ import { PageComponent } from './page.component';
 import { PageRoutingGuard } from './page-routing-guard';
 import { LoginComponent } from './@ui/components/auth/login.component';
 import { AuthComponent } from './@ui/components/auth/auth.component';
+import { TestComponent } from './test.component';
 
 const routes: Routes = [
   {
     path: 'pages', component: PageComponent,canActivate: [AppRoutingGuard,PageRoutingGuard], children: [
       { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
       { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
-      { path: '', redirectTo: 'city', pathMatch: 'full' },
+      { path: 'test', component: TestComponent},
+      { path: '', redirectTo: 'test', pathMatch: 'full' },
     ]
   },
   // {

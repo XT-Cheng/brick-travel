@@ -5,7 +5,8 @@ import { IViewPointBiz } from '../../../store/bizModel/viewPoint.biz.model';
 
 @Component({
   selector: 'bt-vp-marker-a',
-  templateUrl: 'viewpoint-marker.component.html'
+  templateUrl: 'viewpoint-marker.component.html',
+  styleUrls: ['viewpoint-marker.component.scss']
 })
 export class ViewPointMarkerComponent {
   //#region Private member

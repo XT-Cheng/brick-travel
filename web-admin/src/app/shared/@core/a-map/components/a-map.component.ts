@@ -38,6 +38,7 @@ export class AMapComponent implements AfterViewInit {
   private _dailyTrip: IDailyTripBiz = null;
   private _viewPoints: Array<IViewPointBiz> = new Array<IViewPointBiz>();
   private _viewMode: boolean;
+  private _city : ICityBiz;
 
   //#endregion
 
@@ -63,7 +64,14 @@ export class AMapComponent implements AfterViewInit {
   }
 
   @Input()
-  protected city : ICityBiz;
+  protected set city(city :ICityBiz) {
+    if (city) {
+      this._city = city;
+      if (this._map == null) return;
+
+      this._map.setCity(this._city.adressCode);  
+    } 
+  }
 
   @Input()
   protected set viewPoints(viewPoints: Array<IViewPointBiz>) {
@@ -125,6 +133,8 @@ export class AMapComponent implements AfterViewInit {
     this._map = new AMap.Map(this._mapElement.nativeElement, {});
     this.loadPlugin();
 
+    this.setCity();
+
     if (this._viewPoints.length >0)
       this.generateViewPoints();
 
@@ -139,12 +149,14 @@ export class AMapComponent implements AfterViewInit {
       this._map.setFitView();
   }
 
-  public setCity() {
-    this._map.setCity(this.city.adressCode);
-  }
   //#endregion
 
   //#region Private method
+  private setCity() {
+    if (this._map && this._city)
+      this._map.setCity(this._city.adressCode);
+  }
+
   @HostListener('transitionend', ['$event.target'])
   private transitionEnd(target : any) {
     this._map.setFitView();

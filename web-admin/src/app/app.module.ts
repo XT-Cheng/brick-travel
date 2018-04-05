@@ -16,9 +16,10 @@ import { StoreModule } from 'shared/@core/store/store.module';
 import { PageComponent } from './page.component';
 import { PageRoutingGuard } from './page-routing-guard';
 import { AppRoutingGuard } from './app-routing-guard';
+import { TestComponent } from './test.component';
 
 @NgModule({
-  declarations: [AppComponent,PageComponent],
+  declarations: [AppComponent,PageComponent,TestComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

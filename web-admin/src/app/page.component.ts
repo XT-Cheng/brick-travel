@@ -38,6 +38,11 @@ export enum EntityFormMode {
 })
 export class PageComponent {
   //#region Private members
+  private testMenuItem = {
+    title: 'Test',
+    icon: 'nb-home',
+    link: '/test'
+  }
 
   private cityMenuItem = {
     title: 'City',
@@ -57,7 +62,7 @@ export class PageComponent {
 
   //#region Public members
 
-  menu: NbMenuItem[] = [this.cityMenuItem, this.viewPointMenuItem];
+  menu: NbMenuItem[] = [this.testMenuItem, this.cityMenuItem, this.viewPointMenuItem];
 
   config: ToasterConfig = new ToasterConfig({
     positionClass: 'toast-top-right',
