@@ -1,6 +1,15 @@
-<ul class="rating" (keydown)="onKeyDown($event)">
-      <li *ngFor="let starIndex of starIndexes" tappable (click)="rate(starIndex + 1)">
-        <!-- <ion-icon [name]="getStarIconName(starIndex)">
-        </ion-icon> -->
-      </li>
+<ul class='rating' (keydown)="onKeyDown($event)">
+  <li *ngFor="let starIndex of starIndexes" tappable (click)="rate(starIndex + 1)">
+    <ng-container [ngSwitch]="getStarIconName(starIndex)">
+      <svg *ngSwitchCase="'empty'" class="bt-icon-small" aria-hidden="true">
+        <use xlink:href='#icon-empty-star'></use>
+      </svg>
+      <svg *ngSwitchCase="'half'" class="bt-icon-small" aria-hidden="true">
+        <use xlink:href='#icon-half-star'></use>
+      </svg>
+      <svg *ngSwitchCase="'star'" class="bt-icon-small" aria-hidden="true">
+        <use xlink:href='#icon-star'></use>
+      </svg>
+    </ng-container>
+  </li>
 </ul>

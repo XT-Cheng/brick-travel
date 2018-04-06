@@ -13,15 +13,13 @@ export const RATING_CONTROL_VALUE_ACCESSOR: any = {
 @Component({
   selector: 'bt-rate',
   templateUrl: 'rate.component.html',
+  styleUrls: ['rate.component.scss'],
   providers: [RATING_CONTROL_VALUE_ACCESSOR]
 })
 export class RateComponent implements ControlValueAccessor, OnInit {
   //Private member
   private _maxRate: number = 5;
   private _isReadOnly: boolean = false;
-  private _emptyIconName: string = 'star-outline';
-  private _halfIconName: string = 'star-half';
-  private _starIconName: string = 'star';
   private _isNullable: boolean = false;
   private _innerValue: any;
   private _starIndexes: Array<number>;
@@ -53,27 +51,6 @@ export class RateComponent implements ControlValueAccessor, OnInit {
     this._isReadOnly = this.isTrueProperty(val);
   }
   @Input()
-  protected get emptyStarIcon() {
-    return this._emptyIconName;
-  }
-  protected set emptyStarIcon(val: any) {
-    this._emptyIconName = val;
-  }
-  @Input()
-  protected get halfStarIcon() {
-    return this._halfIconName;
-  }
-  protected set halfStarIcon(val: any) {
-    this._halfIconName = val;
-  }
-  @Input()
-  protected get starIcon() {
-    return this._starIconName;
-  }
-  protected set starIcon(val: any) {
-    this._starIconName = val;
-  }
-  @Input()
   protected get nullable() {
     return this._isNullable;
   }
@@ -91,17 +68,17 @@ export class RateComponent implements ControlValueAccessor, OnInit {
   //Public method
   public getStarIconName(starIndex: number) {
     if (this.value === undefined) {
-      return this.emptyStarIcon;
+      return 'empty';
     }
 
     if (this.value > starIndex) {
       if (this.value < starIndex + 1) {
-        return this.halfStarIcon;
+        return 'half';
       } else {
-        return this._starIconName;
+        return 'star';
       }
     } else {
-      return this.emptyStarIcon;
+      return 'empty';
     }
   }
 

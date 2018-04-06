@@ -5,6 +5,7 @@ import { AMapComponent } from "./components/a-map.component";
 import { InformationWindowComponent } from "./components/information-window/information-window.component";
 import { RateComponent } from "./components/rate/rate.component";
 import { ViewPointMarkerComponent } from "./components/viewpoint-marker/viewpoint-marker.component";
+import { FormsModule } from "@angular/forms";
 
 const COMPONENTS = [
     AMapComponent,
@@ -20,7 +21,8 @@ const ENTRY_COMPONENTS = [
 
 @NgModule({
     imports: [
-        CommonModule
+        CommonModule,
+        FormsModule
     ],
     declarations: [
         COMPONENTS

@@ -6,7 +6,8 @@ import { ActionAllowed } from 'shared/@core/utils/constants';
 
 @Component({
   selector: 'bt-information-window-a',
-  templateUrl: 'information-window.component.html'
+  templateUrl: 'information-window.component.html',
+  styleUrls: ['information-window.component.scss']
 })
 export class InformationWindowComponent {
   //Private member

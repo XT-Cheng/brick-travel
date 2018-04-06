@@ -1,3 +1,13 @@
+<div [ngStyle]='getStyle()' class='card'>
+  <div class='img-col'>
+      <img style='height:80px;width:80px;' [src]="viewPoint.thumbnail" />
+  </div>
+  <div class='title-col'>
+      <div class='title'>{{viewPoint.name}}</div>
+      <bt-rate class='fr' [readOnly]='true' [(ngModel)]="viewPoint.rank"></bt-rate>
+  </div>
+</div>
+
 <!-- <ion-card #card [ngStyle]='getStyle()' class='outer-card'>
   <ion-grid fixed>
     <ion-row>
@@ -24,4 +34,4 @@
     </ion-row>
   </ion-grid>
 </ion-card> -->
-<div class='arrow-down'></div>
+<!-- <div class='arrow-down'></div> -->

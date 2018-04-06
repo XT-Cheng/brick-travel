@@ -2,9 +2,16 @@
       display: block;
     }
 
+    .bt-vp-category {
+      top: 25%;
+      left: 43%;
+      transform: translate(-25%, -25%);
+    }
+
     .icon-stack {
       display: inline-block;
     }
+
 
     .icon-stack-normal,
     .icon-stack-small {

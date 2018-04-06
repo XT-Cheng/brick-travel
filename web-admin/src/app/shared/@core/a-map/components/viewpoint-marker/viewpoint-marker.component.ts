@@ -10,8 +10,8 @@ import { IViewPointBiz } from '../../../store/bizModel/viewPoint.biz.model';
 })
 export class ViewPointMarkerComponent {
   //#region Private member
-  public static readonly WIDTH: number = 48;
-  public static readonly HEIGHT: number = 48;
+  public static readonly WIDTH: number = 32;
+  public static readonly HEIGHT: number = 32;
 
   //#endregion
 
@@ -44,24 +44,17 @@ export class ViewPointMarkerComponent {
   }
 
   protected getOuterClass() {
-    return {
-      'icon-stack-normal': true,
-      'icon-map2': true
-    }
+    // return {
+    //   'icon-stack-normal': true,
+    //   'icon-map2': true
+    // }
+    return `#icon-map`
   }
 
-  protected getInnerClass() {
-    if (this.viewPoint === null)
-      return {
-        'icon-icon': false,
-        'icon-restaurant': true,
-        'icon-hotel': true,
-        'icon-stack-small': true
-      };
-
+  protected getDisplay() {
     if (this.inCurrentTrip)
-      return this.getInnerClassOfTravelViewPoint();
-    return this.getInnerClassOfViewPoint();
+      return 'trip';
+    return this.getViewPointDisplay();
   }
 
   protected getSpanClass() {
@@ -76,17 +69,29 @@ export class ViewPointMarkerComponent {
 
     switch (this.viewPoint.category) {
       case ViewPointCategory.View:
-        color = 'blue';
+        color = '#0517ec';
+        break;
+      case ViewPointCategory.Food:
+        color = '#00c4ff';
+        break;
+      case ViewPointCategory.Humanities:
+        color = '#c000ff';
+        break;
+      case ViewPointCategory.Transportation:
+        color = '#6eff00';
         break;
       case ViewPointCategory.Shopping:
-        color = 'red';
+        color = '#ff8d00';
+        break;
+      case ViewPointCategory.Lodging:
+        color = '#643a67';
         break;
       default:
-        color = 'green';
+        color = '#0517ec';
     }
 
     if (this.inCurrentTrip)
-      color = 'green';
+      color = '#39a73c';
 
     return {
       'color': color,
@@ -97,31 +102,27 @@ export class ViewPointMarkerComponent {
   //Protected method
 
   //Private method
-  private getInnerClassOfViewPoint() {
+  private getViewPointDisplay() {
     let isView, isShopping, isRestaurant: boolean;
     switch (this.viewPoint.category) {
       case ViewPointCategory.View:
-        isView = true;
-        break;
+        return 'view';
       case ViewPointCategory.Food:
-        isRestaurant = true;
-        break;
+        return 'food';
+      case ViewPointCategory.Humanities:
+        return 'humanities';
+      case ViewPointCategory.Transportation:
+        return 'transportation';
       case ViewPointCategory.Shopping:
-        isShopping = true;
-        break;
+        return 'shopping';
+      case ViewPointCategory.Lodging:
+        return 'lodging';
       default:
-        isRestaurant = true;
+        return 'view';
     }
-
-    return {
-      'icon-icon': isShopping,
-      'icon-restaurant': isRestaurant,
-      'icon-hotel': isView,
-      'icon-stack-small': true
-    };
   }
 
-  private getInnerClassOfTravelViewPoint() {
+  private getTravelViewPointDisplay() {
     return {
       'trip': true
     };
