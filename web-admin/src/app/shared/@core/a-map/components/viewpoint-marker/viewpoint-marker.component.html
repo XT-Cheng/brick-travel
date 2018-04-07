@@ -1,7 +1,10 @@
-<span [ngStyle]='getStyle()' [ngClass]='getSpanClass()' class='iconfont icon-stack'>
-  <svg class="bt-icon-big" aria-hidden="true">
+<span [ngStyle]='getStyle()' class='bt-point-icon'>
+  <svg *ngIf='hasViewPoint()' class="bt-icon-big" aria-hidden="true">
     <use xlink:href='#icon-map'></use>
   </svg>
+  <svg *ngIf='!hasViewPoint()' class="bt-icon-big" aria-hidden="true">
+      <use xlink:href='#icon-pin'></use>
+    </svg>
   <ng-container [ngSwitch]="getDisplay()">
     <svg *ngSwitchCase="'view'" class="bt-icon-small bt-vp-category" aria-hidden="true">
       <use xlink:href='#icon-view'></use>

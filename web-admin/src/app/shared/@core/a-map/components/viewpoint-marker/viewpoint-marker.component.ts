@@ -39,57 +39,52 @@ export class ViewPointMarkerComponent {
   //Public method
 
   //Protected method
+  protected hasViewPoint() : boolean {
+    return !!this.viewPoint;
+  }
+
   protected getSequenceDisplay(): string {
     return this.inCurrentTrip ? (this.sequence + 1).toString() : '';
   }
 
-  protected getOuterClass() {
-    // return {
-    //   'icon-stack-normal': true,
-    //   'icon-map2': true
-    // }
-    return `#icon-map`
-  }
-
   protected getDisplay() {
+    if (!this.viewPoint)
+      return '';
     if (this.inCurrentTrip)
       return 'trip';
     return this.getViewPointDisplay();
   }
 
-  protected getSpanClass() {
-    return {
-      'iconfont': true,
-      'icon-stack': true
-    };
-  }
-
   protected getStyle() {
     let color: string;
 
-    switch (this.viewPoint.category) {
-      case ViewPointCategory.View:
-        color = '#0517ec';
-        break;
-      case ViewPointCategory.Food:
-        color = '#00c4ff';
-        break;
-      case ViewPointCategory.Humanities:
-        color = '#c000ff';
-        break;
-      case ViewPointCategory.Transportation:
-        color = '#6eff00';
-        break;
-      case ViewPointCategory.Shopping:
-        color = '#ff8d00';
-        break;
-      case ViewPointCategory.Lodging:
-        color = '#643a67';
-        break;
-      default:
-        color = '#0517ec';
+    if (!this.viewPoint)
+      color = '39a73c';
+    else {
+      switch (this.viewPoint.category) {
+        case ViewPointCategory.View:
+          color = '#0517ec';
+          break;
+        case ViewPointCategory.Food:
+          color = '#00c4ff';
+          break;
+        case ViewPointCategory.Humanities:
+          color = '#c000ff';
+          break;
+        case ViewPointCategory.Transportation:
+          color = '#6eff00';
+          break;
+        case ViewPointCategory.Shopping:
+          color = '#ff8d00';
+          break;
+        case ViewPointCategory.Lodging:
+          color = '#643a67';
+          break;
+        default:
+          color = '#0517ec';
+      }
     }
-
+    
     if (this.inCurrentTrip)
       color = '#39a73c';
 
@@ -120,12 +115,6 @@ export class ViewPointMarkerComponent {
       default:
         return 'view';
     }
-  }
-
-  private getTravelViewPointDisplay() {
-    return {
-      'trip': true
-    };
   }
   //Private method
 }

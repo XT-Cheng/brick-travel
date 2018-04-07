@@ -34,6 +34,7 @@ export class AMapComponent implements AfterViewInit {
   private _viewPointMarkerFactory: ComponentFactory<ViewPointMarkerComponent>;
   private _informationWindowFactory: ComponentFactory<InformationWindowComponent>;
   private _markers: Map<string, MarkerInfor>;
+  private _pointChoosed : MarkerInfor;
   private _travelLines: Array<AMap.Polyline>;
   private _dailyTrip: IDailyTripBiz = null;
   private _viewPoints: Array<IViewPointBiz> = new Array<IViewPointBiz>();
@@ -133,6 +134,11 @@ export class AMapComponent implements AfterViewInit {
     this._map = new AMap.Map(this._mapElement.nativeElement, {});
     this.loadPlugin();
 
+    AMap.event.addListener(this._map,'click',($event: any) => {
+      console.log($event.lnglat.getLng());
+      this.generateChoosedPoint($event.lnglat.getLng(),$event.lnglat.getLat());
+    });
+
     this.setCity();
 
     if (this._viewPoints.length >0)
@@ -201,6 +207,24 @@ export class AMapComponent implements AfterViewInit {
     this.generateLines();
 
     this.setFitView();
+  }
+
+  private generateChoosedPoint(longtitude : any,latitude : any) {
+    //Create Marker Component
+    let crMarker = this._viewPointMarkerFactory.create(this._injector);
+    let marker: AMap.Marker = new AMap.Marker({
+      content: (<any>crMarker.hostView).rootNodes[0],
+      position: new AMap.LngLat(longtitude, latitude),
+      title: '',
+      offset: new AMap.Pixel(-1 * ViewPointMarkerComponent.WIDTH / 2, -1 * ViewPointMarkerComponent.HEIGHT),
+      map: this._map
+    });
+
+    // marker.setExtData(viewPoint);
+    // crMarker.instance.viewPoint = viewPoint;
+    // crMarker.instance.inCurrentTrip = inCurrentTrip;
+    // crMarker.instance.sequence = sequence;
+    crMarker.instance.detectChanges();
   }
 
   private generateViewPoints() {
