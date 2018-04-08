@@ -15,6 +15,7 @@ const COMPONENTS = [
 ]
 
 const ENTRY_COMPONENTS = [
+    AMapComponent,
     InformationWindowComponent,
     ViewPointMarkerComponent
 ]

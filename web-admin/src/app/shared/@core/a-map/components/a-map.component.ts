@@ -11,6 +11,8 @@ import {
   Output,
   ViewChild,
   HostListener,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -26,7 +28,9 @@ import { ActionAllowed } from 'shared/@core/utils/constants';
   templateUrl: 'a-map.component.html',
   styleUrls: ['a-map.component.scss']
 })
-export class AMapComponent implements AfterViewInit {
+export class AMapComponent implements AfterViewInit, OnDestroy {
+  
+  
   //#region Private member
   @ViewChild('map') private _mapElement: ElementRef;
 
@@ -34,7 +38,8 @@ export class AMapComponent implements AfterViewInit {
   private _viewPointMarkerFactory: ComponentFactory<ViewPointMarkerComponent>;
   private _informationWindowFactory: ComponentFactory<InformationWindowComponent>;
   private _markers: Map<string, MarkerInfor>;
-  private _pointChoosed : MarkerInfor;
+  private _pointChoosed : MarkerInfor = null;
+  private _mapClickListener : any;
   private _travelLines: Array<AMap.Polyline>;
   private _dailyTrip: IDailyTripBiz = null;
   private _viewPoints: Array<IViewPointBiz> = new Array<IViewPointBiz>();
@@ -51,6 +56,9 @@ export class AMapComponent implements AfterViewInit {
   //#endregion
 
   //#region Protected property
+  @Input() protected minHeight : number;
+  @Input() protected allowSelectPoint : boolean = false;
+
   @Input() protected set viewMode(viewMode: boolean) {
     this._viewMode = viewMode;
 
@@ -130,15 +138,18 @@ export class AMapComponent implements AfterViewInit {
   //#endregion Constructor
 
   //#region Implements interface
+
   ngAfterViewInit(): void {
     this._map = new AMap.Map(this._mapElement.nativeElement, {});
     this.loadPlugin();
 
-    AMap.event.addListener(this._map,'click',($event: any) => {
-      console.log($event.lnglat.getLng());
-      this.generateChoosedPoint($event.lnglat.getLng(),$event.lnglat.getLat());
-    });
-
+    if (this.allowSelectPoint) {
+      this._mapClickListener = AMap.event.addListener(this._map,'click',($event: any) => {
+        console.log($event.lnglat.getLng());
+        this.generateChoosedPoint($event.lnglat.getLng(),$event.lnglat.getLat());
+      });  
+    }
+    
     this.setCity();
 
     if (this._viewPoints.length >0)
@@ -146,6 +157,11 @@ export class AMapComponent implements AfterViewInit {
 
     if (this._dailyTrip)
       this.generateDailyTrip();
+  }
+
+  ngOnDestroy(): void {
+    console.log('Destroyed');
+    AMap.event.removeListener(this._mapClickListener);
   }
 
   //#endregion Implements interface
@@ -210,21 +226,34 @@ export class AMapComponent implements AfterViewInit {
   }
 
   private generateChoosedPoint(longtitude : any,latitude : any) {
-    //Create Marker Component
-    let crMarker = this._viewPointMarkerFactory.create(this._injector);
-    let marker: AMap.Marker = new AMap.Marker({
-      content: (<any>crMarker.hostView).rootNodes[0],
-      position: new AMap.LngLat(longtitude, latitude),
-      title: '',
-      offset: new AMap.Pixel(-1 * ViewPointMarkerComponent.WIDTH / 2, -1 * ViewPointMarkerComponent.HEIGHT),
-      map: this._map
-    });
+    if (!this._pointChoosed) {
+      //Create Marker Component
+      let crMarker = this._viewPointMarkerFactory.create(this._injector);
+      let marker: AMap.Marker = new AMap.Marker({
+        content: (<any>crMarker.hostView).rootNodes[0],
+        position: new AMap.LngLat(longtitude, latitude),
+        title: '',
+        offset: new AMap.Pixel(-1 * ViewPointMarkerComponent.WIDTH / 2, -1 * ViewPointMarkerComponent.HEIGHT),
+        map: this._map
+      });
 
+      this._pointChoosed = {
+        marker: marker,
+        markerComponent: crMarker,
+        viewPoint: null,
+        window: null,
+        windowComponent: null,
+        markerClickListener: null,
+        suscriptions: null
+      };
+    }
+
+    this._pointChoosed.marker.setPosition(new AMap.LngLat(longtitude, latitude));
+    this._pointChoosed.markerComponent.instance.detectChanges();
     // marker.setExtData(viewPoint);
     // crMarker.instance.viewPoint = viewPoint;
     // crMarker.instance.inCurrentTrip = inCurrentTrip;
     // crMarker.instance.sequence = sequence;
-    crMarker.instance.detectChanges();
   }
 
   private generateViewPoints() {

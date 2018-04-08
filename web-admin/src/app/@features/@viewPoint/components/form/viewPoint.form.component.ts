@@ -1,5 +1,5 @@
-import { Component, Inject, Input, ViewChildren } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Inject, Input, ViewChildren, ElementRef } from '@angular/core';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import { ObjectID } from 'bson';
 
@@ -14,6 +14,7 @@ import { NbMenuService, NbMenuItem, NbContextMenuDirective } from '@nebular/them
 import { SelectorService } from 'shared/@core/store/providers/selector.service';
 import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model';
 import { EntityFormMode } from '../../../../app.component';
+import { AMapComponent } from 'shared/@core/a-map/components/a-map.component';
 
 @Component({
   selector: 'bt-vp-form',
@@ -61,7 +62,7 @@ export class ViewPointFormComponent {
 
   //#region Constructor
 
-  constructor(private _viewPointService: ViewPointService,
+  constructor(private _viewPointService: ViewPointService,private modalService: NgbModal, private element : ElementRef,
     @Inject(FILE_UPLOADER) public uploader: FileUploader, 
     public selectorService : SelectorService,
     private toasterService: ToasterService, private menuService: NbMenuService,
@@ -161,6 +162,12 @@ export class ViewPointFormComponent {
 
   close() {
     this.activeModal.close();
+  }
+
+  openMap() {
+    const activeModal = this.modalService.open(AMapComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
+    activeModal.componentInstance.minHeight = this.element.nativeElement.clientHeight;
+    activeModal.componentInstance.allowSelectPoint = true;
   }
 
   //#endregion

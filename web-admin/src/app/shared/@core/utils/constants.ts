@@ -18,7 +18,9 @@ export enum ActionAllowed {
     NONE
 }
 
-export enum MapMode {
-    DailyTrip,
-    ViewPoint
-}
+// export enum MapMode {
+//     DailyTrip,
+//     ViewPoint
+// }
+
+//export enum 

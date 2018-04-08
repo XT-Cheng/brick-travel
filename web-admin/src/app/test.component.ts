@@ -4,12 +4,18 @@ import { Component } from '@angular/core';
 import { ICityBiz } from "shared/@core/store/bizModel/city.biz.model";
 import { IViewPointBiz } from "shared/@core/store/bizModel/viewPoint.biz.model";
 import { ViewPointService } from "shared/@core/store/providers/viewPoint.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { AMapComponent } from "shared/@core/a-map/components/a-map.component";
 
+
+// <bt-a-map [allowSelectPoint]='true' [city]='city' [viewPoints]='selector.filterAndSearchedViewPoints$ | async'>
+// </bt-a-map>
 @Component({
   selector: 'bt-test',
   template: `
-    <bt-a-map style='display: inline;' [city]='city' [viewPoints]='selector.filterAndSearchedViewPoints$ | async'>
-    </bt-a-map>
+  <button type="button" (click)='test()' class="btn btn-primary btn-icon">
+  <i class="nb-plus"></i>
+  </button>
 `
 })
 export class TestComponent {
@@ -27,8 +33,8 @@ export class TestComponent {
 
   //#region Constructor  
 
-  constructor(private route: ActivatedRoute,
-    private router: Router, public selector: SelectorService,private _viewPointService : ViewPointService) {
+  constructor(private route: ActivatedRoute,private modalService: NgbModal,
+    private router: Router, public selector: SelectorService, private _viewPointService: ViewPointService) {
     this.selector.cities$.subscribe(cities => {
       this.city = cities[0];
     })
@@ -37,6 +43,11 @@ export class TestComponent {
   //#endregion
 
   //#region Pubic methods
-
+  test() {
+    //nb-layout
+    const activeModal = this.modalService.open(AMapComponent, { backdrop: true, size: 'lg', container: '.scrollable-container' });
+    activeModal.componentInstance.minHeight = 500;
+    activeModal.componentInstance.allowSelectPoint = true;
+  }
   //#endregion
 }
