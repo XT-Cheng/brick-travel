@@ -14,7 +14,7 @@ import { AMapComponent } from "shared/@core/a-map/components/a-map.component";
   selector: 'bt-test',
   template: `
   <button type="button" (click)='test()' class="btn btn-primary btn-icon">
-  <i class="nb-plus"></i>
+    <i class="nb-plus"></i>
   </button>
 `
 })

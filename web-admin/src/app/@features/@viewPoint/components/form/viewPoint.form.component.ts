@@ -15,6 +15,7 @@ import { SelectorService } from 'shared/@core/store/providers/selector.service';
 import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model';
 import { EntityFormMode } from '../../../../app.component';
 import { AMapComponent } from 'shared/@core/a-map/components/a-map.component';
+import { MapModalComponent } from '../mapModal.component';
 
 @Component({
   selector: 'bt-vp-form',
@@ -108,6 +109,14 @@ export class ViewPointFormComponent {
     }];
   }
 
+  getClientHeight() {
+    return this.element.nativeElement.clientHeight;
+  }
+
+  hasCity() : boolean {
+    return !!this.newViewPoint.city.id;
+  }
+
   hasFile(): boolean {
     return this.newViewPoint.images.length > 0;
   }
@@ -165,9 +174,9 @@ export class ViewPointFormComponent {
   }
 
   openMap() {
-    const activeModal = this.modalService.open(AMapComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
+    const activeModal = this.modalService.open(MapModalComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
     activeModal.componentInstance.minHeight = this.element.nativeElement.clientHeight;
-    activeModal.componentInstance.allowSelectPoint = true;
+    activeModal.componentInstance.city = this.newViewPoint.city;
   }
 
   //#endregion

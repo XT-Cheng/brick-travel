@@ -5,10 +5,12 @@ import { UIModule } from '../../@ui/ui.module';
 import { ViewPointFormComponent } from './components/form/viewPoint.form.component';
 import { ViewPointListComponent } from './components/list/viewPoint.list.component';
 import { ViewPointRoutingModule } from './viewPoint-routing.module';
+import { MapModalComponent } from './components/mapModal.component';
 
 const VIEWPOINT_COMPONENTS = [
   ViewPointListComponent,
-  ViewPointFormComponent
+  ViewPointFormComponent,
+  MapModalComponent
 ];
 
 @NgModule({
@@ -20,7 +22,7 @@ const VIEWPOINT_COMPONENTS = [
   declarations: [
     ...VIEWPOINT_COMPONENTS
   ],
-  entryComponents: [ViewPointFormComponent]
+  entryComponents: [ViewPointFormComponent,MapModalComponent]
 })
 export class ViewPointModule {
 }
