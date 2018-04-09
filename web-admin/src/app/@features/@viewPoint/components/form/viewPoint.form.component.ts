@@ -114,7 +114,15 @@ export class ViewPointFormComponent {
   }
 
   hasCity() : boolean {
-    return !!this.newViewPoint.city.id;
+    return !!this.newViewPoint.city;
+  }
+
+  cityCheck(city) {
+    console.log(city);
+  }
+
+  hasPosition() : boolean {
+    return (!!this.newViewPoint.latitude && !!this.newViewPoint.longtitude);
   }
 
   hasFile(): boolean {
@@ -177,6 +185,14 @@ export class ViewPointFormComponent {
     const activeModal = this.modalService.open(MapModalComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
     activeModal.componentInstance.minHeight = this.element.nativeElement.clientHeight;
     activeModal.componentInstance.city = this.newViewPoint.city;
+    if (this.newViewPoint.latitude)
+      activeModal.componentInstance.pointChoosed = new AMap.LngLat(this.newViewPoint.longtitude,this.newViewPoint.latitude);
+    activeModal.result.then((pos : AMap.LngLat) => {
+      this.newViewPoint.latitude = pos.getLat();
+      this.newViewPoint.longtitude = pos.getLng();
+    }, (cancel) => {
+      //do nothing
+    });
   }
 
   //#endregion
@@ -184,6 +200,8 @@ export class ViewPointFormComponent {
   //#region Private method  
 
   private isChanged(): boolean {
+    if (!this.newViewPoint.city || !this._originalViewPoint.city) return false;
+
     let changed = !(this.newViewPoint.name == this._originalViewPoint.name &&
       this.newViewPoint.city.id == this._originalViewPoint.city.id && 
       this.newViewPoint.images.length == this._originalViewPoint.images.length)

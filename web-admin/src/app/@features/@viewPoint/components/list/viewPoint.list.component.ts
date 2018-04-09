@@ -77,7 +77,7 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy{
     activeModal.componentInstance.originalViewPoint = {
       id: '',
       name: '',
-      city: { id: '' },
+      city: null,
       description: '',
       tips: '',
       timeNeeded: '',
@@ -114,7 +114,7 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy{
           this.toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
         else
           this.toasterService.pop('success', 'Success', `View point ${viewPoint.name} deleted`);
-      });;
+      });
     }, (cancel) => {
       //do nothing
     });

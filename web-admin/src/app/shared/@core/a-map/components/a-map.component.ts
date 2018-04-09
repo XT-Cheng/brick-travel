@@ -38,7 +38,8 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   private _viewPointMarkerFactory: ComponentFactory<ViewPointMarkerComponent>;
   private _informationWindowFactory: ComponentFactory<InformationWindowComponent>;
   private _markers: Map<string, MarkerInfor>;
-  private _pointChoosed : MarkerInfor = null;
+  private _pointChoosedMarker : MarkerInfor = null;
+  private _pointChoosed : AMap.LngLat = null;
   private _mapClickListener : any;
   private _travelLines: Array<AMap.Polyline>;
   private _dailyTrip: IDailyTripBiz = null;
@@ -52,7 +53,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   @Output() viewPointClickedEvent: EventEmitter<IViewPointBiz>;
   @Output() viewPointAddedToDailyTrip: EventEmitter<{ dailyTrip: IDailyTripBiz, added: IViewPointBiz }>;
   @Output() viewPointRemovedFromDailyTrip: EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>;
-  
+  @Output() pointChoosedEvent : EventEmitter<AMap.LngLat>;
   //#endregion
 
   //#region Protected property
@@ -70,6 +71,18 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
   protected get viewMode(): boolean {
     return this._viewMode;
+  }
+
+  @Input() set pointChoosed(choosed : AMap.LngLat) {
+    if (choosed) {
+      this._pointChoosed = choosed;
+      
+      if (this._map == null) return;
+
+      this.generateChoosedPoint(this._pointChoosed);
+
+      this._map.setCenter(choosed);
+    }
   }
 
   @Input()
@@ -133,6 +146,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
     this.viewPointAddedToDailyTrip = new EventEmitter<{ dailyTrip: IDailyTripBiz, added: IViewPointBiz }>();
     this.viewPointRemovedFromDailyTrip = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>();
+    this.pointChoosedEvent = new EventEmitter<AMap.LngLat>();
   }
 
   //#endregion Constructor
@@ -145,8 +159,9 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
     if (this.allowSelectPoint) {
       this._mapClickListener = AMap.event.addListener(this._map,'click',($event: any) => {
-        console.log($event.lnglat.getLng());
-        this.generateChoosedPoint($event.lnglat.getLng(),$event.lnglat.getLat());
+        this.generateChoosedPoint($event.lnglat);
+        
+        this.pointChoosedEvent.emit($event.lnglat);
       });  
     }
     
@@ -157,10 +172,14 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
     if (this._dailyTrip)
       this.generateDailyTrip();
+
+    if (this._pointChoosed) {
+      this.generateChoosedPoint(this._pointChoosed);
+      this._map.setCenter(this._pointChoosed);
+    }
   }
 
   ngOnDestroy(): void {
-    console.log('Destroyed');
     AMap.event.removeListener(this._mapClickListener);
   }
 
@@ -225,19 +244,19 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     this.setFitView();
   }
 
-  private generateChoosedPoint(longtitude : any,latitude : any) {
-    if (!this._pointChoosed) {
+  private generateChoosedPoint(pos : AMap.LngLat) {
+    if (!this._pointChoosedMarker) {
       //Create Marker Component
       let crMarker = this._viewPointMarkerFactory.create(this._injector);
       let marker: AMap.Marker = new AMap.Marker({
         content: (<any>crMarker.hostView).rootNodes[0],
-        position: new AMap.LngLat(longtitude, latitude),
+        //position: pos,
         title: '',
         offset: new AMap.Pixel(-1 * ViewPointMarkerComponent.WIDTH / 2, -1 * ViewPointMarkerComponent.HEIGHT),
         map: this._map
       });
 
-      this._pointChoosed = {
+      this._pointChoosedMarker = {
         marker: marker,
         markerComponent: crMarker,
         viewPoint: null,
@@ -248,12 +267,8 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
       };
     }
 
-    this._pointChoosed.marker.setPosition(new AMap.LngLat(longtitude, latitude));
-    this._pointChoosed.markerComponent.instance.detectChanges();
-    // marker.setExtData(viewPoint);
-    // crMarker.instance.viewPoint = viewPoint;
-    // crMarker.instance.inCurrentTrip = inCurrentTrip;
-    // crMarker.instance.sequence = sequence;
+    this._pointChoosedMarker.marker.setPosition(pos);
+    this._pointChoosedMarker.markerComponent.instance.detectChanges();
   }
 
   private generateViewPoints() {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
 
@@ -7,10 +7,10 @@ import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
   templateUrl: 'mapModal.component.html',
   styleUrls: [`./mapModal.component.scss`]
 })
-export class MapModalComponent {
-
+export class MapModalComponent{
   @Input() city : ICityBiz;
   @Input() minHeight : number;
+  @Input() pointChoosed : AMap.LngLat;
 
   constructor(private activeModal: NgbActiveModal) { }
 
@@ -20,5 +20,9 @@ export class MapModalComponent {
 
   reject() {
     this.activeModal.dismiss();
+  }
+
+  onPointChoosed(pos : AMap.LngLat) {
+    this.activeModal.close(pos);
   }
 }
