@@ -183,15 +183,21 @@ export class ViewPointFormComponent {
 
   openMap() {
     const activeModal = this.modalService.open(MapModalComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.minHeight = this.element.nativeElement.clientHeight;
+    activeModal.componentInstance.minHeight = 600;
     activeModal.componentInstance.city = this.newViewPoint.city;
+
+    this.element.nativeElement.style.display = 'none';
+
     if (this.newViewPoint.latitude)
       activeModal.componentInstance.pointChoosed = new AMap.LngLat(this.newViewPoint.longtitude,this.newViewPoint.latitude);
     activeModal.result.then((pos : AMap.LngLat) => {
       this.newViewPoint.latitude = pos.getLat();
       this.newViewPoint.longtitude = pos.getLng();
+      this.element.nativeElement.style.display = 'block';
+      this.element.nativeElement.ownerDocument.body.classList.add('modal-open');
     }, (cancel) => {
-      //do nothing
+      this.element.nativeElement.style.display = 'block';
+      this.element.nativeElement.ownerDocument.body.classList.add('modal-open');
     });
   }
 
