@@ -11,7 +11,8 @@ export const viewPointCategory = new schema.Entity(STORE_ENTITIES_KEY.viewPointC
 
 export const viewPoint = new schema.Entity(STORE_ENTITIES_KEY.viewPoints,{
     comments: [ viewPointComment ],
-    city: city
+    city: city,
+    category: viewPointCategory
 });
 
 export const travelViewPoint = new schema.Entity(STORE_ENTITIES_KEY.travelViewPoints,{

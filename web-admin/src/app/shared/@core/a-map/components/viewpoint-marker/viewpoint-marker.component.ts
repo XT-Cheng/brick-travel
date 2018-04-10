@@ -1,6 +1,5 @@
 import { Component, ChangeDetectorRef, Input } from '@angular/core';
 
-import { ViewPointCategory } from "../../../store/entity/viewPoint/viewPoint.model";
 import { IViewPointBiz } from '../../../store/bizModel/viewPoint.biz.model';
 
 @Component({
@@ -61,23 +60,23 @@ export class ViewPointMarkerComponent {
     if (!this.viewPoint)
       color = '39a73c';
     else {
-      switch (this.viewPoint.category) {
-        case ViewPointCategory.View:
+      switch (this.viewPoint.category.name) {
+        case 'View':
           color = '#0517ec';
           break;
-        case ViewPointCategory.Food:
+        case 'Food':
           color = '#00c4ff';
           break;
-        case ViewPointCategory.Humanities:
+        case 'Humanities':
           color = '#c000ff';
           break;
-        case ViewPointCategory.Transportation:
+        case 'Transportation':
           color = '#6eff00';
           break;
-        case ViewPointCategory.Shopping:
+        case 'Shopping':
           color = '#ff8d00';
           break;
-        case ViewPointCategory.Lodging:
+        case 'Lodging':
           color = '#643a67';
           break;
         default:
@@ -99,18 +98,18 @@ export class ViewPointMarkerComponent {
   //Private method
   private getViewPointDisplay() {
     let isView, isShopping, isRestaurant: boolean;
-    switch (this.viewPoint.category) {
-      case ViewPointCategory.View:
+    switch (this.viewPoint.category.name) {
+      case 'View':
         return 'view';
-      case ViewPointCategory.Food:
+      case 'Food':
         return 'food';
-      case ViewPointCategory.Humanities:
+      case 'Humanities':
         return 'humanities';
-      case ViewPointCategory.Transportation:
+      case 'Transportation':
         return 'transportation';
-      case ViewPointCategory.Shopping:
+      case 'Shopping':
         return 'shopping';
-      case ViewPointCategory.Lodging:
+      case 'Lodging':
         return 'lodging';
       default:
         return 'view';

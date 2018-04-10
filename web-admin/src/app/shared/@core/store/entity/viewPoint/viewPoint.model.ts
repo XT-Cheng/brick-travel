@@ -1,13 +1,14 @@
-export enum ViewPointCategory {
-    View,
-    Food,
-    Humanities,
-    Transportation,
-    Shopping,
-    Lodging
-}
+// export enum ViewPointCategory {
+//     View,
+//     Food,
+//     Humanities,
+//     Transportation,
+//     Shopping,
+//     Lodging
+// }
 
 export interface IViewPointCategory {
+    id: string,
     name: string;
 }
 
@@ -22,7 +23,7 @@ export interface IViewPoint {
     address: string,
     latitude: number,
     longtitude: number,
-    category: ViewPointCategory,
+    category: string,
     rank: number,
     countOfComments: number,
     images : string[],

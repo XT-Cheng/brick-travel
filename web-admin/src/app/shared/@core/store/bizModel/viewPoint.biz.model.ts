@@ -1,4 +1,4 @@
-import { ViewPointCategory, IViewPoint } from "../entity/viewPoint/viewPoint.model";
+import { IViewPoint, IViewPointCategory } from "../entity/viewPoint/viewPoint.model";
 import { ICity } from "../entity/city/city.model";
 
 
@@ -13,7 +13,7 @@ export interface IViewPointBiz {
     address: string,
     latitude: number,
     longtitude: number,
-    category: ViewPointCategory,
+    category: IViewPointCategory,
     rank: number,
     countOfComments: number,
     images : string[],
@@ -43,7 +43,7 @@ export function translateViewPointFromBiz(viewPoint: IViewPointBiz): IViewPoint 
         address: viewPoint.address,
         latitude: viewPoint.latitude,
         longtitude: viewPoint.longtitude,
-        category: viewPoint.category,
+        category: viewPoint.category.id,
         rank:viewPoint.rank,
         countOfComments: viewPoint.countOfComments,
         images :viewPoint.images.map((image)=>image),
