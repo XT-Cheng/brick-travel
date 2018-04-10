@@ -10,15 +10,7 @@ import {
 } from '../typegoose/typegoose';
 import { City } from './city.model';
 import { BSON, ObjectId } from 'bson';
-
-export enum ViewPointCategory {
-    View,
-    Food,
-    Humanities,
-    Transportation,
-    Shopping,
-    Lodging
-}
+import { ViewPointCategory } from './viewPointCategory.model';
 
 export class ViewPointComment extends Typegoose {
     @prop()
@@ -85,8 +77,8 @@ export class ViewPoint extends Typegoose {
     latitude: number;
     @prop()
     longtitude: number;
-    @prop({ enum: ViewPointCategory })
-    category: ViewPointCategory;
+    @prop({ ref: ViewPointCategory, idType: 'String' })
+    category: Ref<ViewPointCategory>;
     @prop()
     rank: number;
     @arrayProp({ items: String })

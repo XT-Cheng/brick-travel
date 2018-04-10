@@ -24,6 +24,7 @@
         "../node_modules/@nebular/theme/styles/prebuilt/default.css",
         "../node_modules/angular2-toaster/toaster.css",
         "./app/@ui/styles/styles.scss",
+        "./app/styles/styles.scss",
         "./app/shared/@core/assets/css/iconfont.css"
       ],
       "scripts": [

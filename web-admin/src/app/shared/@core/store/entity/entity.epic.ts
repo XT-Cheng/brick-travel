@@ -6,11 +6,12 @@ import { ViewPointService } from '../providers/viewPoint.service';
 import { FilterCategoryService } from '../providers/filterCategory.service';
 import { TravelAgendaService } from '../providers/travelAgenda.service';
 import { UserService } from '../providers/user.service';
+import { MasterDataService } from 'shared/@core/store/providers/masterData.service';
 
 @Injectable()
 export class EntityEpics {
   constructor(private _cityService: CityService,private _viewPointService: ViewPointService,
-    private _travelAgendaService: TravelAgendaService,
+    private _travelAgendaService: TravelAgendaService,private _masterDataService : MasterDataService,
     private _filterCategoryService: FilterCategoryService,
     private _userService : UserService) {}
 
@@ -20,7 +21,8 @@ export class EntityEpics {
       ...this._viewPointService.createEpic(),
       ...this._travelAgendaService.createEpic(),
       ...this._filterCategoryService.createEpic(),
-      ...this._userService.createEpic()
+      ...this._userService.createEpic(),
+      ...this._masterDataService.createEpic()
     )];
   }
 }

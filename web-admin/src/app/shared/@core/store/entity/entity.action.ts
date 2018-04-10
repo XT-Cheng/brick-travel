@@ -43,7 +43,8 @@ export enum EntityTypeEnum {
     DAILYTRIP = "DAILYTRIP",
     FILTERCATEGORY = "FILTERCATEGORY",
     TRAVELVIEWPOINT = "TRAVELVIEWPOINT",
-    USER = "USER"
+    USER = "USER",
+    MASTER_DATA = "MASTER_DATA"
 }
 
 export enum EntityActionTypeEnum {

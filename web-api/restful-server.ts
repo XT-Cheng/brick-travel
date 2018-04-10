@@ -13,6 +13,7 @@ import { TravelAgendaRoute } from './routes/travelAgenda.route';
 import { AuthRoute } from './routes/auth.route';
 import { UserRoute } from './routes/user.route';
 import { FileUploadRoute } from './routes/fileUpload.route';
+import { MasterDataRoute } from './routes/masterData.route';
 
 /**
  * The server.
@@ -90,19 +91,6 @@ export class RestfulServer {
                res.header('Access-Control-Allow-Credentials','true');
                 next();
             });
-            // //Multer
-            // this.app.use(multer({
-            //     dest: './uploads/',
-            //     rename: function (fieldname, filename) {
-            //       return filename + Date.now();
-            //     },
-            //     onFileUploadStart: function (file) {
-            //       console.log(file.originalname + ' is starting ...');
-            //     },
-            //     onFileUploadComplete: function (file) {
-            //       console.log(file.fieldname + ' uploaded to  ' + file.path);
-            //     }
-            //   }));
 
             console.log("preRoute");
             observer.complete();
@@ -132,6 +120,7 @@ export class RestfulServer {
             TravelAgendaRoute.create(router);
             UserRoute.create(router);
             FileUploadRoute.create(router);
+            MasterDataRoute.create(router);
 
             //use router middleware
             this.app.use(router);

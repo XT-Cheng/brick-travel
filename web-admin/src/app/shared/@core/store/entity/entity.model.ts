@@ -1,8 +1,8 @@
-import { ICity } from "./city/city.model";
-import { IViewPoint, IViewPointComment } from "./viewPoint/viewPoint.model";
-import { ITravelViewPoint, IDailyTrip, ITravelAgenda } from "./travelAgenda/travelAgenda.model";
-import { IFilterCategory, IFilterCriteria } from "./filterCategory/filterCategory.model";
-import { IUser } from "./user/user.model";
+import { ICity } from './city/city.model';
+import { IFilterCategory, IFilterCriteria } from './filterCategory/filterCategory.model';
+import { IDailyTrip, ITravelAgenda, ITravelViewPoint } from './travelAgenda/travelAgenda.model';
+import { IUser } from './user/user.model';
+import { IViewPoint, IViewPointCategory, IViewPointComment } from './viewPoint/viewPoint.model';
 
 export enum STORE_ENTITIES_KEY {
   cities = 'cities',
@@ -13,7 +13,8 @@ export enum STORE_ENTITIES_KEY {
   viewPointComments = 'viewPointComments',
   filterCategories = 'filterCategories',
   filterCriteries = 'filterCriteries',
-  users = 'users'
+  users = 'users',
+  viewPointCatgories = 'viewPointCatgories'
 }
 
 export const INIT_ENTITY_STATE = {
@@ -25,7 +26,8 @@ export const INIT_ENTITY_STATE = {
   travelAgendas: {},
   users: {},
   filterCategories: {},
-  filterCriteries: {}
+  filterCriteries: {},
+  viewPointCatgories: {}
 }
 
 export interface IEntities {
@@ -37,5 +39,6 @@ export interface IEntities {
   dailyTrips?: { [id : string] : IDailyTrip },
   travelAgendas?: { [id : string] : ITravelAgenda },
   filterCategories?: {[id : string] : IFilterCategory},
-  filterCriteries?: {[id : string] : IFilterCriteria}
+  filterCriteries?: {[id : string] : IFilterCriteria},
+  viewPointCatgories?: {[id : string] : IViewPointCategory}
 }

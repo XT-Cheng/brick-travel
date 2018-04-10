@@ -7,6 +7,10 @@ export enum ViewPointCategory {
     Lodging
 }
 
+export interface IViewPointCategory {
+    name: string;
+}
+
 export interface IViewPoint {
     id: string,
     city: string,

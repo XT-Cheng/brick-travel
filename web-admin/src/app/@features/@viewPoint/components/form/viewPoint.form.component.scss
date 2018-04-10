@@ -23,8 +23,17 @@
     .danger {
         border-color: #ff4c6a !important;
     }
+
     .nv-file-over {
          border: dotted 3px red; 
     }
+
+    nb-tabset nb-tab {
+        padding: 0.75rem 0 0 0;
+    }
+}
+
+nb-tabset ul li a {
+    padding: 0.5rem;
 }
 

@@ -21,13 +21,14 @@ import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
 import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
 import { HttpClientModule } from '@angular/common/http';
+import { MasterDataService } from 'shared/@core/store/providers/masterData.service';
 
 @NgModule({
     imports: [NgReduxModule, HttpClientModule, IonicStorageModule]
 })
 export class StoreModule {
     constructor(@Optional() @SkipSelf() parentModule: StoreModule,
-        private _store: NgRedux<IAppState>, private _rootEpics: RootEpics,
+        private _store: NgRedux<IAppState>, private _rootEpics: RootEpics,private _masterDataService : MasterDataService,
         private _cityService : CityService, private _viewPointService : ViewPointService,
         private _dataSync: DataSyncService) {
 
@@ -41,6 +42,7 @@ export class StoreModule {
                 createEpicMiddleware(this._rootEpics.createEpics())]);
 
             this._cityService.load();
+            this._masterDataService.load();
             this._viewPointService.load();
             this._dataSync.stateRestored();
             
@@ -67,7 +69,8 @@ export class StoreModule {
                 ViewPointService,
                 TravelAgendaService,
                 UserService,
-                DataSyncService
+                DataSyncService,
+                MasterDataService
             ]
         };
     }
