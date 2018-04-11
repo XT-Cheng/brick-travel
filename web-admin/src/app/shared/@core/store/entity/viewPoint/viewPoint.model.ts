@@ -1,12 +1,3 @@
-// export enum ViewPointCategory {
-//     View,
-//     Food,
-//     Humanities,
-//     Transportation,
-//     Shopping,
-//     Lodging
-// }
-
 export interface IViewPointCategory {
     id: string,
     name: string;

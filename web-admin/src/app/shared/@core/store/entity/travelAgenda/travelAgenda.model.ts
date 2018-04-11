@@ -1,14 +1,13 @@
-export enum TransportationCategory {
-    Walking,
-    SmallBus,
-    BigBus,
-    SelfDrive
+export interface ITransportationCategory {
+    id: string,
+    name: string,
+    isDefault: boolean
 }
 
 export interface ITravelAgenda {
     id: string,
     name: string,
-    user: string,
+    user: string, 
     cover: string,
     dailyTrips:  string[]
 };
@@ -22,6 +21,6 @@ export interface IDailyTrip {
 export interface ITravelViewPoint {
     id: string,
     viewPoint: string,
-    transportationToNext: TransportationCategory,
+    transportationToNext: string,
     dailyTrip: string
 }

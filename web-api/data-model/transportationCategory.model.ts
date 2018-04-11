@@ -12,6 +12,8 @@ export class TransportationCategory extends Typegoose {
     }
     @prop()
     name: string;
+    @prop()
+    isDefault : boolean;
     @staticMethod
     static findCategories(this: ModelType<TransportationCategory> & typeof TransportationCategory) {
         return this.find();

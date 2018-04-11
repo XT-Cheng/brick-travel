@@ -9,6 +9,8 @@ export const city = new schema.Entity(STORE_ENTITIES_KEY.cities);
 
 export const viewPointCategory = new schema.Entity(STORE_ENTITIES_KEY.viewPointCatgories);
 
+export const transportationCategory = new schema.Entity(STORE_ENTITIES_KEY.transportationCatgories);
+
 export const viewPoint = new schema.Entity(STORE_ENTITIES_KEY.viewPoints,{
     comments: [ viewPointComment ],
     city: city,
@@ -16,7 +18,8 @@ export const viewPoint = new schema.Entity(STORE_ENTITIES_KEY.viewPoints,{
 });
 
 export const travelViewPoint = new schema.Entity(STORE_ENTITIES_KEY.travelViewPoints,{
-    viewPoint: viewPoint
+    viewPoint: viewPoint,
+    transportationToNext: transportationCategory
 });
 
 export const dailyTrip = new schema.Entity(STORE_ENTITIES_KEY.dailyTrips,{

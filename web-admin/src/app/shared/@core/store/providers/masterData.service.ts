@@ -16,7 +16,7 @@ import {
     EntityTypeEnum,
 } from 'shared/@core/store/entity/entity.action';
 import { IEntities } from 'shared/@core/store/entity/entity.model';
-import { viewPointCategory } from 'shared/@core/store/entity/entity.schema';
+import { viewPointCategory, transportationCategory } from 'shared/@core/store/entity/entity.schema';
 import { IAppState } from 'shared/@core/store/store.model';
 import { WEBAPI_HOST } from 'shared/@core/utils/constants';
 
@@ -87,7 +87,10 @@ export class MasterDataService {
     private getMasterDatas(): Observable<IEntities> {
         return this._http.get(`${WEBAPI_HOST}/masterData`)
             .map(records => {
-                const schema = { viewPointCategories: [ viewPointCategory ] }
+                const schema = { 
+                    viewPointCategories: [ viewPointCategory ],
+                    transportationCategories: [transportationCategory]
+                }
                 return normalize(records, schema).entities;
             })
     }

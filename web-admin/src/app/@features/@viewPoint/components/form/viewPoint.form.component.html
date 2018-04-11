@@ -6,13 +6,28 @@
     <form #form="ngForm" class='vp-form' autocomplete="nope">
       <nb-tabset>
         <nb-tab tabTitle='General'>
+          <div class="form-group row">
+            <div class="col-6">
+              <label for="input-name">View Point Name</label>
+              <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="newViewPoint.name"
+                name='name' required bt-autofocus [class.danger]="name.invalid && name.touched" />
+              <small style='margin-left: 0;' class="form-text error" *ngIf="name.invalid && name.touched && name?.errors?.required">
+                Name is required!
+              </small>
+            </div>
+            <div class="col-6">
+              <label for="input-category">Category</label>
+              <select #category='ngModel' required id='input-category' [compareWith]="compareCityFn" [(ngModel)]='newViewPoint.category'
+                name='category' class="form-control" [class.danger]="category.invalid">
+                <option *ngFor="let category of (selectorService?.viewPointCategories$ | async)" [ngValue]="category">{{category.name}}</option>
+              </select>
+              <small style='margin-left: 0;' class="form-text error" *ngIf="category.invalid && category?.errors?.required">
+                Category is required!
+              </small>
+            </div>
+          </div>
           <div class="form-group">
-            <label for="input-name">View Point Name</label>
-            <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="newViewPoint.name"
-              name='name' required bt-autofocus [class.danger]="name.invalid && name.touched" />
-            <small style='margin-left: 0;' class="form-text error" *ngIf="name.invalid && name.touched && name?.errors?.required">
-              Name is required!
-            </small>
+              <bt-rate class='fr' [readOnly]='false'  name='rank' [(ngModel)]="newViewPoint.rank"></bt-rate>
           </div>
           <div class="form-group">
             <label for="input-city">City</label>
@@ -22,6 +37,14 @@
             </select>
             <small style='margin-left: 0;' class="form-text error" *ngIf="city.invalid && city?.errors?.required">
               City is required!
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="input-address">Address</label>
+            <input #address='ngModel' type="text" id='input-address' placeholder="Address" class="form-control" [(ngModel)]="newViewPoint.address"
+              name='address' required [class.danger]="address.invalid && address.touched" />
+            <small style='margin-left: 0;' class="form-text error" *ngIf="address.invalid && address.touched && address?.errors?.required">
+              Address is required!
             </small>
           </div>
           <div class="form-group row">
@@ -55,6 +78,25 @@
           <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasFile()">
             Image is required!
           </small>
+        </nb-tab>
+        <nb-tab tabTitle='Others'>
+          <div class="form-group">
+            <label for="input-tips">Tips</label>
+            <textarea #tips='ngModel' type="text" id='input-tips' placeholder="Tips" class="form-control" [(ngModel)]="newViewPoint.tips"
+              name='tips'>
+            </textarea>
+          </div>
+          <div class="form-group">
+            <label for="input-timeNeeded">Tips</label>
+            <input #timeNeeded='ngModel' type="text" id='input-timeNeeded' placeholder="Time Needed" class="form-control" [(ngModel)]="newViewPoint.timeNeeded"
+              name='timeNeeded' />
+          </div>
+          <div class="form-group">
+            <label for="input-description">Description</label>
+            <textarea #description='ngModel' type="text" id='input-description' class="form-control" [(ngModel)]="newViewPoint.description"
+              name='description'>
+            </textarea>
+          </div>
         </nb-tab>
       </nb-tabset>
       <button (click)='action()' type="button" [disabled]="isSubmitDisAllowed(form)" class="btn btn-primary">Submit</button>

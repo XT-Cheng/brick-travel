@@ -96,7 +96,7 @@ export class ViewPointFormComponent {
   //#endregion
 
   //#region Public method
-  compareCityFn(c1: ICityBiz, c2: ICityBiz): boolean {
+  compareCityFn(c1: any, c2: any): boolean {
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 

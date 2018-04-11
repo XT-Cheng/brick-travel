@@ -4,7 +4,7 @@ import {
     IDailyTrip,
     ITravelAgenda,
     ITravelViewPoint,
-    TransportationCategory,
+    ITransportationCategory
 } from '../entity/travelAgenda/travelAgenda.model';
 import { IViewPointBiz } from './viewPoint.biz.model';
 
@@ -28,10 +28,10 @@ export interface ITravelViewPointBiz {
     viewPoint: IViewPointBiz,
     distanceToNext: number,
     dailyTrip: IDailyTripBiz,
-    transportationToNext: TransportationCategory
+    transportationToNext: ITransportationCategory
 }
 
-export function caculateDistance(dailyTrip: IDailyTripBiz) {
+export function caculateDistance(dailyTrip: IDailyTripBiz,defaultTransportationCategory : ITransportationCategory) {
     if (!dailyTrip || !dailyTrip.travelViewPoints) return;
 
     for (let i = 0; i < dailyTrip.travelViewPoints.length - 1; i++) {
@@ -43,7 +43,7 @@ export function caculateDistance(dailyTrip: IDailyTripBiz) {
         ));
 
         if (vp.transportationToNext == null) {
-            vp.transportationToNext = TransportationCategory.Walking;
+            vp.transportationToNext = defaultTransportationCategory;
         }
     }
 
@@ -97,7 +97,7 @@ export function translateTravelViewPointFromBiz(travelViewPoint: ITravelViewPoin
         id: travelViewPoint.id,
         viewPoint: travelViewPoint.viewPoint.id,
         dailyTrip: travelViewPoint.dailyTrip.id,
-        transportationToNext: travelViewPoint.transportationToNext
+        transportationToNext: travelViewPoint.transportationToNext.id
     };
 }
 

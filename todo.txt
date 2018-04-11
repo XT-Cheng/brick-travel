@@ -1,5 +1,3 @@
-1. rxjs\add\observable\fromEvent.d.ts必须移除，否则编译报错
-
-"sourceMapPathOverrides": {
-                "webpack:/*": "${webRoot}/*"
-            },
+2018/4/11
+    1. Finish ViewPoint form
+    2. Adapt to Mobile Client

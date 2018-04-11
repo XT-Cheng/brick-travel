@@ -11,10 +11,10 @@ import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz 
 import { IViewPointBiz } from '../bizModel/viewPoint.biz.model';
 import { ICity } from '../entity/city/city.model';
 import { STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint, user } from '../entity/entity.schema';
+import { city, filterCategory, travelAgenda, viewPoint, dailyTrip, travelViewPoint, user, viewPointCategory, transportationCategory } from '../entity/entity.schema';
 import { IFilterCategory } from '../entity/filterCategory/filterCategory.model';
-import { ITravelAgenda, IDailyTrip, ITravelViewPoint } from '../entity/travelAgenda/travelAgenda.model';
-import { IViewPoint } from '../entity/viewPoint/viewPoint.model';
+import { ITravelAgenda, IDailyTrip, ITravelViewPoint, ITransportationCategory } from '../entity/travelAgenda/travelAgenda.model';
+import { IViewPoint, IViewPointCategory } from '../entity/viewPoint/viewPoint.model';
 import { IAppState } from '../store.model';
 import { STORE_KEY } from '../store.model';
 import { STORE_UI_TRAVELAGENDA_KEY } from '../ui/travelAgenda/travelAgenda.model';
@@ -39,6 +39,8 @@ export class SelectorService {
     private currentFiltersSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
     private viewPointsSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
     private citiesSelector$: BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
+    private viewPointCategoriesSelector$: BehaviorSubject<IViewPointCategory[]> = new BehaviorSubject([]);
+    private transportationCategoriesSelector$: BehaviorSubject<ITransportationCategory[]> = new BehaviorSubject([]);
     private travelAgendasSelector$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
     private filterCategoriesSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
     private searchedCitiesSelector$ : BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
@@ -49,6 +51,9 @@ export class SelectorService {
     private _selectedTravelViewPoint: ITravelViewPointBiz;
     private _selectedViewPoint: IViewPointBiz;
     private _userLoggedIn : IUserBiz;
+
+    private _viewPointCategories : IViewPointCategory[];
+    private _transportationCategories : ITransportationCategory[];
 
     private _currentViewPointSearchKey : string;
     private _isViewPointFiltered : boolean;
@@ -73,6 +78,10 @@ export class SelectorService {
 
     public get loggedInUser(): IUserBiz {
         return this._userLoggedIn;
+    }
+
+    public get defaultTransportationCategory() : ITransportationCategory {
+        return this._transportationCategories.find((cat)=> cat.isDefault);
     }
 
     public get selectedTravelAgenda(): ITravelAgendaBiz {
@@ -124,6 +133,12 @@ export class SelectorService {
     public get cities$(): Observable<ICityBiz[]> {
         return this.citiesSelector$.asObservable();
     }
+    public get viewPointCategories$() : Observable<IViewPointCategory[]> {
+        return this.viewPointCategoriesSelector$.asObservable();
+    }
+    public get transportationCategories$() : Observable<ITransportationCategory[]> {
+        return this.transportationCategoriesSelector$.asObservable();
+    }
     public get filterCategories$(): Observable<IFilterCategoryBiz[]> {
         return this.filterCategoriesSelector$.asObservable();
     }
@@ -149,6 +164,14 @@ export class SelectorService {
         })
         this.getCities(this._store).subscribe((value) => {
             this.citiesSelector$.next(value);
+        })
+        this.getViewPointCategories(this._store).subscribe((value) => {
+            this._viewPointCategories = value;
+            this.viewPointCategoriesSelector$.next(value);
+        })
+        this.getTransportationCategories(this._store).subscribe((value) => {
+            this._transportationCategories = value;
+            this.transportationCategoriesSelector$.next(value);
         })
         this.getSelectedCity(this._store).subscribe((value) => {
             this._selectedCity = value;
@@ -207,6 +230,20 @@ export class SelectorService {
     }
 
     //#region Entities Selector
+    private getViewPointCategories(store: NgRedux<IAppState>): Observable<IViewPointCategory[]> {
+        return store.select<{ [id: string]: IViewPointCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPointCatgories])
+            .map((data) => {
+                return denormalize(Object.keys(data), [viewPointCategory], Immutable(store.getState().entities).asMutable({ deep: true }));
+            });
+    }
+
+    private getTransportationCategories(store: NgRedux<IAppState>): Observable<ITransportationCategory[]> {
+        return store.select<{ [id: string]: ITransportationCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.transportationCatgories])
+            .map((data) => {
+                return denormalize(Object.keys(data), [transportationCategory], Immutable(store.getState().entities).asMutable({ deep: true }));
+            });
+    }
+
     private getCities(store: NgRedux<IAppState>): Observable<ICityBiz[]> {
         return store.select<{ [id: string]: ICity }>([STORE_KEY.entities, STORE_ENTITIES_KEY.cities])
             .map((data) => {
@@ -235,7 +272,7 @@ export class SelectorService {
 
                 ret.forEach(ta => {
                     ta.dailyTrips.forEach(dt => {
-                        caculateDistance(dt);
+                        caculateDistance(dt,this.defaultTransportationCategory);
                     })
                 })
 
@@ -294,7 +331,7 @@ export class SelectorService {
             .switch()
             .map(dt => {
                 let ret = dt ? denormalize(dt.id, dailyTrip, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
-                if (ret) caculateDistance(ret);
+                if (ret) caculateDistance(ret,this.defaultTransportationCategory);
                 return ret;
             })
     }

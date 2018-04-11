@@ -343,7 +343,7 @@ export class TravelAgendaService {
     public addTravelViewPoint(viewPoint: IViewPointBiz, dailyTrip: IDailyTripBiz): ITravelViewPointBiz {
         let added = createTravelViewPoint(viewPoint, dailyTrip);
         dailyTrip.travelViewPoints.push(added);
-        caculateDistance(dailyTrip);
+        caculateDistance(dailyTrip,this._selectorService.defaultTransportationCategory);
 
         this.insertTravelViewPointAction(added.id, translateTravelViewPointFromBiz(added));
         if (dailyTrip.travelViewPoints.length > 1)
@@ -372,7 +372,7 @@ export class TravelAgendaService {
     }
 
     public switchTravelViewPoint(dailyTrip: IDailyTripBiz) {
-        caculateDistance(dailyTrip);
+        caculateDistance(dailyTrip,this._selectorService.defaultTransportationCategory);
 
         dailyTrip.travelViewPoints.forEach((tvp) => {
             this.updateTravelViewPointAction(tvp.id, translateTravelViewPointFromBiz(tvp));
