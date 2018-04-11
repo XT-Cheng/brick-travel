@@ -27,7 +27,23 @@
             </div>
           </div>
           <div class="form-group">
-              <bt-rate class='fr' [readOnly]='false'  name='rank' [(ngModel)]="newViewPoint.rank"></bt-rate>
+            <label for="input-rank">Rank</label>
+            <bt-rate required #rank='ngModel' id='input-rank' class="form-control" [class.danger]="rank.invalid"
+                max=5 [readonly]='false' name='rank' [(ngModel)]="newViewPoint.rank">
+              <ng-template let-fill="fill">
+                <!-- <span class="star fill" [class.filled]="fill === 100"> -->
+                  <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 0">
+                    <use xlink:href='#icon-empty-star'></use>
+                  </svg>
+                  <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 50">
+                    <use xlink:href='#icon-half-star'></use>
+                  </svg>
+                  <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 100">
+                    <use xlink:href='#icon-star'></use>
+                  </svg>
+                <!-- </span> -->
+              </ng-template>
+            </bt-rate>
           </div>
           <div class="form-group">
             <label for="input-city">City</label>

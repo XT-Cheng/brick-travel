@@ -1,10 +1,24 @@
 <div [ngStyle]='getStyle()' class='card'>
   <div class='img-col'>
-      <img style='height:80px;width:80px;' [src]="viewPoint.thumbnail" />
+    <img style='height:80px;width:80px;' [src]="viewPoint.thumbnail" />
   </div>
   <div class='title-col'>
-      <div class='title'>{{viewPoint.name}}</div>
-      <bt-rate class='fr' [readOnly]='true' [(ngModel)]="viewPoint.rank"></bt-rate>
+    <div class='title'>{{viewPoint.name}}</div>
+    <bt-rate class='fr' [readonly]='true' [(ngModel)]="viewPoint.rank">
+      <ng-template let-fill="fill">
+        <span class="star fill" [class.filled]="fill === 100">
+          <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 0">
+            <use xlink:href='#icon-empty-star'></use>
+          </svg>
+          <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 50">
+            <use xlink:href='#icon-half-star'></use>
+          </svg>
+          <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 100">
+            <use xlink:href='#icon-star'></use>
+          </svg>
+        </span>
+      </ng-template>
+    </bt-rate>
   </div>
 </div>
 

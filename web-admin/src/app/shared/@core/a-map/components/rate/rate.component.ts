@@ -1,152 +1,229 @@
-import { Component, Input, forwardRef, OnInit, ChangeDetectorRef } from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  TemplateRef,
+  OnChanges,
+  SimpleChanges,
+  ContentChild,
+  forwardRef,
+  ChangeDetectorRef
+} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import { toString, getValueInRange } from '../../../utils/helpers';
 
-const noop = () => {
-};
+enum Key {
+  End = 35,
+  Home = 36,
+  ArrowLeft = 37,
+  ArrowUp = 38,
+  ArrowRight = 39,
+  ArrowDown = 40
+}
 
-export const RATING_CONTROL_VALUE_ACCESSOR: any = {
+/**
+ * Context for the custom star display template
+ */
+export interface StarTemplateContext {
+  /**
+   * Star fill percentage. An integer value between 0 and 100
+   */
+  fill: number;
+
+  /**
+   * Index of the star.
+   */
+  index: number;
+}
+
+const NGB_RATING_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => RateComponent),
   multi: true
 };
 
+/**
+ * Rating directive that will take care of visualising a star rating bar.
+ */
 @Component({
   selector: 'bt-rate',
-  templateUrl: 'rate.component.html',
-  styleUrls: ['rate.component.scss'],
-  providers: [RATING_CONTROL_VALUE_ACCESSOR]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    'tabindex': '0',
+    'role': 'slider',
+    'aria-valuemin': '0',
+    '[attr.aria-valuemax]': 'max',
+    '[attr.aria-valuenow]': 'nextRate',
+    '[attr.aria-valuetext]': 'ariaValueText()',
+    '[attr.aria-disabled]': 'readonly ? true : null',
+    '(blur)': 'handleBlur()',
+    '(keydown)': 'handleKeyDown($event)',
+    '(mouseleave)': 'reset()'
+  },
+  template: `
+    <ng-template #t let-fill="fill">{{ fill === 100 ? '&#9733;' : '&#9734;' }}</ng-template>
+    <ng-template ngFor [ngForOf]="contexts" let-index="index">
+      <span (mouseenter)="enter(index + 1)" (click)="handleClick(index + 1)" [style.cursor]="readonly || disabled ? 'default' : 'pointer'">
+        <ng-template [ngTemplateOutlet]="starTemplate || t" [ngTemplateOutletContext]="contexts[index]"></ng-template>
+      </span>
+    </ng-template>
+  `,
+  providers: [NGB_RATING_VALUE_ACCESSOR]
 })
-export class RateComponent implements ControlValueAccessor, OnInit {
-  //Private member
-  private _maxRate: number = 5;
-  private _isReadOnly: boolean = false;
-  private _isNullable: boolean = false;
-  private _innerValue: any;
-  private _starIndexes: Array<number>;
-  //Private member
+// <span class="sr-only">({{ index < nextRate ? '*' : ' ' }})</span>
+export class RateComponent implements ControlValueAccessor,
+    OnInit, OnChanges {
+  contexts: StarTemplateContext[] = [];
+  disabled = false;
+  nextRate: number;
 
-  //Constructor
-  constructor(private _cdRef: ChangeDetectorRef) {
-  }
-  //Constructor
 
-  //Protected property
-  @Input()
-  protected get starIndexes() {
-    return this._starIndexes;
+  /**
+   * Maximal rating that can be given using this widget.
+   */
+  @Input() max: number;
+
+  /**
+   * Current rating. Can be a decimal value like 3.75
+   */
+  @Input() rate: number;
+
+  /**
+   * A flag indicating if rating can be updated.
+   */
+  @Input() readonly: boolean;
+
+  /**
+   * A flag indicating if rating can be reset to 0 on mouse click
+   */
+  @Input() resettable: boolean;
+
+  /**
+   * A template to override star display.
+   * Alternatively put a <ng-template> as the only child of <ngb-rating> element
+   */
+  @Input() @ContentChild(TemplateRef) starTemplate: TemplateRef<StarTemplateContext>;
+
+  /**
+   * An event fired when a user is hovering over a given rating.
+   * Event's payload equals to the rating being hovered over.
+   */
+  @Output() hover = new EventEmitter<number>();
+
+  /**
+   * An event fired when a user stops hovering over a given rating.
+   * Event's payload equals to the rating of the last item being hovered over.
+   */
+  @Output() leave = new EventEmitter<number>();
+
+  /**
+   * An event fired when a user selects a new rating.
+   * Event's payload equals to the newly selected rating.
+   */
+  @Output() rateChange = new EventEmitter<number>(true);
+
+  onChange = (_: any) => {};
+  onTouched = () => {};
+
+  constructor(private _changeDetectorRef: ChangeDetectorRef) {
+    this.max = 5;
+    this.readonly = false;
   }
 
-  @Input()
-  protected get max() {
-    return this._maxRate;
-  }
-  protected set max(val: any) {
-    this._maxRate = this.getNumberPropertyValue(val);
-  }
-  @Input()
-  protected get readOnly() {
-    return this._isReadOnly;
-  }
-  protected set readOnly(val: any) {
-    this._isReadOnly = this.isTrueProperty(val);
-  }
-  @Input()
-  protected get nullable() {
-    return this._isNullable;
-  }
-  protected set nullable(val: any) {
-    this._isNullable = this.isTrueProperty(val);
-  }
-  //Protected property
+  ariaValueText() { return `${this.nextRate} out of ${this.max}`; }
 
-  //Implements interface
-  ngOnInit() {
-    this._starIndexes = Array(this.max).fill(1).map((x, i) => i);
-  }
-  //Implements interface
-
-  //Public method
-  public getStarIconName(starIndex: number) {
-    if (this.value === undefined) {
-      return 'empty';
+  enter(value: number): void {
+    if (!this.readonly && !this.disabled) {
+      this._updateState(value);
     }
-
-    if (this.value > starIndex) {
-      if (this.value < starIndex + 1) {
-        return 'half';
-      } else {
-        return 'star';
-      }
-    } else {
-      return 'empty';
-    }
+    this.hover.emit(value);
   }
 
-  public rate(value: number) {
-    if (this.readOnly || value < 0 || value > this.max) {
-      return;
-    }
+  handleBlur() { this.onTouched(); }
 
-    if (value === this.value && this.nullable) {
-      value = null;
-    }
+  handleClick(value: number) { this.update(this.resettable && this.rate === value ? 0 : value); }
 
-    this.value = value;
-  }
-
-  public get value(): any {
-    return this._innerValue;
-  }
-
-  public set value(value: any) {
-    if (value !== this._innerValue) {
-      this._innerValue = value;
-      this.onChangeCallback(value);
-    }
-  }
-
-  public writeValue(value: any) {
-    if (value !== this._innerValue) {
-      this._innerValue = value;
-      //To fix change detection
-      this._cdRef.detectChanges();
-    }
-  }
-
-  public registerOnChange(fn: any) {
-    this.onChangeCallback = fn;
-  }
-
-  public registerOnTouched(fn: any) {
-  }
-
-  public onKeyDown(event: any) {
-    if (/(37|38|39|40)/.test(event.which)) {
+  handleKeyDown(event: KeyboardEvent) {
+    if (Key[toString(event.which)]) {
       event.preventDefault();
-      event.stopPropagation();
 
-      let newValue = this.value + ((event.which == 38 || event.which == 39) ? 1 : -1);
-      return this.rate(newValue);
+      switch (event.which) {
+        case Key.ArrowDown:
+        case Key.ArrowLeft:
+          this.update(this.rate - 1);
+          break;
+        case Key.ArrowUp:
+        case Key.ArrowRight:
+          this.update(this.rate + 1);
+          break;
+        case Key.Home:
+          this.update(0);
+          break;
+        case Key.End:
+          this.update(this.max);
+          break;
+      }
     }
   }
-  //Public method
 
-  //Private method
-  private onChangeCallback: (_: any) => void = noop;
-
-  private isTrueProperty(val: any): boolean {
-    if (typeof val === 'string') {
-      val = val.toLowerCase().trim();
-      return (val === 'true' || val === 'on');
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['rate']) {
+      this.update(this.rate);
     }
-    return !!val;
   }
 
-  private getNumberPropertyValue(val: any): number {
-    if (typeof val === 'string') {
-      return parseInt(val.trim());
-    }
-    return val;
+  ngOnInit(): void {
+    this.contexts = Array.from({length: this.max}, (v, k) => ({fill: 0, index: k}));
+    this._updateState(this.rate);
   }
-  //Private method
+
+  registerOnChange(fn: (value: any) => any): void { this.onChange = fn; }
+
+  registerOnTouched(fn: () => any): void { this.onTouched = fn; }
+
+  reset(): void {
+    this.leave.emit(this.nextRate);
+    this._updateState(this.rate);
+  }
+
+  setDisabledState(isDisabled: boolean) { this.disabled = isDisabled; }
+
+  update(value: number, internalChange = true): void {
+    const newRate = getValueInRange(value, this.max, 0);
+    if (!this.readonly && !this.disabled && this.rate !== newRate) {
+      this.rate = newRate;
+      this.rateChange.emit(this.rate);
+    }
+    if (internalChange) {
+      this.onChange(this.rate);
+      this.onTouched();
+    }
+    this._updateState(this.rate);
+  }
+
+  writeValue(value) {
+    this.update(value, false);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  private _getFillValue(index: number): number {
+    const diff = this.nextRate - index;
+
+    if (diff >= 1) {
+      return 100;
+    }
+    if (diff < 1 && diff > 0) {
+      return Number.parseInt((diff * 100).toFixed(2));
+    }
+
+    return 0;
+  }
+
+  private _updateState(nextValue: number) {
+    this.nextRate = nextValue;
+    this.contexts.forEach((context, index) => context.fill = this._getFillValue(index));
+  }
 }

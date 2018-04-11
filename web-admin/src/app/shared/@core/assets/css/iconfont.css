@@ -1,17 +1,17 @@
 .bt-icon {
   width: 2rem; height: 2rem;
   fill: currentColor;
-  position: absolute;
+  /* position: absolute; */
 }
 
 .bt-icon-big {
   width: 2.4rem; height: 2.4rem;
   fill: currentColor;
-  position: absolute;
+  /* position: absolute; */
 }
 
 .bt-icon-small {
   width: 1.2rem; height: 1.2rem;
   fill: currentColor;
-  position: absolute;
+  /* position: absolute; */
 }

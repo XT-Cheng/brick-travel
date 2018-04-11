@@ -86,7 +86,7 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy{
       latitude: null,
       longtitude: null,
       category: null,
-      rank: -1,
+      rank: null,
       countOfComments: 0,
       images: [],
       tags: [],
