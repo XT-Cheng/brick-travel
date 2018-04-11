@@ -26,7 +26,8 @@ export class ViewPointFormComponent {
   //#region Private member
 
   private _originalViewPoint: IViewPointBiz = null;
-  private _files: Map<string, FileItem>;
+  private _imageFiles: Map<string, FileItem>;
+  private _thumbnailFile: FileItem;
   //#endregion
 
   //#region Public member
@@ -34,14 +35,15 @@ export class ViewPointFormComponent {
     title: 'Delete'
   }];
 
-  hasBaseDropZoneOver: boolean = false;
+  hasImagesDropZoneOver: boolean = false;
+  hasThumbnailDropZoneOver: boolean = false;
 
   //#endregion
 
   //#region Public property
   newViewPoint: IViewPointBiz = null;
-  selectedCity : any = null;
-  
+  selectedCity: any = null;
+
   @ViewChildren(NbContextMenuDirective) contextMenus;
 
   @Input()
@@ -63,12 +65,12 @@ export class ViewPointFormComponent {
 
   //#region Constructor
 
-  constructor(private _viewPointService: ViewPointService,private modalService: NgbModal, private element : ElementRef,
-    @Inject(FILE_UPLOADER) public uploader: FileUploader, 
-    public selectorService : SelectorService,
+  constructor(private _viewPointService: ViewPointService, private modalService: NgbModal, private element: ElementRef,
+    @Inject(FILE_UPLOADER) public uploader: FileUploader,
+    public selectorService: SelectorService,
     private toasterService: ToasterService, private menuService: NbMenuService,
     private activeModal: NgbActiveModal) {
-    this._files = new Map<string, FileItem>();
+    this._imageFiles = new Map<string, FileItem>();
 
     this.uploader.clearQueue();
     this.uploader.setOptions({ allowedMimeType: ['image/png'] });
@@ -101,7 +103,7 @@ export class ViewPointFormComponent {
   }
 
   getMenuItem(img: string): NbMenuItem[] {
-    let fileItem = this._files.get(img);
+    let fileItem = this._imageFiles.get(img);
 
     return [{
       title: 'Delete',
@@ -113,7 +115,7 @@ export class ViewPointFormComponent {
     return this.element.nativeElement.clientHeight;
   }
 
-  hasCity() : boolean {
+  hasCity(): boolean {
     return !!this.newViewPoint.city;
   }
 
@@ -121,30 +123,49 @@ export class ViewPointFormComponent {
     console.log(city);
   }
 
-  hasPosition() : boolean {
+  hasPosition(): boolean {
     return (!!this.newViewPoint.latitude && !!this.newViewPoint.longtitude);
   }
 
-  hasFile(): boolean {
+  hasImageFiles(): boolean {
     return this.newViewPoint.images.length > 0;
+  }
+
+  hasThumbnailFile(): boolean {
+    return !!this.newViewPoint.thumbnail;
   }
 
   isSubmitDisAllowed(form): boolean {
     return !this.isChanged() || !form.valid || (this.newViewPoint.images.length == 0);
   }
 
-  fileOverBase(e: boolean): void {
-    this.hasBaseDropZoneOver = e;
+  imageFileOver(e: boolean): void {
+    this.hasImagesDropZoneOver = e;
   }
 
-  fileDropped(fileItems: FileItem[]): void {
+  thumbnailFileOver(e: boolean): void {
+    this.hasThumbnailDropZoneOver = e;
+  }
+
+  imageFileDropped(fileItems: FileItem[]): void {
     let reader = new FileReader();
 
     reader.onloadend = (e: any) => {
       this.newViewPoint.images.push(e.target.result);
       fileItems.forEach(item => {
-        this._files.set(e.target.result, item);
+        this._imageFiles.set(e.target.result, item);
       })
+    }
+
+    reader.readAsDataURL(fileItems[0]._file)
+  }
+
+  thumbnailFileDropped(fileItems: FileItem[]): void {
+    let reader = new FileReader();
+
+    reader.onloadend = (e: any) => {
+      this.newViewPoint.thumbnail = e.target.result;
+      this._thumbnailFile = fileItems[0];
     }
 
     reader.readAsDataURL(fileItems[0]._file)
@@ -189,8 +210,8 @@ export class ViewPointFormComponent {
     this.element.nativeElement.style.display = 'none';
 
     if (this.newViewPoint.latitude)
-      activeModal.componentInstance.pointChoosed = new AMap.LngLat(this.newViewPoint.longtitude,this.newViewPoint.latitude);
-    activeModal.result.then((pos : AMap.LngLat) => {
+      activeModal.componentInstance.pointChoosed = new AMap.LngLat(this.newViewPoint.longtitude, this.newViewPoint.latitude);
+    activeModal.result.then((pos: AMap.LngLat) => {
       this.newViewPoint.latitude = pos.getLat();
       this.newViewPoint.longtitude = pos.getLng();
       this.element.nativeElement.style.display = 'block';
@@ -206,15 +227,24 @@ export class ViewPointFormComponent {
   //#region Private method  
 
   private isChanged(): boolean {
-    if (!this.newViewPoint.city || !this._originalViewPoint.city) return false;
+    if (this.mode === EntityFormMode.create) return true;
 
     let changed = !(this.newViewPoint.name == this._originalViewPoint.name &&
-      this.newViewPoint.city.id == this._originalViewPoint.city.id && 
+      this.newViewPoint.city.id == this._originalViewPoint.city.id &&
+      this.newViewPoint.category.id == this._originalViewPoint.category.id &&
+      this.newViewPoint.address == this._originalViewPoint.address &&
+      this.newViewPoint.description == this._originalViewPoint.description &&
+      this.newViewPoint.latitude == this._originalViewPoint.latitude &&
+      this.newViewPoint.longtitude == this._originalViewPoint.longtitude &&
+      this.newViewPoint.rank == this._originalViewPoint.rank &&
+      this.newViewPoint.tags == this._originalViewPoint.tags &&
+      this.newViewPoint.timeNeeded == this._originalViewPoint.timeNeeded &&
+      this.newViewPoint.tips == this._originalViewPoint.tips &&
       this.newViewPoint.images.length == this._originalViewPoint.images.length)
 
     if (changed) return changed;
 
-    for (let i = 0 ; i < this.newViewPoint.images.length ; i ++) {
+    for (let i = 0; i < this.newViewPoint.images.length; i++) {
       if (this.newViewPoint.images[i] != this._originalViewPoint.images[i])
         return true;
     }

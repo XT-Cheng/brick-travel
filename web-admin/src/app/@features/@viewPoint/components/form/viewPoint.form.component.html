@@ -28,19 +28,19 @@
           </div>
           <div class="form-group">
             <label for="input-rank">Rank</label>
-            <bt-rate required #rank='ngModel' id='input-rank' class="form-control" [class.danger]="rank.invalid"
-                max=5 [readonly]='false' name='rank' [(ngModel)]="newViewPoint.rank">
+            <bt-rate required #rank='ngModel' id='input-rank' class="form-control" [class.danger]="rank.invalid" max=5 [readonly]='false'
+              name='rank' [(ngModel)]="newViewPoint.rank">
               <ng-template let-fill="fill">
                 <!-- <span class="star fill" [class.filled]="fill === 100"> -->
-                  <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 0">
-                    <use xlink:href='#icon-empty-star'></use>
-                  </svg>
-                  <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 50">
-                    <use xlink:href='#icon-half-star'></use>
-                  </svg>
-                  <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 100">
-                    <use xlink:href='#icon-star'></use>
-                  </svg>
+                <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 0">
+                  <use xlink:href='#icon-empty-star'></use>
+                </svg>
+                <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 50">
+                  <use xlink:href='#icon-half-star'></use>
+                </svg>
+                <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 100">
+                  <use xlink:href='#icon-star'></use>
+                </svg>
                 <!-- </span> -->
               </ng-template>
             </bt-rate>
@@ -83,17 +83,30 @@
           </div>
         </nb-tab>
         <nb-tab tabTitle='Images'>
-          <label for="input-name">View Point Image</label>
-          <div ng2FileDrop [multiple]='true' [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDropped($event)"
-            [uploader]="uploader" class="my-drop-zone" [class.danger]="!hasFile()">
-            <div *ngIf='!hasFile()'>Drop File</div>
-            <ng-container *ngIf='hasFile()'>
-              <img *ngFor='let image of newViewPoint.images' [src]='image' [nbContextMenu]="getMenuItem(image)" />
-            </ng-container>
+          <div class="form-group">
+            <label for="input-thumnail">View Point Thumbnail</label>
+            <div ng2FileDrop id='input-thumnail' [multiple]='false' [ngClass]="{'nv-file-over': hasThumbnailDropZoneOver}" (fileOver)="thumbnailFileOver($event)"
+              (onFileDrop)="thumbnailFileDropped($event)" name='thumbnail' [uploader]="uploader" class="my-drop-zone" [class.danger]="!hasThumbnailFile()">
+              <div *ngIf='!hasThumbnailFile()'>Drop Thumbnail File</div>
+              <img *ngIf='hasThumbnailFile()' [src]='newViewPoint.thumbnail' />
+            </div>
+            <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasThumbnailFile()">
+              Thumbnail is required!
+            </small>
           </div>
-          <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasFile()">
-            Image is required!
-          </small>
+          <div class="form-group">
+            <label for="input-images">View Point Images</label>
+            <div ng2FileDrop id='input-images' [multiple]='true' [ngClass]="{'nv-file-over': hasImagesDropZoneOver}" (fileOver)="imageFileOver($event)"
+              (onFileDrop)="imageFileDropped($event)" name='images' [uploader]="uploader" class="my-drop-zone" [class.danger]="!hasImageFiles()">
+              <div *ngIf='!hasImageFiles()'>Drop Image Files</div>
+              <ng-container *ngIf='hasImageFiles()'>
+                <img *ngFor='let image of newViewPoint.images' [src]='image' [nbContextMenu]="getMenuItem(image)" />
+              </ng-container>
+            </div>
+            <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasImageFiles()">
+              Image is required!
+            </small>
+          </div>
         </nb-tab>
         <nb-tab tabTitle='Others'>
           <div class="form-group">
@@ -103,7 +116,7 @@
             </textarea>
           </div>
           <div class="form-group">
-            <label for="input-timeNeeded">Tips</label>
+            <label for="input-timeNeeded">Time Needed</label>
             <input #timeNeeded='ngModel' type="text" id='input-timeNeeded' placeholder="Time Needed" class="form-control" [(ngModel)]="newViewPoint.timeNeeded"
               name='timeNeeded' />
           </div>
