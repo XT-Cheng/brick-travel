@@ -102,8 +102,7 @@ export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIView
 export class ViewPointService {
     //#region Constructor
     constructor(private _http: HttpClient,
-        @Inject(FILE_UPLOADER) private _uploader: FileUploader,
-        private _store: NgRedux<IAppState>) {
+       private _store: NgRedux<IAppState>) {
     }
     //#endregion
 
@@ -285,8 +284,8 @@ export class ViewPointService {
         this.setViewModeAction(viewMode);
     }
 
-    public addViewPoint(added: IViewPointBiz): Observable<Error | IViewPoint> {
-        return this.insert(added).pipe(tap((vp) => {
+    public addViewPoint(added: IViewPointBiz,files : Map<string,FileUploader>): Observable<Error | IViewPoint> {
+        return this.insert(added,files).pipe(tap((vp) => {
             this.insertViewPointAction(added.id, vp);
         }),
             catchError((err: Error) => {
@@ -294,8 +293,8 @@ export class ViewPointService {
             }));
     }
 
-    public updateViewPoint(update: IViewPointBiz): Observable<Error | IViewPoint> {
-        return this.update(update).pipe(tap((vp) => {
+    public updateViewPoint(update: IViewPointBiz,files : Map<string,FileUploader>): Observable<Error | IViewPoint> {
+        return this.update(update,files).pipe(tap((vp) => {
             this.updateViewPointAction(update.id, vp);
         }),
             catchError((err) => {
@@ -314,7 +313,7 @@ export class ViewPointService {
     //#endregion
 
     //#region CRUD methods
-    public insert(id: string | IViewPointBiz): Observable<IViewPoint> {
+    public insert(id: string | IViewPointBiz,files : Map<string,FileUploader>): Observable<IViewPoint> {
         let created : any = id;
         if (typeof id == 'string') {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
@@ -328,15 +327,17 @@ export class ViewPointService {
 
         formData.append("viewPoint", JSON.stringify(created));
 
-        for (let i = 0; i < this._uploader.queue.length; i++) {
-            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+        for (let key of Array.from(files.keys())) {
+            for (let i = 0; i < files.get(key).queue.length; i++) {
+                formData.append(`${key}${i}`, files.get(key).queue[i]._file, files.get(key).queue[i].file.name);
+            }
+            files.get(key).clearQueue();        
         }
-        this._uploader.clearQueue();
-
+        
         return this._http.post<IViewPoint>(`${WEBAPI_HOST}/viewPoints/`, formData);
     }
 
-    public update(id: string | IViewPointBiz) {
+    public update(id: string | IViewPointBiz,files : Map<string,FileUploader>) {
         let updated: any = id;
         if (typeof id == 'string') {
             let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
@@ -348,11 +349,14 @@ export class ViewPointService {
         const formData: FormData = new FormData();
 
         formData.append("viewPoint", JSON.stringify(updated));
-        for (let i = 0; i < this._uploader.queue.length; i++) {
-            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
-        }
-        this._uploader.clearQueue();
 
+        for (let key of Array.from(files.keys())) {
+            for (let i = 0; i < files.get(key).queue.length; i++) {
+                formData.append(`${key}${i}`, files.get(key).queue[i]._file, files.get(key).queue[i].file.name);
+            }
+            files.get(key).clearQueue();        
+        }
+        
         return this._http.put<IViewPoint>(`${WEBAPI_HOST}/viewPoints`, formData);
     }
 

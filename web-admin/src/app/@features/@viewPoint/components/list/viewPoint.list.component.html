@@ -1,8 +1,7 @@
-
 <div class="row">
   <nb-card *ngFor='let vp of (viewPoints$ | async)' class='vp-card' >
     <nb-card-body>
-      <img [src]="vp.images[0]" />
+      <img [src]="vp.thumbnail" />
       <div class="card-title">{{vp.name}}</div>
     </nb-card-body>
     <nb-card-footer>
@@ -13,4 +12,3 @@
     </nb-card-footer>
   </nb-card>
 </div>
-<!-- style="float: left;" -->

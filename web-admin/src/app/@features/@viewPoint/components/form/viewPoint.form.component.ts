@@ -1,4 +1,4 @@
-import { Component, Inject, Input, ViewChildren, ElementRef } from '@angular/core';
+import { Component, Inject, Input, ViewChildren, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import { ObjectID } from 'bson';
@@ -16,15 +16,17 @@ import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model'
 import { EntityFormMode } from '../../../../app.component';
 import { AMapComponent } from 'shared/@core/a-map/components/a-map.component';
 import { MapModalComponent } from '../mapModal.component';
+import { WEBAPI_HOST } from 'shared/@core/utils/constants';
 
 @Component({
   selector: 'bt-vp-form',
   templateUrl: 'viewPoint.form.component.html',
   styleUrls: ['./viewPoint.form.component.scss']
 })
-export class ViewPointFormComponent {
+export class ViewPointFormComponent implements AfterViewInit {
+  
   //#region Private member
-
+  
   private _originalViewPoint: IViewPointBiz = null;
   private _imageFiles: Map<string, FileItem>;
   private _thumbnailFile: FileItem;
@@ -38,11 +40,24 @@ export class ViewPointFormComponent {
   hasImagesDropZoneOver: boolean = false;
   hasThumbnailDropZoneOver: boolean = false;
 
+  imagesUploader: FileUploader = new FileUploader({ url: `${WEBAPI_HOST}/fileUpload` });
+  thumbnailUploader: FileUploader = new FileUploader({ url: `${WEBAPI_HOST}/fileUpload` });
+
+  filesMap: Map<string, FileUploader> = new Map<string, FileUploader>();
+
+  //#endregion
+
+  //#region Interface implementation
+  ngAfterViewInit(): void {
+    this.nameInput.nativeElement.focus(); 
+  }
   //#endregion
 
   //#region Public property
   newViewPoint: IViewPointBiz = null;
   selectedCity: any = null;
+
+  @ViewChild('name',{read: ElementRef}) nameInput : ElementRef;
 
   @ViewChildren(NbContextMenuDirective) contextMenus;
 
@@ -66,14 +81,19 @@ export class ViewPointFormComponent {
   //#region Constructor
 
   constructor(private _viewPointService: ViewPointService, private modalService: NgbModal, private element: ElementRef,
-    @Inject(FILE_UPLOADER) public uploader: FileUploader,
     public selectorService: SelectorService,
     private toasterService: ToasterService, private menuService: NbMenuService,
     private activeModal: NgbActiveModal) {
     this._imageFiles = new Map<string, FileItem>();
 
-    this.uploader.clearQueue();
-    this.uploader.setOptions({ allowedMimeType: ['image/png'] });
+    this.imagesUploader.clearQueue();
+    this.imagesUploader.setOptions({ allowedMimeType: ['image/png'] });
+
+    this.thumbnailUploader.clearQueue();
+    this.thumbnailUploader.setOptions({ allowedMimeType: ['image/png'] });
+
+    this.filesMap.set('images',this.imagesUploader);
+    this.filesMap.set('thumbnail',this.thumbnailUploader);
 
     this.menuService.onItemClick().subscribe(menuBag => {
       if (this.newViewPoint == null) return;
@@ -81,7 +101,7 @@ export class ViewPointFormComponent {
       let { file, source } = menuBag.item.data;
 
       if (file) {
-        this.uploader.removeFromQueue(file);
+        this.imagesUploader.removeFromQueue(file);
       }
       let index = this.newViewPoint.images.findIndex((img) => {
         return img === source;
@@ -176,8 +196,10 @@ export class ViewPointFormComponent {
       return !img.startsWith('data:');
     })
 
+    this.newViewPoint.thumbnail = '';
+
     if (this.mode == EntityFormMode.create) {
-      this._viewPointService.addViewPoint(this.newViewPoint)
+      this._viewPointService.addViewPoint(this.newViewPoint,this.filesMap )
         .subscribe((ret: Error | IViewPoint) => {
           if (ret instanceof Error)
             this.toasterService.pop('error', 'Error', `Can't create view point, pls try later`);
@@ -187,7 +209,7 @@ export class ViewPointFormComponent {
         });
     }
     else {
-      this._viewPointService.updateViewPoint(this.newViewPoint)
+      this._viewPointService.updateViewPoint(this.newViewPoint,this.filesMap)
         .subscribe((ret: Error | IViewPoint) => {
           if (ret instanceof Error)
             this.toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
@@ -204,7 +226,7 @@ export class ViewPointFormComponent {
 
   openMap() {
     const activeModal = this.modalService.open(MapModalComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.minHeight = 600;
+    activeModal.componentInstance.minHeight = 500;
     activeModal.componentInstance.city = this.newViewPoint.city;
 
     this.element.nativeElement.style.display = 'none';
@@ -240,6 +262,7 @@ export class ViewPointFormComponent {
       this.newViewPoint.tags == this._originalViewPoint.tags &&
       this.newViewPoint.timeNeeded == this._originalViewPoint.timeNeeded &&
       this.newViewPoint.tips == this._originalViewPoint.tips &&
+      this.newViewPoint.thumbnail == this._originalViewPoint.thumbnail &&
       this.newViewPoint.images.length == this._originalViewPoint.images.length)
 
     if (changed) return changed;
