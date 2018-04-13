@@ -10,7 +10,19 @@
               </ion-col>
               <ion-col col-7>
                 <div class='title'>{{viewPoint.name}}</div>
-                <rate class='fr' [readOnly]='true' [(ngModel)]="viewPoint.rank"></rate>
+                <bt-rate max=5 [readonly]='false' [(ngModel)]="viewPoint.rank">
+                  <ng-template let-fill="fill">
+                    <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 0">
+                      <use xlink:href='#icon-empty-star'></use>
+                    </svg>
+                    <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 50">
+                      <use xlink:href='#icon-half-star'></use>
+                    </svg>
+                    <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 100">
+                      <use xlink:href='#icon-star'></use>
+                    </svg>
+                  </ng-template>
+                </bt-rate>
               </ion-col>
             </ion-row>
           </ion-grid>

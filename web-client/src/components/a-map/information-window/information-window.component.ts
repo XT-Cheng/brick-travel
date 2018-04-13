@@ -2,10 +2,15 @@ import { ChangeDetectorRef, Component, Input, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
-import { ActionAllowed } from '../a-map.component';
+
+export enum ActionAllowed {
+  ADD,
+  REMOVE,
+  NONE
+}
 
 @Component({
-  selector: 'information-window-a',
+  selector: 'bt-information-window-a',
   templateUrl: 'information-window.component.html'
 })
 export class InformationWindowComponent {

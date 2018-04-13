@@ -17,10 +17,10 @@
   </ion-navbar>
 </ion-header>
 <ion-content no-padding>
-  <a-map [ngStyle]='getStyle(displayModeEnum.Map)' [viewPoints]='selector.filterAndSearchedViewPoints$ | async' [city]='selector.selectedCity$ | async'
+  <bt-a-map [ngStyle]='getStyle(displayModeEnum.Map)' [viewPoints]='selector.filterAndSearchedViewPoints$ | async' [city]='selector.selectedCity$ | async'
     [dailyTrip]='selector.selectedDailyTrip$ | async' [travelAgenda]='selector.selectedTravelAgenda$ | async' [selectedViewPoint]='selector.selectedViewPoint$ | async'
     [viewMode]='selector.viewMode$ | async' (viewPointClickedEvent)='viewPointClicked($event)' (viewPointAddedToDailyTrip)='viewPointAdded($event)'
-    (viewPointRemovedFromDailyTrip)='viewPointRemoved($event)'></a-map>
+    (viewPointRemovedFromDailyTrip)='viewPointRemoved($event)'></bt-a-map>
   <viewpoint-list [ngStyle]='getStyle(displayModeEnum.List)' [dailyTrip]='selector.selectedDailyTrip$ | async' [travelAgenda]='selector.selectedTravelAgenda$ | async'
     [viewPoints]='selector.filterAndSearchedViewPoints$ | async' [viewMode]='selector.viewMode$ | async' (viewPointClickedEvent)='viewPointClicked($event)'
     (viewPointAddedToDailyTrip)='viewPointAdded($event)' (viewPointRemovedFromDailyTrip)='viewPointRemoved($event)'></viewpoint-list>

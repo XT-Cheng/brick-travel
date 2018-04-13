@@ -30,7 +30,7 @@
       <p class='fl'>{{c.user}}说</p>
       <div> 
         <span class='fr'>{{c.publishedAt | date:'shortDate'}}</span>
-        <rate class='fr' [readOnly]='true' [(ngModel)]="c.rate"></rate> 
+        <bt-rate class='fr' [readonly]='true' [(ngModel)]="c.rate"></bt-rate> 
        </div>
       <div>
         <p class='commentDetail'>{{c.detail}}</p>

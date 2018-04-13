@@ -1,4 +1,28 @@
-<span [ngStyle] = 'getStyle()' [ngClass]='getSpanClass()' class='iconfont icon-stack'>
-    <i [ngClass]='getOuterClass()'></i>
-    <i [ngClass]='getInnerClass()'>{{getSequenceDisplay()}}</i>
-</span>
+<span [ngStyle]='getStyle()' class='bt-point-icon'>
+    <svg *ngIf='hasViewPoint()' class="bt-icon-big" aria-hidden="true">
+      <use xlink:href='#icon-map'></use>
+    </svg>
+    <svg *ngIf='!hasViewPoint()' class="bt-icon-big" aria-hidden="true">
+        <use xlink:href='#icon-pin'></use>
+      </svg>
+    <ng-container [ngSwitch]="getDisplay()">
+      <svg *ngSwitchCase="'view'" class="bt-icon-small bt-vp-category" aria-hidden="true">
+        <use xlink:href='#icon-view'></use>
+      </svg>
+      <svg *ngSwitchCase="'food'" class="bt-icon-small bt-vp-category" aria-hidden="true">
+        <use xlink:href='#icon-food'></use>
+      </svg>
+      <svg *ngSwitchCase="'humanities'" class="bt-icon-small bt-vp-category" aria-hidden="true">
+        <use xlink:href='#icon-humanities'></use>
+      </svg>
+      <svg *ngSwitchCase="'transportation'" class="bt-icon-small bt-vp-category" aria-hidden="true">
+        <use xlink:href='#icon-transportation'></use>
+      </svg>
+      <svg *ngSwitchCase="'shopping'" class="bt-icon-small bt-vp-category" aria-hidden="true">
+        <use xlink:href='#icon-shopping'></use>
+      </svg>
+      <svg *ngSwitchCase="'lodging'" class="bt-icon-small bt-vp-category" aria-hidden="true">
+        <use xlink:href='#icon-lodging'></use>
+      </svg>
+    </ng-container>
+  </span>

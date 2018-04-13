@@ -12,11 +12,11 @@
 
 <ion-content no-padding>
   <div style="display: flex;flex-direction:column; height:100%;" class='column'>
-    <a-map [class.hideMe] = 'isMapHide'
+    <bt-a-map [class.hideMe] = 'isMapHide'
     [city]='selector.selectedCity$ | async'
     [travelAgenda]='selector.selectedTravelAgenda$ | async'
           [dailyTrip]='selector.selectedDailyTrip$ | async'
-          [selectedViewPoint]='selector.selectedViewPoint$ | async'></a-map>
+          [selectedViewPoint]='selector.selectedViewPoint$ | async'></bt-a-map>
     <travel-agenda  style="flex:1;" 
                     [selectedDailyTrip]='selector.selectedDailyTrip$ | async' 
                     [selectedTravelViewPoint]='selector.selectedTravelViewPoint$ | async'

@@ -1,93 +1,17 @@
-
-@font-face {font-family: "iconfont";
-  src: url('../fonts/iconfont.eot?t=1502239155216'); /* IE9*/
-  src: url('../fonts/iconfont.eot?t=1502239155216#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('../fonts/iconfont.woff?t=1502239155216') format('woff'), /* chrome, firefox */
-  url('../fonts/iconfont.ttf?t=1502239155216') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('../fonts/iconfont.svg?t=1502239155216#iconfont') format('svg'); /* iOS 4.1- */
+.bt-icon {
+  width: 2rem; height: 2rem;
+  fill: currentColor;
+  /* position: absolute; */
 }
 
-.iconfont {
-  font-family:"iconfont" !important;
-  font-size:16px;
-  font-style:normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.bt-icon-big {
+  width: 2.4rem; height: 2.4rem;
+  fill: currentColor;
+  /* position: absolute; */
 }
 
-.icon-liebiao:before { content: "\e60b"; }
-
-.icon-starline:before { content: "\e6a0"; }
-
-.icon-map:before { content: "\e604"; }
-
-.icon-liebiao2:before { content: "\e60c"; }
-
-.icon-map1:before { content: "\e60e"; }
-
-.icon-star1:before { content: "\e62f"; }
-
-.icon-shuzi1:before { content: "\e697"; }
-
-.icon-shuzi3:before { content: "\e699"; }
-
-.icon-shuzi7:before { content: "\e69e"; }
-
-.icon-halfstar:before { content: "\e60a"; }
-
-.icon-half1:before { content: "\e61d"; }
-
-.icon-iconfontshoucang1:before { content: "\e601"; }
-
-.icon-staro:before { content: "\e66c"; }
-
-.icon-icon:before { content: "\e605"; }
-
-.icon-halfstar1:before { content: "\e70d"; }
-
-.icon-hotel:before { content: "\e636"; }
-
-.icon-staro1:before { content: "\e6ad"; }
-
-.icon-starhalf:before { content: "\e630"; }
-
-.icon-shuzi5:before { content: "\e626"; }
-
-.icon-shuzi9:before { content: "\e62a"; }
-
-.icon-star:before { content: "\e6c9"; }
-
-.icon-shuzi2:before { content: "\e627"; }
-
-.icon-shuzi8:before { content: "\e62d"; }
-
-.icon-star2:before { content: "\e733"; }
-
-.icon-star-copy:before { content: "\e602"; }
-
-.icon-halfstarn:before { content: "\e650"; }
-
-.icon-transportation13:before { content: "\e9c3"; }
-
-.icon-restaurant:before { content: "\e69d"; }
-
-.icon-map2:before { content: "\e606"; }
-
-.icon-mapred:before { content: "\e600"; }
-
-.icon-bangekongxing:before { content: "\e603"; }
-
-.icon-map3:before { content: "\e622"; }
-
-.icon-half-star:before { content: "\e611"; }
-
-.icon-cangkucangchu-xianxing:before { content: "\e88d"; }
-
-.icon-shuzi3-copy:before { content: "\e607"; }
-
-.icon-map4:before { content: "\e612"; }
-
-.icon-shuzi:before { content: "\e608"; }
-
-.icon-shuzi4:before { content: "\e609"; }
-
+.bt-icon-small {
+  width: 1.2rem; height: 1.2rem;
+  fill: currentColor;
+  /* position: absolute; */
+}

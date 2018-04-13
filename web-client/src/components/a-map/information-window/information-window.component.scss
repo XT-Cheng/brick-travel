@@ -1,4 +1,4 @@
-information-window-a {
+bt-information-window-a {
     display: block;
     width: 320px;
     
@@ -36,6 +36,10 @@ information-window-a {
         padding: 0px;
         width: 100%;
         height: 100%;
+    }
+
+    svg {
+        display: inline;
     }
 
     .arrow-down {

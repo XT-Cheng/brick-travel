@@ -37,7 +37,6 @@ export class TravelAgendaPage implements AfterViewInit {
   }
 
   ionViewDidLoad() :void {
-    this._map.setCity();
   }
   //#endregion
 

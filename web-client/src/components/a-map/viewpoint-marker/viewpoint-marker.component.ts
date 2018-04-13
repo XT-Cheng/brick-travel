@@ -1,16 +1,15 @@
 import { Component, ChangeDetectorRef, Input } from '@angular/core';
 
-import { ViewPointCategory } from "shared/@core/store/entity/viewPoint/viewPoint.model";
 import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
 
 @Component({
-  selector: 'viewpoint-marker-a',
+  selector: 'bt-vp-marker-a',
   templateUrl: 'viewpoint-marker.component.html'
 })
 export class ViewPointMarkerComponent {
   //#region Private member
-  public static readonly WIDTH: number = 48;
-  public static readonly HEIGHT: number = 48;
+  public static readonly WIDTH: number = 32;
+  public static readonly HEIGHT: number = 32;
 
   //#endregion
 
@@ -38,54 +37,54 @@ export class ViewPointMarkerComponent {
   //Public method
 
   //Protected method
+  protected hasViewPoint() : boolean {
+    return !!this.viewPoint;
+  }
+
   protected getSequenceDisplay(): string {
     return this.inCurrentTrip ? (this.sequence + 1).toString() : '';
   }
 
-  protected getOuterClass() {
-    return {
-      'icon-stack-normal': true,
-      'icon-map2': true
-    }
-  }
-
-  protected getInnerClass() {
-    if (this.viewPoint === null)
-      return {
-        'icon-icon': false,
-        'icon-restaurant': true,
-        'icon-hotel': true,
-        'icon-stack-small': true
-      };
-
+  protected getDisplay() {
+    if (!this.viewPoint)
+      return '';
     if (this.inCurrentTrip)
-      return this.getInnerClassOfTravelViewPoint();
-    return this.getInnerClassOfViewPoint();
-  }
-
-  protected getSpanClass() {
-    return {
-      'iconfont': true,
-      'icon-stack': true
-    };
+      return 'trip';
+    return this.getViewPointDisplay();
   }
 
   protected getStyle() {
     let color: string;
 
-    switch (this.viewPoint.category) {
-      case ViewPointCategory.View:
-        color = 'blue';
-        break;
-      case ViewPointCategory.Shopping:
-        color = 'red';
-        break;
-      default:
-        color = 'green';
+    if (!this.viewPoint)
+      color = '39a73c';
+    else {
+      switch (this.viewPoint.category.name) {
+        case 'View':
+          color = '#0517ec';
+          break;
+        case 'Food':
+          color = '#00c4ff';
+          break;
+        case 'Humanities':
+          color = '#c000ff';
+          break;
+        case 'Transportation':
+          color = '#6eff00';
+          break;
+        case 'Shopping':
+          color = '#ff8d00';
+          break;
+        case 'Lodging':
+          color = '#643a67';
+          break;
+        default:
+          color = '#0517ec';
+      }
     }
-
+    
     if (this.inCurrentTrip)
-      color = 'green';
+      color = '#39a73c';
 
     return {
       'color': color,
@@ -96,34 +95,24 @@ export class ViewPointMarkerComponent {
   //Protected method
 
   //Private method
-  private getInnerClassOfViewPoint() {
+  private getViewPointDisplay() {
     let isView, isShopping, isRestaurant: boolean;
-    switch (this.viewPoint.category) {
-      case ViewPointCategory.View:
-        isView = true;
-        break;
-      case ViewPointCategory.Food:
-        isRestaurant = true;
-        break;
-      case ViewPointCategory.Shopping:
-        isShopping = true;
-        break;
+    switch (this.viewPoint.category.name) {
+      case 'View':
+        return 'view';
+      case 'Food':
+        return 'food';
+      case 'Humanities':
+        return 'humanities';
+      case 'Transportation':
+        return 'transportation';
+      case 'Shopping':
+        return 'shopping';
+      case 'Lodging':
+        return 'lodging';
       default:
-        isRestaurant = true;
+        return 'view';
     }
-
-    return {
-      'icon-icon': isShopping,
-      'icon-restaurant': isRestaurant,
-      'icon-hotel': isView,
-      'icon-stack-small': true
-    };
-  }
-
-  private getInnerClassOfTravelViewPoint() {
-    return {
-      'trip': true
-    };
   }
   //Private method
 }

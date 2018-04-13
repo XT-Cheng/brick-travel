@@ -12,12 +12,6 @@ export const AUTH_ERRORS_KEY = 'errors';
 export const REDIRECT_DELAY = 100;
 export const SOCIAL_LINKS = [];
 
-export enum ActionAllowed {
-    ADD,
-    REMOVE,
-    NONE
-}
-
 // export enum MapMode {
 //     DailyTrip,
 //     ViewPoint
