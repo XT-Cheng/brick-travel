@@ -16,7 +16,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Web Admin",
+            "name": "Web Cliet",
             "url": "http://localhost:4200",
             "webRoot": "${workspaceRoot}/web-admin",
             "sourceMaps": true,

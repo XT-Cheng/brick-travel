@@ -1,86 +1,40 @@
-import { HttpClientModule } from '@angular/common/http';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { APP_BASE_HREF } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { StatusBar } from '@ionic-native/status-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicStorageModule } from '@ionic/storage';
-import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-
-import { AMapComponent } from '../components/a-map/a-map.component';
-import { InformationWindowComponent } from '../components/a-map/information-window/information-window.component';
-import { RateComponent } from '../components/a-map/rate/rate.component';
-import { ViewPointMarkerComponent } from '../components/a-map/viewpoint-marker/viewpoint-marker.component';
-import { TravelAgendaListComponent } from '../components/travel-agenda-list/travel-agenda-list.component';
-import { TravelAgendaComponent } from '../components/travel-agenda/travel-agenda.component';
-import { ViewPointDetailComponent } from '../components/viewpoint-detail/viewpoint-detail';
-import { ViewPointFilterComponent } from '../components/viewpoint-filter/viewpoint-filter.component';
-import { ViewPointListComponent } from '../components/viewpoint-list/viewpoint-list.component';
-import { ViewPointSearchComponent } from '../components/viewpoint-search/viewpoint-search.component';
-import { DragulaDirective } from '../directives/dragula.directive';
-import { CityPickPage } from '../pages/city-pick/city-pick.page';
-import { HomePage } from '../pages/home/home.page';
-import { TestPage } from '../pages/test/test.page';
-import { TravelAgendaListPage } from '../pages/travel-agenda-list/travel-agenda-list.page';
-import { TravelAgendaPage } from '../pages/travel-agenda/travel-agenda.page';
-import { ViewPointPage } from '../pages/view-point/view-point.page';
-import { ViewPointsListPage } from '../pages/view-points-list/view-points-list.page';
-import { ViewPointsSelectPage } from '../pages/view-points-select/view-points-select.page';
-import { App } from './app.component';
-import { StoreModule } from 'shared/@core/store/store.module';
+import { NbAuthModule } from '@nebular/auth';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthModule } from 'shared/@core/auth/auth.module';
 import { FileUploadModule } from 'shared/@core/fileUpload/fileUpload.module';
 import { WEBAPI_HOST } from 'shared/@core/utils/constants';
+import { UIModule } from './@ui/ui.module';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { StoreModule } from 'shared/@core/store/store.module';
+import { PageComponent } from './page.component';
+import { PageRoutingGuard } from './page-routing-guard';
+import { AppRoutingGuard } from './app-routing-guard';
+import { TestComponent } from './test.component';
 
 @NgModule({
-  declarations: [
-    App,
-    AMapComponent,
-    ViewPointMarkerComponent,
-    InformationWindowComponent,
-    TestPage,
-    HomePage,
-    ViewPointPage,
-    RateComponent,
-    ViewPointFilterComponent,
-    ViewPointSearchComponent,
-    ViewPointListComponent,
-    ViewPointDetailComponent,
-    TravelAgendaComponent,
-    TravelAgendaListComponent,
-    DragulaDirective,
-    ViewPointsListPage,
-    TravelAgendaListPage,
-    ViewPointsSelectPage,
-    TravelAgendaPage,
-    CityPickPage
-  ],
+  declarations: [AppComponent,PageComponent,TestComponent],
   imports: [
     BrowserModule,
-    HttpClientModule,
-    FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`}),
-    AuthModule.forRoot(),
-    StoreModule.forRoot(),
-    IonicModule.forRoot(App),
+    BrowserAnimationsModule,
     IonicStorageModule.forRoot(),
+    StoreModule.forRoot(),
+    AuthModule.forRoot(),
+    NgbModule.forRoot(),
+    UIModule.forRoot(),
+    FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`}),
+    AppRoutingModule
   ],
-  bootstrap: [IonicApp],
-  entryComponents: [
-    App,
-    TestPage,
-    HomePage,
-    ViewPointPage,
-    ViewPointsListPage,
-    ViewPointsSelectPage,
-    TravelAgendaPage,
-    CityPickPage,
-    TravelAgendaListPage,
-    ViewPointMarkerComponent,
-    InformationWindowComponent
-  ],
+  bootstrap: [AppComponent],
   providers: [
-    StatusBar,
-    SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
-  ]
+    { provide: APP_BASE_HREF, useValue: '/' },PageRoutingGuard,AppRoutingGuard
+  ],
 })
-export class AppModule {}
+export class AppModule {
+}

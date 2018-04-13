@@ -12,7 +12,7 @@ module.exports = {
     paths: [
       '{{SRC}}/**/*.(ts|html|s(c|a)ss)',
       // START: Custom Config....
-      '{{SRC}}/../../web-admin/src/app/shared/**/*.(ts|html|s(c|a)ss)'
+      '{{SRC}}/../../web-client/src/app/shared/**/*.(ts|html|s(c|a)ss)'
       // END: Custom Config....
     ],
     options: { ignored: ['{{SRC}}/**/*.spec.ts', '{{SRC}}/**/*.e2e.ts', '**/*.DS_Store', '{{SRC}}/index.html'] },
