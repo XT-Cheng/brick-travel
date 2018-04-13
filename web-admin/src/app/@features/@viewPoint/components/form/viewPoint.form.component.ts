@@ -14,7 +14,7 @@ import { NbMenuService, NbMenuItem, NbContextMenuDirective } from '@nebular/them
 import { SelectorService } from 'shared/@core/store/providers/selector.service';
 import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model';
 import { EntityFormMode } from '../../../../app.component';
-import { AMapComponent } from 'shared/@core/a-map/components/a-map.component';
+import { AMapComponent } from '../../../../@ui/components/a-map/a-map.component';
 import { MapModalComponent } from '../mapModal.component';
 import { WEBAPI_HOST } from 'shared/@core/utils/constants';
 

@@ -19,8 +19,8 @@ import { Subscription } from 'rxjs';
 import { InformationWindowComponent } from './information-window/information-window.component';
 import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from 'shared/@core/store/bizModel/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../store/bizModel/viewPoint.biz.model';
-import { ICityBiz } from '../../store/bizModel/city.biz.model';
+import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
+import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
 import { ActionAllowed } from 'shared/@core/utils/constants';
 
 @Component({

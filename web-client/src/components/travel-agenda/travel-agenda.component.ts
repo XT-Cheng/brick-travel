@@ -16,7 +16,7 @@ import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from 'shared/@co
 
 import { DragulaService } from '../../providers/dragula.service';
 import { EnumEx } from '../../utils/enumEx';
-import { TransportationCategory } from 'shared/@core/store/entity/travelAgenda/travelAgenda.model';
+import { ITransportationCategory } from 'shared/@core/store/entity/travelAgenda/travelAgenda.model';
 
 @Component({
   selector: 'travel-agenda',
@@ -56,9 +56,9 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   @Input() protected selectedDailyTrip: IDailyTripBiz;
   @Input() protected selectedTravelViewPoint: ITravelViewPointBiz;
 
-  protected get transCategoryNameAndValues(): { name: string, value: any }[] {
-    return EnumEx.getNamesAndValues(TransportationCategory)
-  }
+  // protected get transCategoryNameAndValues(): { name: string, value: any }[] {
+  //   return EnumEx.getNamesAndValues(TransportationCategory)
+  // }
 
   @Output() protected dailyTripSelectedEvent: EventEmitter<IDailyTripBiz>;
   @Output() protected travelViewPointSelectedEvent: EventEmitter<ITravelViewPointBiz>;

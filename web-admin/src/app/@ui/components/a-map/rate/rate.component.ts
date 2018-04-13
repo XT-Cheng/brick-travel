@@ -13,7 +13,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import { toString, getValueInRange } from '../../../utils/helpers';
+import { toString, getValueInRange } from 'shared/@core/utils/helpers';
 
 enum Key {
   End = 35,

@@ -5,7 +5,7 @@ import { ICityBiz } from "shared/@core/store/bizModel/city.biz.model";
 import { IViewPointBiz } from "shared/@core/store/bizModel/viewPoint.biz.model";
 import { ViewPointService } from "shared/@core/store/providers/viewPoint.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { AMapComponent } from "shared/@core/a-map/components/a-map.component";
+import { AMapComponent } from "./@ui/components/a-map/a-map.component";
 
 
 // <bt-a-map [allowSelectPoint]='true' [city]='city' [viewPoints]='selector.filterAndSearchedViewPoints$ | async'>

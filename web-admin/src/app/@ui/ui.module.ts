@@ -33,9 +33,12 @@ import { RouterModule } from '@angular/router';
 import { NbAuthModule } from '@nebular/auth';
 import { AuthComponent } from './components/auth/auth.component';
 import { AuthBlockComponent } from './components/auth/auth-block.component';
-import { AMapModule } from 'shared/@core/a-map/a-map.module';
+import { AMapComponent } from './components/a-map/a-map.component';
+import { InformationWindowComponent } from './components/a-map/information-window/information-window.component';
+import { RateComponent } from './components/a-map/rate/rate.component';
+import { ViewPointMarkerComponent } from './components/a-map/viewpoint-marker/viewpoint-marker.component';
 
-const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule,RouterModule];
+const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule, RouterModule];
 
 const NB_MODULES = [
   NbCardModule,
@@ -50,8 +53,7 @@ const NB_MODULES = [
   NbCheckboxModule,
   NbContextMenuModule,
   NgbModule,
-  ToasterModule,
-  AMapModule
+  ToasterModule
 ];
 
 const COMPONENTS = [
@@ -64,7 +66,11 @@ const COMPONENTS = [
   SearchComponent,
   TwoColumnsLayoutComponent,
   ModalComponent,
-  AutofocusDirective
+  AutofocusDirective,
+  AMapComponent,
+  InformationWindowComponent,
+  RateComponent,
+  ViewPointMarkerComponent
 ];
 
 const PIPES = [
@@ -87,11 +93,21 @@ const PROVIDERS = [
   SearchService
 ];
 
+const ENTRY_COMPONENTS = [
+  AMapComponent,
+  InformationWindowComponent,
+  ViewPointMarkerComponent,
+  SearchInputComponent, 
+  ModalComponent, 
+  LoginComponent, 
+  AuthComponent
+]
+
 @NgModule({
   imports: [...BASE_MODULES, ...NB_MODULES],
   exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
-  entryComponents: [SearchInputComponent,ModalComponent,LoginComponent,AuthComponent]
+  entryComponents: [...ENTRY_COMPONENTS]
 })
 export class UIModule {
   static forRoot(): ModuleWithProviders {
