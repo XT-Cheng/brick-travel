@@ -1,9 +1,9 @@
-import { Component, Input, OnInit, ViewRef, ViewChild, AfterViewInit, ElementRef, ViewContainerRef, Renderer2 } from '@angular/core';
-
-import { NbMenuService, NbSidebarService } from '@nebular/theme';
-import { SelectorService } from '../../../shared/@core/store/providers/selector.service';
-import { IUserBiz } from '../../../shared/@core/store/bizModel/user.biz.model';
+import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NbSidebarService } from '@nebular/theme';
+
+import { IUserBiz } from '../../../shared/@core/store/bizModel/user.biz.model';
+import { SelectorService } from '../../../shared/@core/store/providers/selector.service';
 import { SearchService } from '../../providers/search.service';
 
 @Component({
@@ -22,7 +22,6 @@ export class HeaderComponent implements OnInit {
   userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
   constructor(private sidebarService: NbSidebarService,
-    private menuService: NbMenuService,
     private renderer : Renderer2,
     private searchService : SearchService,
     public selectorService: SelectorService,

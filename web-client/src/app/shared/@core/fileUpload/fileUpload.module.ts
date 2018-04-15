@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { InjectionToken, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
-import { FileUploader, FileUploaderOptions } from './providers/file-uploader';
-import { WEBAPI_HOST } from '../utils/constants';
-import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
-import { FileSelectDirective } from './directives/file-select.directive';
+import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
+
 import { FileDropDirective } from './directives/file-drop.directive';
+import { FileSelectDirective } from './directives/file-select.directive';
+import { FileUploader, FileUploaderOptions } from './providers/file-uploader';
 
 export const FILE_UPLOADER = new InjectionToken('File Uploader');
 export const FILE_UPLOADER_OPTIONS = new InjectionToken('File Uploader Options');

@@ -97,7 +97,6 @@ export class ViewPointMarkerComponent {
 
   //Private method
   private getViewPointDisplay() {
-    let isView, isShopping, isRestaurant: boolean;
     switch (this.viewPoint.category.name) {
       case 'View':
         return 'view';

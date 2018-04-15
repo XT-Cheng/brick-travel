@@ -1,4 +1,4 @@
-import { dispatch, NgRedux } from '@angular-redux/store';
+import { dispatch } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { normalize } from 'normalizr';
@@ -16,15 +16,14 @@ import {
     EntityTypeEnum,
 } from 'shared/@core/store/entity/entity.action';
 import { IEntities } from 'shared/@core/store/entity/entity.model';
-import { viewPointCategory, transportationCategory } from 'shared/@core/store/entity/entity.schema';
+import { transportationCategory, viewPointCategory } from 'shared/@core/store/entity/entity.schema';
 import { IAppState } from 'shared/@core/store/store.model';
 import { WEBAPI_HOST } from 'shared/@core/utils/constants';
 
 @Injectable()
 export class MasterDataService {
     //#region Constructor
-    constructor(private _http: HttpClient,
-        private _store: NgRedux<IAppState>) {
+    constructor(private _http: HttpClient) {
     }
     //#endregion
 

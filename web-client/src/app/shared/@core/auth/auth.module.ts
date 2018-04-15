@@ -1,10 +1,10 @@
-import { NgModule, Optional, SkipSelf, ModuleWithProviders } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { throwIfAlreadyLoaded } from "../utils/module-import-guard";
-import { WEBAPI_HOST } from "../utils/constants";
-import { AuthService } from "./providers/authService";
-import { TokenStorage } from "./providers/tokenStorage";
-import { TokenService } from "./providers/tokenService";
+import { CommonModule } from '@angular/common';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+
+import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
+import { AuthService } from './providers/authService';
+import { TokenService } from './providers/tokenService';
+import { TokenStorage } from './providers/tokenStorage';
 
 const CORE_PROVIDERS = [
     AuthService,

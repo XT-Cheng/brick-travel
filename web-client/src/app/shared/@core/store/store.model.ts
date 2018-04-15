@@ -1,7 +1,6 @@
-import { IEntities, INIT_ENTITY_STATE } from "./entity/entity.model";
-import { IUIState, INIT_UI_STATE } from "./ui/ui.model";
-import { IDirties, INIT_DIRTY_STATE } from "./dirty/dirty.model";
-import { INIT_UI_VIEWPOINT_STATE } from "./ui/viewPoint/viewPoint.model";
+import { IDirties, INIT_DIRTY_STATE } from './dirty/dirty.model';
+import { IEntities, INIT_ENTITY_STATE } from './entity/entity.model';
+import { INIT_UI_STATE, IUIState } from './ui/ui.model';
 
 export enum STORE_KEY {
   ui = 'ui',

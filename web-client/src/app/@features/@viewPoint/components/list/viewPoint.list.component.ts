@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest, map, takeUntil } from 'rxjs/operators';
-
 import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
 import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model';
 import { SelectorService } from 'shared/@core/store/providers/selector.service';
 import { ViewPointService } from 'shared/@core/store/providers/viewPoint.service';
+
 import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
 import { SearchService } from '../../../../@ui/providers/search.service';
 import { ComponentType, EntityFormMode } from '../../../../app.component';
@@ -38,7 +38,7 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy{
   //#region Constructor
   constructor(private route: ActivatedRoute, public selector: SelectorService,
     private _searchService: SearchService, private modalService: NgbModal, private _viewPointService: ViewPointService,
-    private toasterService: ToasterService,private changeDet : ChangeDetectorRef ) {
+    private toasterService: ToasterService ) {
     this.viewPoints$ = this.selector.filterAndSearchedViewPoints$.pipe(
       combineLatest(this.cityId$),map(([vps,cityId]) => {
         let ret = vps.filter((vp) => {

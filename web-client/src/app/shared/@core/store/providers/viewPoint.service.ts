@@ -1,40 +1,38 @@
 import { dispatch, NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
+import { denormalize, normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { catchError, tap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
-import { denormalize, normalize } from 'normalizr';
 
+import { FileUploader } from '../../fileUpload/providers/file-uploader';
+import { WEBAPI_HOST } from '../../utils/constants';
 import { IViewPointBiz, translateViewPointFromBiz } from '../bizModel/viewPoint.biz.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,
     EntityActionTypeEnum,
+    entityDeleteAction,
+    entityInsertAction,
     entityLoadAction,
     entityLoadActionFailed,
     entityLoadActionStarted,
     entityLoadActionSucceeded,
     EntityTypeEnum,
+    entityUpdateAction,
     IPagination,
     IQueryCondition,
-    entityUpdateAction,
-    entityInsertAction,
-    entityDeleteAction,
 } from '../entity/entity.action';
 import { IEntities } from '../entity/entity.model';
 import { viewPoint } from '../entity/entity.schema';
+import { IViewPoint } from '../entity/viewPoint/viewPoint.model';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
-import { INIT_UI_VIEWPOINT_STATE, STORE_UI_VIEWPOINT_KEY,IViewPointUI } from '../ui/viewPoint/viewPoint.model';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { tap, catchError } from 'rxjs/operators';
-import { IViewPoint } from '../entity/viewPoint/viewPoint.model';
-import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
-import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { SelectorService } from './selector.service';
+import { INIT_UI_VIEWPOINT_STATE, IViewPointUI, STORE_UI_VIEWPOINT_KEY } from '../ui/viewPoint/viewPoint.model';
 
 interface IUIViewPointActionMetaInfo extends IActionMetaInfo {
 

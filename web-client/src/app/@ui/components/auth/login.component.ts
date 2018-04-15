@@ -3,11 +3,10 @@
  * Copyright Akveo. All Rights Reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { getDeepFromObject } from 'shared/@core/utils/helpers';
-import { AuthService } from 'shared/@core/auth/providers/authService';
 import { AuthResult } from 'shared/@core/auth/providers/authResult';
+import { AuthService } from 'shared/@core/auth/providers/authService';
 import { REDIRECT_DELAY, SOCIAL_LINKS } from 'shared/@core/utils/constants';
 
 export interface AuthSocialLink {

@@ -1,22 +1,18 @@
-import { Component, Inject, Input, ViewChildren, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, ViewChildren } from '@angular/core';
+import { NbContextMenuDirective, NbMenuItem, NbMenuService } from '@nebular/theme';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import { ObjectID } from 'bson';
-
-import { FILE_UPLOADER } from 'shared/@core/fileUpload/fileUpload.module';
 import { FileItem } from 'shared/@core/fileUpload/providers/file-item';
 import { FileUploader } from 'shared/@core/fileUpload/providers/file-uploader';
-import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
-import { CityService } from 'shared/@core/store/providers/city.service';
 import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
-import { ViewPointService } from 'shared/@core/store/providers/viewPoint.service';
-import { NbMenuService, NbMenuItem, NbContextMenuDirective } from '@nebular/theme';
-import { SelectorService } from 'shared/@core/store/providers/selector.service';
 import { IViewPoint } from 'shared/@core/store/entity/viewPoint/viewPoint.model';
-import { EntityFormMode } from '../../../../app.component';
-import { AMapComponent } from '../../../../@ui/components/a-map/a-map.component';
-import { MapModalComponent } from '../mapModal.component';
+import { SelectorService } from 'shared/@core/store/providers/selector.service';
+import { ViewPointService } from 'shared/@core/store/providers/viewPoint.service';
 import { WEBAPI_HOST } from 'shared/@core/utils/constants';
+
+import { EntityFormMode } from '../../../../app.component';
+import { MapModalComponent } from '../mapModal.component';
 
 @Component({
   selector: 'bt-vp-form',

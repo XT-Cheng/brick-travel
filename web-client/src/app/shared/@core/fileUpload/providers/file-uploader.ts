@@ -100,8 +100,6 @@ export class FileUploader {
       list.push(file);
     }
     let arrayOfFilters = this._getFilters(filters);
-    let count = this.queue.length;
-    let addedFileItems: FileItem[] = [];
     list.map((some: File) => {
       if (!options) {
         options = this.options;

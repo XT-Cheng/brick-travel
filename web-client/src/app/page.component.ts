@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ToasterConfig } from 'angular2-toaster';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SelectorService } from 'shared/@core/store/providers/selector.service';
+import { Component } from '@angular/core';
 import { NbMenuItem } from '@nebular/theme';
+import { ToasterConfig } from 'angular2-toaster';
+import { SelectorService } from 'shared/@core/store/providers/selector.service';
 
 export interface ComponentType {
   createEntity();
@@ -82,8 +80,7 @@ export class PageComponent {
 
   //#region Constructor  
 
-  constructor(private route: ActivatedRoute, private modalService: NgbModal,
-    private router: Router, private _selectorService: SelectorService) {
+  constructor(private _selectorService: SelectorService) {
 
     this._selectorService.cities$.subscribe(cities => {
       cities.forEach((city) => {

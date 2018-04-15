@@ -1,15 +1,10 @@
-import { ActivatedRoute, Router } from "@angular/router";
-import { SelectorService } from "shared/@core/store/providers/selector.service";
 import { Component } from '@angular/core';
-import { ICityBiz } from "shared/@core/store/bizModel/city.biz.model";
-import { IViewPointBiz } from "shared/@core/store/bizModel/viewPoint.biz.model";
-import { ViewPointService } from "shared/@core/store/providers/viewPoint.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { AMapComponent } from "./@ui/components/a-map/a-map.component";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
+import { SelectorService } from 'shared/@core/store/providers/selector.service';
 
+import { AMapComponent } from './@ui/components/a-map/a-map.component';
 
-// <bt-a-map [allowSelectPoint]='true' [city]='city' [viewPoints]='selector.filterAndSearchedViewPoints$ | async'>
-// </bt-a-map>
 @Component({
   selector: 'bt-test',
   template: `
@@ -33,8 +28,7 @@ export class TestComponent {
 
   //#region Constructor  
 
-  constructor(private route: ActivatedRoute,private modalService: NgbModal,
-    private router: Router, public selector: SelectorService, private _viewPointService: ViewPointService) {
+  constructor(private modalService: NgbModal, public selector: SelectorService) {
     this.selector.cities$.subscribe(cities => {
       this.city = cities[0];
     })

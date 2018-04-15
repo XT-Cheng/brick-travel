@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { MiddlewareAPI } from 'redux';
 import { Epic } from 'redux-observable';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
@@ -21,12 +21,11 @@ import {
 } from '../dirty/dirty.action';
 import { EntityTypeEnum, getEntityType } from '../entity/entity.action';
 import { IAppState } from '../store.model';
-import { TravelAgendaService } from './travelAgenda.service';
 import { CityService } from './city.service';
+import { TravelAgendaService } from './travelAgenda.service';
 
 @Injectable()
 export class DataSyncService {
-    private _sub: Subscription;
     private _stateRestored$ : BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
 
     //#region Actions

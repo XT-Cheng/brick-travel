@@ -1,17 +1,15 @@
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/take';
-import { Injectable }             from '@angular/core';
-import { Observable }             from 'rxjs/Observable';
-import { Router, Resolve, RouterStateSnapshot,
-         ActivatedRouteSnapshot } from '@angular/router';
-import { CityService } from '../../../shared/@core/store/providers/city.service';
-import { SelectorService } from '../../../shared/@core/store/providers/selector.service';
+
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class ViewPointCityResolver implements Resolve<string> {
-  constructor(private selectorService: SelectorService, private router: Router) {}
+  constructor() {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<string> {
+  resolve(route: ActivatedRouteSnapshot): Observable<string> {
     return Observable.of(route.paramMap.get('city'));
   }
 }

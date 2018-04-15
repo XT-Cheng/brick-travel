@@ -13,11 +13,6 @@ import { ModalComponent } from '../../../../@ui/components/modal/modal.component
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-enum DisplayModeEnum {
-  Map,
-  List
-}
-
 @Component({
   selector: 'bt-city-list',
   templateUrl: 'city.list.component.html',
