@@ -46,8 +46,8 @@
         <ion-item class='tp-item' *ngIf="travelViewPoint.id !== selectedDailyTrip.lastViewPoint">
           <ion-label>距离: {{travelViewPoint.distanceToNext}}</ion-label>
           <ion-select [(ngModel)]="travelViewPoint.transportationToNext" (ionChange)="onTransportChange(travelViewPoint)">
-            <ion-option *ngFor="let nameValue of transCategoryNameAndValues" [selected]='nameValue.value === travelViewPoint.transportationToNext'
-              [value]="nameValue.value">{{nameValue.name}}</ion-option>
+            <ion-option *ngFor="let category of transCategories" [selected]='category.id === travelViewPoint.transportationToNext.id'
+              [value]="category">{{category.name}}</ion-option>
           </ion-select>
         </ion-item>
       </div>

@@ -55,7 +55,8 @@ export class TravelAgendaComponent implements AfterViewInit, OnDestroy {
   @Input() protected travelAgenda: ITravelAgendaBiz;
   @Input() protected selectedDailyTrip: IDailyTripBiz;
   @Input() protected selectedTravelViewPoint: ITravelViewPointBiz;
-
+  @Input() protected transCategories : ITransportationCategory[];
+  
   // protected get transCategoryNameAndValues(): { name: string, value: any }[] {
   //   return EnumEx.getNamesAndValues(TransportationCategory)
   // }
