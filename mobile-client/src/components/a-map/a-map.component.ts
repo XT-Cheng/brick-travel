@@ -87,7 +87,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   protected set city(city :ICityBiz) {
     if (city) {
       this._city = city;
-      if (this._map == null) return;
+      if (this._map == null && this._markers.size > 0) return;
 
       this._map.setCity(this._city.adressCode);  
     } 
@@ -162,8 +162,6 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
         this.pointChoosedEvent.emit($event.lnglat);
       });  
     }
-    
-    this.setCity();
 
     if (this._viewPoints.length >0)
       this.generateViewPoints();
@@ -175,6 +173,8 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
       this.generateChoosedPoint(this._pointChoosed);
       this._map.setCenter(this._pointChoosed);
     }
+
+    if (this._markers.size == 0) this.setCity();
   }
 
   ngOnDestroy(): void {

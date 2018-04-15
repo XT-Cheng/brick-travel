@@ -14,6 +14,15 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Test",
+            "protocol": "inspector",
+            "program": "${workspaceFolder}/mobile-client/.bin/copyShared.js",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Web Cliet",
