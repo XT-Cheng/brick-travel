@@ -24,11 +24,10 @@ import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
 
 @Component({
   selector: 'bt-a-map',
-  templateUrl: 'a-map.component.html'
+  templateUrl: 'a-map.component.html',
+  styleUrls: ['a-map.component.scss']
 })
 export class AMapComponent implements AfterViewInit, OnDestroy {
-  
-  
   //#region Private member
   @ViewChild('map') private _mapElement: ElementRef;
 

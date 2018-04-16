@@ -12,7 +12,7 @@ const filterFn = item => {
 } 
 
 const paths = klawSync(currentPath,{filter: filterFn}).forEach(find => {
+  // console.log(find.path);
+  // console.log(find.path.replace(mobileClientPath,webClientPath));
   fs.copySync(find.path, find.path.replace(mobileClientPath,webClientPath));
 });
-
-console.log(paths);

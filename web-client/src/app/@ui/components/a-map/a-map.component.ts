@@ -8,17 +8,19 @@ import {
   EventEmitter,
   Injector,
   Input,
-  OnDestroy,
   Output,
   ViewChild,
+  HostListener,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
+
+import { InformationWindowComponent, ActionAllowed } from './information-window/information-window.component';
+import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from 'shared/@core/store/bizModel/travelAgenda.biz.model';
 import { IViewPointBiz } from 'shared/@core/store/bizModel/viewPoint.biz.model';
-
-import { ActionAllowed, InformationWindowComponent } from './information-window/information-window.component';
-import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
+import { ICityBiz } from 'shared/@core/store/bizModel/city.biz.model';
 
 @Component({
   selector: 'bt-a-map',
@@ -86,7 +88,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   protected set city(city :ICityBiz) {
     if (city) {
       this._city = city;
-      if (this._map == null) return;
+      if (this._map == null && this._markers.size > 0) return;
 
       this._map.setCity(this._city.adressCode);  
     } 
@@ -161,8 +163,6 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
         this.pointChoosedEvent.emit($event.lnglat);
       });  
     }
-    
-    this.setCity();
 
     if (this._viewPoints.length >0)
       this.generateViewPoints();
@@ -174,6 +174,8 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
       this.generateChoosedPoint(this._pointChoosed);
       this._map.setCenter(this._pointChoosed);
     }
+
+    if (this._markers.size == 0) this.setCity();
   }
 
   ngOnDestroy(): void {
@@ -193,6 +195,11 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   private setCity() {
     if (this._map && this._city)
       this._map.setCity(this._city.adressCode);
+  }
+
+  @HostListener('transitionend', ['$event.target'])
+  private transitionEnd(target : any) {
+    this._map.setFitView();
   }
 
   private generateDailyTrip() {

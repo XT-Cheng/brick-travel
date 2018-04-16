@@ -14,20 +14,11 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
-            "type": "node",
-            "request": "launch",
-            "name": "Test",
-            "protocol": "inspector",
-            "program": "${workspaceFolder}/mobile-client/.bin/copyShared.js",
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
-        },
-        {
             "type": "chrome",
             "request": "launch",
-            "name": "Web Cliet",
+            "name": "Web Admin Cliet",
             "url": "http://localhost:4200",
-            "webRoot": "${workspaceRoot}/web-admin",
+            "webRoot": "${workspaceRoot}/web-client-admin",
             "sourceMaps": true,
             "port": 9223,
             "userDataDir": "${workspaceRoot}/.vscode/chrome"

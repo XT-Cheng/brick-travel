@@ -1,5 +1,5 @@
 {
-  "name": "web-admin",
+  "name": "web-client-admin",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -12,9 +12,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-redux/store": "^7.1.0",
     "@angular/animations": "^5.2.0",
-    "@angular/cli": "^1.7.3",
     "@angular/common": "^5.2.0",
     "@angular/compiler": "^5.2.0",
     "@angular/core": "^5.2.0",
@@ -23,34 +21,18 @@
     "@angular/platform-browser": "^5.2.0",
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
-    "@ionic/storage": "^2.1.3",
-    "@nebular/auth": "^2.0.0-rc.6",
-    "@nebular/theme": "^2.0.0-rc.6",
-    "@ng-bootstrap/ng-bootstrap": "^1.0.0",
-    "angular2-toaster": "^5.0.0",
-    "bootstrap": "^4.0.0",
-    "bson": "^2.0.2",
+    "@angular/service-worker": "^5.2.0",
     "core-js": "^2.4.1",
-    "flux-standard-action": "^2.0.0",
-    "ionicons": "2.0.1",
-    "nebular-icons": "^1.0.6",
-    "normalizr": "^3.2.4",
-    "redux": "^3.7.2",
-    "redux-logger": "^3.0.6",
-    "redux-observable": "^0.18.0",
-    "redux-seamless-immutable": "^0.4.0",
-    "rxjs": "5.5.6",
-    "seamless-immutable": "^7.1.3",
+    "rxjs": "^5.5.6",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {
+    "@angular/cli": "~1.7.3",
     "@angular/compiler-cli": "^5.2.0",
     "@angular/language-service": "^5.2.0",
     "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
-    "@types/seamless-immutable": "^7.1.1",
-    "awesome-typescript-loader": "^4.0.1",
     "codelyzer": "^4.0.1",
     "jasmine-core": "~2.8.0",
     "jasmine-spec-reporter": "~4.2.1",
@@ -62,8 +44,6 @@
     "protractor": "~5.1.2",
     "ts-node": "~4.1.0",
     "tslint": "~5.9.1",
-    "tslint-eslint-rules": "^5.1.0",
     "typescript": "~2.5.3"
-  },
-  "description": "Brick travel web admin"
+  }
 }
