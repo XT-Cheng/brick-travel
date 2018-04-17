@@ -18,11 +18,11 @@ const DELCARATIONS = [
   AppComponent,
   PageComponent,
   TestComponent
-]
+];
 
 const BOOTSTRAPS = [
   AppComponent
-]
+];
 
 @NgModule({
   declarations: [

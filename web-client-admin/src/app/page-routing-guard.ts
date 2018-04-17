@@ -9,7 +9,7 @@ export class PageRoutingGuard implements CanActivate, CanActivateChild {
   constructor(private _authService: AuthService, private _router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    let url: string = state.url;
+    const url: string = state.url;
 
     return this.checkLogin(url);
   }
@@ -22,8 +22,7 @@ export class PageRoutingGuard implements CanActivate, CanActivateChild {
     return this._authService.onTokenChange().take(1).map((authToken) => {
       if (authToken.isValid()) {
         return true;
-      }
-      else {
+      } else {
         this._router.navigate(['/auth/login']);
         return false;
       }

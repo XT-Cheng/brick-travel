@@ -8,13 +8,13 @@ import { SelectorService } from './@core/store/providers/selector.service';
 
 @Injectable()
 export class AppRoutingGuard implements CanActivate {
-  constructor(private _dataSyncService: DataSyncService, private _selectorService : SelectorService) { }
+  constructor(private _dataSyncService: DataSyncService, private _selectorService: SelectorService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    //TODO: We need refactor activate logic later
+    // TODO: We need refactor activate logic later
     return Observable.forkJoin(this.checkStateRestored(),
-    this._selectorService.cities$.pipe(filter((cities => cities.length >0)),map(()=>true),take(1)))
-    .pipe(map(()=>true));
+    this._selectorService.cities$.pipe(filter((cities => cities.length > 0)), map(() => true), take(1)))
+    .pipe(map(() => true));
   }
 
   checkStateRestored(): Observable<boolean> {

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
 import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
-import { Storage } from '@ionic/storage'
+import { Storage } from '@ionic/storage';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import * as Immutable from 'seamless-immutable';
@@ -31,23 +31,21 @@ import { AuthService } from '../../auth/providers/authService';
 import { TokenStorage } from '../../auth/providers/tokenStorage';
 import { AuthToken } from '../../auth/providers/authToken';
 import { TokenService } from '../../auth/providers/tokenService';
-
-interface IUIUserActionMetaInfo extends IActionMetaInfo {
-}
+import { delay } from 'rxjs/operators';
 
 interface IUIUserActionPayload extends IActionPayload {
-    userLoggedIn: string
+    userLoggedIn: string;
 }
 
 const defaultUIUserActionPayload = {
     [STORE_UI_USER_KEY.userLoggedIn]: '',
     error: null,
-}
+};
 
-type UIUserAction = FluxStandardAction<IUIUserActionPayload, IUIUserActionMetaInfo>;
+type UIUserAction = FluxStandardAction<IUIUserActionPayload, IActionMetaInfo>;
 
 enum UIUserActionTypeEnum {
-    USER_LOGGED_IN = "UI:USER:USER_LOGGED_IN",
+    USER_LOGGED_IN = 'UI:USER:USER_LOGGED_IN'
 }
 
 export function userReducer(state = INIT_UI_USER_STATE, action: UIUserAction): IUserUI {
@@ -57,30 +55,33 @@ export function userReducer(state = INIT_UI_USER_STATE, action: UIUserAction): I
         }
     }
     return <any>state;
-};
+}
 
 
 @Injectable()
 export class UserService {
-    
-    //#region Constructor
-    constructor(private _http: HttpClient, private _auth: AuthService,private _tokenService : TokenService,private _storage : Storage) {
-        this._storage.get(TokenStorage.TOKEN_KEY).then((value)=>{
-            this._tokenService.setRaw(value);
-        });
 
-        this._auth.onTokenChange().delay(0).subscribe((token: AuthToken) => {
-            if (token.isValid()) {
-                let { id, name, nick, picture } = token.getPayload();
-                let userBiz = {
-                    id, name, nick, picture
-                };
-                this.addLoggedInUserAction({
-                    users: { [userBiz.id]: userBiz }
-                });
-                this.userLoggedInAction(userBiz);
-            }
-        });
+    //#region Constructor
+    constructor(private _http: HttpClient, private _auth: AuthService, private _tokenService: TokenService, private _storage: Storage) {
+        this._storage.get(TokenStorage.TOKEN_KEY).then((value) =>
+            this._tokenService.setRaw(value)
+        );
+
+        this._auth.onTokenChange().pipe(
+            delay(0)
+        )
+            .subscribe((token: AuthToken) => {
+                if (token.isValid()) {
+                    const { id, name, nick, picture } = token.getPayload();
+                    const userBiz = {
+                        id, name, nick, picture
+                    };
+                    this.addLoggedInUserAction({
+                        users: { [userBiz.id]: userBiz }
+                    });
+                    this.userLoggedInAction(userBiz);
+                }
+            });
     }
     //#endregion
 
@@ -94,7 +95,7 @@ export class UserService {
 
     private loadUserSucceededAction = entityLoadActionSucceeded(EntityTypeEnum.USER);
 
-    private loadUserFailedAction = entityLoadActionFailed(EntityTypeEnum.USER)
+    private loadUserFailedAction = entityLoadActionFailed(EntityTypeEnum.USER);
 
     @dispatch()
     private addLoggedInUserAction = entityLoadActionSucceeded(EntityTypeEnum.USER);
@@ -102,12 +103,12 @@ export class UserService {
 
     //#region UI Actions
     @dispatch()
-    private userLoggedInAction(user: IUserBiz): UIUserAction {
+    private userLoggedInAction(u: IUserBiz): UIUserAction {
         return {
             type: UIUserActionTypeEnum.USER_LOGGED_IN,
             meta: { progressing: false },
             payload: <any>Object.assign({}, defaultUIUserActionPayload, {
-                [STORE_UI_USER_KEY.userLoggedIn]: user ? user.id : ''
+                [STORE_UI_USER_KEY.userLoggedIn]: u ? u.id : ''
             })
         };
     }
@@ -123,7 +124,7 @@ export class UserService {
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
             .ofType(EntityActionTypeEnum.LOAD)
-            .filter(action => action.meta.entityType == entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
+            .filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
             .switchMap(action => this.getUsers(action.meta.pagination)
                 .map(data => this.loadUserSucceededAction(data))
                 .catch(response =>
@@ -138,7 +139,7 @@ export class UserService {
         return this._http.get(`${WEBAPI_HOST}/users`)
             .map(records => {
                 return normalize(records, [user]).entities;
-            })
+            });
     }
     //#endregion
 

@@ -19,42 +19,42 @@ export interface IQueryCondition {
 }
 
 export interface IEntityActionPayload extends IActionPayload {
-    entities: IEntities
-    queryCondition: IQueryCondition,
-    objectId : string
+    entities: IEntities;
+    queryCondition: IQueryCondition;
+    objectId: string;
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
 export type EntityAction = FluxStandardAction<IEntityActionPayload, IEntityActionMetaInfo>;
 
 export enum EntityActionPhaseEnum {
-    TRIGGER = "TRIGGER",
-    START = "START",
-    SUCCEED = "SUCCEED",
-    FAIL = "FAIL",
-    EXECUTE = "EXECUTE"
+    TRIGGER = 'TRIGGER',
+    START = 'START',
+    SUCCEED = 'SUCCEED',
+    FAIL = 'FAIL',
+    EXECUTE = 'EXECUTE'
 }
 
 export enum EntityTypeEnum {
-    CITY = "CITY",
-    VIEWPOINT = "VIEWPOINT",
-    VIEWPOINTCOMMENT = "VIEWPOINTCOMMENT",
-    TRAVELAGENDA = "TRAVELAGENDA",
-    DAILYTRIP = "DAILYTRIP",
-    FILTERCATEGORY = "FILTERCATEGORY",
-    TRAVELVIEWPOINT = "TRAVELVIEWPOINT",
-    USER = "USER",
-    MASTER_DATA = "MASTER_DATA"
+    CITY = 'CITY',
+    VIEWPOINT = 'VIEWPOINT',
+    VIEWPOINTCOMMENT = 'VIEWPOINTCOMMENT',
+    TRAVELAGENDA = 'TRAVELAGENDA',
+    DAILYTRIP = 'DAILYTRIP',
+    FILTERCATEGORY = 'FILTERCATEGORY',
+    TRAVELVIEWPOINT = 'TRAVELVIEWPOINT',
+    USER = 'USER',
+    MASTER_DATA = 'MASTER_DATA'
 }
 
 export enum EntityActionTypeEnum {
-    LOAD = "ENTITY:LOAD",
-    SAVE = "ENTITY:SAVE",
-    UPDATE = "ENTITY:UPDATE",
-    INSERT = "ENTITY:INSERT",
-    DELETE = "ENTITY:DELETE",
-    FLUSH = "ENTITY:FLUSH",
-    APPEND_COMMENTS = "ENTITY:APPEND_COMMENTS",
+    LOAD = 'ENTITY:LOAD',
+    SAVE = 'ENTITY:SAVE',
+    UPDATE = 'ENTITY:UPDATE',
+    INSERT = 'ENTITY:INSERT',
+    DELETE = 'ENTITY:DELETE',
+    FLUSH = 'ENTITY:FLUSH',
+    APPEND_COMMENTS = 'ENTITY:APPEND_COMMENTS',
 }
 
 const defaultEntityActionPayload = {
@@ -62,16 +62,16 @@ const defaultEntityActionPayload = {
     entities: {},
     queryCondition: {},
     objectId: ''
-}
+};
 
 const defaultEntityActionMeta = {
     pagination: null,
     phaseType: EntityActionPhaseEnum.EXECUTE,
     progressing: false
-}
+};
 
-export function getEntityKey(typeEnum : EntityTypeEnum ) : string {
-    switch(typeEnum) {
+export function getEntityKey(typeEnum: EntityTypeEnum ): string {
+    switch (typeEnum) {
         case EntityTypeEnum.CITY: {
             return STORE_ENTITIES_KEY.cities;
         }
@@ -85,21 +85,21 @@ export function getEntityKey(typeEnum : EntityTypeEnum ) : string {
             return STORE_ENTITIES_KEY.travelViewPoints;
         }
         case EntityTypeEnum.FILTERCATEGORY: {
-            return STORE_ENTITIES_KEY.filterCategories
+            return STORE_ENTITIES_KEY.filterCategories;
         }
         case EntityTypeEnum.VIEWPOINT: {
-            return STORE_ENTITIES_KEY.viewPoints
+            return STORE_ENTITIES_KEY.viewPoints;
         }
         case EntityTypeEnum.USER: {
-            return STORE_ENTITIES_KEY.users
+            return STORE_ENTITIES_KEY.users;
         }
         default:
             return '';
     }
 }
 
-export function getEntityType(type : string ) : EntityTypeEnum {
-    switch(type) {
+export function getEntityType(type: string ): EntityTypeEnum {
+    switch (type) {
         case STORE_ENTITIES_KEY.cities: {
             return EntityTypeEnum.CITY;
         }
@@ -136,7 +136,7 @@ export function entityLoadAction(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultEntityActionPayload, {
             queryCondition: queryCondition
         })
-    })
+    });
 }
 
 export function entityLoadActionStarted(entityType: EntityTypeEnum) {
@@ -148,23 +148,23 @@ export function entityLoadActionStarted(entityType: EntityTypeEnum) {
             phaseType: EntityActionPhaseEnum.START
         }),
         payload: defaultEntityActionPayload,
-    })
+    });
 }
 
 export function entityLoadActionFailed(entityType: EntityTypeEnum) {
     return (error: Error): EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
         meta: Object.assign({}, defaultEntityActionMeta, {
-            entityType: entityType, 
+            entityType: entityType,
             phaseType: EntityActionPhaseEnum.FAIL
         }),
         payload: Object.assign({}, defaultEntityActionPayload, {
             error: error
         })
-    })
+    });
 }
 
-export function entityLoadActionSucceeded(entityType: EntityTypeEnum,actionType: EntityActionTypeEnum = EntityActionTypeEnum.LOAD) {
+export function entityLoadActionSucceeded(entityType: EntityTypeEnum, actionType: EntityActionTypeEnum = EntityActionTypeEnum.LOAD) {
     return (entities: IEntities): EntityAction => ({
         type: actionType,
         meta: Object.assign({}, defaultEntityActionMeta, {
@@ -174,7 +174,7 @@ export function entityLoadActionSucceeded(entityType: EntityTypeEnum,actionType:
         payload: Object.assign({}, defaultEntityActionPayload, {
             entities: entities
         })
-    })
+    });
 }
 //#endregion
 
@@ -188,7 +188,7 @@ export function entityUpdateAction<T>(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultEntityActionPayload, {
             entities: Object.assign({}, INIT_ENTITY_STATE, { [getEntityKey(entityType)]: { [id]: entity } })
         })
-    })
+    });
 }
 //#endregion
 
@@ -202,7 +202,7 @@ export function entityInsertAction<T>(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultEntityActionPayload, {
             entities: Object.assign({}, INIT_ENTITY_STATE, { [getEntityKey(entityType)]: { [id]: entity } })
         })
-    })
+    });
 }
 //#endregion
 
@@ -216,6 +216,6 @@ export function entityDeleteAction<T>(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultEntityActionPayload, {
             entities: Object.assign({}, INIT_ENTITY_STATE, { [getEntityKey(entityType)]: { [id]: entity } })
         })
-    })
+    });
 }
 //#endregion

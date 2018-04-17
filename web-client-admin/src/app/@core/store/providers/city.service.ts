@@ -4,9 +4,8 @@ import { Inject, Injectable } from '@angular/core';
 import { FluxStandardAction } from 'flux-standard-action';
 import { denormalize, normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
-import { Observable } from 'rxjs';
 import { of } from 'rxjs/observable/of';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, filter, switchMap, map, startWith } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
@@ -33,12 +32,13 @@ import { city } from '../entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { ICityUI, INIT_UI_CITY_STATE, STORE_UI_CITY_KEY } from '../ui/city/city.model';
+import { Observable } from 'rxjs/Observable';
 
-type UICityAction = FluxStandardAction<IUICityActionPayload, IUICityActionMetaInfo>;
+type UICityAction = FluxStandardAction<IUICityActionPayload, IActionMetaInfo>;
 
 enum UICityActionTypeEnum {
-    SELECT_CITY = "UI:CITY:SELECT_CITY",
-    SEARCH_CITY = "UI:CITY:SEARCH_CITY",
+    SELECT_CITY = 'UI:CITY:SELECT_CITY',
+    SEARCH_CITY = 'UI:CITY:SEARCH_CITY',
 }
 
 export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): ICityUI {
@@ -51,21 +51,18 @@ export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): I
         }
     }
     return <any>state;
-};
-
-interface IUICityActionMetaInfo extends IActionMetaInfo {
 }
 
 interface IUICityActionPayload extends IActionPayload {
-    searchKey?: string,
-    selectedCityId?: string
+    searchKey?: string;
+    selectedCityId?: string;
 }
 
 const defaultUICityActionPayload = {
     [STORE_UI_CITY_KEY.selectedCityId]: '',
     [STORE_UI_CITY_KEY.searchKey]: '',
     error: null,
-}
+};
 
 @Injectable()
 export class CityService {
@@ -87,7 +84,7 @@ export class CityService {
 
     private loadCitySucceededAction = entityLoadActionSucceeded(EntityTypeEnum.CITY);
 
-    private loadCityFailedAction = entityLoadActionFailed(EntityTypeEnum.CITY)
+    private loadCityFailedAction = entityLoadActionFailed(EntityTypeEnum.CITY);
     //#endregion
 
     //#region update actions
@@ -123,12 +120,12 @@ export class CityService {
         };
     }
     @dispatch()
-    private selectCityAction(city: ICityBiz): UICityAction {
+    private selectCityAction(c: ICityBiz): UICityAction {
         return {
             type: UICityActionTypeEnum.SELECT_CITY,
             meta: { progressing: false },
             payload: <any>Object.assign({}, defaultUICityActionPayload, {
-                [STORE_UI_CITY_KEY.selectedCityId]: city ? city.id : ''
+                [STORE_UI_CITY_KEY.selectedCityId]: c ? c.id : ''
             })
         };
     }
@@ -147,23 +144,26 @@ export class CityService {
 
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
-            .ofType(EntityActionTypeEnum.LOAD)
-            .filter(action => action.meta.entityType == entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
-            .switchMap(action => this.getCities(action.meta.pagination)
-                .map(data => this.loadCitySucceededAction(data))
-                .catch(response =>
+            .ofType(EntityActionTypeEnum.LOAD).pipe(
+            filter(action =>
+                action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+            switchMap(action => this.getCities(action.meta.pagination).pipe(
+                map(data => this.loadCitySucceededAction(data)),
+                catchError(response =>
                     of(this.loadCityFailedAction(response))
-                )
-                .startWith(this.loadCityStartedAction()));
+                ),
+                startWith(this.loadCityStartedAction()))
+            ));
     }
     //#endregion
 
     //#region Private methods
     private getCities(pagination: IPagination): Observable<IEntities> {
-        return this._http.get(`${WEBAPI_HOST}/cities`)
-            .map(records => {
+        return this._http.get(`${WEBAPI_HOST}/cities`).pipe(
+            map(records => {
                 return normalize(records, [city]).entities;
             })
+        );
     }
     //#endregion
 
@@ -176,13 +176,13 @@ export class CityService {
         this.loadCitiesAction();
     }
 
-    public selectCity(city: ICityBiz) {
-        this.selectCityAction(city);
+    public selectCity(c: ICityBiz) {
+        this.selectCityAction(c);
     }
 
     public insertCity(added: ICityBiz): Observable<Error | ICity> {
-        return this.insert(added).pipe(tap((city) => {
-            this.insertCityAction(added.id, translateCityFromBiz(city));
+        return this.insert(added).pipe(tap((c) => {
+            this.insertCityAction(added.id, translateCityFromBiz(c));
         }),
             catchError((err: Error) => {
                 return of(err);
@@ -190,8 +190,8 @@ export class CityService {
     }
 
     public updateCity(update: ICityBiz): Observable<Error | ICity> {
-        return this.update(update).pipe(tap((city) => {
-            this.updateCityAction(update.id, translateCityFromBiz(city));
+        return this.update(update).pipe(tap((c) => {
+            this.updateCityAction(update.id, translateCityFromBiz(c));
         }),
             catchError((err) => {
                 return of(err);
@@ -211,14 +211,14 @@ export class CityService {
     //#region CRUD methods
     public insert(id: string | ICityBiz): Observable<ICity> {
         let created = id;
-        if (typeof id == 'string') {
-            let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+        if (typeof id === 'string') {
+            const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
             created = denormalize(id, city, entities);
         }
 
         const formData: FormData = new FormData();
 
-        formData.append("city", JSON.stringify(created));
+        formData.append('city', JSON.stringify(created));
 
         for (let i = 0; i < this._uploader.queue.length; i++) {
             formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
@@ -230,14 +230,14 @@ export class CityService {
 
     public update(id: string | ICityBiz) {
         let updated: any = id;
-        if (typeof id == 'string') {
-            let entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+        if (typeof id === 'string') {
+            const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
             updated = denormalize(id, city, entities);
         }
 
         const formData: FormData = new FormData();
 
-        formData.append("city", JSON.stringify(updated));
+        formData.append('city', JSON.stringify(updated));
         for (let i = 0; i < this._uploader.queue.length; i++) {
             formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
         }

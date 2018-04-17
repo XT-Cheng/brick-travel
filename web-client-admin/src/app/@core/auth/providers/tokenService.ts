@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { of as observableOf } from 'rxjs/observable/of';
-import { filter } from 'rxjs/operators/filter';
-import { share } from 'rxjs/operators/share';
+import { filter, share} from 'rxjs/operators';
 import { AuthToken } from './authToken';
 import { TokenStorage } from './tokenStorage';
 

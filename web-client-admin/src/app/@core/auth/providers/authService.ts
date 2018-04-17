@@ -2,10 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { of as observableOf } from 'rxjs/observable/of';
-import { switchMap } from 'rxjs/operators/switchMap';
-import { map } from 'rxjs/operators/map';
-import { catchError } from 'rxjs/operators/catchError';
-import { AUTH_METHOD, WEBAPI_HOST, AUTH_URL, AUTH_SUCCESS_REDIRECT, AUTH_MESSAGE_KEY, AUTH_ERRORS_KEY, AUTH_FAIL_REDIRECT } from '../../utils/constants';
+import { switchMap, map, catchError } from 'rxjs/operators';
+import {
+  AUTH_METHOD,
+  WEBAPI_HOST,
+  AUTH_URL,
+  AUTH_SUCCESS_REDIRECT,
+  AUTH_MESSAGE_KEY,
+  AUTH_ERRORS_KEY,
+  AUTH_FAIL_REDIRECT
+} from '../../utils/constants';
 import { getDeepFromObject } from '../../utils/helpers';
 import { AuthResult } from './authResult';
 import { TokenStorage } from './tokenStorage';
@@ -16,7 +22,7 @@ import { TokenService } from './tokenService';
 export class AuthService {
 
   constructor(protected http: HttpClient,
-    protected tokenService: TokenService,) {
+    protected tokenService: TokenService, ) {
   }
 
   /**
@@ -57,10 +63,10 @@ export class AuthService {
     const method = AUTH_METHOD;
     const url = `${WEBAPI_HOST}${AUTH_URL}`;
 
-    return this.http.request(method, url, {body: data, observe: 'response'})
+    return this.http.request(method, url, { body: data, observe: 'response' })
       .pipe(
         this.validateToken(),
-        map((res : HttpResponse<Object>) => {
+        map((res: HttpResponse<Object>) => {
           return new AuthResult(
             true,
             res,
@@ -68,19 +74,19 @@ export class AuthService {
             [],
             getDeepFromObject(res.body,
               AUTH_MESSAGE_KEY,
-                  'You have been successfully logged in.'),
+              'You have been successfully logged in.'),
             getDeepFromObject(res.body,
-                         TokenStorage.TOKEN_KEY));
+              TokenStorage.TOKEN_KEY));
         }),
-        switchMap((ret : AuthResult) => {
+        switchMap((ret: AuthResult) => {
           return this.processResultToken(ret);
         }),
-        catchError((res : any) => {
+        catchError((res: any) => {
           let errors = [];
           if (res instanceof HttpErrorResponse) {
             errors = getDeepFromObject(res.error,
               AUTH_ERRORS_KEY,
-                  'Login/Email combination is not correct, please try again.');
+              'Login/Email combination is not correct, please try again.');
           } else {
             errors.push('Something went wrong.');
           }
@@ -93,12 +99,12 @@ export class AuthService {
               errors,
             ));
         }),
-      );
+    );
   }
 
-  protected validateToken (): any {
-    return map((res : HttpResponse<Object>) => {
-      const token = getDeepFromObject(res.body,TokenStorage.TOKEN_KEY)
+  protected validateToken(): any {
+    return map((res: HttpResponse<Object>) => {
+      const token = getDeepFromObject(res.body, TokenStorage.TOKEN_KEY);
       if (!token) {
         throw new Error('Could not extract token from the response.');
       }
@@ -115,7 +121,7 @@ export class AuthService {
             result.setToken(token);
             return result;
           }),
-        );
+      );
     }
 
     return observableOf(result);

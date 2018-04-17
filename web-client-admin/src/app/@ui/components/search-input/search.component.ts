@@ -20,9 +20,7 @@ import { NbThemeService } from '@nebular/theme';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import { of as observableOf } from 'rxjs/observable/of';
-import { delay } from 'rxjs/operators/delay';
-import { filter } from 'rxjs/operators/filter';
-import { takeWhile } from 'rxjs/operators/takeWhile';
+import { delay, filter, takeWhile } from 'rxjs/operators';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SearchService } from '../../providers/search.service';
@@ -70,21 +68,21 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
    * Search input placeholder
    * @type {string}
    */
-  @Input() placeholder: string = 'Search...';
+  @Input() placeholder = 'Search...';
 
   /**
    * Hint showing under the input field to improve user experience
    *
    * @type {string}
    */
-  @Input() hint: string = 'Hit enter to search';
+  @Input() hint = 'Hit enter to search';
 
-  @HostBinding('class.show') showSearch: boolean = false;
+  @HostBinding('class.show') showSearch = false;
 
   @ViewChild('attachedSearchContainer', {read: ViewContainerRef}) attachedSearchContainer: ViewContainerRef;
 
   private searchFieldComponentRef$ = new BehaviorSubject<ComponentRef<any>>(null);
-  private searchType: string = 'rotate-layout';
+  private searchType = 'rotate-layout';
   private activateSearchSubscription: Subscription;
   private deactivateSearchSubscription: Subscription;
   private routerSubscription: Subscription;
@@ -111,7 +109,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(event => event instanceof NavigationEnd),
       )
       .subscribe(event => {
-        this.searchService.deactivateSearch(this.searchType, this.tag)
+        this.searchService.deactivateSearch(this.searchType, this.tag);
       });
 
     this.activateSearchSubscription = combineLatest([
@@ -185,7 +183,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
     componentRef.changeDetectorRef.detectChanges();
 
-    this.searchFieldComponentRef$.next(componentRef)
+    this.searchFieldComponentRef$.next(componentRef);
   }
 
   ngOnDestroy() {

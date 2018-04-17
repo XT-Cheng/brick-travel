@@ -31,8 +31,8 @@ export class AuthComponent implements OnDestroy {
 
   subscription: any;
 
-  authenticated: boolean = false;
-  token: string = '';
+  authenticated = false;
+  token = '';
 
   // showcase of how to use the onAuthenticationChange method
   constructor(protected auth: AuthService) {

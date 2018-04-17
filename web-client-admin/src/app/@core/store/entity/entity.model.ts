@@ -30,18 +30,18 @@ export const INIT_ENTITY_STATE = {
   filterCriteries: {},
   viewPointCatgories: {},
   transportationCatgories: {}
-}
+};
 
 export interface IEntities {
-  cities?: { [id : string] : ICity },
-  viewPoints?: { [id : string] : IViewPoint },
-  viewPointComments?: { [id : string] : IViewPointComment },
-  users?: { [id : string] : IUser },
-  travelViewPoints?: { [id : string] : ITravelViewPoint },
-  dailyTrips?: { [id : string] : IDailyTrip },
-  travelAgendas?: { [id : string] : ITravelAgenda },
-  filterCategories?: {[id : string] : IFilterCategory},
-  filterCriteries?: {[id : string] : IFilterCriteria},
-  viewPointCatgories?: {[id : string] : IViewPointCategory},
-  transportationCatgories?: {[id : string] : ITransportationCategory}
+  cities?: { [id: string]: ICity };
+  viewPoints?: { [id: string]: IViewPoint };
+  viewPointComments?: { [id: string]: IViewPointComment };
+  users?: { [id: string]: IUser };
+  travelViewPoints?: { [id: string]: ITravelViewPoint };
+  dailyTrips?: { [id: string]: IDailyTrip };
+  travelAgendas?: { [id: string]: ITravelAgenda };
+  filterCategories?: {[id: string]: IFilterCategory};
+  filterCriteries?: {[id: string]: IFilterCriteria};
+  viewPointCatgories?: {[id: string]: IViewPointCategory};
+  transportationCatgories?: {[id: string]: ITransportationCategory};
 }

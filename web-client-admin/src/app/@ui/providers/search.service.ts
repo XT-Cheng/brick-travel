@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
-import { share } from 'rxjs/operators/share';
+import { share } from 'rxjs/operators';
 
 /**
  * Search component service, connects you code to a page-level search component.
@@ -13,16 +13,16 @@ export class SearchService {
   private searchActivations$ = new Subject<{ searchType: string, tag?: string }>();
   private searchDeactivations$ = new Subject<{ searchType: string, tag?: string }>();
 
-  private _currentSearchKey : string;
+  private _currentSearchKey: string;
 
-  public set currentSearchKey(value :string) {
+  public set currentSearchKey(value: string) {
     this._currentSearchKey = value;
-  } 
-  
-  public get currentSearchKey() : string {
+  }
+
+  public get currentSearchKey(): string {
     return this._currentSearchKey;
-  } 
-  
+  }
+
   /***
    * Activate (open) search component
    * @param {string} searchType

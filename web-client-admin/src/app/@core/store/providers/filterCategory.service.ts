@@ -43,7 +43,7 @@ export class FilterCategoryService {
     //#endregion
 
     //#region UI Actions
-    
+
     //#endregion
 
     //#endregion
@@ -56,14 +56,14 @@ export class FilterCategoryService {
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
             .ofType(EntityActionTypeEnum.LOAD)
-            .filter(action => action.meta.entityType === entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
+            .filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
             .switchMap(action => {
                 return this.getFilterCategory(action.meta.pagination)
                     .map(data => this.loadFilterCategorySucceededAction(data))
                     .catch(response =>
                         of(this.loadFilterCategoryFailedAction(response))
                     )
-                    .startWith(this.loadFilterCategoryStartedAction())
+                    .startWith(this.loadFilterCategoryStartedAction());
             });
     }
     //#endregion
@@ -73,7 +73,7 @@ export class FilterCategoryService {
         return this._http.get(`${WEBAPI_HOST}/filterCategories`)
             .map(records => {
                 return normalize(records, [filterCategory]).entities;
-            })
+            });
     }
     //#endregion
 

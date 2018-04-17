@@ -20,6 +20,7 @@ import {
 import { IEntities } from '../entity/entity.model';
 import { transportationCategory, viewPointCategory } from '../entity/entity.schema';
 import { IAppState } from '../store.model';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class MasterDataService {
@@ -39,7 +40,7 @@ export class MasterDataService {
 
     private loadMasterDataSucceededAction = entityLoadActionSucceeded(EntityTypeEnum.MASTER_DATA);
 
-    private loadMasterDataFailedAction = entityLoadActionFailed(EntityTypeEnum.MASTER_DATA)
+    private loadMasterDataFailedAction = entityLoadActionFailed(EntityTypeEnum.MASTER_DATA);
     //#endregion
 
     //#region update actions
@@ -51,14 +52,14 @@ export class MasterDataService {
     //#endregion
 
     //#region delete actions
-    
+
     //#endregion
 
     //#endregion
     //#region UI Actions
-   
+
     //#region Dirty Actions
-    
+
     //#endregion
 
     //#endregion
@@ -73,7 +74,7 @@ export class MasterDataService {
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
             .ofType(EntityActionTypeEnum.LOAD)
-            .filter(action => action.meta.entityType == entityType && action.meta.phaseType == EntityActionPhaseEnum.TRIGGER)
+            .filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
             .switchMap(action => this.getMasterDatas()
                 .map(data => this.loadMasterDataSucceededAction(data))
                 .catch(response =>
@@ -85,14 +86,15 @@ export class MasterDataService {
 
     //#region Private methods
     private getMasterDatas(): Observable<IEntities> {
-        return this._http.get(`${WEBAPI_HOST}/masterData`)
-            .map(records => {
-                const schema = { 
+        return this._http.get(`${WEBAPI_HOST}/masterData`).pipe(
+            map(records => {
+                const schema = {
                     viewPointCategories: [ viewPointCategory ],
                     transportationCategories: [transportationCategory]
-                }
+                };
                 return normalize(records, schema).entities;
             })
+        );
     }
     //#endregion
 
@@ -104,6 +106,6 @@ export class MasterDataService {
     //#endregion
 
     //#region CRUD methods
-    
+
     //#endregion
 }
