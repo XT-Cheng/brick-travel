@@ -1,0 +1,78 @@
+:host {
+  .search {
+    background: #ebeff5;
+
+    button {
+      color: #a4abb3;
+    }
+
+    span {
+      color: #a4abb3;
+    }
+
+    input {
+      color: #2a2a2a;
+      border-bottom: 4px solid #a4abb3;
+
+      &::placeholder {
+        color: nb-theme(search-placeholder);
+      }
+
+      &::-ms-clear {
+        display: none;
+      }
+    }
+  }
+
+  &.rotate-layout {
+    opacity: 0;
+    background: #ebeff5;
+  }
+
+  &.modal-zoomin {
+    .search::before,
+    .search::after {
+      border: 1.5rem solid nb-theme(search-bg-secondary);
+    }
+
+  }
+
+  &.modal-half {
+    .form-wrapper {
+      background: nb-theme(search-bg);
+    }
+    .search::before {
+      background: nb-theme(search-bg-secondary);
+    }
+  }
+
+  &.modal-drop {
+    .form-content::after {
+      background: nb-theme(search-dash);
+    }
+    .search::before {
+      background: nb-theme(search-bg);
+    }
+  }
+
+  &.curtain {
+    .search::after {
+      background: nb-theme(search-bg);
+    }
+    .search {
+      background: nb-theme(search-bg);
+    }
+  }
+
+  &.column-curtain {
+    &::before {
+      background: nb-theme(search-bg);
+    }
+    &::after {
+      background: transparent;
+    }
+    &.show::after {
+      background: nb-theme(search-bg-secondary);
+    }
+  }
+}

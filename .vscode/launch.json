@@ -18,8 +18,15 @@
             "request": "launch",
             "name": "Web Admin Cliet",
             "url": "http://localhost:4200",
-            "webRoot": "${workspaceRoot}/web-client-admin",
+            "webRoot": "${workspaceRoot}/web-client-admin/",
             "sourceMaps": true,
+            // "trace": true,
+            "sourceMapPathOverrides": {
+                 "webpack:/*":"${webRoot}/*"
+             },
+            // "sourceMapPathOverrides": {
+            //     "*": "${webRoot}/*"
+            // },
             "port": 9223,
             "userDataDir": "${workspaceRoot}/.vscode/chrome"
         },
