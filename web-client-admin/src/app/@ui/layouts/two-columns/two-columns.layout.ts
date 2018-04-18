@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
   template: `
     <nb-layout [withScroll]='true'>
       <nb-layout-header fixed>
-        <app-bt-header></app-bt-header>
+        <bt-header></bt-header>
       </nb-layout-header>
 
       <nb-sidebar class="menu-sidebar" tag="menu-sidebar" responsive >

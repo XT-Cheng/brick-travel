@@ -5,6 +5,7 @@ import { MiddlewareAPI } from 'redux';
 import { Epic } from 'redux-observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { fromPromise } from 'rxjs/observable/fromPromise';
 import { of } from 'rxjs/observable/of';
 import { catchError, concat, filter, map, mergeMap, startWith, switchMap } from 'rxjs/operators';
 
@@ -25,6 +26,7 @@ import { IAppState } from '../store.model';
 import { CityService } from './city.service';
 import { TravelAgendaService } from './travelAgenda.service';
 
+// import * as Observable from 'rxjs/Rx';
 @Injectable()
 export class DataSyncService {
     private _stateRestored$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
@@ -56,26 +58,26 @@ export class DataSyncService {
     public createFlushEpic(): Epic<DirtyAction, IAppState> {
         return (action$, store) => action$
             .ofType(DirtyActionTypeEnum.FLUSH).pipe(
-            filter(action => action.meta.phaseType === DirtyActionPhaseEnum.TRIGGER),
-            switchMap(action => this.flush(store).pipe(
-                mergeMap((value: { entityType: EntityTypeEnum, type: DirtyTypeEnum, id: string }) =>
-                    this.requestFlush(value).pipe(
-                        map(data => {
-                            // Do nothing while succeed.
-                            return { type: 'empty', payload: null, meta: null };
-                        }),
-                        catchError(error =>
-                            of(dirtyAddAction(value.entityType)(value.id, value.type)).pipe(
-                                concat(of(this.flushDirtyFailedAction(error)))
-                            )
-                        ),
-                        startWith(dirtyRemoveAction(value.entityType)(value.id, value.type))
-                    )
-                ),
-                startWith(this.flushDirtyStartedAction()),
-                concat(Observable.fromPromise(this.persistantState()).pipe(
-                    map(() => this.flushDirtyFinishedAction()))
-                )))
+                filter(action => action.meta.phaseType === DirtyActionPhaseEnum.TRIGGER),
+                switchMap(action => this.flush(store).pipe(
+                    mergeMap((value: { entityType: EntityTypeEnum, type: DirtyTypeEnum, id: string }) =>
+                        this.requestFlush(value).pipe(
+                            map(data => {
+                                // Do nothing while succeed.
+                                return { type: 'empty', payload: null, meta: null };
+                            }),
+                            catchError(error =>
+                                of(dirtyAddAction(value.entityType)(value.id, value.type)).pipe(
+                                    concat(of(this.flushDirtyFailedAction(error)))
+                                )
+                            ),
+                            startWith(dirtyRemoveAction(value.entityType)(value.id, value.type))
+                        )
+                    ),
+                    startWith(this.flushDirtyStartedAction()),
+                    concat(fromPromise(this.persistantState()).pipe(
+                        map(() => this.flushDirtyFinishedAction()))
+                    )))
             );
     }
     //#endregion
@@ -95,7 +97,7 @@ export class DataSyncService {
     }
 
     public isStateRestored(): Observable<boolean> {
-        return this._stateRestored$.filter(value => !!value).share();
+        return this._stateRestored$.pipe(filter(value => !!value)).share();
     }
 
     //#endregion
@@ -116,7 +118,7 @@ export class DataSyncService {
             });
         });
 
-        return Observable.of(...ret);
+        return of(...ret);
     }
 
     private requestFlush(value: { entityType: EntityTypeEnum, type: string, id: string }) {

@@ -5,7 +5,7 @@ import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, startWith, switchMap } from 'rxjs/operators';
 
 import { WEBAPI_HOST } from '../../utils/constants';
 import {
@@ -74,14 +74,15 @@ export class MasterDataService {
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
             .ofType(EntityActionTypeEnum.LOAD).pipe(
-            filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
-            switchMap(action => this.getMasterDatas()
-                .map(data => this.loadMasterDataSucceededAction(data))
-                .catch(response =>
-                    of(this.loadMasterDataFailedAction(response))
-                )
-                .startWith(this.loadMasterDataStartedAction()))
-            );
+                filter(action => action.meta.entityType === entityType
+                    && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+                switchMap(action => this.getMasterDatas().pipe(
+                    map(data => this.loadMasterDataSucceededAction(data)),
+                    catchError(response =>
+                        of(this.loadMasterDataFailedAction(response))
+                    ),
+                    startWith(this.loadMasterDataStartedAction()))
+                ));
     }
     //#endregion
 
@@ -90,7 +91,7 @@ export class MasterDataService {
         return this._http.get(`${WEBAPI_HOST}/masterData`).pipe(
             map(records => {
                 const schema = {
-                    viewPointCategories: [ viewPointCategory ],
+                    viewPointCategories: [viewPointCategory],
                     transportationCategories: [transportationCategory]
                 };
                 return normalize(records, schema).entities;

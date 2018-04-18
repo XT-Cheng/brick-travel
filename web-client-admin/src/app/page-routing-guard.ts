@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { map, take } from 'rxjs/operators';
 
 import { AuthService } from './@core/auth/providers/authService';
 
@@ -19,13 +20,16 @@ export class PageRoutingGuard implements CanActivate, CanActivateChild {
   }
 
   checkLogin(url: string): Observable<boolean> {
-    return this._authService.onTokenChange().take(1).map((authToken) => {
-      if (authToken.isValid()) {
-        return true;
-      } else {
-        this._router.navigate(['/auth/login']);
-        return false;
-      }
-    });
+    return this._authService.onTokenChange().pipe(
+      take(1),
+      map((authToken) => {
+        if (authToken.isValid()) {
+          return true;
+        } else {
+          this._router.navigate(['/auth/login']);
+          return false;
+        }
+      })
+    );
   }
 }

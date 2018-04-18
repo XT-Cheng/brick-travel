@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { filter, map, take } from 'rxjs/operators';
 
 import { DataSyncService } from './@core/store/providers/dataSync.service';
@@ -12,12 +13,15 @@ export class AppRoutingGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     // TODO: We need refactor activate logic later
-    return Observable.forkJoin(this.checkStateRestored(),
-    this._selectorService.cities$.pipe(filter((cities => cities.length > 0)), map(() => true), take(1)))
-    .pipe(map(() => true));
+    return forkJoin(this.checkStateRestored(),
+      this._selectorService.cities$.pipe(
+        filter((cities => cities.length > 0)),
+        map(() => true),
+        take(1)))
+      .pipe(map(() => true));
   }
 
   checkStateRestored(): Observable<boolean> {
-    return this._dataSyncService.isStateRestored().take(1);
+    return this._dataSyncService.isStateRestored().pipe(take(1));
   }
 }

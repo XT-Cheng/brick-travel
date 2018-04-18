@@ -10,6 +10,7 @@ import { FileUploadModule } from './@core/fileUpload/fileUpload.module';
 import { StoreModule } from './@core/store/store.module';
 import { WEBAPI_HOST } from './@core/utils/constants';
 import { UIModule } from './@ui/ui.module';
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PageComponent } from './page.component';
 import { TestComponent } from './test.component';
@@ -36,7 +37,8 @@ const BOOTSTRAPS = [
     AuthModule.forRoot(),
     NgbModule.forRoot(),
     UIModule.forRoot(),
-    FileUploadModule.forRoot({url: `${WEBAPI_HOST}/fileUpload`}),
+    FileUploadModule.forRoot({ url: `${WEBAPI_HOST}/fileUpload` }),
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [

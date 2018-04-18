@@ -5,7 +5,7 @@ import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, startWith, switchMap } from 'rxjs/operators';
 
 import { WEBAPI_HOST } from '../../utils/constants';
 import {
@@ -57,16 +57,17 @@ export class FilterCategoryService {
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
             .ofType(EntityActionTypeEnum.LOAD).pipe(
-            filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
-            switchMap(action => {
-                return this.getFilterCategory(action.meta.pagination)
-                    .map(data => this.loadFilterCategorySucceededAction(data))
-                    .catch(response =>
-                        of(this.loadFilterCategoryFailedAction(response))
-                    )
-                    .startWith(this.loadFilterCategoryStartedAction());
-            })
-        );
+                filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+                switchMap(action => {
+                    return this.getFilterCategory(action.meta.pagination).pipe(
+                        map(data => this.loadFilterCategorySucceededAction(data)),
+                        catchError(response =>
+                            of(this.loadFilterCategoryFailedAction(response))
+                        ),
+                        startWith(this.loadFilterCategoryStartedAction())
+                    );
+                })
+            );
     }
     //#endregion
 
