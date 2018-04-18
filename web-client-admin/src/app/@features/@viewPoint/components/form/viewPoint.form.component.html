@@ -1,0 +1,143 @@
+<nb-card>
+  <nb-card-header>
+    {{title}}
+  </nb-card-header>
+  <nb-card-body>
+    <form #form="ngForm" class='vp-form' autocomplete="nope">
+      <nb-tabset>
+        <nb-tab tabTitle='General'>
+          <div class="form-group row">
+            <div class="col-6">
+              <label for="input-name">View Point Name</label>
+              <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="newViewPoint.name"
+                name='name' required bt-autofocus [class.danger]="name.invalid && name.touched" />
+              <small style='margin-left: 0;' class="form-text error" *ngIf="name.invalid && name.touched && name?.errors?.required">
+                Name is required!
+              </small>
+            </div>
+            <div class="col-6">
+              <label for="input-category">Category</label>
+              <select #category='ngModel' required id='input-category' [compareWith]="compareCityFn" [(ngModel)]='newViewPoint.category'
+                name='category' class="form-control" [class.danger]="category.invalid">
+                <option *ngFor="let category of (selectorService?.viewPointCategories$ | async)" [ngValue]="category">{{category.name}}</option>
+              </select>
+              <small style='margin-left: 0;' class="form-text error" *ngIf="category.invalid && category?.errors?.required">
+                Category is required!
+              </small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="input-rank">Rank</label>
+            <bt-rate required #rank='ngModel' id='input-rank' class="form-control" [class.danger]="rank.invalid" max=5 [readonly]='false'
+              name='rank' [(ngModel)]="newViewPoint.rank">
+              <ng-template let-fill="fill">
+                <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 0">
+                  <use xlink:href='#icon-empty-star'></use>
+                </svg>
+                <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 50">
+                  <use xlink:href='#icon-half-star'></use>
+                </svg>
+                <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 100">
+                  <use xlink:href='#icon-star'></use>
+                </svg>
+              </ng-template>
+            </bt-rate>
+            <small style='margin-left: 0;' class="form-text error" *ngIf="rank.invalid && rank?.errors?.required">
+              Address is required!
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="input-timeNeeded">Time Needed</label>
+            <input #timeNeeded='ngModel' required type="text" id='input-timeNeeded' placeholder="Time Needed" class="form-control" [(ngModel)]="newViewPoint.timeNeeded"
+              name='timeNeeded' [class.danger]="timeNeeded.invalid" />
+            <small style='margin-left: 0;' class="form-text error" *ngIf="timeNeeded.invalid && timeNeeded?.errors?.required">
+              Time Needed is required!
+            </small>
+          </div>
+        </nb-tab>
+        <nb-tab tabTitle='Location'>
+          <div class="form-group">
+            <label for="input-city">City</label>
+            <select #city='ngModel' required id='input-city' [compareWith]="compareCityFn" [(ngModel)]='newViewPoint.city' name='city'
+              class="form-control" [class.danger]="city.invalid">
+              <option *ngFor="let city of (selectorService?.cities$ | async)" [ngValue]="city">{{city.name}}</option>
+            </select>
+            <small style='margin-left: 0;' class="form-text error" *ngIf="city.invalid && city?.errors?.required">
+              City is required!
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="input-address">Address</label>
+            <input #address='ngModel' type="text" id='input-address' placeholder="Address" class="form-control" [(ngModel)]="newViewPoint.address"
+              name='address' required [class.danger]="address.invalid && address.touched" />
+            <small style='margin-left: 0;' class="form-text error" *ngIf="address.invalid && address?.errors?.required">
+              Address is required!
+            </small>
+          </div>
+          <div class="form-group row">
+            <div class="col-4">
+              <label for="input-latitude">Latitude</label>
+              <input #latitude='ngModel' type="text" id='input-latitude' placeholder="Lat." class="form-control" [(ngModel)]="newViewPoint.latitude"
+                name='latitude' required [disabled]='true' [class.danger]="form.touched && !hasPosition()" />
+            </div>
+            <div class="col-4">
+              <label for="input-longtitude">Longtitude</label>
+              <input #longtitude='ngModel' type="text" id='input-longtitude' placeholder="Lng." class="form-control" [(ngModel)]="newViewPoint.longtitude"
+                name='longtitude' required [disabled]='true' [class.danger]="form.touched && !hasPosition()" />
+            </div>
+            <button (click)='openMap()' type="button" [disabled]='!hasCity()' class="btn btn-success btn-icon" style='align-self: flex-end;'>
+              <i class="nb-location"></i>
+            </button>
+            <small class="form-text error" *ngIf="form.touched && !hasPosition()">
+              Position is required!
+            </small>
+          </div>
+        </nb-tab>
+        <nb-tab tabTitle='Images'>
+          <div class="form-group">
+            <label for="input-thumnail">View Point Thumbnail</label>
+            <div btFileDrop id='input-thumnail' [multiple]='false' [ngClass]="{'nv-file-over': hasThumbnailDropZoneOver}" (fileOver)="thumbnailFileOver($event)"
+              (onFileDrop)="thumbnailFileDropped($event)" name='thumbnail' [uploader]="thumbnailUploader" class="my-drop-zone"
+              [class.danger]="!hasThumbnailFile()">
+              <div style='margin-left: 10px;' *ngIf='!hasThumbnailFile()'>Drop Thumbnail File</div>
+              <img *ngIf='hasThumbnailFile()' [src]='newViewPoint.thumbnail' />
+            </div>
+            <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasThumbnailFile()">
+              Thumbnail is required!
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="input-images">View Point Images</label>
+            <div btFileDrop id='input-images' [multiple]='true' [ngClass]="{'nv-file-over': hasImagesDropZoneOver}" (fileOver)="imageFileOver($event)"
+              (onFileDrop)="imageFileDropped($event)" name='images' [uploader]="imagesUploader" class="my-drop-zone" [class.danger]="!hasImageFiles()">
+              <div style='margin-left: 10px;' *ngIf='!hasImageFiles()'>Drop Image Files</div>
+              <ng-container *ngIf='hasImageFiles()'>
+                <img *ngFor='let image of newViewPoint.images' [src]='image' [nbContextMenu]="getMenuItem(image)" />
+              </ng-container>
+            </div>
+            <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasImageFiles()">
+              Image is required!
+            </small>
+          </div>
+        </nb-tab>
+        <nb-tab tabTitle='Others'>
+          <div class="form-group">
+            <label for="input-tips">Tips</label>
+            <textarea style='resize: none;' #tips='ngModel' type="text" id='input-tips' placeholder="Tips" class="form-control" [(ngModel)]="newViewPoint.tips"
+              name='tips'>
+            </textarea>
+          </div>
+          <div class="form-group">
+            <label for="input-description">Description</label>
+            <textarea style='height: 180px;resize: none;' #description='ngModel' placeholder="Description" type="text" id='input-description'
+              class="form-control" [(ngModel)]="newViewPoint.description" name='description'>
+            </textarea>
+          </div>
+        </nb-tab>
+      </nb-tabset>
+      <button (click)='action()' type="button" [disabled]="isSubmitDisAllowed(form)" class="btn btn-primary">Submit</button>
+      <button (click)='close()' type="button" class="btn btn-danger">Close</button>
+    </form>
+
+  </nb-card-body>
+</nb-card>

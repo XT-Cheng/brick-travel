@@ -11,19 +11,12 @@ import { TestComponent } from './test.component';
 const routes: Routes = [
   {
     path: 'pages', component: PageComponent, canActivate: [AppRoutingGuard, PageRoutingGuard], children: [
-      // { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
-      // { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
+      { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
+      { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
       { path: 'test', component: TestComponent },
-      { path: '', redirectTo: 'test', pathMatch: 'full' },
+      { path: '', redirectTo: 'city', pathMatch: 'full' },
     ]
   },
-  // {
-  //   path: 'pages', component: PageComponent, canActivate: [PageRoutingGuard, AppRoutingGuard], children: [
-  //     { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
-  //     { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
-  //     { path: '', redirectTo: 'city', pathMatch: 'full' },
-  //   ]
-  // },
   {
     path: 'auth', component: AuthComponent, children: [
       { path: 'login', component: LoginComponent },
