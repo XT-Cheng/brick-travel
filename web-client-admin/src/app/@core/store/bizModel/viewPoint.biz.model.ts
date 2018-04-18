@@ -1,34 +1,34 @@
-import { IViewPoint, IViewPointCategory } from "../entity/viewPoint/viewPoint.model";
-import { ICity } from "../entity/city/city.model";
+import { ICity } from '../entity/city/city.model';
+import { IViewPoint, IViewPointCategory } from '../entity/viewPoint/viewPoint.model';
 
 
 export interface IViewPointBiz {
-    id: string,
-    name: string,
-    city: ICity,
-    description: string,
-    tips: string,
-    timeNeeded: string,
-    thumbnail: string,
-    address: string,
-    latitude: number,
-    longtitude: number,
-    category: IViewPointCategory,
-    rank: number,
-    countOfComments: number,
-    images : string[],
-    tags: string[],
-    comments: IViewPointCommentBiz[]
+    id: string;
+    name: string;
+    city: ICity;
+    description: string;
+    tips: string;
+    timeNeeded: string;
+    thumbnail: string;
+    address: string;
+    latitude: number;
+    longtitude: number;
+    category: IViewPointCategory;
+    rank: number;
+    countOfComments: number;
+    images: string[];
+    tags: string[];
+    comments: IViewPointCommentBiz[];
 }
 
 export interface IViewPointCommentBiz {
-    id: string,
-    detail: string,
-    user: string,
-    avatar: string,
-    publishedAt: Date,
-    images: string[],
-    rate: number
+    id: string;
+    detail: string;
+    user: string;
+    avatar: string;
+    publishedAt: Date;
+    images: string[];
+    rate: number;
 }
 
 export function translateViewPointFromBiz(viewPoint: IViewPointBiz): IViewPoint {
@@ -44,10 +44,10 @@ export function translateViewPointFromBiz(viewPoint: IViewPointBiz): IViewPoint 
         latitude: viewPoint.latitude,
         longtitude: viewPoint.longtitude,
         category: viewPoint.category.id,
-        rank:viewPoint.rank,
+        rank: viewPoint.rank,
         countOfComments: viewPoint.countOfComments,
-        images :viewPoint.images.map((image)=>image),
-        tags: viewPoint.images.map((tag)=>tag),
-        comments: viewPoint.comments.map((comment)=>comment.id)
+        images: viewPoint.images.map((image) => image),
+        tags: viewPoint.images.map((tag) => tag),
+        comments: viewPoint.comments.map((comment) => comment.id)
     };
 }

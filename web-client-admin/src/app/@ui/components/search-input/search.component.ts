@@ -1,8 +1,3 @@
-/**
- * @license
- * Copyright Akveo. All Rights Reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- */
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -26,21 +21,6 @@ import { Subscription } from 'rxjs/Subscription';
 import { SearchService } from '../../providers/search.service';
 import { SearchInputComponent } from './search-input.component';
 
-
-/**
- * Beautiful full-page search control.
- *
- * @styles
- *
- * search-btn-open-fg:
- * search-btn-close-fg:
- * search-bg:
- * search-bg-secondary:
- * search-text:
- * search-info:
- * search-dash:
- * search-placeholder:
- */
 @Component({
   selector: 'bt-search',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,7 +59,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostBinding('class.show') showSearch = false;
 
-  @ViewChild('attachedSearchContainer', {read: ViewContainerRef}) attachedSearchContainer: ViewContainerRef;
+  @ViewChild('attachedSearchContainer', { read: ViewContainerRef }) attachedSearchContainer: ViewContainerRef;
 
   private searchFieldComponentRef$ = new BehaviorSubject<ComponentRef<any>>(null);
   private searchType = 'rotate-layout';
@@ -88,8 +68,8 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private routerSubscription: Subscription;
 
   constructor(private searchService: SearchService,
-              private themeService: NbThemeService,
-              private router: Router) {
+    private themeService: NbThemeService,
+    private router: Router) {
   }
 
   /**
@@ -107,7 +87,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         takeWhile(() => this.alive),
         filter(event => event instanceof NavigationEnd),
-      )
+    )
       .subscribe(event => {
         this.searchService.deactivateSearch(this.searchType, this.tag);
       });
@@ -119,7 +99,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         takeWhile(() => this.alive),
         filter(([componentRef, data]: [ComponentRef<any>, any]) => !this.tag || data.tag === this.tag),
-      )
+    )
       .subscribe(([componentRef, data]: [ComponentRef<any>, any]) => {
         this.showSearch = true;
 
@@ -140,7 +120,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         takeWhile(() => this.alive),
         filter(([componentRef, data]: [ComponentRef<any>, any]) => !this.tag || data.tag === this.tag),
-      )
+    )
       .subscribe(([componentRef, data]: [ComponentRef<any>, any]) => {
         this.showSearch = false;
 

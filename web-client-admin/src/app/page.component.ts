@@ -14,9 +14,9 @@ export enum EntityFormMode {
 }
 
 @Component({
-  selector: 'ngx-page',
+  selector: 'bt-page',
   template: `
-    <ngx-two-columns-layout>
+    <bt-two-columns-layout>
     <nb-menu [items]="menu"></nb-menu>
     <toaster-container [toasterconfig]="config"></toaster-container>
     <router-outlet (activate)="onActivate($event)"></router-outlet>
@@ -31,7 +31,7 @@ export enum EntityFormMode {
         </nb-card-body>
       </nb-card>
       </div>
-  </ngx-two-columns-layout>
+  </bt-two-columns-layout>
 `,
   styleUrls: [`./page.component.scss`]
 })
@@ -41,19 +41,19 @@ export class PageComponent {
     title: 'Test',
     icon: 'nb-home',
     link: '/test'
-  }
+  };
 
   private cityMenuItem = {
     title: 'City',
     icon: 'nb-home',
     link: '/city'
-  }
+  };
 
   private viewPointMenuItem = {
     title: 'View Point',
     icon: 'nb-home',
     children: []
-  }
+  };
 
   private createCmp: ComponentType;
 
@@ -79,7 +79,7 @@ export class PageComponent {
 
   //#endregion
 
-  //#region Constructor  
+  //#region Constructor
 
   constructor(private _selectorService: SelectorService) {
 
@@ -89,9 +89,9 @@ export class PageComponent {
           title: city.name,
           link: `viewPoint/${city.id}`,
           icon: 'nb-home'
-        })
-      })
-    })
+        });
+      });
+    });
   }
 
   //#endregion

@@ -12,12 +12,12 @@ export const INIT_UI_VIEWPOINT_STATE = {
   [STORE_UI_VIEWPOINT_KEY.selectedViewPointId]: '',
   [STORE_UI_VIEWPOINT_KEY.filterCriteriaIds]: [],
   [STORE_UI_VIEWPOINT_KEY.filteredViewPointIds]: []
-}
+};
 
 export interface IViewPointUI {
-  searchKey: string,
-  viewMode : boolean,
-  selectedViewPointId: string,
-  filterCriteriaIds: string[],
-  filteredViewPointIds: string[]
+  searchKey: string;
+  viewMode: boolean;
+  selectedViewPointId: string;
+  filterCriteriaIds: string[];
+  filteredViewPointIds: string[];
 }

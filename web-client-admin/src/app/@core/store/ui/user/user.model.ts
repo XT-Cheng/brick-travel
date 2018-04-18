@@ -4,8 +4,8 @@ export enum STORE_UI_USER_KEY {
 
 export const INIT_UI_USER_STATE = {
   [STORE_UI_USER_KEY.userLoggedIn]: ''
-}
+};
 
 export interface IUserUI {
-  userLoggedIn: string
+  userLoggedIn: string;
 }

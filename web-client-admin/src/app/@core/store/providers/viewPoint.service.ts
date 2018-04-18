@@ -6,7 +6,7 @@ import { denormalize, normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
@@ -34,7 +34,7 @@ import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { INIT_UI_VIEWPOINT_STATE, IViewPointUI, STORE_UI_VIEWPOINT_KEY } from '../ui/viewPoint/viewPoint.model';
 
- interface IUIViewPointActionPayload extends IActionPayload {
+interface IUIViewPointActionPayload extends IActionPayload {
     searchKey?: string;
     viewMode?: boolean;
     selectedViewPointId?: string;
@@ -52,9 +52,9 @@ const defaultViewPointActionPayload = {
     error: null,
 };
 
- type UIViewPointAction = FluxStandardAction<IUIViewPointActionPayload, IActionMetaInfo>;
+type UIViewPointAction = FluxStandardAction<IUIViewPointActionPayload, IActionMetaInfo>;
 
- enum UIViewPointActionTypeEnum {
+enum UIViewPointActionTypeEnum {
     SEARCH_VIEWPOINT = 'UI:VIEWPOINT:SEARCH_VIEWPOINT',
     SELECT_VIEWPOINT = 'UI:VIEWPOINT:SELECT_VIEWPOINT',
     SELECT_CRITERIA = 'UI:VIEWPOINT:SELECT_CRITERIA',
@@ -63,41 +63,41 @@ const defaultViewPointActionPayload = {
 
 export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIViewPointAction): IViewPointUI {
     switch (action.type) {
-      case UIViewPointActionTypeEnum.SEARCH_VIEWPOINT: {
-        return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.searchKey, action.payload.searchKey);
-      }
-      case UIViewPointActionTypeEnum.SELECT_VIEWPOINT: {
-        return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.selectedViewPointId, action.payload.selectedViewPointId);
-      }
-      case UIViewPointActionTypeEnum.SET_VIEWMODE: {
-        return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.viewMode, action.payload.viewMode);
-      }
-      case UIViewPointActionTypeEnum.SELECT_CRITERIA: {
-
-        state = <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.selectedViewPointId, action.payload.selectedViewPointId);
-
-        const select = action.payload.selectCriteria;
-
-        if (select) {
-          let filterCriteriaIds = (<any[]>state[STORE_UI_VIEWPOINT_KEY.filterCriteriaIds])
-            .filter(id => !select.unSelectedCriteriaIds.find(removed => removed === id));
-
-          if (action.payload.selectCriteria.selectedCriteriaId) {
-            filterCriteriaIds = filterCriteriaIds.concat(action.payload.selectCriteria.selectedCriteriaId);
-          }
-
-          return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.filterCriteriaIds, filterCriteriaIds);
+        case UIViewPointActionTypeEnum.SEARCH_VIEWPOINT: {
+            return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.searchKey, action.payload.searchKey);
         }
-      }
+        case UIViewPointActionTypeEnum.SELECT_VIEWPOINT: {
+            return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.selectedViewPointId, action.payload.selectedViewPointId);
+        }
+        case UIViewPointActionTypeEnum.SET_VIEWMODE: {
+            return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.viewMode, action.payload.viewMode);
+        }
+        case UIViewPointActionTypeEnum.SELECT_CRITERIA: {
+
+            state = <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.selectedViewPointId, action.payload.selectedViewPointId);
+
+            const select = action.payload.selectCriteria;
+
+            if (select) {
+                let filterCriteriaIds = (<any[]>state[STORE_UI_VIEWPOINT_KEY.filterCriteriaIds])
+                    .filter(id => !select.unSelectedCriteriaIds.find(removed => removed === id));
+
+                if (action.payload.selectCriteria.selectedCriteriaId) {
+                    filterCriteriaIds = filterCriteriaIds.concat(action.payload.selectCriteria.selectedCriteriaId);
+                }
+
+                return <any>Immutable(state).set(STORE_UI_VIEWPOINT_KEY.filterCriteriaIds, filterCriteriaIds);
+            }
+        }
     }
     return <any>state;
-  }
+}
 
 @Injectable()
 export class ViewPointService {
     //#region Constructor
     constructor(private _http: HttpClient,
-       private _store: NgRedux<IAppState>) {
+        private _store: NgRedux<IAppState>) {
     }
     //#endregion
 
@@ -107,11 +107,11 @@ export class ViewPointService {
     private loadViewPointStartedAction = entityLoadActionStarted(EntityTypeEnum.VIEWPOINT);
 
     @dispatch()
-    private  loadViewPointsAction = entityLoadAction(EntityTypeEnum.VIEWPOINT);
+    private loadViewPointsAction = entityLoadAction(EntityTypeEnum.VIEWPOINT);
 
     private loadViewPointSucceededAction = entityLoadActionSucceeded(EntityTypeEnum.VIEWPOINT);
 
-    private loadViewPointFailedAction  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINT);
+    private loadViewPointFailedAction = entityLoadActionFailed(EntityTypeEnum.VIEWPOINT);
 
     @dispatch()
     private loadViewPointCommentsAction = entityLoadAction(EntityTypeEnum.VIEWPOINTCOMMENT);
@@ -119,7 +119,7 @@ export class ViewPointService {
     private loadViewPointCommentsSucceededAction = entityLoadActionSucceeded(
         EntityTypeEnum.VIEWPOINTCOMMENT, EntityActionTypeEnum.APPEND_COMMENTS);
 
-    private loadViewPointCommentsFailedAction  = entityLoadActionFailed(EntityTypeEnum.VIEWPOINTCOMMENT);
+    private loadViewPointCommentsFailedAction = entityLoadActionFailed(EntityTypeEnum.VIEWPOINTCOMMENT);
     //#endregion
 
     //#region update actions
@@ -147,7 +147,7 @@ export class ViewPointService {
     private searchViewPointAction(searchKey: string): UIViewPointAction {
         return {
             type: UIViewPointActionTypeEnum.SEARCH_VIEWPOINT,
-            meta: { progressing : false },
+            meta: { progressing: false },
             payload: Object.assign({}, defaultViewPointActionPayload, {
                 searchKey: searchKey
             })
@@ -158,7 +158,7 @@ export class ViewPointService {
     private selectViewPointAction(vp: IViewPointBiz | string): UIViewPointAction {
         return {
             type: UIViewPointActionTypeEnum.SELECT_VIEWPOINT,
-            meta: { progressing : false },
+            meta: { progressing: false },
             payload: Object.assign({}, defaultViewPointActionPayload, {
                 selectedViewPointId: vp ? (typeof vp === 'string' ? vp : vp.id) : ''
             })
@@ -169,7 +169,7 @@ export class ViewPointService {
     private setViewModeAction(viewMode: boolean): UIViewPointAction {
         return {
             type: UIViewPointActionTypeEnum.SET_VIEWMODE,
-            meta: { progressing : false },
+            meta: { progressing: false },
             payload: Object.assign({}, defaultViewPointActionPayload, {
                 viewMode: viewMode
             })
@@ -180,7 +180,7 @@ export class ViewPointService {
     private selectCriteriaAction(selectedCriteriaId: string, unSelectedCriteriaIds: string[]): UIViewPointAction {
         return {
             type: UIViewPointActionTypeEnum.SELECT_CRITERIA,
-            meta: { progressing : false },
+            meta: { progressing: false },
             payload: Object.assign({}, defaultViewPointActionPayload, {
                 selectCriteria: {
                     selectedCriteriaId: selectedCriteriaId,
@@ -196,62 +196,66 @@ export class ViewPointService {
     //#region Epic
     public createEpic() {
         return [this.createEpicLoadViewPointInternal(EntityTypeEnum.VIEWPOINT),
-          this.createEpicLoadViewPointCommentInternal(EntityTypeEnum.VIEWPOINTCOMMENT)];
-      }
+        this.createEpicLoadViewPointCommentInternal(EntityTypeEnum.VIEWPOINTCOMMENT)];
+    }
 
-      private createEpicLoadViewPointInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
+    private createEpicLoadViewPointInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
-          .ofType(EntityActionTypeEnum.LOAD)
-          .filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
-          .switchMap(action => {
-            return this.getViewPoints(action.meta.pagination, action.payload.queryCondition)
-            .map(data => this.loadViewPointSucceededAction(data))
-            .catch(response =>
-              of(this.loadViewPointFailedAction(response))
-            )
-            .startWith(this.loadViewPointStartedAction());
-          });
-      }
-
-      private createEpicLoadViewPointCommentInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
-        return (action$, store) => action$
-          .ofType(EntityActionTypeEnum.LOAD)
-          .filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
-          .switchMap(action => {
-            return this.getViewPointComments(action.meta.pagination, action.payload.queryCondition)
-            .map(data => this.loadViewPointCommentsSucceededAction(data))
-            .catch(response =>
-              of(this.loadViewPointCommentsFailedAction(response))
+            .ofType(EntityActionTypeEnum.LOAD).pipe(
+                filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+                switchMap(action => {
+                    return this.getViewPoints(action.meta.pagination, action.payload.queryCondition).pipe(
+                        map(data => this.loadViewPointSucceededAction(data)),
+                        catchError(response =>
+                            of(this.loadViewPointFailedAction(response))
+                        ),
+                        startWith(this.loadViewPointStartedAction()));
+                })
             );
-          });
-      }
+    }
+
+    private createEpicLoadViewPointCommentInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
+        return (action$, store) => action$
+            .ofType(EntityActionTypeEnum.LOAD).pipe(
+                filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+                switchMap(action => {
+                    return this.getViewPointComments(action.meta.pagination, action.payload.queryCondition).pipe(
+                        map(data => this.loadViewPointCommentsSucceededAction(data)),
+                        catchError(response =>
+                            of(this.loadViewPointCommentsFailedAction(response))
+                        ));
+                })
+            );
+    }
     //#endregion
 
     //#region Private methods
     private getViewPoints(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
         let url = `${WEBAPI_HOST}/`;
         if (!!queryCondition['cityId']) {
-          url += queryCondition['cityId'];
-          url += '/viewPoints';
+            url += queryCondition['cityId'];
+            url += '/viewPoints';
         } else {
-          url += 'viewPoints';
+            url += 'viewPoints';
         }
 
-        return this._http.get(url)
-        .map(records => {
-          return normalize(records, [ viewPoint ]).entities;
-        });
-      }
+        return this._http.get(url).pipe(
+            map(records => {
+                return normalize(records, [viewPoint]).entities;
+            })
+        );
+    }
 
-      private getViewPointComments(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
+    private getViewPointComments(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
         const url = `${WEBAPI_HOST}/viewPoints/${queryCondition['viewPointId']}/comments?
                     skip=${pagination.page}&&limit=${pagination.limit}`;
 
-        return this._http.get(url)
-        .map(records => {
-          return normalize(records, viewPoint).entities;
-        });
-      }
+        return this._http.get(url).pipe(
+            map(records => {
+                return normalize(records, viewPoint).entities;
+            })
+        );
+    }
     //#endregion
 
     //#region Public methods
@@ -280,30 +284,36 @@ export class ViewPointService {
     }
 
     public addViewPoint(added: IViewPointBiz, files: Map<string, FileUploader>): Observable<Error | IViewPoint> {
-        return this.insert(added, files).pipe(tap((vp) => {
-            this.insertViewPointAction(added.id, vp);
-        }),
+        return this.insert(added, files).pipe(
+            tap((vp) => {
+                this.insertViewPointAction(added.id, vp);
+            }),
             catchError((err: Error) => {
                 return of(err);
-            }));
+            })
+        );
     }
 
     public updateViewPoint(update: IViewPointBiz, files: Map<string, FileUploader>): Observable<Error | IViewPoint> {
-        return this.update(update, files).pipe(tap((vp) => {
-            this.updateViewPointAction(update.id, vp);
-        }),
+        return this.update(update, files).pipe(
+            tap((vp) => {
+                this.updateViewPointAction(update.id, vp);
+            }),
             catchError((err) => {
                 return of(err);
-            }));
+            })
+        );
     }
 
     public deleteViewPoint(del: IViewPointBiz) {
-        return this.delete(del.id).pipe(tap(() => {
-            this.deleteViewPointAction(del.id, translateViewPointFromBiz(del));
-        }),
+        return this.delete(del.id).pipe(
+            tap(() => {
+                this.deleteViewPointAction(del.id, translateViewPointFromBiz(del));
+            }),
             catchError((err) => {
                 return of(err);
-            }));
+            })
+        );
     }
     //#endregion
 

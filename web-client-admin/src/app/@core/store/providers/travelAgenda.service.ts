@@ -6,8 +6,10 @@ import { denormalize, normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { catchError, filter, map, startWith, switchMap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
+import { WEBAPI_HOST } from '../../utils/constants';
 import {
     caculateDistance,
     createDailiyTrip,
@@ -48,8 +50,6 @@ import {
     STORE_UI_TRAVELAGENDA_KEY,
 } from '../ui/travelAgenda/travelAgenda.model';
 import { SelectorService } from './selector.service';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { map } from 'rxjs/operators';
 
 interface IUITravelAgendaActionPayload extends IActionPayload {
     selectedTravelAgendaId: string;
@@ -202,15 +202,17 @@ export class TravelAgendaService {
 
     public createLoadEpic(): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
-            .ofType(EntityActionTypeEnum.LOAD)
-            .filter(action =>
-                action.meta.entityType === EntityTypeEnum.TRAVELAGENDA && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
-            .switchMap(action => this.getTravelAgenda(action.meta.pagination)
-                .map(data => this.loadTravelAgendaSucceededAction(data))
-                .catch(response =>
+            .ofType(EntityActionTypeEnum.LOAD).pipe(
+            filter(action =>
+                action.meta.entityType === EntityTypeEnum.TRAVELAGENDA && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+            switchMap(action => this.getTravelAgenda(action.meta.pagination).pipe(
+                map(data => this.loadTravelAgendaSucceededAction(data)),
+                catchError(response =>
                     of(this.loadTravelAgendaFailedAction(response))
-                )
-                .startWith(this.loadTravelAgendaStartedAction()));
+                ),
+                startWith(this.loadTravelAgendaStartedAction()))
+            )
+        );
     }
 
     //#endregion

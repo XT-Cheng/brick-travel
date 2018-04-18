@@ -18,14 +18,14 @@ export const INIT_DIRTY_STATE = {
       deleted: []
     }
   }
-}
+};
 
 export interface IDirties {
-  lastError: Error,
-  lastSynced: Date,
-  syncing: boolean,
+  lastError: Error;
+  lastSynced: Date;
+  syncing: boolean;
   dirtyIds: {
     travelAgendas: { created: string[], updated: string[], deleted: string[] },
     cities: { created: string[], updated: string[], deleted: string[] }
-  }
+  };
 }

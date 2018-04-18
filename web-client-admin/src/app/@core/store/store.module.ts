@@ -5,6 +5,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { createLogger } from 'redux-logger';
 import { createEpicMiddleware } from 'redux-observable';
 import { stateTransformer } from 'redux-seamless-immutable';
+import { debounceTime, filter } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { deepExtend } from '../utils/helpers';
@@ -28,8 +29,8 @@ import { rootReducer } from './store.reducer';
 })
 export class StoreModule {
     constructor(@Optional() @SkipSelf() parentModule: StoreModule,
-        private _store: NgRedux<IAppState>, private _rootEpics: RootEpics,private _masterDataService : MasterDataService,
-        private _cityService : CityService, private _viewPointService : ViewPointService,
+        private _store: NgRedux<IAppState>, private _rootEpics: RootEpics, private _masterDataService: MasterDataService,
+        private _cityService: CityService, private _viewPointService: ViewPointService,
         private _dataSync: DataSyncService) {
 
         throwIfAlreadyLoaded(parentModule, 'StoreModule');
@@ -45,14 +46,16 @@ export class StoreModule {
             this._masterDataService.load();
             this._viewPointService.load();
             this._dataSync.stateRestored();
-            
-            //TODO: When data sync should happen?
-            this._store.select<Error>(['dirties', 'lastError']).filter((err)=> {
-                return err !== null;
-            }).debounceTime(60000)
-            .subscribe(() => {
-                this._dataSync.syncData();
-            })
+
+            // TODO: When data sync should happen?
+            this._store.select<Error>(['dirties', 'lastError']).pipe(
+                filter((err) => {
+                    return err !== null;
+                }),
+                debounceTime(60000))
+                .subscribe(() => {
+                    this._dataSync.syncData();
+                });
         });
     }
 

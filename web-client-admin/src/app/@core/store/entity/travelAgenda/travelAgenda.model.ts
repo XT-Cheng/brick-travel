@@ -1,26 +1,26 @@
 export interface ITransportationCategory {
-    id: string,
-    name: string,
-    isDefault: boolean
+    id: string;
+    name: string;
+    isDefault: boolean;
 }
 
 export interface ITravelAgenda {
-    id: string,
-    name: string,
-    user: string, 
-    cover: string,
-    dailyTrips:  string[]
-};
+    id: string;
+    name: string;
+    user: string;
+    cover: string;
+    dailyTrips:  string[];
+}
 
 export interface IDailyTrip {
-    id: string,
-    travelViewPoints:  string[],
-    travelAgenda: string
+    id: string;
+    travelViewPoints:  string[];
+    travelAgenda: string;
 }
 
 export interface ITravelViewPoint {
-    id: string,
-    viewPoint: string,
-    transportationToNext: string,
-    dailyTrip: string
+    id: string;
+    viewPoint: string;
+    transportationToNext: string;
+    dailyTrip: string;
 }

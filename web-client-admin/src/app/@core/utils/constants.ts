@@ -1,6 +1,6 @@
-//export const WEBAPI_HOST = 'http://358897f0.ngrok.io';
+// export const WEBAPI_HOST = 'http://358897f0.ngrok.io';
 export const WEBAPI_HOST = 'http://localhost:3000';
-//export const WEBAPI_HOST = 'http://192.168.198.103:3000';
+// export const WEBAPI_HOST = 'http://192.168.198.103:3000';
 export const AUTH_METHOD = 'POST';
 export const AUTH_URL = '/auth/login';
 export const AUTH_SUCCESS_REDIRECT = '/pages';
@@ -17,4 +17,4 @@ export const SOCIAL_LINKS = [];
 //     ViewPoint
 // }
 
-//export enum 
+// export enum

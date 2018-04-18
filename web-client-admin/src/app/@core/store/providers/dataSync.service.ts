@@ -6,6 +6,7 @@ import { Epic } from 'redux-observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { catchError, concat, filter, map, mergeMap, startWith, switchMap } from 'rxjs/operators';
 
 import {
     DirtyAction,
@@ -54,22 +55,28 @@ export class DataSyncService {
 
     public createFlushEpic(): Epic<DirtyAction, IAppState> {
         return (action$, store) => action$
-            .ofType(DirtyActionTypeEnum.FLUSH)
-            .filter(action => action.meta.phaseType === DirtyActionPhaseEnum.TRIGGER)
-            .switchMap(action => this.flush(store)
-                .mergeMap((value: { entityType: EntityTypeEnum, type: DirtyTypeEnum, id: string }) =>
-                    this.requestFlush(value)
-                        .map(data => {
+            .ofType(DirtyActionTypeEnum.FLUSH).pipe(
+            filter(action => action.meta.phaseType === DirtyActionPhaseEnum.TRIGGER),
+            switchMap(action => this.flush(store).pipe(
+                mergeMap((value: { entityType: EntityTypeEnum, type: DirtyTypeEnum, id: string }) =>
+                    this.requestFlush(value).pipe(
+                        map(data => {
                             // Do nothing while succeed.
                             return { type: 'empty', payload: null, meta: null };
-                        })
-                        .catch(error =>
-                            of(dirtyAddAction(value.entityType)(value.id, value.type))
-                                .concat(of(this.flushDirtyFailedAction(error)))
-                        )
-                        .startWith(dirtyRemoveAction(value.entityType)(value.id, value.type)))
-                .startWith(this.flushDirtyStartedAction())
-                .concat(Observable.fromPromise(this.persistantState()).map(() => this.flushDirtyFinishedAction())));
+                        }),
+                        catchError(error =>
+                            of(dirtyAddAction(value.entityType)(value.id, value.type)).pipe(
+                                concat(of(this.flushDirtyFailedAction(error)))
+                            )
+                        ),
+                        startWith(dirtyRemoveAction(value.entityType)(value.id, value.type))
+                    )
+                ),
+                startWith(this.flushDirtyStartedAction()),
+                concat(Observable.fromPromise(this.persistantState()).pipe(
+                    map(() => this.flushDirtyFinishedAction()))
+                )))
+            );
     }
     //#endregion
 

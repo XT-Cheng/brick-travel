@@ -6,7 +6,7 @@ import { combineEpics } from 'redux-observable';
 
 @Injectable()
 export class RootEpics {
-  constructor(private _entityEpic: EntityEpics,private _dirtyEpic: DirtyEpics) {}
+  constructor(private _entityEpic: EntityEpics, private _dirtyEpic: DirtyEpics) {}
 
   public createEpics() {
     return combineEpics(

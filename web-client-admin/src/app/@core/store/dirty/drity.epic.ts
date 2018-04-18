@@ -6,7 +6,7 @@ import { DataSyncService } from '../providers/dataSync.service';
 export class DirtyEpics {
   constructor(private _dataSyncService: DataSyncService) {}
 
-  public createEpics() : any[] {
+  public createEpics(): any[] {
     return [this._dataSyncService.createEpic()];
   }
 }

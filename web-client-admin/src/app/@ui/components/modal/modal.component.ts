@@ -9,7 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ModalComponent {
 
   modalHeader: string;
-  modalContent : string;
+  modalContent: string;
 
   constructor(private activeModal: NgbActiveModal) { }
 

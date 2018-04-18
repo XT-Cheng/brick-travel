@@ -12,9 +12,9 @@ export const INIT_APP_STATE = {
   entities: INIT_ENTITY_STATE,
   dirties: INIT_DIRTY_STATE,
   ui: INIT_UI_STATE,
-  error: {description: '',stack: ''},
-  progress: {progressing: false}
-}
+  error: { description: '', stack: '' },
+  progress: { progressing: false }
+};
 
 export interface IError {
   description: string;
@@ -26,9 +26,9 @@ export interface IProgress {
 }
 
 export interface IAppState {
-  entities: IEntities,
-  dirties: IDirties,
-  ui: IUIState,
-  error: IError,
-  progress: IProgress
+  entities: IEntities;
+  dirties: IDirties;
+  ui: IUIState;
+  error: IError;
+  progress: IProgress;
 }

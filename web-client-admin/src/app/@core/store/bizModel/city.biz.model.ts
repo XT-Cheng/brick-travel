@@ -1,10 +1,10 @@
-import { ICity } from "../entity/city/city.model";
+import { ICity } from '../entity/city/city.model';
 
 export interface ICityBiz {
-    id: string
-    name: string
-    thumbnail: string
-    adressCode: string
+    id: string;
+    name: string;
+    thumbnail: string;
+    adressCode: string;
 }
 
 export function translateCityFromBiz(city: ICityBiz): ICity {

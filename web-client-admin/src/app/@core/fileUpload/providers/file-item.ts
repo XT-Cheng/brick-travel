@@ -1,22 +1,22 @@
 import { FileLikeObject } from './file-like-object';
-import { FileUploader, ParsedResponseHeaders, FileUploaderOptions } from './file-uploader';
+import { FileUploader, FileUploaderOptions, ParsedResponseHeaders } from './file-uploader';
 
 export class FileItem {
   public file: FileLikeObject;
   public _file: File;
   public alias: string;
-  public url: string = '/';
+  public url = '/';
   public method: string;
   public headers: any = [];
-  public withCredentials: boolean = true;
+  public withCredentials = true;
   public formData: any = [];
-  public isReady: boolean = false;
-  public isUploading: boolean = false;
-  public isUploaded: boolean = false;
-  public isSuccess: boolean = false;
-  public isCancel: boolean = false;
-  public isError: boolean = false;
-  public progress: number = 0;
+  public isReady = false;
+  public isUploading = false;
+  public isUploaded = false;
+  public isSuccess = false;
+  public isCancel = false;
+  public isError = false;
+  public progress = 0;
   public index: number = void 0;
   public _xhr: XMLHttpRequest;
   public _form: any;

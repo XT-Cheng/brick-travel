@@ -12,8 +12,8 @@ import { SearchService } from '../../providers/search.service';
   templateUrl: './header.component.html',
 })
 export class HeaderComponent implements OnInit {
-  
-  @ViewChild('search',{read: ElementRef}) search : ElementRef
+
+  @ViewChild('search', { read: ElementRef }) search: ElementRef;
 
   @Input() position = 'normal';
 
@@ -22,24 +22,23 @@ export class HeaderComponent implements OnInit {
   userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
   constructor(private sidebarService: NbSidebarService,
-    private renderer : Renderer2,
-    private searchService : SearchService,
+    private renderer: Renderer2,
+    private searchService: SearchService,
     public selectorService: SelectorService,
     protected router: Router) {
   }
 
   ngOnInit() {
     this.selectorService.userLoggedIn$
-      .subscribe((user: IUserBiz) =>{
-        this.user = user
+      .subscribe((user: IUserBiz) => {
+        this.user = user;
       });
 
-    this.searchService.onSearchSubmit().subscribe(({term,tag}) => {
-      if (term != '') {
-        this.renderer.addClass(this.search.nativeElement,'markable');
-      }
-      else {
-        this.renderer.removeClass(this.search.nativeElement,'markable');
+    this.searchService.onSearchSubmit().subscribe(({ term, tag }) => {
+      if (term !== '') {
+        this.renderer.addClass(this.search.nativeElement, 'markable');
+      } else {
+        this.renderer.removeClass(this.search.nativeElement, 'markable');
       }
     });
   }

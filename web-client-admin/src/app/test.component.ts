@@ -26,19 +26,19 @@ export class TestComponent {
 
   //#endregion
 
-  //#region Constructor  
+  //#region Constructor
 
   constructor(private modalService: NgbModal, public selector: SelectorService) {
     this.selector.cities$.subscribe(cities => {
       this.city = cities[0];
-    })
+    });
   }
 
   //#endregion
 
   //#region Pubic methods
   test() {
-    //nb-layout
+    // nb-layout
     const activeModal = this.modalService.open(AMapComponent, { backdrop: true, size: 'lg', container: '.scrollable-container' });
     activeModal.componentInstance.minHeight = 500;
     activeModal.componentInstance.allowSelectPoint = true;

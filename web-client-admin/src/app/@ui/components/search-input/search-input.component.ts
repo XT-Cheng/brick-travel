@@ -1,4 +1,13 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild, Input, HostBinding, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'bt-search-input',
@@ -55,7 +64,7 @@ export class SearchInputComponent {
 
   @ViewChild('searchInput') inputElement: ElementRef;
 
-  @Input() @HostBinding('class.show') showSearch: boolean = false;
+  @Input() @HostBinding('class.show') showSearch = false;
 
   @HostBinding('class.modal-zoomin')
   get modalZoomin() {
@@ -97,6 +106,6 @@ export class SearchInputComponent {
   }
 
   submitSearch(term) {
-      this.search.emit(term);
+    this.search.emit(term);
   }
 }

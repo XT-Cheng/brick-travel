@@ -97,11 +97,11 @@ const ENTRY_COMPONENTS = [
   AMapComponent,
   InformationWindowComponent,
   ViewPointMarkerComponent,
-  SearchInputComponent, 
-  ModalComponent, 
-  LoginComponent, 
+  SearchInputComponent,
+  ModalComponent,
+  LoginComponent,
   AuthComponent
-]
+];
 
 @NgModule({
   imports: [...BASE_MODULES, ...NB_MODULES],

@@ -5,6 +5,7 @@ import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { filter, map, switchMap } from 'rxjs/operators';
 
 import { WEBAPI_HOST } from '../../utils/constants';
 import {
@@ -20,7 +21,6 @@ import {
 import { IEntities } from '../entity/entity.model';
 import { transportationCategory, viewPointCategory } from '../entity/entity.schema';
 import { IAppState } from '../store.model';
-import { map } from 'rxjs/operators';
 
 @Injectable()
 export class MasterDataService {
@@ -73,14 +73,15 @@ export class MasterDataService {
 
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
-            .ofType(EntityActionTypeEnum.LOAD)
-            .filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
-            .switchMap(action => this.getMasterDatas()
+            .ofType(EntityActionTypeEnum.LOAD).pipe(
+            filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+            switchMap(action => this.getMasterDatas()
                 .map(data => this.loadMasterDataSucceededAction(data))
                 .catch(response =>
                     of(this.loadMasterDataFailedAction(response))
                 )
-                .startWith(this.loadMasterDataStartedAction()));
+                .startWith(this.loadMasterDataStartedAction()))
+            );
     }
     //#endregion
 

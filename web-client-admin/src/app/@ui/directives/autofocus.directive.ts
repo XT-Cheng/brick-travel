@@ -1,23 +1,20 @@
-import { Directive, ElementRef, Input } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 
 @Directive({
-    selector: '[bt-autofocus]'
+    selector: '[btAutofocus]'
 })
-export class AutofocusDirective
-{
+export class AutofocusDirective implements OnInit {
     private _autofocus;
-    constructor(private el: ElementRef)
-    {
+    constructor(private el: ElementRef) {
     }
 
-    ngOnInit()
-    {
-        if (this._autofocus || typeof this._autofocus === "undefined")
-            this.el.nativeElement.focus();      //For SSR (server side rendering) this is not safe. Use: https://github.com/angular/angular/issues/15008#issuecomment-285141070)
+    ngOnInit() {
+        if (this._autofocus || typeof this._autofocus === 'undefined') {
+            this.el.nativeElement.focus();
+        }
     }
 
-    @Input() set autofocus(condition: boolean)
-    {
-        this._autofocus = condition != false;
+    @Input() set autofocus(condition: boolean) {
+        this._autofocus = condition !== false;
     }
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, Output } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 
 import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
 
@@ -52,7 +52,7 @@ export class InformationWindowComponent {
   getStyle() {
     return {
       'background-color': this.actionAllowed === ActionAllowed.NONE ? '#ffffff;' : '#e6e0e0;'
-    }
+    };
   }
 
   //#endregion
@@ -72,10 +72,9 @@ export class InformationWindowComponent {
   }
 
   protected addOrRemove(viewPoint: IViewPointBiz) {
-    if (this.actionAllowed == ActionAllowed.ADD) {
+    if (this.actionAllowed === ActionAllowed.ADD) {
       this.viewPointAddedEvent.next(viewPoint);
-    }
-    else {
+    } else {
       this.viewPointRemovedEvent.next(viewPoint);
     }
   }

@@ -1,11 +1,11 @@
-import { FluxStandardAction } from "flux-standard-action";
+import { FluxStandardAction } from 'flux-standard-action';
 
 export interface IActionMetaInfo {
     progressing: boolean;
 }
 
 export interface IActionPayload {
-    error: Error
+    error: Error;
 }
 
 // Flux-standard-action gives us stronger typing of our actions.

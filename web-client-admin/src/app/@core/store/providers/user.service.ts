@@ -1,14 +1,21 @@
 import { dispatch } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
 import { FluxStandardAction } from 'flux-standard-action';
 import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
-import { Storage } from '@ionic/storage';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { catchError, delay, filter, map, startWith, switchMap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
+import { AuthService } from '../../auth/providers/authService';
+import { AuthToken } from '../../auth/providers/authToken';
+import { TokenService } from '../../auth/providers/tokenService';
+import { TokenStorage } from '../../auth/providers/tokenStorage';
+import { WEBAPI_HOST } from '../../utils/constants';
+import { IUserBiz } from '../bizModel/user.biz.model';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -25,13 +32,6 @@ import { user } from '../entity/entity.schema';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { IAppState } from '../store.model';
 import { INIT_UI_USER_STATE, IUserUI, STORE_UI_USER_KEY } from '../ui/user/user.model';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { IUserBiz } from '../bizModel/user.biz.model';
-import { AuthService } from '../../auth/providers/authService';
-import { TokenStorage } from '../../auth/providers/tokenStorage';
-import { AuthToken } from '../../auth/providers/authToken';
-import { TokenService } from '../../auth/providers/tokenService';
-import { delay } from 'rxjs/operators';
 
 interface IUIUserActionPayload extends IActionPayload {
     userLoggedIn: string;
@@ -69,19 +69,18 @@ export class UserService {
 
         this._auth.onTokenChange().pipe(
             delay(0)
-        )
-            .subscribe((token: AuthToken) => {
-                if (token.isValid()) {
-                    const { id, name, nick, picture } = token.getPayload();
-                    const userBiz = {
-                        id, name, nick, picture
-                    };
-                    this.addLoggedInUserAction({
-                        users: { [userBiz.id]: userBiz }
-                    });
-                    this.userLoggedInAction(userBiz);
-                }
-            });
+        ).subscribe((token: AuthToken) => {
+            if (token.isValid()) {
+                const { id, name, nick, picture } = token.getPayload();
+                const userBiz = {
+                    id, name, nick, picture
+                };
+                this.addLoggedInUserAction({
+                    users: { [userBiz.id]: userBiz }
+                });
+                this.userLoggedInAction(userBiz);
+            }
+        });
     }
     //#endregion
 
@@ -123,23 +122,26 @@ export class UserService {
 
     private createEpicInternal(entityType: EntityTypeEnum): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
-            .ofType(EntityActionTypeEnum.LOAD)
-            .filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER)
-            .switchMap(action => this.getUsers(action.meta.pagination)
-                .map(data => this.loadUserSucceededAction(data))
-                .catch(response =>
-                    of(this.loadUserFailedAction(response))
+            .ofType(EntityActionTypeEnum.LOAD).pipe(
+                filter(action => action.meta.entityType === entityType && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+                switchMap(action => this.getUsers(action.meta.pagination).pipe(
+                    map(data => this.loadUserSucceededAction(data)),
+                    catchError(response =>
+                        of(this.loadUserFailedAction(response))
+                    ),
+                    startWith(this.loadUserStartedAction()))
                 )
-                .startWith(this.loadUserStartedAction()));
+            );
     }
     //#endregion
 
     //#region Private methods
     private getUsers(pagination: IPagination): Observable<IEntities> {
-        return this._http.get(`${WEBAPI_HOST}/users`)
-            .map(records => {
+        return this._http.get(`${WEBAPI_HOST}/users`).pipe(
+            map(records => {
                 return normalize(records, [user]).entities;
-            });
+            })
+        );
     }
     //#endregion
 

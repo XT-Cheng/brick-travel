@@ -36,24 +36,26 @@ export class ViewPointMarkerComponent {
     this._cdRef.detectChanges();
   }
 
-  hasViewPoint() : boolean {
+  hasViewPoint(): boolean {
     return !!this.viewPoint;
   }
 
- getDisplay() {
-    if (!this.viewPoint)
+  getDisplay() {
+    if (!this.viewPoint) {
       return '';
-    if (this.inCurrentTrip)
+    }
+    if (this.inCurrentTrip) {
       return 'trip';
+    }
     return this.getViewPointDisplay();
   }
 
- getStyle() {
+  getStyle() {
     let color: string;
 
-    if (!this.viewPoint)
+    if (!this.viewPoint) {
       color = '39a73c';
-    else {
+    } else {
       switch (this.viewPoint.category.name) {
         case 'View':
           color = '#0517ec';
@@ -77,9 +79,10 @@ export class ViewPointMarkerComponent {
           color = '#0517ec';
       }
     }
-    
-    if (this.inCurrentTrip)
+
+    if (this.inCurrentTrip) {
       color = '#39a73c';
+    }
 
     return {
       'color': color,
@@ -91,16 +94,15 @@ export class ViewPointMarkerComponent {
   //#endregion
 
   //#region Protected method
-  
+
   protected getSequenceDisplay(): string {
     return this.inCurrentTrip ? (this.sequence + 1).toString() : '';
   }
 
-    //#endregion
+  //#endregion
 
   //#region Private method
   private getViewPointDisplay() {
-    let isView, isShopping, isRestaurant: boolean;
     switch (this.viewPoint.category.name) {
       case 'View':
         return 'view';

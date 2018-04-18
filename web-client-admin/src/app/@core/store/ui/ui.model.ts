@@ -15,11 +15,11 @@ export const INIT_UI_STATE = {
   viewPoint: INIT_UI_VIEWPOINT_STATE,
   travelAgenda: INIT_UI_TRAVELAGENDA_STATE,
   user: INIT_UI_USER_STATE
-}
+};
 
 export interface IUIState {
-    city: ICityUI,
-    viewPoint: IViewPointUI,
-    travelAgenda: ITravelAgendaUI,
-    user: IUserUI
-  }
+  city: ICityUI;
+  viewPoint: IViewPointUI;
+  travelAgenda: ITravelAgendaUI;
+  user: IUserUI;
+}

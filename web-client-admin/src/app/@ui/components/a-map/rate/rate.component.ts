@@ -76,7 +76,7 @@ const NGB_RATING_VALUE_ACCESSOR = {
 })
 // <span class="sr-only">({{ index < nextRate ? '*' : ' ' }})</span>
 export class RateComponent implements ControlValueAccessor,
-    OnInit, OnChanges {
+  OnInit, OnChanges {
   contexts: StarTemplateContext[] = [];
   disabled = false;
   nextRate: number;
@@ -126,8 +126,8 @@ export class RateComponent implements ControlValueAccessor,
    */
   @Output() rateChange = new EventEmitter<number>(true);
 
-  onChange = (_: any) => {};
-  onTouched = () => {};
+  onChange = (_: any) => { };
+  onTouched = () => { };
 
   constructor(private _changeDetectorRef: ChangeDetectorRef) {
     this.max = 5;
@@ -177,7 +177,7 @@ export class RateComponent implements ControlValueAccessor,
   }
 
   ngOnInit(): void {
-    this.contexts = Array.from({length: this.max}, (v, k) => ({fill: 0, index: k}));
+    this.contexts = Array.from({ length: this.max }, (v, k) => ({ fill: 0, index: k }));
     this._updateState(this.rate);
   }
 

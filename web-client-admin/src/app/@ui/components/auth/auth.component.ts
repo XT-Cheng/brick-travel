@@ -1,13 +1,13 @@
-/**
- * @license
- * Copyright Akveo. All Rights Reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- */
 import { Component, OnDestroy } from '@angular/core';
 import { takeWhile } from 'rxjs/operators/takeWhile';
 
 import { AuthService } from '../../../@core/auth/providers/authService';
 
+/**
+ * @license
+ * Copyright Akveo. All Rights Reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ */
 @Component({
   selector: 'bt-auth',
   styleUrls: ['./auth.component.scss'],

@@ -13,7 +13,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ICityBiz } from '../../../@core/store/bizModel/city.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../../@core/store/bizModel/travelAgenda.biz.model';
@@ -34,27 +34,31 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   private _viewPointMarkerFactory: ComponentFactory<ViewPointMarkerComponent>;
   private _informationWindowFactory: ComponentFactory<InformationWindowComponent>;
   private _markers: Map<string, MarkerInfor>;
-  private _pointChoosedMarker : MarkerInfor = null;
-  private _pointChoosed : AMap.LngLat = null;
-  private _mapClickListener : any;
+  private _pointChoosedMarker: MarkerInfor = null;
+  private _pointChoosed: AMap.LngLat = null;
+  private _mapClickListener: any;
   private _travelLines: Array<AMap.Polyline>;
   private _dailyTrip: IDailyTripBiz = null;
   private _viewPoints: Array<IViewPointBiz> = new Array<IViewPointBiz>();
   private _viewMode: boolean;
-  private _city : ICityBiz;
+  private _city: ICityBiz;
 
   //#endregion
 
   //#region Event
   @Output() viewPointClickedEvent: EventEmitter<IViewPointBiz>;
   @Output() viewPointAddedToDailyTrip: EventEmitter<{ dailyTrip: IDailyTripBiz, added: IViewPointBiz }>;
-  @Output() viewPointRemovedFromDailyTrip: EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>;
-  @Output() pointChoosedEvent : EventEmitter<AMap.LngLat>;
+  @Output() viewPointRemovedFromDailyTrip: EventEmitter<{
+    dailyTrip: IDailyTripBiz,
+    travelAgenda: ITravelAgendaBiz,
+    removed: ITravelViewPointBiz
+  }>;
+  @Output() pointChoosedEvent: EventEmitter<AMap.LngLat>;
   //#endregion
 
   //#region Public property
-  @Input()  minHeight : number;
-  @Input()  allowSelectPoint : boolean = false;
+  @Input() minHeight: number;
+  @Input() allowSelectPoint = false;
 
   @Input() set viewMode(viewMode: boolean) {
     this._viewMode = viewMode;
@@ -62,17 +66,17 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     this._markers.forEach(marker => {
       marker.windowComponent.instance.actionAllowed = this.actionAllowed(marker.viewPoint);
       marker.windowComponent.instance.detectChanges();
-    })
+    });
   }
- get viewMode(): boolean {
+  get viewMode(): boolean {
     return this._viewMode;
   }
 
-  @Input() set pointChoosed(choosed : AMap.LngLat) {
+  @Input() set pointChoosed(choosed: AMap.LngLat) {
     if (choosed) {
       this._pointChoosed = choosed;
-      
-      if (this._map == null) return;
+
+      if (this._map == null) { return; }
 
       this.generateChoosedPoint(this._pointChoosed);
 
@@ -81,30 +85,30 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   }
 
   @Input()
-  protected set city(city :ICityBiz) {
+  protected set city(city: ICityBiz) {
     if (city) {
       this._city = city;
-      if (this._map == null && this._markers.size > 0) return;
+      if (this._map == null && this._markers.size > 0) { return; }
 
-      this._map.setCity(this._city.adressCode);  
-    } 
+      this._map.setCity(this._city.adressCode);
+    }
   }
 
   @Input()
   protected set viewPoints(viewPoints: Array<IViewPointBiz>) {
     this._viewPoints = viewPoints;
 
-    if (this._map == null) return;
-    
+    if (this._map == null) { return; }
+
     this.generateViewPoints();
   }
 
   @Input()
-  protected set dailyTrip(dailyTrip: IDailyTripBiz) {    
+  protected set dailyTrip(dailyTrip: IDailyTripBiz) {
     this._dailyTrip = dailyTrip;
 
-    if (this._map == null) return;
-    
+    if (this._map == null) { return; }
+
     this.generateDailyTrip();
   }
 
@@ -113,7 +117,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   }
 
   @Input() protected set selectedViewPoint(vp: IViewPointBiz) {
-    if (!vp) return;
+    if (!vp) { return; }
 
     this._markers.forEach(marker => {
       if (marker.viewPoint.id === vp.id) {
@@ -123,12 +127,12 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
         //   marker.marker.setAnimation("AMAP_ANIMATION_NONE");
         // }, 2000);
       }
-    })
+    });
   }
 
-  @Input() protected travelAgenda : ITravelAgendaBiz;
+  @Input() protected travelAgenda: ITravelAgendaBiz;
 
-  //#endregion 
+  //#endregion
 
   //#region Constructor
 
@@ -140,7 +144,11 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
     this.viewPointClickedEvent = new EventEmitter<IViewPointBiz>();
     this.viewPointAddedToDailyTrip = new EventEmitter<{ dailyTrip: IDailyTripBiz, added: IViewPointBiz }>();
-    this.viewPointRemovedFromDailyTrip = new EventEmitter<{dailyTrip: IDailyTripBiz,travelAgenda : ITravelAgendaBiz,removed: ITravelViewPointBiz}>();
+    this.viewPointRemovedFromDailyTrip = new EventEmitter<{
+      dailyTrip: IDailyTripBiz,
+      travelAgenda: ITravelAgendaBiz,
+      removed: ITravelViewPointBiz
+    }>();
     this.pointChoosedEvent = new EventEmitter<AMap.LngLat>();
   }
 
@@ -153,25 +161,27 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     this.loadPlugin();
 
     if (this.allowSelectPoint) {
-      this._mapClickListener = AMap.event.addListener(this._map,'click',($event: any) => {
+      this._mapClickListener = AMap.event.addListener(this._map, 'click', ($event: any) => {
         this.generateChoosedPoint($event.lnglat);
-        
+
         this.pointChoosedEvent.emit($event.lnglat);
-      });  
+      });
     }
 
-    if (this._viewPoints.length >0)
+    if (this._viewPoints.length > 0) {
       this.generateViewPoints();
+    }
 
-    if (this._dailyTrip)
+    if (this._dailyTrip) {
       this.generateDailyTrip();
+    }
 
     if (this._pointChoosed) {
       this.generateChoosedPoint(this._pointChoosed);
       this._map.setCenter(this._pointChoosed);
     }
 
-    if (this._markers.size == 0) this.setCity();
+    if (this._markers.size === 0) { this.setCity(); }
   }
 
   ngOnDestroy(): void {
@@ -182,25 +192,26 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
   //#region Public methods
   public setFitView() {
-      this._map.setFitView();
+    this._map.setFitView();
   }
 
   //#endregion
 
   //#region Private method
   private setCity() {
-    if (this._map && this._city)
+    if (this._map && this._city) {
       this._map.setCity(this._city.adressCode);
+    }
   }
 
   @HostListener('transitionend', ['$event.target'])
-  private transitionEnd(target : any) {
+  private transitionEnd(target: any) {
     this._map.setFitView();
   }
 
   private generateDailyTrip() {
-    //Update all of markers as viewPoint 
-    for (let key of Array.from(this._markers.keys())) {
+    // Update all of markers as viewPoint
+    for (const key of Array.from(this._markers.keys())) {
       this.updateMarkerInfor(this._markers[key], this._markers[key].viewPoint, this.actionAllowed(this._markers[key].viewPoint), false, -1);
     }
 
@@ -214,20 +225,19 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
     this.destroyExtraMarkers(this._dailyTrip.travelViewPoints.map(tvp => tvp.viewPoint.id), false);
 
-    let viewPoints = (<ITravelViewPointBiz[]>this._dailyTrip.travelViewPoints).map(tvp => tvp.viewPoint);
+    const viewPoints = (<ITravelViewPointBiz[]>this._dailyTrip.travelViewPoints).map(tvp => tvp.viewPoint);
 
     let sequence = 0;
 
     viewPoints.forEach(viewPoint => {
-      //Find it
-      let found = this._markers.get(viewPoint.id);
+      // Find it
+      const found = this._markers.get(viewPoint.id);
 
       if (!found) {
-        //Not found, create it
+        // Not found, create it
         this.generateMarker(viewPoint, this.actionAllowed(viewPoint), true, sequence);
-      }
-      else {
-        //Found, update it
+      } else {
+        // Found, update it
         this.updateMarkerInfor(found, viewPoint, this.actionAllowed(viewPoint), true, sequence);
       }
 
@@ -239,13 +249,13 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     this.setFitView();
   }
 
-  private generateChoosedPoint(pos : AMap.LngLat) {
+  private generateChoosedPoint(pos: AMap.LngLat) {
     if (!this._pointChoosedMarker) {
-      //Create Marker Component
-      let crMarker = this._viewPointMarkerFactory.create(this._injector);
-      let marker: AMap.Marker = new AMap.Marker({
+      // Create Marker Component
+      const crMarker = this._viewPointMarkerFactory.create(this._injector);
+      const marker: AMap.Marker = new AMap.Marker({
         content: (<any>crMarker.hostView).rootNodes[0],
-        //position: pos,
+        // position: pos,
         title: '',
         offset: new AMap.Pixel(-1 * ViewPointMarkerComponent.WIDTH / 2, -1 * ViewPointMarkerComponent.HEIGHT),
         map: this._map
@@ -267,21 +277,20 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   }
 
   private generateViewPoints() {
-    //Destroy markers which 1. not belongs to this._viewPoints and 2. not belongs to this._dailyTrip
+    // Destroy markers which 1. not belongs to this._viewPoints and 2. not belongs to this._dailyTrip
     this.destroyExtraMarkers(this._viewPoints.map(vp => vp.id), true);
 
     this._viewPoints.forEach(viewPoint => {
-      //Find it
-      let found = this._markers.get(viewPoint.id);
+      // Find it
+      const found = this._markers.get(viewPoint.id);
 
       if (!found) {
-        //Not found, create it
+        // Not found, create it
         this.generateMarker(viewPoint, this.actionAllowed(viewPoint), false, -1);
-      }
-      else {
-        //Found, update it with viewPoint
-        this.updateMarkerInfor(found, viewPoint, this.actionAllowed(viewPoint), 
-                  found.markerComponent.instance.inCurrentTrip, found.markerComponent.instance.sequence);
+      } else {
+        // Found, update it with viewPoint
+        this.updateMarkerInfor(found, viewPoint, this.actionAllowed(viewPoint),
+          found.markerComponent.instance.inCurrentTrip, found.markerComponent.instance.sequence);
       }
     });
 
@@ -290,7 +299,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
   private loadPlugin() {
     AMap.plugin(['AMap.ToolBar', 'AMap.Geolocation'], () => {
-      this._map.addControl(new AMap.ToolBar({ locate: false, position: "RB" }));
+      this._map.addControl(new AMap.ToolBar({ locate: false, position: 'RB' }));
     });
   }
 
@@ -298,7 +307,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     this._markers.forEach(vpInfo => {
       vpInfo.windowComponent.instance.actionAllowed = actionAllowed;
       vpInfo.windowComponent.instance.detectChanges();
-    })
+    });
   }
 
   //#region Generate line
@@ -306,32 +315,35 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     this._map.remove(this._travelLines);
     this._travelLines = new Array<AMap.Polyline>();
 
-    let linePoints: Array<AMap.LngLat> = new Array<AMap.LngLat>();
-    let markerInfors = Array.from(this._markers.values());
+    const linePoints: Array<AMap.LngLat> = new Array<AMap.LngLat>();
+    const markerInfors = Array.from(this._markers.values());
 
     markerInfors.sort((a, b) => {
       return a.markerComponent.instance.sequence - b.markerComponent.instance.sequence;
     });
 
     markerInfors.forEach(marker => {
-      if (marker.markerComponent.instance.inCurrentTrip)
+      if (marker.markerComponent.instance.inCurrentTrip) {
         linePoints.push(marker.marker.getPosition());
+      }
     });
 
     this._travelLines.push(new AMap.Polyline({
-      path: linePoints,       //设置线覆盖物路径
-      strokeColor: "#008000", //线颜色
-      strokeOpacity: 0.5,       //线透明度
-      strokeWeight: 3,        //线宽
-      strokeStyle: "solid",   //线样式
-      strokeDasharray: [10, 5], //补充线样式
+      path: linePoints,       // 设置线覆盖物路径
+      strokeColor: '#008000', // 线颜色
+      strokeOpacity: 0.5,       // 线透明度
+      strokeWeight: 3,        // 线宽
+      strokeStyle: 'solid',   // 线样式
+      strokeDasharray: [10, 5], // 补充线样式
       map: this._map
     }));
   }
   //#endregion
 
   //#region Update MarkerInfor
-  private updateMarkerInfor(markerInfo: MarkerInfor, viewPoint: IViewPointBiz, actionAllowed: ActionAllowed, inCurrentTrip: boolean, sequence: number) {
+  private updateMarkerInfor(markerInfo: MarkerInfor,
+    viewPoint: IViewPointBiz, actionAllowed: ActionAllowed,
+    inCurrentTrip: boolean, sequence: number) {
     markerInfo.viewPoint = viewPoint;
 
     markerInfo.marker.setPosition(new AMap.LngLat(viewPoint.longtitude, viewPoint.latitude));
@@ -349,11 +361,11 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
   //#region Generate ViewPoint marker
   private generateMarker(viewPoint: IViewPointBiz, actionAloowed: ActionAllowed, inCurrentTrip: boolean, sequence: number) {
-    let point = new AMap.LngLat(viewPoint.longtitude, viewPoint.latitude);
+    const point = new AMap.LngLat(viewPoint.longtitude, viewPoint.latitude);
 
-    //Create Marker Component
-    let crMarker = this._viewPointMarkerFactory.create(this._injector);
-    let marker: AMap.Marker = new AMap.Marker({
+    // Create Marker Component
+    const crMarker = this._viewPointMarkerFactory.create(this._injector);
+    const marker: AMap.Marker = new AMap.Marker({
       content: (<any>crMarker.hostView).rootNodes[0],
       position: point,
       title: '',
@@ -377,9 +389,9 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     crMarker.instance.sequence = sequence;
     crMarker.instance.detectChanges();
 
-    //Create Window Component
-    let crWindow = this._informationWindowFactory.create(this._injector);
-    let window = new AMap.InfoWindow({
+    // Create Window Component
+    const crWindow = this._informationWindowFactory.create(this._injector);
+    const window = new AMap.InfoWindow({
       isCustom: true,
       content: (<any>crWindow.hostView).rootNodes[0],
       closeWhenClickMap: true,
@@ -387,34 +399,34 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     });
     crWindow.instance.viewPoint = viewPoint;
     crWindow.instance.actionAllowed = actionAloowed;
-    let subscriptions = new Array<Subscription>();
-    subscriptions.push(crWindow.instance.viewPointClickedEvent.subscribe(viewPoint => {
-      this._markers.get(viewPoint.id).window.close();
-      this.viewPointClickedEvent.emit(viewPoint);
+    const subscriptions = new Array<Subscription>();
+    subscriptions.push(crWindow.instance.viewPointClickedEvent.subscribe(vp => {
+      this._markers.get(vp.id).window.close();
+      this.viewPointClickedEvent.emit(vp);
     }));
-    subscriptions.push(crWindow.instance.viewPointAddedEvent.subscribe(viewPoint => {
-      this._markers.get(viewPoint.id).window.close();
-      this.viewPointAddedToDailyTrip.emit({dailyTrip: this.dailyTrip,added : viewPoint})
+    subscriptions.push(crWindow.instance.viewPointAddedEvent.subscribe(vp => {
+      this._markers.get(vp.id).window.close();
+      this.viewPointAddedToDailyTrip.emit({ dailyTrip: this.dailyTrip, added: vp });
     }));
-    subscriptions.push(crWindow.instance.viewPointRemovedEvent.subscribe(viewPoint => {
-      this._markers.get(viewPoint.id).window.close();
-      
-      //Remove viewpoint
-      let removed = this.dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint.id == viewPoint.id)
+    subscriptions.push(crWindow.instance.viewPointRemovedEvent.subscribe(vp => {
+      this._markers.get(vp.id).window.close();
+
+      // Remove viewpoint
+      const removed = this.dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint.id === vp.id);
       this.dailyTrip.travelViewPoints =
-        this.dailyTrip.travelViewPoints.filter(tvp => tvp.viewPoint.id != viewPoint.id);
-        this.viewPointRemovedFromDailyTrip.emit({dailyTrip: this.dailyTrip,travelAgenda : this.travelAgenda,removed: removed})
+        this.dailyTrip.travelViewPoints.filter(tvp => tvp.viewPoint.id !== vp.id);
+      this.viewPointRemovedFromDailyTrip.emit({ dailyTrip: this.dailyTrip, travelAgenda: this.travelAgenda, removed: removed });
     }));
     crWindow.instance.detectChanges();
 
-    let markerClickListener = AMap.event.addListener(marker, "click", ($event: any) => {
-      let marker = <AMap.Marker>$event.target;
-      let viewPoint = <IViewPointBiz>marker.getExtData();
+    const markerClickListener = AMap.event.addListener(marker, 'click', ($event: any) => {
+      const target = <AMap.Marker>$event.target;
+      const vp = <IViewPointBiz>target.getExtData();
 
-      if (this._markers.has(viewPoint.id)) {
-        this._map.setCenter(marker.getPosition());
-        let window = this._markers.get(viewPoint.id).window;
-        setTimeout(() => window.open(this._map, marker.getPosition()), 300);
+      if (this._markers.has(vp.id)) {
+        this._map.setCenter(target.getPosition());
+        const win = this._markers.get(vp.id).window;
+        setTimeout(() => win.open(this._map, target.getPosition()), 300);
 
       }
     });
@@ -432,7 +444,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   //#endregion
 
   private destroyMarker(viewPointId: string) {
-    let markerInfor = this._markers.get(viewPointId);
+    const markerInfor = this._markers.get(viewPointId);
 
     if (markerInfor) {
       this._map.remove(markerInfor.marker);
@@ -453,8 +465,9 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
     if (this.dailyTrip) {
       this.dailyTrip.travelViewPoints.forEach(tvp => {
-        if (viewPoint.id === tvp.viewPoint.id)
+        if (viewPoint.id === tvp.viewPoint.id) {
           ret = true;
+        }
       });
     }
 
@@ -463,8 +476,9 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 
   private actionAllowed(viewPoint: IViewPointBiz): ActionAllowed {
     if (!this._viewMode && this._dailyTrip) {
-      if (this.isInCurrentTrip(viewPoint))
+      if (this.isInCurrentTrip(viewPoint)) {
         return ActionAllowed.REMOVE;
+      }
       return ActionAllowed.ADD;
     }
 
@@ -475,24 +489,25 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
     let toBeRemoved: Array<string> = new Array<string>();
 
     if (isViewPoints) {
-      //remains should be new viewPoints Ids
+      // remains should be new viewPoints Ids
       toBeRemoved = Array.from(this._markers.keys()).filter(key => {
-        //Preserve if marker belongs to current dailyTrip
-        if (this._dailyTrip && this._dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint.id === key))
+        // Preserve if marker belongs to current dailyTrip
+        if (this._dailyTrip && this._dailyTrip.travelViewPoints.find(tvp => tvp.viewPoint.id === key)) {
           return false;
+        }
 
-        //Preserve if marker included in new viewPoints Ids
+        // Preserve if marker included in new viewPoints Ids
         return !remains.find(remain => remain === key);
       });
-    }
-    else {
-      //remains should be new dailyTrip viewPoints Ids
+    } else {
+      // remains should be new dailyTrip viewPoints Ids
       toBeRemoved = Array.from(this._markers.keys()).filter(key => {
-        //Preserve if marker belongs to current viewPoints
-        if (this._viewPoints && this._viewPoints.find(vp => vp.id === key))
+        // Preserve if marker belongs to current viewPoints
+        if (this._viewPoints && this._viewPoints.find(vp => vp.id === key)) {
           return false;
+        }
 
-        //Preserve if marker included in new dailyTrip viewPoints Ids
+        // Preserve if marker included in new dailyTrip viewPoints Ids
         return !remains.find(remain => remain === key);
       });
     }
@@ -503,11 +518,11 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
 }
 
 export interface MarkerInfor {
-  marker: AMap.Marker,
-  markerComponent: ComponentRef<ViewPointMarkerComponent>,
-  markerClickListener: any,
-  viewPoint: IViewPointBiz,
+  marker: AMap.Marker;
+  markerComponent: ComponentRef<ViewPointMarkerComponent>;
+  markerClickListener: any;
+  viewPoint: IViewPointBiz;
   window: AMap.InfoWindow;
   windowComponent: ComponentRef<InformationWindowComponent>;
-  suscriptions: Array<Subscription>
+  suscriptions: Array<Subscription>;
 }

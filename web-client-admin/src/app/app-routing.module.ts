@@ -10,9 +10,9 @@ import { TestComponent } from './test.component';
 
 const routes: Routes = [
   {
-    path: 'pages', component: PageComponent,canActivate: [AppRoutingGuard,PageRoutingGuard], children: [
-      //{ path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
-      //{ path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
+    path: 'pages', component: PageComponent, canActivate: [AppRoutingGuard, PageRoutingGuard], children: [
+      // { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
+      // { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
       { path: 'test', component: TestComponent},
       { path: '', redirectTo: 'test', pathMatch: 'full' },
     ]
@@ -25,7 +25,7 @@ const routes: Routes = [
   //   ]
   // },
   {
-    path: 'auth',component: AuthComponent,children: [
+    path: 'auth', component: AuthComponent, children: [
       { path: 'login', component: LoginComponent },
       { path: '', redirectTo: 'login' , pathMatch: 'full'}
     ]

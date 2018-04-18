@@ -9,34 +9,34 @@ import {
 import { IViewPointBiz } from './viewPoint.biz.model';
 
 export interface ITravelAgendaBiz {
-    id: string,
-    name: string,
-    user: string,
-    cover: string,
-    dailyTrips: IDailyTripBiz[]
-};
+    id: string;
+    name: string;
+    user: string;
+    cover: string;
+    dailyTrips: IDailyTripBiz[];
+}
 
 export interface IDailyTripBiz {
-    id: string,
-    travelViewPoints: ITravelViewPointBiz[],
-    lastViewPoint: string,
-    travelAgenda: ITravelAgendaBiz
+    id: string;
+    travelViewPoints: ITravelViewPointBiz[];
+    lastViewPoint: string;
+    travelAgenda: ITravelAgendaBiz;
 }
 
 export interface ITravelViewPointBiz {
-    id: string,
-    viewPoint: IViewPointBiz,
-    distanceToNext: number,
-    dailyTrip: IDailyTripBiz,
-    transportationToNext: ITransportationCategory
+    id: string;
+    viewPoint: IViewPointBiz;
+    distanceToNext: number;
+    dailyTrip: IDailyTripBiz;
+    transportationToNext: ITransportationCategory;
 }
 
-export function caculateDistance(dailyTrip: IDailyTripBiz,defaultTransportationCategory : ITransportationCategory) {
-    if (!dailyTrip || !dailyTrip.travelViewPoints) return;
+export function caculateDistance(dailyTrip: IDailyTripBiz, defaultTransportationCategory: ITransportationCategory) {
+    if (!dailyTrip || !dailyTrip.travelViewPoints) { return; }
 
     for (let i = 0; i < dailyTrip.travelViewPoints.length - 1; i++) {
-        let vp = dailyTrip.travelViewPoints[i];
-        let vpNext = dailyTrip.travelViewPoints[i + 1];
+        const vp = dailyTrip.travelViewPoints[i];
+        const vpNext = dailyTrip.travelViewPoints[i + 1];
 
         vp.distanceToNext = Math.round(new AMap.LngLat(vp.viewPoint.longtitude, vp.viewPoint.latitude).distance(
             new AMap.LngLat(vpNext.viewPoint.longtitude, vpNext.viewPoint.latitude)
@@ -50,9 +50,9 @@ export function caculateDistance(dailyTrip: IDailyTripBiz,defaultTransportationC
     if (dailyTrip.travelViewPoints.length > 0) {
         dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].transportationToNext = null;
         dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
-    }
-    else
+    } else {
         dailyTrip.lastViewPoint = '';
+    }
 }
 
 export function createTravelAgenda(): ITravelAgendaBiz {
@@ -62,19 +62,19 @@ export function createTravelAgenda(): ITravelAgendaBiz {
         user: 'whoiscxt',
         cover: 'assets/img/IMG_4201.jpg',
         dailyTrips: []
-    }
+    };
 }
 
-export function createDailiyTrip(travelAgenda : ITravelAgendaBiz): IDailyTripBiz {
+export function createDailiyTrip(travelAgenda: ITravelAgendaBiz): IDailyTripBiz {
     return {
         id: new ObjectID().toHexString(),
         travelViewPoints: [],
         lastViewPoint: '',
         travelAgenda: travelAgenda
-    }
+    };
 }
 
-export function createTravelViewPoint(viewPoint: IViewPointBiz,dailyTrip : IDailyTripBiz): ITravelViewPointBiz {
+export function createTravelViewPoint(viewPoint: IViewPointBiz, dailyTrip: IDailyTripBiz): ITravelViewPointBiz {
     return {
         id: new ObjectID().toHexString(),
         viewPoint: viewPoint,
@@ -108,5 +108,5 @@ export function translateTravelAgendaFromBiz(travelAgenda: ITravelAgendaBiz): IT
         user: travelAgenda.user,
         cover: travelAgenda.cover,
         dailyTrips: travelAgenda.dailyTrips.map(dt => dt.id)
-    }
+    };
 }

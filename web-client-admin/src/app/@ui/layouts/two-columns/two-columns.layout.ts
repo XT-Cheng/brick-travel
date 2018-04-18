@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 
 // TODO: move layouts into the framework
 @Component({
-  selector: 'ngx-two-columns-layout',
+  selector: 'bt-two-columns-layout',
   styleUrls: ['./two-columns.layout.scss'],
   template: `
     <nb-layout [withScroll]='true'>
       <nb-layout-header fixed>
-        <bt-header></bt-header>
+        <app-bt-header></app-bt-header>
       </nb-layout-header>
 
       <nb-sidebar class="menu-sidebar" tag="menu-sidebar" responsive >

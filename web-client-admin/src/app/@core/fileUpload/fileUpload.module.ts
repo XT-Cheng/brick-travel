@@ -8,7 +8,7 @@ import { FileUploader, FileUploaderOptions } from './providers/file-uploader';
 export const FILE_UPLOADER = new InjectionToken('File Uploader');
 export const FILE_UPLOADER_OPTIONS = new InjectionToken('File Uploader Options');
 
-export function fileUploaderFactory(fileUploadOpt : FileUploaderOptions) {
+export function fileUploaderFactory(fileUploadOpt: FileUploaderOptions) {
   return new FileUploader(fileUploadOpt);
 }
 
@@ -26,11 +26,11 @@ export function fileUploaderFactory(fileUploadOpt : FileUploaderOptions) {
   ]
 })
 export class FileUploadModule {
-  static forRoot(fileUploadOpt : FileUploaderOptions): ModuleWithProviders {
+  static forRoot(fileUploadOpt: FileUploaderOptions): ModuleWithProviders {
     return <ModuleWithProviders>{
       ngModule: FileUploadModule,
       providers: [
-        {provide: FILE_UPLOADER_OPTIONS, useValue: fileUploadOpt},
+        { provide: FILE_UPLOADER_OPTIONS, useValue: fileUploadOpt },
         { provide: FILE_UPLOADER, useFactory: fileUploaderFactory, deps: [FILE_UPLOADER_OPTIONS] }
       ],
     };

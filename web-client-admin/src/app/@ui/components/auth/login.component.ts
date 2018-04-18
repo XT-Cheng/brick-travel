@@ -1,8 +1,3 @@
-/**
- * @license
- * Copyright Akveo. All Rights Reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- */
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -11,11 +6,11 @@ import { AuthService } from '../../../@core/auth/providers/authService';
 import { REDIRECT_DELAY, SOCIAL_LINKS } from '../../../@core/utils/constants';
 
 export interface AuthSocialLink {
-  link?: string,
-  url?: string,
-  target?: string,
-  title?: string,
-  icon?: string,
+  link?: string;
+  url?: string;
+  target?: string;
+  title?: string;
+  icon?: string;
 }
 
 @Component({
@@ -101,16 +96,16 @@ export interface AuthSocialLink {
   `,
 })
 export class LoginComponent {
-  redirectDelay: number = 0;
-  provider: string = '';
+  redirectDelay = 0;
+  provider = '';
 
   errors: string[] = [];
   messages: string[] = [];
   user: any = {};
-  submitted: boolean = false;
+  submitted = false;
   socialLinks: AuthSocialLink[] = [];
 
-  constructor(protected service: AuthService,protected router: Router) {
+  constructor(protected service: AuthService, protected router: Router) {
     this.redirectDelay = REDIRECT_DELAY;
     this.socialLinks = SOCIAL_LINKS;
   }

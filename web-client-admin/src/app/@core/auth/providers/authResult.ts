@@ -1,4 +1,4 @@
-import { AuthToken } from "./authToken";
+import { AuthToken } from './authToken';
 
 export class AuthResult {
 

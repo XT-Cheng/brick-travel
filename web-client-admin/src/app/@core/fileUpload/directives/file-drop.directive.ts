@@ -1,15 +1,16 @@
-import { Directive, EventEmitter, ElementRef, HostListener, Input, Output, OnInit } from '@angular/core';
-import { FileUploader, FileUploaderOptions } from '../providers/file-uploader';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+
 import { FileItem } from '../providers/file-item';
 import { FileLikeObject } from '../providers/file-like-object';
+import { FileUploader, FileUploaderOptions } from '../providers/file-uploader';
 
 
-@Directive({ selector: '[ng2FileDrop]' })
+@Directive({ selector: '[btFileDrop]' })
 export class FileDropDirective implements OnInit {
   @Input() public uploader: FileUploader;
-  @Input() public multiple: boolean = false;
+  @Input() public multiple = false;
   @Output() public fileOver: EventEmitter<any> = new EventEmitter();
-  @Output() public onFileDrop: EventEmitter<FileItem[]> = new EventEmitter<FileItem[]>();
+  @Output() public fileDrop: EventEmitter<FileItem[]> = new EventEmitter<FileItem[]>();
 
   protected element: ElementRef;
 
@@ -19,11 +20,11 @@ export class FileDropDirective implements OnInit {
 
   ngOnInit() {
     this.uploader.onAfterAddingAll = (fileItems) => {
-      this.onFileDrop.emit(fileItems);
-    }
+      this.fileDrop.emit(fileItems);
+    };
     this.uploader.onWhenAddingFileFailed = (item: FileLikeObject, filter: any, options: any) => {
       console.log('onWhenAddingFileFailed');
-    }
+    };
   }
 
   public getOptions(): FileUploaderOptions {
@@ -36,15 +37,15 @@ export class FileDropDirective implements OnInit {
 
   @HostListener('drop', ['$event'])
   public onDrop(event: any): void {
-    let transfer = this._getTransfer(event);
+    const transfer = this._getTransfer(event);
     if (!transfer) {
       return;
     }
 
     this._preventAndStop(event);
 
-    let options = this.getOptions();
-    let filters = this.getFilters();
+    const options = this.getOptions();
+    const filters = this.getFilters();
     if (!this.multiple && this.uploader.queue.length > 0) {
       this.uploader.removeFromQueue(this.uploader.queue[0]);
     }
@@ -54,7 +55,7 @@ export class FileDropDirective implements OnInit {
 
   @HostListener('dragover', ['$event'])
   public onDragOver(event: any): void {
-    let transfer = this._getTransfer(event);
+    const transfer = this._getTransfer(event);
     if (!this._haveFiles(transfer.types)) {
       return;
     }

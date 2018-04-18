@@ -1,10 +1,11 @@
-import { Directive, EventEmitter, ElementRef, Input, HostListener, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+
 import { FileUploader } from '../providers/file-uploader';
 
-@Directive({ selector: '[ng2FileSelect]' })
+@Directive({ selector: '[btFileSelect]' })
 export class FileSelectDirective {
   @Input() public uploader: FileUploader;
-  @Output() public onFileSelected: EventEmitter<File[]> = new EventEmitter<File[]>();
+  @Output() public fileSelected: EventEmitter<File[]> = new EventEmitter<File[]>();
 
   protected element: ElementRef;
 
@@ -26,12 +27,12 @@ export class FileSelectDirective {
 
   @HostListener('change')
   public onChange(): any {
-    let files = this.element.nativeElement.files;
-    let options = this.getOptions();
-    let filters = this.getFilters();
+    const files = this.element.nativeElement.files;
+    const options = this.getOptions();
+    const filters = this.getFilters();
 
     this.uploader.addToQueue(files, options, filters);
-    this.onFileSelected.emit(files);
+    this.fileSelected.emit(files);
 
     if (this.isEmptyAfterSelection()) {
       this.element.nativeElement.value = '';
