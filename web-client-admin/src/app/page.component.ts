@@ -46,7 +46,7 @@ export class PageComponent {
   private cityMenuItem = {
     title: 'City',
     icon: 'nb-home',
-    link: '/city'
+    link: 'city'
   };
 
   private viewPointMenuItem = {
@@ -55,13 +55,19 @@ export class PageComponent {
     children: []
   };
 
+  private travelAgendaMenuItem = {
+    title: 'Travel Agenda',
+    icon: 'nb-home',
+    link: 'travelAgenda'
+  };
+
   private createCmp: ComponentType;
 
   //#endregion
 
   //#region Public members
 
-  menu: NbMenuItem[] = [this.testMenuItem, this.cityMenuItem, this.viewPointMenuItem];
+  menu: NbMenuItem[] = [this.testMenuItem, this.cityMenuItem, this.viewPointMenuItem, this.travelAgendaMenuItem];
 
   config: ToasterConfig = new ToasterConfig({
     positionClass: 'toast-top-right',

@@ -52,12 +52,14 @@ import {
 import { SelectorService } from './selector.service';
 
 interface IUITravelAgendaActionPayload extends IActionPayload {
+    searchKey: string;
     selectedTravelAgendaId: string;
     selectedDailyTripId: string;
     selectedTravelViewPointId: string;
 }
 
 const defaultUIAgendaActionPayload = {
+    searchKey: '',
     selectedTravelAgendaId: '',
     selectedDailyTripId: '',
     selectedTravelViewPointId: '',
@@ -67,6 +69,7 @@ const defaultUIAgendaActionPayload = {
 type UITravelAgendaAction = FluxStandardAction<IUITravelAgendaActionPayload, IActionMetaInfo>;
 
 enum UITravelAgendaActionTypeEnum {
+    SEARCH_TRAVELADENDA = 'UI:TRAVELADENDA:SEARCH_TRAVELADENDA',
     SELECT_TRAVELADENDA = 'UI:TRAVELAGENDA:SELECT_TRAVELADENDA',
     SELECT_DAILYTRIP = 'UI:TRAVELAGENDA:SELECT_DAILYTRIP',
     SELECT_TRAVELVIEWPOINT = 'UI:TRAVELAGENDA:SELECT_TRAVELVIEWPOINT'
@@ -74,6 +77,9 @@ enum UITravelAgendaActionTypeEnum {
 
 export function travelAgendaReducer(state = INIT_UI_TRAVELAGENDA_STATE, action: UITravelAgendaAction): ITravelAgendaUI {
     switch (action.type) {
+        case UITravelAgendaActionTypeEnum.SEARCH_TRAVELADENDA: {
+            return <any>Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.searchKey, action.payload.searchKey);
+        }
         case UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA: {
             return <any>Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedTravelAgendaId, action.payload.selectedTravelAgendaId);
         }
@@ -153,6 +159,17 @@ export class TravelAgendaService {
 
     //#region UI Actions
     @dispatch()
+    private searchTravelAgendaAction(searchKey: string): UITravelAgendaAction {
+        return {
+            type: UITravelAgendaActionTypeEnum.SEARCH_TRAVELADENDA,
+            meta: { progressing: false },
+            payload: Object.assign({}, defaultUIAgendaActionPayload, {
+                searchKey: searchKey
+            })
+        };
+    }
+
+    @dispatch()
     private selectTravelAgendaAction(selectedTravelAgendaId: string): UITravelAgendaAction {
         return {
             type: UITravelAgendaActionTypeEnum.SELECT_TRAVELADENDA,
@@ -203,16 +220,16 @@ export class TravelAgendaService {
     public createLoadEpic(): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
             .ofType(EntityActionTypeEnum.LOAD).pipe(
-            filter(action =>
-                action.meta.entityType === EntityTypeEnum.TRAVELAGENDA && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
-            switchMap(action => this.getTravelAgenda(action.meta.pagination).pipe(
-                map(data => this.loadTravelAgendaSucceededAction(data)),
-                catchError(response =>
-                    of(this.loadTravelAgendaFailedAction(response))
-                ),
-                startWith(this.loadTravelAgendaStartedAction()))
-            )
-        );
+                filter(action =>
+                    action.meta.entityType === EntityTypeEnum.TRAVELAGENDA && action.meta.phaseType === EntityActionPhaseEnum.TRIGGER),
+                switchMap(action => this.getTravelAgenda(action.meta.pagination).pipe(
+                    map(data => this.loadTravelAgendaSucceededAction(data)),
+                    catchError(response =>
+                        of(this.loadTravelAgendaFailedAction(response))
+                    ),
+                    startWith(this.loadTravelAgendaStartedAction()))
+                )
+            );
     }
 
     //#endregion
@@ -264,6 +281,9 @@ export class TravelAgendaService {
         return this._http.delete(`${WEBAPI_HOST}/travelAgendas/${id}`);
     }
     //#endregion
+    public search(searchKey: string) {
+        this.searchTravelAgendaAction(searchKey);
+    }
 
     public load(queryCondition?: IQueryCondition) {
         this.loadTravelAgendasAction(queryCondition);
@@ -333,7 +353,7 @@ export class TravelAgendaService {
             this.selectDailyTrip(null);
         } else if (isCurrentSelect) {
             this.selectDailyTrip(dailyTrip.travelAgenda.dailyTrips[0]);
-             }
+        }
 
         return dailyTrip.travelAgenda;
     }

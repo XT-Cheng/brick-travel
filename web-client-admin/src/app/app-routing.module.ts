@@ -13,8 +13,9 @@ const routes: Routes = [
     path: 'pages', component: PageComponent, canActivate: [AppRoutingGuard, PageRoutingGuard], children: [
       { path: 'city', loadChildren: 'app/@features/@city/city.module#CityModule' },
       { path: 'viewPoint', loadChildren: 'app/@features/@viewPoint/viewPoint.module#ViewPointModule' },
+      { path: 'travelAgenda', loadChildren: 'app/@features/@travelAgenda/travelAgenda.module#TravelAgendaModule' },
       { path: 'test', component: TestComponent },
-      { path: '', redirectTo: 'city', pathMatch: 'full' },
+      { path: '', redirectTo: 'travelAgenda', pathMatch: 'full' },
     ]
   },
   {
@@ -28,7 +29,7 @@ const routes: Routes = [
 ];
 
 const config: ExtraOptions = {
-  useHash: true,
+  useHash: true
 };
 
 @NgModule({

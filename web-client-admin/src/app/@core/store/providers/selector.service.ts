@@ -3,40 +3,45 @@ import { Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { combineLatest, map, switchAll } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { ICityBiz } from '../bizModel/city.biz.model';
 import { IFilterCategoryBiz } from '../bizModel/filterCategory.biz.model';
 import { caculateDistance, IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/travelAgenda.biz.model';
+import { IUserBiz } from '../bizModel/user.biz.model';
 import { IViewPointBiz } from '../bizModel/viewPoint.biz.model';
 import { ICity } from '../entity/city/city.model';
 import { STORE_ENTITIES_KEY } from '../entity/entity.model';
 import {
     city,
-    filterCategory,
-    travelAgenda,
-    viewPoint,
     dailyTrip,
+    filterCategory,
+    transportationCategory,
+    travelAgenda,
     travelViewPoint,
     user,
+    viewPoint,
     viewPointCategory,
-    transportationCategory
 } from '../entity/entity.schema';
 import { IFilterCategory } from '../entity/filterCategory/filterCategory.model';
-import { ITravelAgenda, IDailyTrip, ITravelViewPoint, ITransportationCategory } from '../entity/travelAgenda/travelAgenda.model';
+import {
+    IDailyTrip,
+    ITransportationCategory,
+    ITravelAgenda,
+    ITravelViewPoint,
+} from '../entity/travelAgenda/travelAgenda.model';
+import { IUser } from '../entity/user/user.model';
 import { IViewPoint, IViewPointCategory } from '../entity/viewPoint/viewPoint.model';
-import { IAppState } from '../store.model';
-import { STORE_KEY } from '../store.model';
+import { IAppState, STORE_KEY } from '../store.model';
 import { STORE_UI_TRAVELAGENDA_KEY } from '../ui/travelAgenda/travelAgenda.model';
 import { STORE_UI_KEY } from '../ui/ui.model';
 import { ViewPointFilterEx } from '../utils/viewPointFilterEx';
-import { IUserBiz } from '../bizModel/user.biz.model';
-import { IUser } from '../entity/user/user.model';
-import { map, switchAll, combineLatest } from 'rxjs/operators';
 
 @Injectable()
 export class SelectorService {
     private viewPointSearchKeySelector$: BehaviorSubject<string> = new BehaviorSubject('');
+    private travelAgendaSearchKeySelector$: BehaviorSubject<string> = new BehaviorSubject('');
     private citySearchKeySelector$: BehaviorSubject<string> = new BehaviorSubject('');
 
     private viewModeSelector$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -69,6 +74,8 @@ export class SelectorService {
     private _currentViewPointSearchKey: string;
     private _isViewPointFiltered: boolean;
 
+    private _currentTravelAgendaSearchKey: string;
+
     private _currentCitySearchKey: string;
 
     public get isViewPointFiltered(): boolean {
@@ -77,6 +84,10 @@ export class SelectorService {
 
     public get viewPointSearchKey(): string {
         return this._currentViewPointSearchKey;
+    }
+
+    public get travelAgendaSearchKey(): string {
+        return this._currentTravelAgendaSearchKey;
     }
 
     public get citySearchKey(): string {
@@ -119,6 +130,9 @@ export class SelectorService {
     }
     public get viewPointSearchKey$(): Observable<string> {
         return this.viewPointSearchKeySelector$.asObservable();
+    }
+    public get travelAgendaSearchKey$(): Observable<string> {
+        return this.travelAgendaSearchKeySelector$.asObservable();
     }
     public get citySearchKey$(): Observable<string> {
         return this.citySearchKeySelector$.asObservable();
@@ -458,6 +472,22 @@ export class SelectorService {
         );
     }
 
+    private getSearchedTravelAgendas(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz[]> {
+        return this.travelAgendasSelector$.pipe(
+            combineLatest(this.travelAgendaSearchKey$,
+                (travelAgendas, searchKey) => {
+                    return travelAgendas.filter(ta => {
+                        let matchSearchKey = true;
+                        if (searchKey !== '') {
+                            matchSearchKey = ta.name.indexOf(searchKey) !== -1;
+                        }
+
+                        return matchSearchKey;
+                    });
+                })
+        );
+    }
+
     private getFilterAndSearchedViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
         return this.currentFiltersSelector$.pipe(
             combineLatest(this.viewPointsSelector$, this.viewPointSearchKey$,
@@ -485,6 +515,10 @@ export class SelectorService {
     }
     //#endregion
 
+    //#region ViewPoint Search Key
+    private getTravelAgendaSearchKey(store: NgRedux<IAppState>): Observable<string> {
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.travelAgenda, 'searchKey']);
+    }
     //#region ViewPoint Search Key
     private getViewPointSearchKey(store: NgRedux<IAppState>): Observable<string> {
         return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, 'searchKey']);

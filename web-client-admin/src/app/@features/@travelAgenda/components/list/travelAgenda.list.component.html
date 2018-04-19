@@ -1,0 +1,14 @@
+<div class="row">
+  <nb-card *ngFor='let ta of (travelAgendas$ | async)' class='ta-card'>
+    <nb-card-body>
+      <img [src]="ta.cover" />
+      <div class="card-title">{{ta.name}}</div>
+    </nb-card-body>
+    <nb-card-footer>
+      <nb-actions [fullWidth]='true'>
+        <nb-action icon='nb-compose' (click)='edit(ta)'></nb-action>
+        <nb-action icon='nb-close' (click)='delete(ta)'></nb-action>
+      </nb-actions>
+    </nb-card-footer>
+  </nb-card>
+</div>
