@@ -12,14 +12,14 @@ import { WEBAPI_HOST } from '../../utils/constants';
 import { IBiz } from '../bizModel/biz.model';
 import {
     EntityAction,
+    entityActionFailed,
     EntityActionPhaseEnum,
+    entityActionStarted,
+    entityActionSucceeded,
     EntityActionTypeEnum,
     entityDeleteAction,
     entityInsertAction,
     entityLoadAction,
-    entityLoadActionFailed,
-    entityLoadActionStarted,
-    entityLoadActionSucceeded,
     entityUpdateAction,
     getEntityKey,
     IPagination,
@@ -30,6 +30,9 @@ import { IAppState } from '../store.model';
 import { EntityTypeEnum } from '../store.module';
 
 export abstract class EntityService<T extends IEntity, U extends IBiz> {
+    private DEFAULT_PAGE = 0;
+    private DEFAULT_LIMIT = 50;
+
     //#region Constructor
     constructor(protected _http: HttpClient,
         protected _uploader: FileUploader,
@@ -44,15 +47,19 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
 
     //#region Entity Actions
 
+    protected startedAction = entityActionStarted(this._entityType);
+
+    protected succeededAction = entityActionSucceeded(this._entityType);
+
+    protected failedAction = entityActionFailed(this._entityType);
+
+    //#endregion
+
     //#region load actions
-    protected loadStartedAction = entityLoadActionStarted(this._entityType);
 
     @dispatch()
     protected loadAction = entityLoadAction(this._entityType);
 
-    protected loadSucceededAction = entityLoadActionSucceeded(this._entityType);
-
-    protected loadFailedAction = entityLoadActionFailed(this._entityType);
     //#endregion
 
     //#region update actions
@@ -83,10 +90,10 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
 
     //#region Epic
     public createEpic() {
-        return [this.createEpicInternal()];
+        return [this.createEpicOfLoad(), this.createEpicOfInsert()];
     }
 
-    private createEpicInternal(): Epic<EntityAction, IAppState> {
+    private createEpicOfLoad(): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
             .ofType(EntityActionTypeEnum.LOAD).pipe(
                 filter(action =>
@@ -97,12 +104,21 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
                     catchError(response =>
                         of(this.loadFailedAction(response))
                     ),
-                    startWith(this.loadStartedAction()))
+                    startWith(this.startedAction()))
                 ));
+    }
+
+    private createEpicOfInsert(): Epic<EntityAction, IAppState> {
+        return null;
     }
     //#endregion
 
     //#region public methods
+
+    public loadEntities(pagination: IPagination = { page: this.DEFAULT_PAGE, limit: this.DEFAULT_LIMIT },
+        queryCondition: IQueryCondition = {}) {
+        this.loadAction(pagination, queryCondition);
+    }
 
     //#endregion
 

@@ -65,25 +65,9 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
     }
 }
 
-//#region Load Actions
-export function entityLoadAction(entityType: EntityTypeEnum) {
-    return (queryCondition: IQueryCondition = {}, page: number = 0, limit: number = 50): EntityAction => ({
-        type: EntityActionTypeEnum.LOAD,
-        meta: Object.assign({}, defaultEntityActionMeta, {
-            progressing: true,
-        }),
-        payload: Object.assign({}, defaultEntityActionPayload, {
-            pagination: { page: page, limit: limit },
-            entityType: entityType,
-            phaseType: EntityActionPhaseEnum.TRIGGER,
-            queryCondition: queryCondition
-        })
-    });
-}
-
-export function entityLoadActionStarted(entityType: EntityTypeEnum) {
-    return (): EntityAction => ({
-        type: EntityActionTypeEnum.LOAD,
+export function entityActionStarted(entityType: EntityTypeEnum) {
+    return (actionType: EntityActionTypeEnum): EntityAction => ({
+        type: actionType,
         meta: Object.assign({}, defaultEntityActionMeta, {
             progressing: true,
         }),
@@ -94,9 +78,9 @@ export function entityLoadActionStarted(entityType: EntityTypeEnum) {
     });
 }
 
-export function entityLoadActionFailed(entityType: EntityTypeEnum) {
-    return (error: Error): EntityAction => ({
-        type: EntityActionTypeEnum.LOAD,
+export function entityActionFailed(entityType: EntityTypeEnum) {
+    return (actionType: EntityActionTypeEnum, error: Error): EntityAction => ({
+        type: actionType,
         meta: Object.assign({}, defaultEntityActionMeta, {
             progressing: false,
         }),
@@ -108,8 +92,8 @@ export function entityLoadActionFailed(entityType: EntityTypeEnum) {
     });
 }
 
-export function entityLoadActionSucceeded(entityType: EntityTypeEnum, actionType: EntityActionTypeEnum = EntityActionTypeEnum.LOAD) {
-    return (entities: IEntities): EntityAction => ({
+export function entityActionSucceeded(entityType: EntityTypeEnum) {
+    return (actionType: EntityActionTypeEnum, entities: IEntities): EntityAction => ({
         type: actionType,
         meta: Object.assign({}, defaultEntityActionMeta, {
             progressing: false,
@@ -121,6 +105,23 @@ export function entityLoadActionSucceeded(entityType: EntityTypeEnum, actionType
         })
     });
 }
+
+//#region Load Actions
+export function entityLoadAction(entityType: EntityTypeEnum) {
+    return (pagination: IPagination, queryCondition: IQueryCondition = {}): EntityAction => ({
+        type: EntityActionTypeEnum.LOAD,
+        meta: Object.assign({}, defaultEntityActionMeta, {
+            progressing: true,
+        }),
+        payload: Object.assign({}, defaultEntityActionPayload, {
+            pagination: pagination,
+            entityType: entityType,
+            phaseType: EntityActionPhaseEnum.TRIGGER,
+            queryCondition: queryCondition
+        })
+    });
+}
+
 //#endregion
 
 //#region Update action
