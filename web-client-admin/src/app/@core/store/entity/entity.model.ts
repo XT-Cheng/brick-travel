@@ -9,5 +9,11 @@ export interface IEntity {
 }
 
 export interface IEntities {
-    cities: {} | { [id: string]: ICity };
+    cities: { [id: string]: ICity };
 }
+
+export const INIT_ENTITY_STATE: IEntities = {
+    cities: {}
+};
+
+// {} |

@@ -1,3 +1,5 @@
+declare module 'redux-seamless-immutable';
+
 declare namespace AMap {
 
   class Map {
@@ -5,15 +7,15 @@ declare namespace AMap {
     addControl(control: any): void;
     remove(marker: Marker | Polyline | Array<Marker> | Array<Polyline>): void;
     clearInfoWindow(): void;
-    setZoomAndCenter(zoomLevel:Number,center:LngLat): void;
-    setCenter(center:LngLat): void;
-    setFitView() : void;
-    setCity(code:string) : void;
+    setZoomAndCenter(zoomLevel: Number, center: LngLat): void;
+    setCenter(center: LngLat): void;
+    setFitView(): void;
+    setCity(code: string): void;
   }
 
   class MarkerClusterer {
-    constructor(map : Map,markers : Array<Marker>, config : any);
-    addMarker(marker:Marker) : void;
+    constructor(map: Map, markers: Array<Marker>, config: any);
+    addMarker(marker: Marker): void;
   }
 
   class InfoWindow {
@@ -33,20 +35,20 @@ declare namespace AMap {
     setExtData(viewPoint: any): void;
     getExtData(): any;
     getPosition(): LngLat;
-    setPosition(lnglat : LngLat);
-    setAnimation(animate:String);
+    setPosition(lnglat: LngLat);
+    setAnimation(animate: String);
   }
 
   class LngLat {
     constructor(longtitude: number, latitude: number);
-    getLng() : number;
-    getLat() : number;
-    distance(next : AMap.LngLat) : number;
+    getLng(): number;
+    getLat(): number;
+    distance(next: AMap.LngLat): number;
   }
 
   class event {
     static addListener(mapObject: any, name: string, callback: any): any;
-    static removeListener(listener : any) : void;
+    static removeListener(listener: any): void;
   }
 
   class Polyline {

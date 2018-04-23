@@ -22,8 +22,8 @@
             "sourceMaps": true,
             // "trace": true,
             "sourceMapPathOverrides": {
-                 "webpack:/*":"${webRoot}/*"
-             },
+                "webpack:/*": "${webRoot}/*"
+            },
             // "sourceMapPathOverrides": {
             //     "*": "${webRoot}/*"
             // },
@@ -36,6 +36,18 @@
             "name": "Mobile Client",
             "url": "http://localhost:8100",
             "webRoot": "${workspaceRoot}/web-client/www"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Unit tests",
+            "address": "localhost",
+            "port": 9333,
+            "sourceMaps": true,
+            "webRoot": "${workspaceRoot}/web-client-admin/",
+            "sourceMapPathOverrides": {
+                "webpack:/*": "${webRoot}/*"
+            }
         }
     ]
 }

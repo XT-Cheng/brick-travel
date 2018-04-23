@@ -90,7 +90,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
 
     //#region Epic
     public createEpic() {
-        return [this.createEpicOfLoad(), this.createEpicOfInsert()];
+        return [this.createEpicOfLoad(), this.createEpicOfDML()];
     }
 
     private createEpicOfLoad(): Epic<EntityAction, IAppState> {
@@ -100,43 +100,81 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
                     action.payload.entityType === this._entityType
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER),
                 switchMap(action => this.load(action.payload.pagination, action.payload.queryCondition).pipe(
-                    map(data => this.loadSucceededAction(data)),
+                    map(data => this.succeededAction(EntityActionTypeEnum.LOAD, data)),
                     catchError(response =>
-                        of(this.loadFailedAction(response))
+                        of(this.failedAction(EntityActionTypeEnum.LOAD, response))
                     ),
-                    startWith(this.startedAction()))
+                    startWith(this.startedAction(EntityActionTypeEnum.LOAD)))
                 ));
     }
 
-    private createEpicOfInsert(): Epic<EntityAction, IAppState> {
-        return null;
+    private createEpicOfDML(): Epic<EntityAction, IAppState> {
+        return (action$, store) => action$
+            .ofType(EntityActionTypeEnum.INSERT, EntityActionTypeEnum.INSERT, EntityActionTypeEnum.INSERT).pipe(
+                filter(action =>
+                    action.payload.entityType === this._entityType
+                    && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER),
+                switchMap(action => {
+                    const id = Object.keys(action.payload.entities[getEntityKey(this._entityType)])[0];
+                    const biz = action.payload.entities[getEntityKey(this._entityType)][id];
+                    let ret: Observable<IEntities>;
+                    switch (action.type) {
+                        case EntityActionTypeEnum.INSERT: {
+                            ret = this.insert(id);
+                            break;
+                        }
+                        case EntityActionTypeEnum.DELETE: {
+                            ret = this.delete(id);
+                            break;
+                        }
+                        case EntityActionTypeEnum.UPDATE: {
+                            ret = this.update(id);
+                            break;
+                        }
+                    }
+                    return ret.pipe(
+                        map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
+                        catchError(response =>
+                            of(this.failedAction(<EntityActionTypeEnum>(action.type), response))
+                        ),
+                        startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
+                }));
     }
     //#endregion
 
-    //#region public methods
+    //#region protected methods
 
-    public loadEntities(pagination: IPagination = { page: this.DEFAULT_PAGE, limit: this.DEFAULT_LIMIT },
+    protected loadEntities(pagination: IPagination = { page: this.DEFAULT_PAGE, limit: this.DEFAULT_LIMIT },
         queryCondition: IQueryCondition = {}) {
         this.loadAction(pagination, queryCondition);
+    }
+
+    protected insertEntity(entity: T) {
+        this.insertAction(entity.id, entity);
+    }
+
+    protected updateEntity(entity: T) {
+        this.updateAction(entity.id, entity);
+    }
+
+    protected deleteEntity(entity: T) {
+        this.deleteAction(entity.id, entity);
     }
 
     //#endregion
 
     //#region private methods
     private load(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
-        return this._http.get(`${WEBAPI_HOST}${this._url}`).pipe(
+        return this._http.get(`${WEBAPI_HOST}/${this._url}`).pipe(
             map(records => {
                 return normalize(records, [this._entitySchema]).entities;
             })
         );
     }
 
-    private insert(idOrBiz: string | U): Observable<T> {
-        let created = idOrBiz;
-        if (typeof idOrBiz === 'string') {
-            const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
-            created = denormalize(idOrBiz, this._entitySchema, entities);
-        }
+    private insert(id: string): Observable<IEntities> {
+        const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+        const created = denormalize(id, this._entitySchema, entities);
 
         const formData: FormData = new FormData();
 
@@ -147,16 +185,16 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
         }
         this._uploader.clearQueue();
 
-        return this._http.post<T>(`${WEBAPI_HOST}/${this._url}`, formData);
+        return this._http.post<T>(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
+            map(records => {
+                return normalize(records, [this._entitySchema]).entities;
+            })
+        );
     }
 
-    private update(idOrBiz: string | U): Observable<T> {
-        let updated: any = idOrBiz;
-        if (typeof idOrBiz === 'string') {
-            const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
-            updated = denormalize(idOrBiz, this._entitySchema, entities);
-        }
-
+    private update(id: string): Observable<IEntities> {
+        const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
+        const updated = denormalize(id, this._entitySchema, entities);
         const formData: FormData = new FormData();
 
         formData.append(getEntityKey(this._entityType), JSON.stringify(updated));
@@ -165,11 +203,19 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
         }
         this._uploader.clearQueue();
 
-        return this._http.put<T>(`${WEBAPI_HOST}/${this._url}`, formData);
+        return this._http.put<T>(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
+            map(records => {
+                return normalize(records, [this._entitySchema]).entities;
+            })
+        );
     }
 
-    private delete(id: string): Observable<T> {
-        return this._http.delete<T>(`${WEBAPI_HOST}/${this._url}/${id}`);
+    private delete(id: string): Observable<IEntities> {
+        return this._http.delete<T>(`${WEBAPI_HOST}/${this._url}/${id}`).pipe(
+            map(records => {
+                return normalize(records, [this._entitySchema]).entities;
+            })
+        );
     }
     //#endregion
 }

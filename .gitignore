@@ -15,6 +15,7 @@ npm-debug.log*
 web-api/uploads
 web-admin/.vscode/chrome
 uploads/
+test-it/
 
 .idea/
 .sourcemaps/

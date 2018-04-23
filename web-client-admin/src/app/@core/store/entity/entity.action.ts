@@ -32,7 +32,6 @@ export interface IQueryCondition {
 export interface IEntityActionPayload extends IActionPayload {
     entities: IEntities;
     queryCondition: IQueryCondition;
-    objectId: string;
     pagination: IPagination;
     entityType: EntityTypeEnum;
     phaseType: EntityActionPhaseEnum;
@@ -51,8 +50,7 @@ const defaultEntityActionPayload: IEntityActionPayload = {
     phaseType: null,
     error: null,
     entities: null,
-    queryCondition: null,
-    objectId: ''
+    queryCondition: null
 };
 
 export function getEntityKey(typeEnum: EntityTypeEnum): string {
@@ -61,7 +59,7 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
             return STORE_ENTITIES_KEY.cities;
         }
         default:
-            return '';
+            throw new Error(`Unknown EntityType ${typeEnum}`);
     }
 }
 
@@ -108,7 +106,7 @@ export function entityActionSucceeded(entityType: EntityTypeEnum) {
 
 //#region Load Actions
 export function entityLoadAction(entityType: EntityTypeEnum) {
-    return (pagination: IPagination, queryCondition: IQueryCondition = {}): EntityAction => ({
+    return (pagination: IPagination, queryCondition: IQueryCondition): EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
         meta: Object.assign({}, defaultEntityActionMeta, {
             progressing: true,
