@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { FluxStandardAction } from 'flux-standard-action';
 
 import { IActionMetaInfo, IActionPayload } from '../store.action';
@@ -77,8 +78,9 @@ export function entityActionStarted(entityType: EntityTypeEnum) {
 }
 
 export function entityActionFailed(entityType: EntityTypeEnum) {
-    return (actionType: EntityActionTypeEnum, error: Error): EntityAction => ({
+    return (actionType: EntityActionTypeEnum, error: HttpErrorResponse): EntityAction => ({
         type: actionType,
+        error: true,
         meta: Object.assign({}, defaultEntityActionMeta, {
             progressing: false,
         }),
@@ -129,6 +131,7 @@ export function entityUpdateAction<T>(entityType: EntityTypeEnum) {
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
+            phaseType: EntityActionPhaseEnum.TRIGGER,
             entities: { [getEntityKey(entityType)]: { [id]: entity } }
         })
     });
@@ -142,6 +145,7 @@ export function entityInsertAction<T>(entityType: EntityTypeEnum) {
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
+            phaseType: EntityActionPhaseEnum.TRIGGER,
             entities: { [getEntityKey(entityType)]: { [id]: entity } }
         })
     });
@@ -155,6 +159,7 @@ export function entityDeleteAction<T>(entityType: EntityTypeEnum) {
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
+            phaseType: EntityActionPhaseEnum.TRIGGER,
             entities: { [getEntityKey(entityType)]: { [id]: entity } }
         })
     });

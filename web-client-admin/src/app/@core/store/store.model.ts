@@ -1,7 +1,8 @@
 import { IEntities, INIT_ENTITY_STATE } from './entity/entity.model';
 
 export enum STORE_KEY {
-    entities = 'entities'
+    entities = 'entities',
+    error = 'error'
 }
 
 export interface IAppState {
@@ -13,6 +14,7 @@ export interface IAppState {
 export interface IError {
     description: string;
     stack: string;
+    network: boolean;
 }
 
 export interface IProgress {
@@ -21,7 +23,7 @@ export interface IProgress {
 
 export const INIT_APP_STATE: IAppState = {
     entities: INIT_ENTITY_STATE,
-    error: { description: '', stack: '' },
+    error: null,
     progress: { progressing: false }
 };
 

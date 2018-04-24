@@ -1,11 +1,10 @@
 import { dispatch, NgRedux } from '@angular-redux/store';
-import { HttpClient } from '@angular/common/http';
-import { denormalize, normalize, schema } from 'normalizr';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, filter, map, startWith, switchMap } from 'rxjs/operators';
-import * as Immutable from 'seamless-immutable';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { WEBAPI_HOST } from '../../utils/constants';
@@ -101,34 +100,33 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER),
                 switchMap(action => this.load(action.payload.pagination, action.payload.queryCondition).pipe(
                     map(data => this.succeededAction(EntityActionTypeEnum.LOAD, data)),
-                    catchError(response =>
-                        of(this.failedAction(EntityActionTypeEnum.LOAD, response))
-                    ),
+                    catchError((errResponse: HttpErrorResponse) => {
+                        return of(this.failedAction(EntityActionTypeEnum.LOAD, errResponse));
+                    }),
                     startWith(this.startedAction(EntityActionTypeEnum.LOAD)))
                 ));
     }
 
     private createEpicOfDML(): Epic<EntityAction, IAppState> {
         return (action$, store) => action$
-            .ofType(EntityActionTypeEnum.INSERT, EntityActionTypeEnum.INSERT, EntityActionTypeEnum.INSERT).pipe(
+            .ofType(EntityActionTypeEnum.INSERT, EntityActionTypeEnum.DELETE, EntityActionTypeEnum.UPDATE).pipe(
                 filter(action =>
                     action.payload.entityType === this._entityType
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER),
                 switchMap(action => {
-                    const id = Object.keys(action.payload.entities[getEntityKey(this._entityType)])[0];
-                    const biz = action.payload.entities[getEntityKey(this._entityType)][id];
+                    const ent = <T>Object.values(action.payload.entities[getEntityKey(this._entityType)])[0];
                     let ret: Observable<IEntities>;
                     switch (action.type) {
                         case EntityActionTypeEnum.INSERT: {
-                            ret = this.insert(id);
+                            ret = this.insert(ent);
                             break;
                         }
                         case EntityActionTypeEnum.DELETE: {
-                            ret = this.delete(id);
+                            ret = this.delete(ent);
                             break;
                         }
                         case EntityActionTypeEnum.UPDATE: {
-                            ret = this.update(id);
+                            ret = this.update(ent);
                             break;
                         }
                     }
@@ -172,13 +170,10 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
         );
     }
 
-    private insert(id: string): Observable<IEntities> {
-        const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
-        const created = denormalize(id, this._entitySchema, entities);
-
+    private insert(ent: T): Observable<IEntities> {
         const formData: FormData = new FormData();
 
-        formData.append(getEntityKey(this._entityType), JSON.stringify(created));
+        formData.append(getEntityKey(this._entityType), JSON.stringify(ent));
 
         for (let i = 0; i < this._uploader.queue.length; i++) {
             formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
@@ -187,17 +182,15 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
 
         return this._http.post<T>(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, [this._entitySchema]).entities;
+                return normalize(records, this._entitySchema).entities;
             })
         );
     }
 
-    private update(id: string): Observable<IEntities> {
-        const entities = Immutable(this._store.getState().entities).asMutable({ deep: true });
-        const updated = denormalize(id, this._entitySchema, entities);
+    private update(ent: T): Observable<IEntities> {
         const formData: FormData = new FormData();
 
-        formData.append(getEntityKey(this._entityType), JSON.stringify(updated));
+        formData.append(getEntityKey(this._entityType), JSON.stringify(ent));
         for (let i = 0; i < this._uploader.queue.length; i++) {
             formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
         }
@@ -205,15 +198,15 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
 
         return this._http.put<T>(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, [this._entitySchema]).entities;
+                return normalize(records, this._entitySchema).entities;
             })
         );
     }
 
-    private delete(id: string): Observable<IEntities> {
-        return this._http.delete<T>(`${WEBAPI_HOST}/${this._url}/${id}`).pipe(
+    private delete(ent: T): Observable<IEntities> {
+        return this._http.delete<T>(`${WEBAPI_HOST}/${this._url}/${ent.id}`).pipe(
             map(records => {
-                return normalize(records, [this._entitySchema]).entities;
+                return normalize(records, this._entitySchema).entities;
             })
         );
     }

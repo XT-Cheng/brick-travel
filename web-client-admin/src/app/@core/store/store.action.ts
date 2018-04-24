@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { FluxStandardAction } from 'flux-standard-action';
 
 export interface IActionMetaInfo {
@@ -5,7 +6,7 @@ export interface IActionMetaInfo {
 }
 
 export interface IActionPayload {
-    error: Error;
+    error: HttpErrorResponse;
 }
 
 // Flux-standard-action gives us stronger typing of our actions.

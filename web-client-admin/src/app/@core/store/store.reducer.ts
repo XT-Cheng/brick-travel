@@ -23,14 +23,15 @@ export function progressReducer(state: IProgress = { progressing: false },
   return state;
 }
 
-export function errorReducer(state: IError = { description: null, stack: '' },
+export function errorReducer(state: IError = null,
   action: FluxStandardAction<IActionPayload, IActionMetaInfo>): IError {
   if (action.error && action.payload.error) {
     return {
-      description: action.payload.error.message || 'Something bad happened',
-      stack: action.payload.error.stack
+      network: (action.payload.error.error instanceof ErrorEvent),
+      description: (action.payload.error.error instanceof ErrorEvent) ? action.payload.error.error.message : action.payload.error.error,
+      stack: ''
     };
   }
 
-  return state;
+  return null;
 }

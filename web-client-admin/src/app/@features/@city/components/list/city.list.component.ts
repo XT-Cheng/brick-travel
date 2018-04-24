@@ -30,12 +30,12 @@ export class CityListComponent implements ComponentType, OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, public selector: SelectorService,
     private _searchService: SearchService, private modalService: NgbModal, private _cityService: CityService,
     private toasterService: ToasterService) {
-    this._cityService.load();
+    this._cityService.fetch();
     this._searchService.onSearchSubmit().pipe(takeUntil(this.destroyed$))
       .subscribe(value => {
         this._searchService.currentSearchKey = value.term;
         this._cityService.search(value.term);
-    });
+      });
   }
   //#endregion
 
