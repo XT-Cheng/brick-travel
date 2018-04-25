@@ -1,4 +1,4 @@
-import { ICity } from '../../entity/city/city.model';
+import { ICity } from '../../entity/model/city.model';
 import { IBiz } from '../biz.model';
 
 export interface ICityBiz extends IBiz {

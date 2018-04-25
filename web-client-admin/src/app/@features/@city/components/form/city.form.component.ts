@@ -6,9 +6,9 @@ import { ObjectID } from 'bson';
 import { FILE_UPLOADER } from '../../../../@core/fileUpload/fileUpload.module';
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
-import { ICityBiz } from '../../../../@core/store/bizModel/city.biz.model';
+import { ICityBiz } from '../../../../@core/store/bizModel/model/city.biz.model';
 import { CityService } from '../../../../@core/store/providers/city.service';
-import { ICity } from '../../../../@core/store/entity/city/city.model';
+import { ICity } from '../../../../@core/store/entity/model/city.model';
 import { EntityFormMode } from '../../../../page.component';
 
 @Component({

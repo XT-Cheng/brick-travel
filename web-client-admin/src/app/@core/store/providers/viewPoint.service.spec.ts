@@ -7,23 +7,107 @@ import { merge } from 'rxjs/operators';
 import { FileUploadModule } from '../../fileUpload/fileUpload.module';
 import { WEBAPI_HOST } from '../../utils/constants';
 import { StoreModule } from '../store.module';
-import { CityService } from './city.service';
 import { ErrorService } from './error.service';
+import { ViewPointService } from './viewPoint.service';
 
-const cityData = [
+const viewPointData = [
     {
-        adressCode: '341000',
-        name: '黄山2',
-        thumbnail: 'assets/img/alan.png',
-        id: '5a4b5756764fba2c80ef5ba1'
+        city: {
+            adressCode: '341000',
+            name: '黄山2',
+            thumbnail: 'assets/img/alan.png',
+            id: '5a4b5756764fba2c80ef5ba1'
+        },
+        updatedAt: '2017-12-31T16:41:34.724Z',
+        createdAt: '2017-12-31T16:37:36.733Z',
+        name: '老街',
+        category: {
+            id: '5acc62fe6c251979dd67f0c1',
+            name: '景点'
+        },
+        tags: [
+            '人文'
+        ],
+        description: '朱家角',
+        tips: '老大桥测试OK，完全好玩不过但是。',
+        timeNeeded: '1-2小时',
+        address: '黄山中路888号',
+        latitude: 29.8,
+        longtitude: 118.3,
+        rank: 4.5,
+        thumbnail: 'assets/img/IMG_4201.jpg',
+        comments: [
+            {
+                detail: '朱家角镇',
+                user: 'Xiaotian',
+                avatar: 'assets/img/IMG_4203.jpg',
+                rate: 3.5,
+                images: [
+                    'assets/img/IMG_4203.jpg',
+                    'assets/img/IMG_4204.jpg'
+                ],
+                publishedAt: new Date('2017-12-31T16:37:36.718Z'),
+                id: 'aaa912502350c4065c30f6ae'
+            }
+        ],
+        countOfComments: 11,
+        images: [
+            'assets/img/IMG_4203.jpg',
+            'assets/img/IMG_4204.jpg',
+            'assets/img/IMG_4203.jpg',
+            'assets/img/IMG_4204.jpg'
+        ],
+        id: '5a4912502350c4065c30f6ad'
     }
 ];
 
 const updateData = {
-    adressCode: '341000',
-    name: '黄山3',
-    thumbnail: 'assets/img/alan.png',
-    id: '5a4b5756764fba2c80ef5ba1'
+    city: {
+        adressCode: '341000',
+        name: '黄山2',
+        thumbnail: 'assets/img/alan.png',
+        id: '5a4b5756764fba2c80ef5ba1'
+    },
+    updatedAt: '2017-12-31T16:41:34.724Z',
+    createdAt: '2017-12-31T16:37:36.733Z',
+    name: '老街123',
+    category: {
+        id: '5acc62fe6c251979dd67f0c1',
+        name: '景点'
+    },
+    tags: [
+        '人文'
+    ],
+    description: '朱家角',
+    tips: '老大桥测试OK，完全好玩不过但是。',
+    timeNeeded: '1-2小时',
+    address: '黄山中路888号',
+    latitude: 29.8,
+    longtitude: 118.3,
+    rank: 4.5,
+    thumbnail: 'assets/img/IMG_4201.jpg',
+    comments: [
+        {
+            detail: '朱家角镇',
+            user: 'Xiaotian',
+            avatar: 'assets/img/IMG_4203.jpg',
+            rate: 3.5,
+            images: [
+                'assets/img/IMG_4203.jpg',
+                'assets/img/IMG_4204.jpg'
+            ],
+            publishedAt: new Date('2017-12-31T16:37:36.718Z'),
+            id: 'aaa912502350c4065c30f6ae'
+        }
+    ],
+    countOfComments: 11,
+    images: [
+        'assets/img/IMG_4203.jpg',
+        'assets/img/IMG_4204.jpg',
+        'assets/img/IMG_4203.jpg',
+        'assets/img/IMG_4204.jpg'
+    ],
+    id: '5a4912502350c4065c30f6ad'
 };
 
 const errorData = {
@@ -31,11 +115,11 @@ const errorData = {
     statusText: 'Not Found'
 };
 
-let service: CityService;
+let service: ViewPointService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
-describe('city test', () => {
+describe('viewPoint test', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [
@@ -46,7 +130,7 @@ describe('city test', () => {
             ]
         });
         httpTestingController = TestBed.get(HttpTestingController);
-        service = TestBed.get(CityService);
+        service = TestBed.get(ViewPointService);
         errorService = TestBed.get(ErrorService);
     });
 
@@ -57,26 +141,26 @@ describe('city test', () => {
 
     describe('fetch test', () => {
         it('#fetch - Success', () => {
-            const provided = service.cities$.pipe(
+            const provided = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
             const expected = cold('(ab)',
                 {
-                    a: cityData,
+                    a: viewPointData,
                     b: null
                 });
             service.fetch();
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
-            req.flush(cityData);
+            req.flush(viewPointData);
 
             expect(provided).toBeObservable(expected);
         });
 
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
-                merge(service.cities$)
+                merge(service.viewPoints$)
             );
 
             const expected = cold('(ba)',
@@ -90,7 +174,7 @@ describe('city test', () => {
                 });
             service.fetch();
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.flush('error happened', errorData);
 
@@ -99,7 +183,7 @@ describe('city test', () => {
 
         it('#fetch - Failed with network error', () => {
             const provided = errorService.error$.pipe(
-                merge(service.cities$)
+                merge(service.viewPoints$)
             );
 
             const expected = cold('(ba)',
@@ -114,7 +198,7 @@ describe('city test', () => {
 
             service.fetch();
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.error(new ErrorEvent('network error'));
 
@@ -124,25 +208,25 @@ describe('city test', () => {
 
         it('#fetch - Success after Failed', () => {
             const provided = errorService.error$.pipe(
-                merge(service.cities$)
+                merge(service.viewPoints$)
             );
             const expected = cold('(ab)',
                 {
                     a: null,
-                    b: cityData
+                    b: viewPointData
                 });
 
             service.fetch();
 
-            let req = httpTestingController.expectOne('http://localhost:3000/cities');
+            let req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.error(new ErrorEvent('network error'));
 
             service.fetch();
 
-            req = httpTestingController.expectOne('http://localhost:3000/cities');
+            req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
-            req.flush(cityData);
+            req.flush(viewPointData);
 
             expect(provided).toBeObservable(expected);
         });
@@ -150,27 +234,27 @@ describe('city test', () => {
 
     describe('add test', () => {
         it('#add - Success', () => {
-            const provided = service.cities$.pipe(
+            const provided = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
             const expected = cold('(ab)',
                 {
-                    a: cityData,
+                    a: viewPointData,
                     b: null
                 });
 
-            service.add(cityData[0]);
+            service.add(viewPointData[0]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
-            req.flush(cityData[0]);
+            req.flush(viewPointData[0]);
 
             expect(provided).toBeObservable(expected);
         });
 
         it('#add - Failed with backend error', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
@@ -184,9 +268,9 @@ describe('city test', () => {
                     }
                 });
 
-            service.add(cityData[0]);
+            service.add(viewPointData[0]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.flush('error happened', errorData);
 
@@ -194,7 +278,7 @@ describe('city test', () => {
         });
 
         it('#add - Failed with network error', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
@@ -208,9 +292,9 @@ describe('city test', () => {
                     }
                 });
 
-            service.add(cityData[0]);
+            service.add(viewPointData[0]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.error(new ErrorEvent('network error'));
 
@@ -218,27 +302,27 @@ describe('city test', () => {
         });
 
         it('#add - Success after Failed', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
             const expected = cold('(ab)',
                 {
-                    a: cityData,
+                    a: viewPointData,
                     b: null
                 });
 
-            service.add(cityData[0]);
+            service.add(viewPointData[0]);
 
-            let req = httpTestingController.expectOne('http://localhost:3000/cities');
+            let req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.error(new ErrorEvent('network error'));
 
-            service.add(cityData[0]);
+            service.add(viewPointData[0]);
 
-            req = httpTestingController.expectOne('http://localhost:3000/cities');
+            req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
-            req.flush(cityData[0]);
+            req.flush(viewPointData[0]);
 
             expect(provide).toBeObservable(expected);
         });
@@ -246,14 +330,14 @@ describe('city test', () => {
 
     describe('update test', () => {
         beforeEach(() => {
-            service.add(cityData[0]);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            service.add(viewPointData[0]);
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
-            req.flush(cityData[0]);
+            req.flush(viewPointData[0]);
         });
 
         it('#update - Success', () => {
-            const provided = service.cities$.pipe(
+            const provided = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
@@ -265,7 +349,7 @@ describe('city test', () => {
 
             service.change(updateData);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.flush(updateData);
 
@@ -273,13 +357,13 @@ describe('city test', () => {
         });
 
         it('#update - Failed with backend error', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
             const expected = cold('(ab)',
                 {
-                    a: cityData,
+                    a: viewPointData,
                     b: {
                         network: false,
                         description: 'error happened',
@@ -289,7 +373,7 @@ describe('city test', () => {
 
             service.change(updateData);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.flush('error happened', errorData);
 
@@ -297,13 +381,13 @@ describe('city test', () => {
         });
 
         it('#update - Failed with network error', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
             const expected = cold('(ab)',
                 {
-                    a: cityData,
+                    a: viewPointData,
                     b: {
                         network: true,
                         description: '',
@@ -313,7 +397,7 @@ describe('city test', () => {
 
             service.change(updateData);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.error(new ErrorEvent('network error'));
 
@@ -321,7 +405,7 @@ describe('city test', () => {
         });
 
         it('#update - Success after Failed', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
@@ -333,13 +417,13 @@ describe('city test', () => {
 
             service.change(updateData);
 
-            let req = httpTestingController.expectOne('http://localhost:3000/cities');
+            let req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.error(new ErrorEvent('network error'));
 
             service.change(updateData);
 
-            req = httpTestingController.expectOne('http://localhost:3000/cities');
+            req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
             req.flush(updateData);
 
@@ -349,14 +433,14 @@ describe('city test', () => {
 
     describe('delete test', () => {
         beforeEach(() => {
-            service.add(cityData[0]);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            service.add(viewPointData[0]);
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
 
-            req.flush(cityData[0]);
+            req.flush(viewPointData[0]);
         });
 
         it('#delete - Success', () => {
-            const provided = service.cities$.pipe(
+            const provided = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
@@ -368,7 +452,7 @@ describe('city test', () => {
 
             service.remove(updateData);
 
-            const req = httpTestingController.expectOne(`http://localhost:3000/cities/${updateData.id}`);
+            const req = httpTestingController.expectOne(`http://localhost:3000/viewPoints/${updateData.id}`);
 
             req.flush(updateData);
 
@@ -376,13 +460,13 @@ describe('city test', () => {
         });
 
         it('#delete - Failed with backend error', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
             const expected = cold('(ab)',
                 {
-                    a: cityData,
+                    a: viewPointData,
                     b: {
                         network: false,
                         description: 'error happened',
@@ -392,7 +476,7 @@ describe('city test', () => {
 
             service.remove(updateData);
 
-            const req = httpTestingController.expectOne(`http://localhost:3000/cities/${updateData.id}`);
+            const req = httpTestingController.expectOne(`http://localhost:3000/viewPoints/${updateData.id}`);
 
             req.flush('error happened', errorData);
 
@@ -400,13 +484,13 @@ describe('city test', () => {
         });
 
         it('#delete - Failed with network error', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
             const expected = cold('(ab)',
                 {
-                    a: cityData,
+                    a: viewPointData,
                     b: {
                         network: true,
                         description: '',
@@ -416,7 +500,7 @@ describe('city test', () => {
 
             service.remove(updateData);
 
-            const req = httpTestingController.expectOne(`http://localhost:3000/cities/${updateData.id}`);
+            const req = httpTestingController.expectOne(`http://localhost:3000/viewPoints/${updateData.id}`);
 
             req.error(new ErrorEvent('network error'));
 
@@ -424,7 +508,7 @@ describe('city test', () => {
         });
 
         it('#delete - Success after Failed', () => {
-            const provide = service.cities$.pipe(
+            const provide = service.viewPoints$.pipe(
                 merge(errorService.error$)
             );
 
@@ -436,13 +520,13 @@ describe('city test', () => {
 
             service.remove(updateData);
 
-            let req = httpTestingController.expectOne(`http://localhost:3000/cities/${updateData.id}`);
+            let req = httpTestingController.expectOne(`http://localhost:3000/viewPoints/${updateData.id}`);
 
             req.error(new ErrorEvent('network error'));
 
             service.remove(updateData);
 
-            req = httpTestingController.expectOne(`http://localhost:3000/cities/${updateData.id}`);
+            req = httpTestingController.expectOne(`http://localhost:3000/viewPoints/${updateData.id}`);
 
             req.flush(updateData);
 

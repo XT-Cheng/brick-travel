@@ -9,19 +9,19 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { ICityBiz, translateCityFromBiz } from '../bizModel/model/city.biz.model';
+import { IUserBiz, translateUserFromBiz } from '../bizModel/model/user.biz.model';
 import { STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { city } from '../entity/entity.schema';
-import { ICity } from '../entity/model/city.model';
+import { user } from '../entity/entity.schema';
+import { IUser } from '../entity/model/user.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { EntityTypeEnum } from '../store.module';
 import { EntityService } from './entity.service';
 
 @Injectable()
-export class CityService extends EntityService<ICity, ICityBiz> {
+export class UserService extends EntityService<IUser, IUserBiz> {
     //#region private member
 
-    private _citiesSelector$: BehaviorSubject<ICityBiz[]> = new BehaviorSubject([]);
+    private _usersSelector$: BehaviorSubject<IUserBiz[]> = new BehaviorSubject([]);
 
     //#endregion
 
@@ -29,17 +29,17 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.CITY, city, `cities`);
+        super(_http, _uploader, _store, EntityTypeEnum.USER, user, `users`);
 
-        this.getCities(this._store).subscribe((value) => {
-            this._citiesSelector$.next(value);
+        this.getUsers(this._store).subscribe((value) => {
+            this._usersSelector$.next(value);
         });
     }
     //#endregion
 
     //#region public methods
-    public get cities$(): Observable<ICityBiz[]> {
-        return this._citiesSelector$.asObservable();
+    public get users$(): Observable<IUserBiz[]> {
+        return this._usersSelector$.asObservable();
     }
 
     //#region CRUD methods
@@ -48,16 +48,16 @@ export class CityService extends EntityService<ICity, ICityBiz> {
         this.loadEntities();
     }
 
-    public add(c: ICityBiz) {
-        this.insertEntity(translateCityFromBiz(c));
+    public add(c: IUserBiz) {
+        this.insertEntity(translateUserFromBiz(c));
     }
 
-    public change(c: ICityBiz) {
-        this.updateEntity(translateCityFromBiz(c));
+    public change(c: IUserBiz) {
+        this.updateEntity(translateUserFromBiz(c));
     }
 
-    public remove(c: ICityBiz) {
-        this.deleteEntity(translateCityFromBiz(c));
+    public remove(c: IUserBiz) {
+        this.deleteEntity(translateUserFromBiz(c));
     }
 
     //#endregion
@@ -66,10 +66,10 @@ export class CityService extends EntityService<ICity, ICityBiz> {
 
     //#region Entities Selector
 
-    private getCities(store: NgRedux<IAppState>): Observable<ICityBiz[]> {
-        return store.select<{ [id: string]: ICity }>([STORE_KEY.entities, STORE_ENTITIES_KEY.cities]).pipe(
+    private getUsers(store: NgRedux<IAppState>): Observable<IUserBiz[]> {
+        return store.select<{ [id: string]: IUser }>([STORE_KEY.entities, STORE_ENTITIES_KEY.users]).pipe(
             map((data) => {
-                return denormalize(Object.keys(data), [city], Immutable(store.getState().entities).asMutable({ deep: true }));
+                return denormalize(Object.keys(data), [user], Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }

@@ -9,14 +9,14 @@ import { IAppState, IError, STORE_KEY } from '../store.model';
 export class ErrorService {
     //#region private member
 
-    private errorSelector$: BehaviorSubject<IError> = new BehaviorSubject(null);
+    private _errorSelector$: BehaviorSubject<IError> = new BehaviorSubject(null);
 
     //#endregion
 
     //#region Constructor
     constructor(protected _store: NgRedux<IAppState>) {
         this.getError(this._store).subscribe((value) => {
-            this.errorSelector$.next(value);
+            this._errorSelector$.next(value);
         });
     }
     //#endregion
@@ -24,7 +24,7 @@ export class ErrorService {
     //#region public methods
 
     public get error$(): Observable<IError> {
-        return this.errorSelector$.asObservable();
+        return this._errorSelector$.asObservable();
     }
 
     //#endregion

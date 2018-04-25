@@ -6,8 +6,8 @@ import { ObjectID } from 'bson';
 
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
-import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
-import { IViewPoint } from '../../../../@core/store/entity/viewPoint/viewPoint.model';
+import { IViewPointBiz } from '../../../../@core/store/bizModel/model/viewPoint.biz.model';
+import { IViewPoint } from '../../../../@core/store/entity/model/viewPoint.model';
 import { SelectorService } from '../../../../@core/store/providers/selector.service';
 import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
 import { WEBAPI_HOST } from '../../../../@core/utils/constants';

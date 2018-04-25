@@ -59,6 +59,12 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
         case EntityTypeEnum.CITY: {
             return STORE_ENTITIES_KEY.cities;
         }
+        case EntityTypeEnum.VIEWPOINT: {
+            return STORE_ENTITIES_KEY.viewPoints;
+        }
+        case EntityTypeEnum.USER: {
+            return STORE_ENTITIES_KEY.users;
+        }
         default:
             throw new Error(`Unknown EntityType ${typeEnum}`);
     }

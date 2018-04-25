@@ -1,4 +1,4 @@
-import { dispatch, NgRedux } from '@angular-redux/store';
+import { NgRedux } from '@angular-redux/store';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
@@ -56,27 +56,24 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
 
     //#region load actions
 
-    @dispatch()
     protected loadAction = entityLoadAction(this._entityType);
 
     //#endregion
 
     //#region update actions
 
-    @dispatch()
     private updateAction = entityUpdateAction<T>(this._entityType);
 
     //#endregion
 
     //#region insert actions
 
-    @dispatch()
     private insertAction = entityInsertAction<T>(this._entityType);
 
     //#endregion
 
     //#region delete actions
-    @dispatch()
+
     private deleteAction = entityDeleteAction<T>(this._entityType);
 
     //#endregion
@@ -144,19 +141,19 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> {
 
     protected loadEntities(pagination: IPagination = { page: this.DEFAULT_PAGE, limit: this.DEFAULT_LIMIT },
         queryCondition: IQueryCondition = {}) {
-        this.loadAction(pagination, queryCondition);
+        this._store.dispatch(this.loadAction(pagination, queryCondition));
     }
 
     protected insertEntity(entity: T) {
-        this.insertAction(entity.id, entity);
+        this._store.dispatch(this.insertAction(entity.id, entity));
     }
 
     protected updateEntity(entity: T) {
-        this.updateAction(entity.id, entity);
+        this._store.dispatch(this.updateAction(entity.id, entity));
     }
 
     protected deleteEntity(entity: T) {
-        this.deleteAction(entity.id, entity);
+        this._store.dispatch(this.deleteAction(entity.id, entity));
     }
 
     //#endregion
