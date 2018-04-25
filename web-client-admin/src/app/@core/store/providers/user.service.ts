@@ -10,11 +10,10 @@ import * as Immutable from 'seamless-immutable';
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IUserBiz, translateUserFromBiz } from '../bizModel/model/user.biz.model';
-import { STORE_ENTITIES_KEY } from '../entity/entity.model';
+import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { user } from '../entity/entity.schema';
 import { IUser } from '../entity/model/user.model';
 import { IAppState, STORE_KEY } from '../store.model';
-import { EntityTypeEnum } from '../store.module';
 import { EntityService } from './entity.service';
 
 @Injectable()
@@ -29,7 +28,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.USER, user, `users`);
+        super(_http, _uploader, _store, EntityTypeEnum.USER, [user], `users`);
 
         this.getUsers(this._store).subscribe((value) => {
             this._usersSelector$.next(value);

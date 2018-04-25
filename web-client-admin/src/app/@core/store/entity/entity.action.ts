@@ -2,8 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FluxStandardAction } from 'flux-standard-action';
 
 import { IActionMetaInfo, IActionPayload } from '../store.action';
-import { EntityTypeEnum } from '../store.module';
-import { IEntities, STORE_ENTITIES_KEY } from './entity.model';
+import { EntityTypeEnum, IEntities, STORE_ENTITIES_KEY } from './entity.model';
 
 export enum EntityActionPhaseEnum {
     TRIGGER = 'TRIGGER',
@@ -64,6 +63,9 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
         }
         case EntityTypeEnum.USER: {
             return STORE_ENTITIES_KEY.users;
+        }
+        case EntityTypeEnum.FILTERCATEGORY: {
+            return STORE_ENTITIES_KEY.filterCategories;
         }
         default:
             throw new Error(`Unknown EntityType ${typeEnum}`);

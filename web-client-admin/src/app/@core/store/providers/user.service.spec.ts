@@ -164,7 +164,7 @@ describe('user test', () => {
 
             const req = httpTestingController.expectOne('http://localhost:3000/users');
 
-            req.flush(userData[0]);
+            req.flush(userData);
 
             expect(provided).toBeObservable(expected);
         });
@@ -238,7 +238,7 @@ describe('user test', () => {
 
             req = httpTestingController.expectOne('http://localhost:3000/users');
 
-            req.flush(userData[0]);
+            req.flush(userData);
 
             expect(provide).toBeObservable(expected);
         });
@@ -249,7 +249,7 @@ describe('user test', () => {
             service.add(userData[0]);
             const req = httpTestingController.expectOne('http://localhost:3000/users');
 
-            req.flush(userData[0]);
+            req.flush(userData);
         });
 
         it('#update - Success', () => {
@@ -267,7 +267,7 @@ describe('user test', () => {
 
             const req = httpTestingController.expectOne('http://localhost:3000/users');
 
-            req.flush(updateData);
+            req.flush([updateData]);
 
             expect(provided).toBeObservable(expected);
         });
@@ -341,7 +341,7 @@ describe('user test', () => {
 
             req = httpTestingController.expectOne('http://localhost:3000/users');
 
-            req.flush(updateData);
+            req.flush([updateData]);
 
             expect(provide).toBeObservable(expected);
         });
@@ -352,7 +352,7 @@ describe('user test', () => {
             service.add(userData[0]);
             const req = httpTestingController.expectOne('http://localhost:3000/users');
 
-            req.flush(userData[0]);
+            req.flush(userData);
         });
 
         it('#delete - Success', () => {
@@ -370,7 +370,7 @@ describe('user test', () => {
 
             const req = httpTestingController.expectOne(`http://localhost:3000/users/${updateData.id}`);
 
-            req.flush(updateData);
+            req.flush([updateData]);
 
             expect(provided).toBeObservable(expected);
         });
@@ -444,7 +444,7 @@ describe('user test', () => {
 
             req = httpTestingController.expectOne(`http://localhost:3000/users/${updateData.id}`);
 
-            req.flush(updateData);
+            req.flush([updateData]);
 
             expect(provide).toBeObservable(expected);
         });

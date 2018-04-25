@@ -11,17 +11,13 @@ import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
 import { EntityEpics } from './entity/entity.epic';
 import { CityService } from './providers/city.service';
 import { ErrorService } from './providers/error.service';
+import { FilterCategoryService } from './providers/filterCategory.service';
+import { MasterDataService } from './providers/masterData.service';
 import { UserService } from './providers/user.service';
 import { ViewPointService } from './providers/viewPoint.service';
 import { RootEpics } from './store.epic';
 import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
-
-export enum EntityTypeEnum {
-    CITY = 'CITY',
-    VIEWPOINT = 'VIEWPOINT',
-    USER = 'USER'
-}
 
 const PROVIDERS = [
     ErrorService,
@@ -29,7 +25,9 @@ const PROVIDERS = [
     EntityEpics,
     CityService,
     ViewPointService,
-    UserService
+    UserService,
+    FilterCategoryService,
+    MasterDataService
 ];
 
 @NgModule({

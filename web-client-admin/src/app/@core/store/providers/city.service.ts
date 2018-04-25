@@ -10,11 +10,10 @@ import * as Immutable from 'seamless-immutable';
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { ICityBiz, translateCityFromBiz } from '../bizModel/model/city.biz.model';
-import { STORE_ENTITIES_KEY } from '../entity/entity.model';
+import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { city } from '../entity/entity.schema';
 import { ICity } from '../entity/model/city.model';
 import { IAppState, STORE_KEY } from '../store.model';
-import { EntityTypeEnum } from '../store.module';
 import { EntityService } from './entity.service';
 
 @Injectable()
@@ -29,7 +28,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.CITY, city, `cities`);
+        super(_http, _uploader, _store, EntityTypeEnum.CITY, [city], `cities`);
 
         this.getCities(this._store).subscribe((value) => {
             this._citiesSelector$.next(value);

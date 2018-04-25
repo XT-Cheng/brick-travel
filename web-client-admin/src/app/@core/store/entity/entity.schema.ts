@@ -15,3 +15,9 @@ export const viewPoint = new schema.Entity(STORE_ENTITIES_KEY.viewPoints, {
     city: city,
     category: viewPointCategory
 });
+
+export const filterCriteria = new schema.Entity(STORE_ENTITIES_KEY.filterCriteries);
+
+export const filterCategory = new schema.Entity(STORE_ENTITIES_KEY.filterCategories, {
+    criteries: [filterCriteria]
+});
