@@ -4,7 +4,7 @@ import { IBiz } from '../biz.model';
 export interface ICityBiz extends IBiz {
     name: string;
     thumbnail: string;
-    adressCode: string;
+    addressCode: string;
 }
 
 export function translateCityFromBiz(city: ICityBiz): ICity {
@@ -12,6 +12,6 @@ export function translateCityFromBiz(city: ICityBiz): ICity {
         id: city.id,
         name: city.name,
         thumbnail: city.thumbnail,
-        adressCode: city.adressCode
+        addressCode: city.addressCode
     };
 }

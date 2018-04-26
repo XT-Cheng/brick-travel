@@ -67,6 +67,15 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
         case EntityTypeEnum.FILTERCATEGORY: {
             return STORE_ENTITIES_KEY.filterCategories;
         }
+        case EntityTypeEnum.TRAVELAGENDA: {
+            return STORE_ENTITIES_KEY.travelAgendas;
+        }
+        case EntityTypeEnum.VIEWPOINTCATEGORY: {
+            return STORE_ENTITIES_KEY.viewPointCatgories;
+        }
+        case EntityTypeEnum.TRANSPORTATIONCATEGORY: {
+            return STORE_ENTITIES_KEY.transportationCatgories;
+        }
         default:
             throw new Error(`Unknown EntityType ${typeEnum}`);
     }

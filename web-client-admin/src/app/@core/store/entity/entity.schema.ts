@@ -21,3 +21,21 @@ export const filterCriteria = new schema.Entity(STORE_ENTITIES_KEY.filterCriteri
 export const filterCategory = new schema.Entity(STORE_ENTITIES_KEY.filterCategories, {
     criteries: [filterCriteria]
 });
+
+export const transportationCategory = new schema.Entity(STORE_ENTITIES_KEY.transportationCatgories);
+
+export const travelViewPoint = new schema.Entity(STORE_ENTITIES_KEY.travelViewPoints, {
+    viewPoint: viewPoint,
+    transportationToNext: transportationCategory
+});
+
+export const dailyTrip = new schema.Entity(STORE_ENTITIES_KEY.dailyTrips, {
+    travelViewPoints: [travelViewPoint]
+});
+
+export const travelAgenda = new schema.Entity(STORE_ENTITIES_KEY.travelAgendas, {
+    dailyTrips: [dailyTrip]
+});
+
+dailyTrip.define({ 'travelAgenda': travelAgenda });
+travelViewPoint.define({ 'dailyTrip': dailyTrip });

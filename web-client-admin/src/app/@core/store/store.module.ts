@@ -13,11 +13,14 @@ import { CityService } from './providers/city.service';
 import { ErrorService } from './providers/error.service';
 import { FilterCategoryService } from './providers/filterCategory.service';
 import { MasterDataService } from './providers/masterData.service';
+import { TravelAgendaService } from './providers/travelAgenda.service';
 import { UserService } from './providers/user.service';
 import { ViewPointService } from './providers/viewPoint.service';
 import { RootEpics } from './store.epic';
 import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
+import { ViewPointCategoryService } from './providers/viewPointCategory.service';
+import { TransportationCategoryService } from './providers/transportationCategory.service';
 
 const PROVIDERS = [
     ErrorService,
@@ -27,7 +30,10 @@ const PROVIDERS = [
     ViewPointService,
     UserService,
     FilterCategoryService,
-    MasterDataService
+    MasterDataService,
+    TravelAgendaService,
+    ViewPointCategoryService,
+    TransportationCategoryService
 ];
 
 @NgModule({

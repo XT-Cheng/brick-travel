@@ -1,4 +1,4 @@
-import { IViewPoint } from '../../entity/model/viewPoint.model';
+import { IViewPoint, IViewPointCategory } from '../../entity/model/viewPoint.model';
 import { IBiz } from '../biz.model';
 import { ICityBiz } from './city.biz.model';
 
@@ -51,5 +51,12 @@ export function translateViewPointFromBiz(viewPoint: IViewPointBiz): IViewPoint 
         images: viewPoint.images.map((image) => image),
         tags: viewPoint.images.map((tag) => tag),
         comments: viewPoint.comments.map((comment) => comment.id)
+    };
+}
+
+export function translateViewPointCategoryFromBiz(viewPoint: IViewPointCategoryBiz): IViewPointCategory {
+    return {
+        id: viewPoint.id,
+        name: viewPoint.name,
     };
 }

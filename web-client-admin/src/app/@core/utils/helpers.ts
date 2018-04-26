@@ -84,6 +84,18 @@ function cloneSpecificValue(val: any): any {
   }
 }
 
+export function cloneObject(obj): any {
+  const clone = {};
+  for (const i in obj) {
+    if (obj[i] != null && typeof (obj[i]) === 'object') {
+      clone[i] = cloneObject(obj[i]);
+    } else {
+      clone[i] = obj[i];
+    }
+  }
+  return clone;
+}
+
 /**
  * Recursive cloning array.
  */

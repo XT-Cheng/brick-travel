@@ -13,7 +13,7 @@ import { ViewPointService } from './viewPoint.service';
 const viewPointData = [
     {
         city: {
-            adressCode: '341000',
+            addressCode: '341000',
             name: '黄山2',
             thumbnail: 'assets/img/alan.png',
             id: '5a4b5756764fba2c80ef5ba1'
@@ -63,7 +63,7 @@ const viewPointData = [
 
 const updateData = {
     city: {
-        adressCode: '341000',
+        addressCode: '341000',
         name: '黄山2',
         thumbnail: 'assets/img/alan.png',
         id: '5a4b5756764fba2c80ef5ba1'

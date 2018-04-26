@@ -2,8 +2,9 @@ import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { transportationCategory } from '../../store.v0/entity/entity.schema';
 import { EntityTypeEnum } from '../entity/entity.model';
-import { viewPointCategory } from '../entity/entity.schema';
+import { city, viewPointCategory } from '../entity/entity.schema';
 import { IAppState } from '../store.model';
 import { FetchService } from './fetch.service';
 
@@ -17,7 +18,9 @@ export class MasterDataService extends FetchService {
     constructor(protected _http: HttpClient,
         protected _store: NgRedux<IAppState>) {
         super(_http, _store, EntityTypeEnum.MASTER_DATA, {
-            viewPointCategories: [viewPointCategory]
+            viewPointCategories: [viewPointCategory],
+            transportationCategories: [transportationCategory],
+            cities: [city]
         }, `masterData`);
     }
     //#endregion

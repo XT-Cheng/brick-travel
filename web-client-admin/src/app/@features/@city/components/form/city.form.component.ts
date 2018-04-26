@@ -7,8 +7,8 @@ import { FILE_UPLOADER } from '../../../../@core/fileUpload/fileUpload.module';
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
 import { ICityBiz } from '../../../../@core/store/bizModel/model/city.biz.model';
-import { CityService } from '../../../../@core/store/providers/city.service';
 import { ICity } from '../../../../@core/store/entity/model/city.model';
+import { CityService } from '../../../../@core/store/providers/city.service';
 import { EntityFormMode } from '../../../../page.component';
 
 @Component({
@@ -26,7 +26,7 @@ export class CityFormComponent {
 
   //#region Public member
 
-   hasBaseDropZoneOver = false;
+  hasBaseDropZoneOver = false;
 
   //#endregion
 
@@ -120,7 +120,7 @@ export class CityFormComponent {
 
   private isChanged(): boolean {
     return !(this._newCity.name === this._originalCity.name &&
-      this._newCity.adressCode === this._originalCity.adressCode &&
+      this._newCity.addressCode === this._originalCity.addressCode &&
       this._newCity.thumbnail === this._originalCity.thumbnail);
   }
 }

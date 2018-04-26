@@ -7,8 +7,10 @@ import { merge } from 'rxjs/operators';
 import { FileUploadModule } from '../../fileUpload/fileUpload.module';
 import { WEBAPI_HOST } from '../../utils/constants';
 import { StoreModule } from '../store.module';
+import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 import { MasterDataService } from './masterData.service';
+import { TravelAgendaService } from './travelAgenda.service';
 import { ViewPointService } from './viewPoint.service';
 
 const flushData = {
@@ -17,13 +19,43 @@ const flushData = {
             name: 'View',
             id: '5a4b5756764fba2c80ef5ba1'
         }
+    ],
+    transportationCategories: [
+        {
+            name: 'Bus',
+            id: '5a4b5756764cca2c80ef5ba1'
+        }
+    ],
+    cities: [
+        {
+            addressCode: '341000',
+            name: '黄山2',
+            thumbnail: 'assets/img/alan.png',
+            id: '5a4b5756764fba2c80ef5ba1'
+        }
     ]
 };
 
-const masterData = [
+const cityData = [
+    {
+        addressCode: '341000',
+        name: '黄山2',
+        thumbnail: 'assets/img/alan.png',
+        id: '5a4b5756764fba2c80ef5ba1'
+    }
+];
+
+const viewCategoryData = [
     {
         name: 'View',
         id: '5a4b5756764fba2c80ef5ba1'
+    }
+];
+
+const transportationCategoryData = [
+    {
+        name: 'Bus',
+        id: '5a4b5756764cca2c80ef5ba1'
     }
 ];
 
@@ -34,7 +66,9 @@ const errorData = {
 
 let service: MasterDataService;
 let viewPointService: ViewPointService;
+let travelAgendaService: TravelAgendaService;
 let errorService: ErrorService;
+let cityService: CityService;
 let httpTestingController: HttpTestingController;
 
 describe('masterData test', () => {
@@ -50,6 +84,8 @@ describe('masterData test', () => {
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(MasterDataService);
         viewPointService = TestBed.get(ViewPointService);
+        travelAgendaService = TestBed.get(TravelAgendaService);
+        cityService = TestBed.get(CityService);
         errorService = TestBed.get(ErrorService);
     });
 
@@ -61,12 +97,14 @@ describe('masterData test', () => {
     describe('fetch test', () => {
         it('#fetch - Success', () => {
             const provided = viewPointService.viewPointCategories$.pipe(
-                merge(errorService.error$)
+                merge(travelAgendaService.transportationCategories$, cityService.cities$, errorService.error$)
             );
-            const expected = cold('(ab)',
+            const expected = cold('(abcd)',
                 {
-                    a: masterData,
-                    b: null
+                    a: viewCategoryData,
+                    b: transportationCategoryData,
+                    c: cityData,
+                    d: null
                 });
             service.fetch();
 
@@ -125,13 +163,15 @@ describe('masterData test', () => {
         });
 
         it('#fetch - Success after Failed', () => {
-            const provided = errorService.error$.pipe(
-                merge(viewPointService.viewPointCategories$)
+            const provided = viewPointService.viewPointCategories$.pipe(
+                merge(travelAgendaService.transportationCategories$, cityService.cities$, errorService.error$)
             );
-            const expected = cold('(ab)',
+            const expected = cold('(abcd)',
                 {
-                    a: null,
-                    b: masterData
+                    a: viewCategoryData,
+                    b: transportationCategoryData,
+                    c: cityData,
+                    d: null
                 });
 
             service.fetch();
