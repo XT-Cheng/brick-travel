@@ -21,6 +21,7 @@ import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
 import { ViewPointCategoryService } from './providers/viewPointCategory.service';
 import { TransportationCategoryService } from './providers/transportationCategory.service';
+import { CityUIService } from './providers/city.ui.service';
 
 const PROVIDERS = [
     ErrorService,
@@ -33,7 +34,8 @@ const PROVIDERS = [
     MasterDataService,
     TravelAgendaService,
     ViewPointCategoryService,
-    TransportationCategoryService
+    TransportationCategoryService,
+    CityUIService
 ];
 
 @NgModule({
