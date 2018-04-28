@@ -51,8 +51,8 @@ const cityData = [
     }
 ];
 
-let prepare: CityService;
-let service: CityUIService;
+let citySrv: CityService;
+let cityUISrv: CityUIService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
@@ -67,18 +67,18 @@ describe('city test', () => {
             ]
         });
         httpTestingController = TestBed.get(HttpTestingController);
-        prepare = TestBed.get(CityService);
-        service = TestBed.get(CityUIService);
+        citySrv = TestBed.get(CityService);
+        cityUISrv = TestBed.get(CityUIService);
         errorService = TestBed.get(ErrorService);
 
-        prepare.add(cityData[0]);
+        citySrv.add(cityData[0]);
         const req = httpTestingController.expectOne('http://localhost:3000/cities');
         req.flush(cityData);
     });
 
     describe('city ui test', () => {
         it('#select - Success', () => {
-            const provided = service.selectedCity$.pipe(
+            const provided = citySrv.selected$.pipe(
                 merge(errorService.error$)
             );
             const expected = cold('(ab)',
@@ -86,13 +86,13 @@ describe('city test', () => {
                     a: cityData[0],
                     b: null
                 });
-            service.selectCity(cityData[0]);
-            expect(service.selectedCity).toEqual(cityData[0]);
+            cityUISrv.select(cityData[0]);
+            expect(citySrv.selected).toEqual(cityData[0]);
             expect(provided).toBeObservable(expected);
         });
 
         it('#select - not exist', () => {
-            const provided = service.selectedCity$.pipe(
+            const provided = citySrv.selected$.pipe(
                 merge(errorService.error$)
             );
             const expected = cold('(ab)',
@@ -100,13 +100,13 @@ describe('city test', () => {
                     a: null,
                     b: null
                 });
-            service.selectCity(noExist);
-            expect(service.selectedCity).toEqual(null);
+            cityUISrv.select(noExist);
+            expect(citySrv.selected).toEqual(null);
             expect(provided).toBeObservable(expected);
         });
 
         it('#search - Success', () => {
-            const provided = service.searchedCities$.pipe(
+            const provided = citySrv.searched$.pipe(
                 merge(errorService.error$)
             );
             const expected = cold('(ab)',
@@ -114,13 +114,13 @@ describe('city test', () => {
                     a: [cityData[4]],
                     b: null
                 });
-            service.searchCity('Search');
-            expect(service.searchKey).toEqual('Search');
+            cityUISrv.search('Search');
+            expect(cityUISrv.searchKey).toEqual('Search');
             expect(provided).toBeObservable(expected);
         });
 
         it('#search - no exist', () => {
-            const provided = service.searchedCities$.pipe(
+            const provided = citySrv.searched$.pipe(
                 merge(errorService.error$)
             );
             const expected = cold('(ab)',
@@ -128,8 +128,8 @@ describe('city test', () => {
                     a: [],
                     b: null
                 });
-            service.searchCity('noExist');
-            expect(service.searchKey).toEqual('noExist');
+            cityUISrv.search('noExist');
+            expect(cityUISrv.searchKey).toEqual('noExist');
             expect(provided).toBeObservable(expected);
         });
     });

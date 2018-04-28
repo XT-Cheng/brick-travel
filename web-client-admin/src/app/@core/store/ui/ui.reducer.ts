@@ -1,9 +1,10 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-seamless-immutable';
 
 import { cityReducer } from './reducer/city.reducer';
-import { IUIState } from './ui.model';
+import { viewPointReducer } from './reducer/viewPoint.reducer';
 
 export const uiReducer =
-    combineReducers<IUIState>({
-        city: cityReducer
+    combineReducers({
+        city: cityReducer,
+        viewPoint: viewPointReducer
     });

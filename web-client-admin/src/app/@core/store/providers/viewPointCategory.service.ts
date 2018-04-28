@@ -20,7 +20,7 @@ import { EntityService } from './entity.service';
 export class ViewPointCategoryService extends EntityService<IViewPointCategory, IViewPointCategoryBiz> {
     //#region private member
 
-    private _viewCategoriesSelector$: BehaviorSubject<IViewPointCategoryBiz[]> = new BehaviorSubject([]);
+    private _all$: BehaviorSubject<IViewPointCategoryBiz[]> = new BehaviorSubject([]);
 
     //#endregion
 
@@ -30,15 +30,15 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
         protected _store: NgRedux<IAppState>) {
         super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINTCATEGORY, [viewPointCategory], `viewPointCategories`);
 
-        this.getViewPointCategories(this._store).subscribe((value) => {
-            this._viewCategoriesSelector$.next(value);
+        this.getAll(this._store).subscribe((value) => {
+            this._all$.next(value);
         });
     }
     //#endregion
 
     //#region public methods
-    public get viewPointCategories$(): Observable<IViewPointCategoryBiz[]> {
-        return this._viewCategoriesSelector$.asObservable();
+    public get all$(): Observable<IViewPointCategoryBiz[]> {
+        return this._all$.asObservable();
     }
 
     //#region CRUD methods
@@ -65,7 +65,7 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
 
     //#region Entities Selector
 
-    private getViewPointCategories(store: NgRedux<IAppState>): Observable<IViewPointCategoryBiz[]> {
+    private getAll(store: NgRedux<IAppState>): Observable<IViewPointCategoryBiz[]> {
         return store.select<{ [id: string]: IViewPointCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPointCatgories]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [viewPointCategory], Immutable(store.getState().entities).asMutable({ deep: true }));

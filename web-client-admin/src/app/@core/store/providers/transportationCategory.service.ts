@@ -23,7 +23,7 @@ import { EntityService } from './entity.service';
 export class TransportationCategoryService extends EntityService<ITransportationCategory, ITransportationCategoryBiz> {
     //#region private member
 
-    private _transportationCategoriesSelector$: BehaviorSubject<ITransportationCategoryBiz[]> = new BehaviorSubject([]);
+    private _all$: BehaviorSubject<ITransportationCategoryBiz[]> = new BehaviorSubject([]);
 
     //#endregion
 
@@ -33,15 +33,15 @@ export class TransportationCategoryService extends EntityService<ITransportation
         protected _store: NgRedux<IAppState>) {
         super(_http, _uploader, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, [transportationCategory], `transportationCategories`);
 
-        this.getTransportationCategories(this._store).subscribe((value) => {
-            this._transportationCategoriesSelector$.next(value);
+        this.getAll(this._store).subscribe((value) => {
+            this._all$.next(value);
         });
     }
     //#endregion
 
     //#region public methods
-    public get transportationCategories$(): Observable<ITransportationCategoryBiz[]> {
-        return this._transportationCategoriesSelector$.asObservable();
+    public get all$(): Observable<ITransportationCategoryBiz[]> {
+        return this._all$.asObservable();
     }
 
     //#region CRUD methods
@@ -68,7 +68,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
 
     //#region Entities Selector
 
-    private getTransportationCategories(store: NgRedux<IAppState>): Observable<ITransportationCategoryBiz[]> {
+    private getAll(store: NgRedux<IAppState>): Observable<ITransportationCategoryBiz[]> {
         return store.select<{ [id: string]: ITransportationCategory }>(
             [STORE_KEY.entities, STORE_ENTITIES_KEY.transportationCatgories]).pipe(
                 map((data) => {

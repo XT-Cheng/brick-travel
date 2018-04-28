@@ -10,18 +10,19 @@ import * as Immutable from 'seamless-immutable';
 import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
 import { EntityEpics } from './entity/entity.epic';
 import { CityService } from './providers/city.service';
+import { CityUIService } from './providers/city.ui.service';
 import { ErrorService } from './providers/error.service';
 import { FilterCategoryService } from './providers/filterCategory.service';
 import { MasterDataService } from './providers/masterData.service';
+import { TransportationCategoryService } from './providers/transportationCategory.service';
 import { TravelAgendaService } from './providers/travelAgenda.service';
 import { UserService } from './providers/user.service';
 import { ViewPointService } from './providers/viewPoint.service';
+import { ViewPointUIService } from './providers/viewPoint.ui.service';
+import { ViewPointCategoryService } from './providers/viewPointCategory.service';
 import { RootEpics } from './store.epic';
 import { IAppState, INIT_APP_STATE } from './store.model';
 import { rootReducer } from './store.reducer';
-import { ViewPointCategoryService } from './providers/viewPointCategory.service';
-import { TransportationCategoryService } from './providers/transportationCategory.service';
-import { CityUIService } from './providers/city.ui.service';
 
 const PROVIDERS = [
     ErrorService,
@@ -35,7 +36,8 @@ const PROVIDERS = [
     TravelAgendaService,
     ViewPointCategoryService,
     TransportationCategoryService,
-    CityUIService
+    CityUIService,
+    ViewPointUIService
 ];
 
 @NgModule({

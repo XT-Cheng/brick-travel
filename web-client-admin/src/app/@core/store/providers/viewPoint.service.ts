@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
+import { combineLatest, map, switchMap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
@@ -14,42 +14,71 @@ import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { viewPoint, viewPointCategory } from '../entity/entity.schema';
 import { IViewPoint, IViewPointCategory } from '../entity/model/viewPoint.model';
 import { IAppState, STORE_KEY } from '../store.model';
+import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
 import { EntityService } from './entity.service';
+import { ViewPointUIService } from './viewPoint.ui.service';
 
 @Injectable()
 export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     //#region private member
 
-    private _viewPointSelector$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
-    private _viewPointCategoriesSelector$: BehaviorSubject<IViewPointCategoryBiz[]> = new BehaviorSubject([]);
+    private _all$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
+    private _categories$: BehaviorSubject<IViewPointCategoryBiz[]> = new BehaviorSubject([]);
+
+    private _selected: IViewPointBiz;
+    private _selected$: BehaviorSubject<IViewPointBiz> = new BehaviorSubject(null);
+
+    private _searched: IViewPointBiz[];
+    private _searched$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject(null);
 
     //#endregion
 
     //#region Constructor
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
-        protected _store: NgRedux<IAppState>) {
+        protected _store: NgRedux<IAppState>, private _viewPointUISrv: ViewPointUIService) {
         super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINT, [viewPoint], `viewPoints`);
 
-        this.getViewPoints(this._store).subscribe((value) => {
-            this._viewPointSelector$.next(value);
+        this.getSelected(this._store).subscribe((value) => {
+            this._selected = value;
+            this._selected$.next(value);
         });
 
-        this.getViewPointCategories(this._store).subscribe((value) => {
-            this._viewPointCategoriesSelector$.next(value);
+        this.getSearched(this._store).subscribe((value) => {
+            this._searched$.next(value);
+        });
+
+        this.getAll(this._store).subscribe((value) => {
+            this._all$.next(value);
+        });
+
+        this.getCategories(this._store).subscribe((value) => {
+            this._categories$.next(value);
         });
     }
     //#endregion
 
     //#region public methods
-
-    public get viewPoints$(): Observable<IViewPointBiz[]> {
-        return this._viewPointSelector$.asObservable();
+    public get selected$(): Observable<IViewPointBiz> {
+        return this._selected$.asObservable();
     }
 
-    public get viewPointCategories$(): Observable<IViewPointCategoryBiz[]> {
-        return this._viewPointCategoriesSelector$.asObservable();
+    public get selected(): IViewPointBiz {
+        return this._selected;
     }
+
+    public get searched$(): Observable<IViewPointBiz[]> {
+        return this._searched$.asObservable();
+    }
+
+    public get all$(): Observable<IViewPointBiz[]> {
+        return this._all$.asObservable();
+    }
+
+    public get categories$(): Observable<IViewPointCategoryBiz[]> {
+        return this._categories$.asObservable();
+    }
+
     //#region CRUD methods
 
     public fetch() {
@@ -74,7 +103,37 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
 
     //#region Entities Selector
 
-    private getViewPoints(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
+    private getSelectedId(store: NgRedux<IAppState>): Observable<string> {
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_COMMON_KEY.selectedId]);
+    }
+
+    private getSelected(store: NgRedux<IAppState>): Observable<IViewPointBiz> {
+        return this.getSelectedId(store).pipe(
+            switchMap(id => {
+                return store.select<IViewPoint>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints, id]);
+            }),
+            map(ct => {
+                return ct ? denormalize(ct.id, viewPoint, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            })
+        );
+    }
+
+    private getSearched(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
+        return this.all$.pipe(
+            combineLatest(this._viewPointUISrv.searchKey$, (viewPoints, searchKey) => {
+                return viewPoints.filter(v => {
+                    let matchSearchKey = true;
+                    if (searchKey !== '') {
+                        matchSearchKey = v.name.indexOf(searchKey) !== -1;
+                    }
+
+                    return matchSearchKey;
+                });
+            })
+        );
+    }
+
+    private getAll(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
         return store.select<{ [id: string]: IViewPoint }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [viewPoint], Immutable(store.getState().entities).asMutable({ deep: true }));
@@ -82,7 +141,7 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
         );
     }
 
-    private getViewPointCategories(store: NgRedux<IAppState>): Observable<IViewPointCategoryBiz[]> {
+    private getCategories(store: NgRedux<IAppState>): Observable<IViewPointCategoryBiz[]> {
         return store.select<{ [id: string]: IViewPointCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPointCatgories]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [viewPointCategory], Immutable(store.getState().entities).asMutable({ deep: true }));

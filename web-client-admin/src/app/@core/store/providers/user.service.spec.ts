@@ -57,7 +57,7 @@ describe('user test', () => {
 
     describe('fetch test', () => {
         it('#fetch - Success', () => {
-            const provided = service.users$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
             const expected = cold('(ab)',
@@ -76,7 +76,7 @@ describe('user test', () => {
 
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
-                merge(service.users$)
+                merge(service.all$)
             );
 
             const expected = cold('(ba)',
@@ -99,7 +99,7 @@ describe('user test', () => {
 
         it('#fetch - Failed with network error', () => {
             const provided = errorService.error$.pipe(
-                merge(service.users$)
+                merge(service.all$)
             );
 
             const expected = cold('(ba)',
@@ -124,7 +124,7 @@ describe('user test', () => {
 
         it('#fetch - Success after Failed', () => {
             const provided = errorService.error$.pipe(
-                merge(service.users$)
+                merge(service.all$)
             );
             const expected = cold('(ab)',
                 {
@@ -150,7 +150,7 @@ describe('user test', () => {
 
     describe('add test', () => {
         it('#add - Success', () => {
-            const provided = service.users$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -170,7 +170,7 @@ describe('user test', () => {
         });
 
         it('#add - Failed with backend error', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -194,7 +194,7 @@ describe('user test', () => {
         });
 
         it('#add - Failed with network error', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -218,7 +218,7 @@ describe('user test', () => {
         });
 
         it('#add - Success after Failed', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -253,7 +253,7 @@ describe('user test', () => {
         });
 
         it('#update - Success', () => {
-            const provided = service.users$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -273,7 +273,7 @@ describe('user test', () => {
         });
 
         it('#update - Failed with backend error', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -297,7 +297,7 @@ describe('user test', () => {
         });
 
         it('#update - Failed with network error', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -321,7 +321,7 @@ describe('user test', () => {
         });
 
         it('#update - Success after Failed', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -356,7 +356,7 @@ describe('user test', () => {
         });
 
         it('#delete - Success', () => {
-            const provided = service.users$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -376,7 +376,7 @@ describe('user test', () => {
         });
 
         it('#delete - Failed with backend error', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -400,7 +400,7 @@ describe('user test', () => {
         });
 
         it('#delete - Failed with network error', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -424,7 +424,7 @@ describe('user test', () => {
         });
 
         it('#delete - Success after Failed', () => {
-            const provide = service.users$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 

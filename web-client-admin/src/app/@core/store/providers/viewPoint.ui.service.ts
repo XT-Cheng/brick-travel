@@ -3,21 +3,21 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
-import { ICityBiz } from '../bizModel/model/city.biz.model';
+import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { EntityTypeEnum } from '../entity/entity.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { entitySearchAction, entitySelectAction } from '../ui/ui.action';
 import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
 
 @Injectable()
-export class CityUIService {
+export class ViewPointUIService {
     //#region Private members
 
     private _searchKey: string;
     private _searchKey$: BehaviorSubject<string> = new BehaviorSubject(null);
 
-    private _searchAction = entitySearchAction(EntityTypeEnum.CITY);
-    private _selectAction = entitySelectAction(EntityTypeEnum.CITY);
+    private _searchAction = entitySearchAction(EntityTypeEnum.VIEWPOINT);
+    private _selectAction = entitySelectAction(EntityTypeEnum.VIEWPOINT);
 
     //#region Constructor
 
@@ -38,7 +38,6 @@ export class CityUIService {
     public get searchKey$(): Observable<string> {
         return this._searchKey$.asObservable();
     }
-
     //#endregion
 
     //#region Public methods
@@ -47,7 +46,7 @@ export class CityUIService {
         this._store.dispatch(this._searchAction(searchKey));
     }
 
-    public select(c: ICityBiz) {
+    public select(c: IViewPointBiz) {
         this._store.dispatch(this._selectAction(c.id));
     }
 
@@ -56,7 +55,7 @@ export class CityUIService {
     //#region Private methods
 
     private getSearchKey(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.city, STORE_UI_COMMON_KEY.searchKey]);
+        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.viewPoint, STORE_UI_COMMON_KEY.searchKey]);
     }
 
     //#endregion

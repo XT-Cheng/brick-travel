@@ -10,7 +10,7 @@ import { StoreModule } from '../store.module';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 import { MasterDataService } from './masterData.service';
-import { TravelAgendaService } from './travelAgenda.service';
+import { TransportationCategoryService } from './transportationCategory.service';
 import { ViewPointService } from './viewPoint.service';
 
 const flushData = {
@@ -66,7 +66,7 @@ const errorData = {
 
 let service: MasterDataService;
 let viewPointService: ViewPointService;
-let travelAgendaService: TravelAgendaService;
+let transportationCategoryService: TransportationCategoryService;
 let errorService: ErrorService;
 let cityService: CityService;
 let httpTestingController: HttpTestingController;
@@ -84,7 +84,7 @@ describe('masterData test', () => {
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(MasterDataService);
         viewPointService = TestBed.get(ViewPointService);
-        travelAgendaService = TestBed.get(TravelAgendaService);
+        transportationCategoryService = TestBed.get(TransportationCategoryService);
         cityService = TestBed.get(CityService);
         errorService = TestBed.get(ErrorService);
     });
@@ -96,8 +96,8 @@ describe('masterData test', () => {
 
     describe('fetch test', () => {
         it('#fetch - Success', () => {
-            const provided = viewPointService.viewPointCategories$.pipe(
-                merge(travelAgendaService.transportationCategories$, cityService.cities$, errorService.error$)
+            const provided = viewPointService.categories$.pipe(
+                merge(transportationCategoryService.all$, cityService.all$, errorService.error$)
             );
             const expected = cold('(abcd)',
                 {
@@ -117,7 +117,7 @@ describe('masterData test', () => {
 
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
-                merge(viewPointService.viewPointCategories$)
+                merge(viewPointService.categories$)
             );
 
             const expected = cold('(ba)',
@@ -140,7 +140,7 @@ describe('masterData test', () => {
 
         it('#fetch - Failed with network error', () => {
             const provided = errorService.error$.pipe(
-                merge(viewPointService.viewPointCategories$)
+                merge(viewPointService.categories$)
             );
 
             const expected = cold('(ba)',
@@ -163,8 +163,8 @@ describe('masterData test', () => {
         });
 
         it('#fetch - Success after Failed', () => {
-            const provided = viewPointService.viewPointCategories$.pipe(
-                merge(travelAgendaService.transportationCategories$, cityService.cities$, errorService.error$)
+            const provided = viewPointService.categories$.pipe(
+                merge(transportationCategoryService.all$, cityService.all$, errorService.error$)
             );
             const expected = cold('(abcd)',
                 {

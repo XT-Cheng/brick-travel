@@ -20,7 +20,7 @@ import { EntityService } from './entity.service';
 export class FilterCategoryService extends EntityService<IFilterCategory, IFilterCategoryBiz> {
     //#region private member
 
-    private _filterCategoriesSelector$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
+    private _all$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
 
     //#endregion
 
@@ -30,15 +30,15 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
         protected _store: NgRedux<IAppState>) {
         super(_http, _uploader, _store, EntityTypeEnum.FILTERCATEGORY, [filterCategory], `filterCategories`);
 
-        this.getFilterCategories(this._store).subscribe((value) => {
-            this._filterCategoriesSelector$.next(value);
+        this.getAll(this._store).subscribe((value) => {
+            this._all$.next(value);
         });
     }
     //#endregion
 
     //#region public methods
-    public get filterCategories$(): Observable<IFilterCategoryBiz[]> {
-        return this._filterCategoriesSelector$.asObservable();
+    public get all$(): Observable<IFilterCategoryBiz[]> {
+        return this._all$.asObservable();
     }
 
     //#region CRUD methods
@@ -65,7 +65,7 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
 
     //#region Entities Selector
 
-    private getFilterCategories(store: NgRedux<IAppState>): Observable<IFilterCategoryBiz[]> {
+    private getAll(store: NgRedux<IAppState>): Observable<IFilterCategoryBiz[]> {
         return store.select<{ [id: string]: IFilterCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.filterCategories]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [filterCategory], Immutable(store.getState().entities).asMutable({ deep: true }));

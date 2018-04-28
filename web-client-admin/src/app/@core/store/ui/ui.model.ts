@@ -1,7 +1,9 @@
 import { ICityUI, INIT_UI_CITY_STATE } from './model/city.model';
+import { INIT_UI_VIEWPOINT_STATE, IViewPointUI } from './model/viewPoint.model';
 
 export enum STORE_UI_KEY {
   city = 'city',
+  viewPoint = 'viewPoint'
 }
 
 export enum STORE_UI_COMMON_KEY {
@@ -9,11 +11,12 @@ export enum STORE_UI_COMMON_KEY {
   searchKey = 'searchKey'
 }
 
-
-export const INIT_UI_STATE = {
+export const INIT_UI_STATE: IUIState = {
   city: INIT_UI_CITY_STATE,
+  viewPoint: INIT_UI_VIEWPOINT_STATE
 };
 
 export interface IUIState {
   city: ICityUI;
+  viewPoint: IViewPointUI;
 }

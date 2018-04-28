@@ -20,7 +20,7 @@ import { EntityService } from './entity.service';
 export class UserService extends EntityService<IUser, IUserBiz> {
     //#region private member
 
-    private _usersSelector$: BehaviorSubject<IUserBiz[]> = new BehaviorSubject([]);
+    private _all$: BehaviorSubject<IUserBiz[]> = new BehaviorSubject([]);
 
     //#endregion
 
@@ -30,15 +30,15 @@ export class UserService extends EntityService<IUser, IUserBiz> {
         protected _store: NgRedux<IAppState>) {
         super(_http, _uploader, _store, EntityTypeEnum.USER, [user], `users`);
 
-        this.getUsers(this._store).subscribe((value) => {
-            this._usersSelector$.next(value);
+        this.getAll(this._store).subscribe((value) => {
+            this._all$.next(value);
         });
     }
     //#endregion
 
     //#region public methods
-    public get users$(): Observable<IUserBiz[]> {
-        return this._usersSelector$.asObservable();
+    public get all$(): Observable<IUserBiz[]> {
+        return this._all$.asObservable();
     }
 
     //#region CRUD methods
@@ -65,7 +65,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
 
     //#region Entities Selector
 
-    private getUsers(store: NgRedux<IAppState>): Observable<IUserBiz[]> {
+    private getAll(store: NgRedux<IAppState>): Observable<IUserBiz[]> {
         return store.select<{ [id: string]: IUser }>([STORE_KEY.entities, STORE_ENTITIES_KEY.users]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [user], Immutable(store.getState().entities).asMutable({ deep: true }));

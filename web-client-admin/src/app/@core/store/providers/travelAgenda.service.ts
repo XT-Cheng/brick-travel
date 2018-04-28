@@ -9,13 +9,9 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import {
-    ITransportationCategoryBiz,
-    ITravelAgendaBiz,
-    translateTravelAgendaFromBiz,
-} from '../bizModel/model/travelAgenda.biz.model';
+import { ITravelAgendaBiz, translateTravelAgendaFromBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { transportationCategory, travelAgenda } from '../entity/entity.schema';
+import { travelAgenda } from '../entity/entity.schema';
 import { ITravelAgenda } from '../entity/model/travelAgenda.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { EntityService } from './entity.service';
@@ -24,8 +20,7 @@ import { EntityService } from './entity.service';
 export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAgendaBiz> {
     //#region private member
 
-    private _travelAgendaSelector$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
-    private _transportationCategorySelector$: BehaviorSubject<ITransportationCategoryBiz[]> = new BehaviorSubject([]);
+    private _all$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
 
     //#endregion
 
@@ -35,24 +30,17 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
         protected _store: NgRedux<IAppState>) {
         super(_http, _uploader, _store, EntityTypeEnum.TRAVELAGENDA, [travelAgenda], `travelAgendas`);
 
-        this.getTravelAgendas(this._store).subscribe((value) => {
-            this._travelAgendaSelector$.next(value);
-        });
-
-        this.getTransportationCategories(this._store).subscribe((value) => {
-            this._transportationCategorySelector$.next(value);
+        this.getAll(this._store).subscribe((value) => {
+            this._all$.next(value);
         });
     }
     //#endregion
 
     //#region public methods
-    public get travelAgendas$(): Observable<ITravelAgendaBiz[]> {
-        return this._travelAgendaSelector$.asObservable();
+    public get all$(): Observable<ITravelAgendaBiz[]> {
+        return this._all$.asObservable();
     }
 
-    public get transportationCategories$(): Observable<ITransportationCategoryBiz[]> {
-        return this._transportationCategorySelector$.asObservable();
-    }
     //#region CRUD methods
 
     public fetch() {
@@ -77,7 +65,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
     //#region Entities Selector
 
-    private getTravelAgendas(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz[]> {
+    private getAll(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz[]> {
         return store.select<{ [id: string]: ITravelAgenda }>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [travelAgenda], Immutable(store.getState().entities).asMutable({ deep: true }));
@@ -85,14 +73,5 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
         );
     }
 
-    private getTransportationCategories(store: NgRedux<IAppState>): Observable<ITransportationCategoryBiz[]> {
-        return store.select<{ [id: string]: ITransportationCategoryBiz }>([STORE_KEY.entities, STORE_ENTITIES_KEY.transportationCatgories])
-            .pipe(
-                map((data) => {
-                    return denormalize(Object.keys(data), [transportationCategory],
-                        Immutable(store.getState().entities).asMutable({ deep: true }));
-                })
-            );
-    }
     //#endregion
 }

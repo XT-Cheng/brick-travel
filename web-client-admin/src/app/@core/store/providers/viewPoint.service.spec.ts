@@ -141,7 +141,7 @@ describe('viewPoint test', () => {
 
     describe('fetch test', () => {
         it('#fetch - Success', () => {
-            const provided = service.viewPoints$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
             const expected = cold('(ab)',
@@ -160,7 +160,7 @@ describe('viewPoint test', () => {
 
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
-                merge(service.viewPoints$)
+                merge(service.all$)
             );
 
             const expected = cold('(ba)',
@@ -183,7 +183,7 @@ describe('viewPoint test', () => {
 
         it('#fetch - Failed with network error', () => {
             const provided = errorService.error$.pipe(
-                merge(service.viewPoints$)
+                merge(service.all$)
             );
 
             const expected = cold('(ba)',
@@ -208,7 +208,7 @@ describe('viewPoint test', () => {
 
         it('#fetch - Success after Failed', () => {
             const provided = errorService.error$.pipe(
-                merge(service.viewPoints$)
+                merge(service.all$)
             );
             const expected = cold('(ab)',
                 {
@@ -234,7 +234,7 @@ describe('viewPoint test', () => {
 
     describe('add test', () => {
         it('#add - Success', () => {
-            const provided = service.viewPoints$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -254,7 +254,7 @@ describe('viewPoint test', () => {
         });
 
         it('#add - Failed with backend error', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -278,7 +278,7 @@ describe('viewPoint test', () => {
         });
 
         it('#add - Failed with network error', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -302,7 +302,7 @@ describe('viewPoint test', () => {
         });
 
         it('#add - Success after Failed', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -337,7 +337,7 @@ describe('viewPoint test', () => {
         });
 
         it('#update - Success', () => {
-            const provided = service.viewPoints$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -357,7 +357,7 @@ describe('viewPoint test', () => {
         });
 
         it('#update - Failed with backend error', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -381,7 +381,7 @@ describe('viewPoint test', () => {
         });
 
         it('#update - Failed with network error', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -405,7 +405,7 @@ describe('viewPoint test', () => {
         });
 
         it('#update - Success after Failed', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -440,7 +440,7 @@ describe('viewPoint test', () => {
         });
 
         it('#delete - Success', () => {
-            const provided = service.viewPoints$.pipe(
+            const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -460,7 +460,7 @@ describe('viewPoint test', () => {
         });
 
         it('#delete - Failed with backend error', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -484,7 +484,7 @@ describe('viewPoint test', () => {
         });
 
         it('#delete - Failed with network error', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
@@ -508,7 +508,7 @@ describe('viewPoint test', () => {
         });
 
         it('#delete - Success after Failed', () => {
-            const provide = service.viewPoints$.pipe(
+            const provide = service.all$.pipe(
                 merge(errorService.error$)
             );
 
