@@ -1,12 +1,9 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { IonicStorageModule } from '@ionic/storage';
 import { cold } from 'jasmine-marbles';
 import { merge } from 'rxjs/operators';
 
-import { FileUploadModule } from '../../fileUpload/fileUpload.module';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { StoreModule } from '../store.module';
+import { initTest } from '../../../../test';
 import { ErrorService } from './error.service';
 import { ViewPointService } from './viewPoint.service';
 
@@ -121,14 +118,8 @@ let httpTestingController: HttpTestingController;
 
 describe('viewPoint test', () => {
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule,
-                IonicStorageModule.forRoot(),
-                StoreModule.forRoot(),
-                FileUploadModule.forRoot({ url: `${WEBAPI_HOST}/fileUpload` })
-            ]
-        });
+        initTest();
+
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(ViewPointService);
         errorService = TestBed.get(ErrorService);

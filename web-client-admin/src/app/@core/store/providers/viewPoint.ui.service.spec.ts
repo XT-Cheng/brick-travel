@@ -10,6 +10,7 @@ import { StoreModule } from '../store.module';
 import { ErrorService } from './error.service';
 import { ViewPointService } from './viewPoint.service';
 import { ViewPointUIService } from './viewPoint.ui.service';
+import { initTest } from '../../../../test';
 
 const noExist = {
     city: null,
@@ -90,14 +91,8 @@ let httpTestingController: HttpTestingController;
 
 describe('viewPoint test', () => {
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule,
-                IonicStorageModule.forRoot(),
-                StoreModule.forRoot(),
-                FileUploadModule.forRoot({ url: `${WEBAPI_HOST}/fileUpload` })
-            ]
-        });
+        initTest();
+
         httpTestingController = TestBed.get(HttpTestingController);
         viewPointSrv = TestBed.get(ViewPointService);
         viewPointUISrv = TestBed.get(ViewPointUIService);

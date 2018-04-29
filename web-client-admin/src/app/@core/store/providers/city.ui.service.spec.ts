@@ -10,6 +10,7 @@ import { StoreModule } from '../store.module';
 import { CityService } from './city.service';
 import { CityUIService } from './city.ui.service';
 import { ErrorService } from './error.service';
+import { initTest } from '../../../../test';
 
 const noExist = {
     addressCode: '341000',
@@ -58,14 +59,8 @@ let httpTestingController: HttpTestingController;
 
 describe('city test', () => {
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule,
-                IonicStorageModule.forRoot(),
-                StoreModule.forRoot(),
-                FileUploadModule.forRoot({ url: `${WEBAPI_HOST}/fileUpload` })
-            ]
-        });
+        initTest();
+
         httpTestingController = TestBed.get(HttpTestingController);
         citySrv = TestBed.get(CityService);
         cityUISrv = TestBed.get(CityUIService);

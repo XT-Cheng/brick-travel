@@ -1,26 +1,26 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of as observableOf } from 'rxjs/observable/of';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
+
 import {
-  AUTH_METHOD,
-  WEBAPI_HOST,
-  AUTH_URL,
-  AUTH_SUCCESS_REDIRECT,
-  AUTH_MESSAGE_KEY,
   AUTH_ERRORS_KEY,
-  AUTH_FAIL_REDIRECT
+  AUTH_FAIL_REDIRECT,
+  AUTH_MESSAGE_KEY,
+  AUTH_METHOD,
+  AUTH_SUCCESS_REDIRECT,
+  AUTH_URL,
+  WEBAPI_HOST,
 } from '../../utils/constants';
 import { getDeepFromObject } from '../../utils/helpers';
 import { AuthResult } from './authResult';
-import { TokenStorage } from './tokenStorage';
 import { AuthToken } from './authToken';
 import { TokenService } from './tokenService';
+import { TokenStorage } from './tokenStorage';
 
 @Injectable()
 export class AuthService {
-
   constructor(protected http: HttpClient,
     protected tokenService: TokenService, ) {
   }

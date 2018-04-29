@@ -12,6 +12,7 @@ import { ErrorService } from './error.service';
 import { MasterDataService } from './masterData.service';
 import { TransportationCategoryService } from './transportationCategory.service';
 import { ViewPointService } from './viewPoint.service';
+import { initTest } from '../../../../test';
 
 const flushData = {
     viewPointCategories: [
@@ -73,14 +74,8 @@ let httpTestingController: HttpTestingController;
 
 describe('masterData test', () => {
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule,
-                IonicStorageModule.forRoot(),
-                StoreModule.forRoot(),
-                FileUploadModule.forRoot({ url: `${WEBAPI_HOST}/fileUpload` })
-            ]
-        });
+        initTest();
+
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(MasterDataService);
         viewPointService = TestBed.get(ViewPointService);

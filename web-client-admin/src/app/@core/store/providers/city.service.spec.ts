@@ -1,12 +1,9 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
-import { IonicStorageModule } from '@ionic/storage';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { getTestBed } from '@angular/core/testing';
 import { cold } from 'jasmine-marbles';
 import { merge } from 'rxjs/operators';
 
-import { FileUploadModule } from '../../fileUpload/fileUpload.module';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { StoreModule } from '../store.module';
+import { initTest } from '../../../../test';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 
@@ -37,17 +34,11 @@ let httpTestingController: HttpTestingController;
 
 describe('city test', () => {
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule,
-                IonicStorageModule.forRoot(),
-                StoreModule.forRoot(),
-                FileUploadModule.forRoot({ url: `${WEBAPI_HOST}/fileUpload` })
-            ]
-        });
-        httpTestingController = TestBed.get(HttpTestingController);
-        service = TestBed.get(CityService);
-        errorService = TestBed.get(ErrorService);
+        initTest();
+
+        httpTestingController = getTestBed().get(HttpTestingController);
+        service = getTestBed().get(CityService);
+        errorService = getTestBed().get(ErrorService);
     });
 
     afterEach(() => {

@@ -1,14 +1,28 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { IonicStorageModule } from '@ionic/storage';
 import { cold } from 'jasmine-marbles';
 import { merge } from 'rxjs/operators';
 
-import { FileUploadModule } from '../../fileUpload/fileUpload.module';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { StoreModule } from '../store.module';
+import { initTest } from '../../../../test';
+import { AuthService } from '../../auth/providers/authService';
 import { ErrorService } from './error.service';
 import { UserService } from './user.service';
+
+const loginData = {
+    username: 'cxt',
+    password: 'cxt'
+};
+
+const loginRes = {
+    auth_app_token: `eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY3h0IiwibmljayI6ImFkbWluIiwicGljdHVyZSI6ImFzc2V0cy9pb
+    WcvamFjay5wbmciLCJpZCI6IjVhNGI1NzU2NzY0ZmJhMmM4MGVmNWJhYiIsImlhdCI6MTUyNDk3Nzg0MSwic3ViIjoiY3h0In0.UrTnwhRaQrsl6i6KvjHc
+    JkXhoKNpdPWpk2A-Dti2wJly6Qm0EyhrIFcB9rEizphgPUPrqUXOw7n9hPSqgbPlK54mR3KXHGMSoKr2y1ELEmPwOmd2AZ3KRX0Nn4kYxHYCFuCsWWGJyDU
+    k4DlcJ74l25P0Z7XdGn51fTzn0TFKestq0BrLsDwvjeVH1s7KCSSqCD9soAo_UochNoJv_2cDTthtrRJg7yw8dMHFMSG-JHGkBcIYSPOd0N9eWl4Y2hyvcS
+    PZrQ6Jp8wmA-skUImYba8syeZZKuaqX4hLU-Ev8Q2uiXgUf4xzwVZcbLcrxjhRX2Ksh6SRON-7JNPxSE5up_Qob13J7wdWo3pwM6rFxCSchbPDMYEuW8LrI
+    7Z4yKpE34Zl4WCOfsoy4bhbFPIjcELiKZsZ7LS_mo4qLGebHIDZiZGSWz9p5zyS8PVBHBJMbwBhP0Uq52ksgSeItU5jBvPmFRaqDLuBowgaJ5vK8R6Kr8RM
+    WDODYoNasQYelBIIbjQphmulzRrVUJvyXng7SAGYMJOr2oYyuD7OevPQIpZN9GmiasQALh7HH3JeNOmjump2sPRmXnSeoJl5jQ6it8FrxkyCwTH3tdOEqBD
+    crcZM8DfplL-_EzD36wBLVFKs2Q9ed0ij6JbtCZDzprIAV0ToBfqvWzshyznwSdV0xBE`
+};
 
 const userData = [
     {
@@ -32,21 +46,17 @@ const errorData = {
 };
 
 let service: UserService;
+let auth: AuthService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
 describe('user test', () => {
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule,
-                IonicStorageModule.forRoot(),
-                StoreModule.forRoot(),
-                FileUploadModule.forRoot({ url: `${WEBAPI_HOST}/fileUpload` })
-            ]
-        });
+        initTest();
+
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(UserService);
+        auth = TestBed.get(AuthService);
         errorService = TestBed.get(ErrorService);
     });
 
@@ -447,6 +457,40 @@ describe('user test', () => {
             req.flush([updateData]);
 
             expect(provide).toBeObservable(expected);
+        });
+    });
+
+    describe('user login test', () => {
+        beforeEach(() => {
+            service.add(userData[0]);
+            const req = httpTestingController.expectOne('http://localhost:3000/users');
+
+            req.flush(userData);
+        });
+
+        it('#login - Success', () => {
+            const provided = service.loggedIn$.pipe(
+                merge(errorService.error$)
+            );
+
+            const expected = cold('(ab)',
+                {
+                    a: userData[0],
+                    b: null
+                });
+
+            auth.authenticate(loginData).subscribe((value) => {
+                console.log(value);
+            });
+
+            // .subscribe((value) => {
+            //     console.log(value);
+            // });
+            const req = httpTestingController.expectOne(`http://localhost:3000/auth/login`);
+
+            req.flush(loginRes);
+
+            expect(provided).toBeObservable(expected);
         });
     });
 });
