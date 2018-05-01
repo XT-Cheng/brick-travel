@@ -80,6 +80,9 @@ export class UserService extends EntityService<IUser, IUserBiz> {
         return this._loggedIn;
     }
 
+    public byId(id: string): IUserBiz {
+        return denormalize(id, user, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+    }
     //#region CRUD methods
 
     public fetch() {

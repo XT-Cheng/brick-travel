@@ -70,6 +70,9 @@ export class CityService extends EntityService<ICity, ICityBiz> {
         return this._searched$.asObservable();
     }
 
+    public byId(id: string): ICityBiz {
+        return denormalize(id, city, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+    }
     //#region CRUD methods
 
     public fetch() {

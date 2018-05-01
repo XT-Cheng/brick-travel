@@ -148,7 +148,15 @@ describe('viewPoint test', () => {
 
             expect(provided).toBeObservable(expected);
         });
+        it('#byId - Success', () => {
+            service.fetch();
 
+            const req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
+
+            req.flush(viewPointData);
+
+            expect(service.byId(viewPointData[0].id)).toEqual(viewPointData[0]);
+        });
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
                 merge(service.all$)

@@ -9,10 +9,10 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { IViewPointBiz, IViewPointCategoryBiz, translateViewPointFromBiz } from '../bizModel/model/viewPoint.biz.model';
+import { IViewPointBiz, translateViewPointFromBiz } from '../bizModel/model/viewPoint.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { viewPoint, viewPointCategory } from '../entity/entity.schema';
-import { IViewPoint, IViewPointCategory } from '../entity/model/viewPoint.model';
+import { viewPoint } from '../entity/entity.schema';
+import { IViewPoint } from '../entity/model/viewPoint.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
 import { EntityService } from './entity.service';
@@ -23,7 +23,6 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     //#region private member
 
     private _all$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject([]);
-    private _categories$: BehaviorSubject<IViewPointCategoryBiz[]> = new BehaviorSubject([]);
 
     private _selected: IViewPointBiz;
     private _selected$: BehaviorSubject<IViewPointBiz> = new BehaviorSubject(null);
@@ -51,10 +50,6 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
         });
-
-        this.getCategories(this._store).subscribe((value) => {
-            this._categories$.next(value);
-        });
     }
     //#endregion
 
@@ -75,8 +70,8 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
         return this._all$.asObservable();
     }
 
-    public get categories$(): Observable<IViewPointCategoryBiz[]> {
-        return this._categories$.asObservable();
+    public byId(id: string): IViewPointBiz {
+        return denormalize(id, viewPoint, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
 
     //#region CRUD methods
@@ -137,14 +132,6 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
         return store.select<{ [id: string]: IViewPoint }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [viewPoint], Immutable(store.getState().entities).asMutable({ deep: true }));
-            })
-        );
-    }
-
-    private getCategories(store: NgRedux<IAppState>): Observable<IViewPointCategoryBiz[]> {
-        return store.select<{ [id: string]: IViewPointCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPointCatgories]).pipe(
-            map((data) => {
-                return denormalize(Object.keys(data), [viewPointCategory], Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }

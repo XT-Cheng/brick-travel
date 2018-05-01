@@ -83,7 +83,15 @@ describe('user test', () => {
 
             expect(provided).toBeObservable(expected);
         });
+        it('#byId - Success', () => {
+            service.fetch();
 
+            const req = httpTestingController.expectOne('http://localhost:3000/users');
+
+            req.flush(userData);
+
+            expect(service.byId(userData[0].id)).toEqual(userData[0]);
+        });
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
                 merge(service.all$)
@@ -483,13 +491,11 @@ describe('user test', () => {
                 console.log(value);
             });
 
-            // .subscribe((value) => {
-            //     console.log(value);
-            // });
             const req = httpTestingController.expectOne(`http://localhost:3000/auth/login`);
 
             req.flush(loginRes);
 
+            expect(service.loggedIn).toEqual(userData[0]);
             expect(provided).toBeObservable(expected);
         });
     });

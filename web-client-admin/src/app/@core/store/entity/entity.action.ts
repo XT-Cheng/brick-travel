@@ -70,6 +70,12 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
         case EntityTypeEnum.TRAVELAGENDA: {
             return STORE_ENTITIES_KEY.travelAgendas;
         }
+        case EntityTypeEnum.TRAVELVIEWPOINT: {
+            return STORE_ENTITIES_KEY.travelViewPoints;
+        }
+        case EntityTypeEnum.DAILYTRIP: {
+            return STORE_ENTITIES_KEY.dailyTrips;
+        }
         case EntityTypeEnum.VIEWPOINTCATEGORY: {
             return STORE_ENTITIES_KEY.viewPointCatgories;
         }
@@ -78,6 +84,40 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
         }
         default:
             throw new Error(`Unknown EntityType ${typeEnum}`);
+    }
+}
+
+export function getEntityType(type: string): EntityTypeEnum {
+    switch (type) {
+        case STORE_ENTITIES_KEY.cities: {
+            return EntityTypeEnum.CITY;
+        }
+        case STORE_ENTITIES_KEY.viewPoints: {
+            return EntityTypeEnum.VIEWPOINT;
+        }
+        case STORE_ENTITIES_KEY.users: {
+            return EntityTypeEnum.USER;
+        }
+        case STORE_ENTITIES_KEY.filterCategories: {
+            return EntityTypeEnum.FILTERCATEGORY;
+        }
+        case STORE_ENTITIES_KEY.travelAgendas: {
+            return EntityTypeEnum.TRAVELAGENDA;
+        }
+        case STORE_ENTITIES_KEY.travelViewPoints: {
+            return EntityTypeEnum.TRAVELVIEWPOINT;
+        }
+        case STORE_ENTITIES_KEY.dailyTrips: {
+            return EntityTypeEnum.DAILYTRIP;
+        }
+        case STORE_ENTITIES_KEY.viewPointCatgories: {
+            return EntityTypeEnum.VIEWPOINTCATEGORY;
+        }
+        case STORE_ENTITIES_KEY.transportationCatgories: {
+            return EntityTypeEnum.TRANSPORTATIONCATEGORY;
+        }
+        default:
+            return null;
     }
 }
 

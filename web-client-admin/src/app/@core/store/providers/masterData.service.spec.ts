@@ -1,18 +1,14 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { IonicStorageModule } from '@ionic/storage';
 import { cold } from 'jasmine-marbles';
 import { merge } from 'rxjs/operators';
 
-import { FileUploadModule } from '../../fileUpload/fileUpload.module';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { StoreModule } from '../store.module';
+import { initTest } from '../../../../test';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 import { MasterDataService } from './masterData.service';
 import { TransportationCategoryService } from './transportationCategory.service';
-import { ViewPointService } from './viewPoint.service';
-import { initTest } from '../../../../test';
+import { ViewPointCategoryService } from './viewPointCategory.service';
 
 const flushData = {
     viewPointCategories: [
@@ -66,7 +62,7 @@ const errorData = {
 };
 
 let service: MasterDataService;
-let viewPointService: ViewPointService;
+let viewPointCatService: ViewPointCategoryService;
 let transportationCategoryService: TransportationCategoryService;
 let errorService: ErrorService;
 let cityService: CityService;
@@ -78,10 +74,10 @@ describe('masterData test', () => {
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(MasterDataService);
-        viewPointService = TestBed.get(ViewPointService);
         transportationCategoryService = TestBed.get(TransportationCategoryService);
         cityService = TestBed.get(CityService);
         errorService = TestBed.get(ErrorService);
+        viewPointCatService = TestBed.get(ViewPointCategoryService);
     });
 
     afterEach(() => {
@@ -91,7 +87,7 @@ describe('masterData test', () => {
 
     describe('fetch test', () => {
         it('#fetch - Success', () => {
-            const provided = viewPointService.categories$.pipe(
+            const provided = viewPointCatService.all$.pipe(
                 merge(transportationCategoryService.all$, cityService.all$, errorService.error$)
             );
             const expected = cold('(abcd)',
@@ -112,7 +108,7 @@ describe('masterData test', () => {
 
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
-                merge(viewPointService.categories$)
+                merge(viewPointCatService.all$)
             );
 
             const expected = cold('(ba)',
@@ -135,7 +131,7 @@ describe('masterData test', () => {
 
         it('#fetch - Failed with network error', () => {
             const provided = errorService.error$.pipe(
-                merge(viewPointService.categories$)
+                merge(viewPointCatService.all$)
             );
 
             const expected = cold('(ba)',
@@ -158,7 +154,7 @@ describe('masterData test', () => {
         });
 
         it('#fetch - Success after Failed', () => {
-            const provided = viewPointService.categories$.pipe(
+            const provided = viewPointCatService.all$.pipe(
                 merge(transportationCategoryService.all$, cityService.all$, errorService.error$)
             );
             const expected = cold('(abcd)',

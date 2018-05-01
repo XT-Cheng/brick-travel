@@ -1,16 +1,12 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { IonicStorageModule } from '@ionic/storage';
 import { cold } from 'jasmine-marbles';
 import { merge } from 'rxjs/operators';
 
-import { FileUploadModule } from '../../fileUpload/fileUpload.module';
-import { WEBAPI_HOST } from '../../utils/constants';
-import { StoreModule } from '../store.module';
+import { initTest } from '../../../../test';
 import { ErrorService } from './error.service';
 import { ViewPointService } from './viewPoint.service';
 import { ViewPointUIService } from './viewPoint.ui.service';
-import { initTest } from '../../../../test';
 
 const noExist = {
     city: null,
@@ -30,7 +26,7 @@ const noExist = {
     comments: [],
     countOfComments: 11,
     images: [],
-    id: '5a4912502350c4065c30f6aa'
+    id: 'noexist'
 };
 
 const viewPointData = [

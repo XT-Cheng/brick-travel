@@ -16,6 +16,7 @@ import { FilterCategoryService } from './providers/filterCategory.service';
 import { MasterDataService } from './providers/masterData.service';
 import { TransportationCategoryService } from './providers/transportationCategory.service';
 import { TravelAgendaService } from './providers/travelAgenda.service';
+import { TravelAgendaUIService } from './providers/travelAgenda.ui.service';
 import { UserService } from './providers/user.service';
 import { ViewPointService } from './providers/viewPoint.service';
 import { ViewPointUIService } from './providers/viewPoint.ui.service';
@@ -34,6 +35,7 @@ const PROVIDERS = [
     FilterCategoryService,
     MasterDataService,
     TravelAgendaService,
+    TravelAgendaUIService,
     ViewPointCategoryService,
     TransportationCategoryService,
     CityUIService,

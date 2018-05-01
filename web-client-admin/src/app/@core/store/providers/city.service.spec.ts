@@ -64,7 +64,15 @@ describe('city test', () => {
 
             expect(provided).toBeObservable(expected);
         });
+        it('#byId - Success', () => {
+            service.fetch();
 
+            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+
+            req.flush(cityData);
+
+            expect(service.byId(cityData[0].id)).toEqual(cityData[0]);
+        });
         it('#fetch - Failed with backend error', () => {
             const provided = errorService.error$.pipe(
                 merge(service.all$)
