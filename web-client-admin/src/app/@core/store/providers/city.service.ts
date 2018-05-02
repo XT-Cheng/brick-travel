@@ -55,7 +55,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
 
     //#region implemented methods
     protected toTransfer(bizModel: ICityBiz) {
-        throw new Error('Method not implemented.');
+        return bizModel;
     }
     //#endregion
 

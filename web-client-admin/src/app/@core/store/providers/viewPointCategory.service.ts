@@ -9,7 +9,7 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { IViewPointCategoryBiz, translateViewPointCategoryFromBiz } from '../bizModel/model/viewPoint.biz.model';
+import { IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { viewPointCategory } from '../entity/entity.schema';
 import { IViewPointCategory } from '../entity/model/viewPoint.model';
@@ -36,6 +36,12 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
     }
     //#endregion
 
+    //#region implemented methods
+    protected toTransfer(bizModel: IViewPointCategoryBiz) {
+        return bizModel;
+    }
+    //#endregion
+
     //#region public methods
     public get all$(): Observable<IViewPointCategoryBiz[]> {
         return this._all$.asObservable();
@@ -48,15 +54,15 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
     }
 
     public add(c: IViewPointCategoryBiz) {
-        this.insertEntity(translateViewPointCategoryFromBiz(c));
+        this.insertEntity(c);
     }
 
     public change(c: IViewPointCategoryBiz) {
-        this.updateEntity(translateViewPointCategoryFromBiz(c));
+        this.updateEntity(c);
     }
 
     public remove(c: IViewPointCategoryBiz) {
-        this.deleteEntity(translateViewPointCategoryFromBiz(c));
+        this.deleteEntity(c);
     }
 
     //#endregion

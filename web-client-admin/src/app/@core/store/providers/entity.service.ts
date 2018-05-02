@@ -66,7 +66,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region dirty actions
 
-    private addDirtyAction = dirtyAddAction(this._entityType);
+    protected addDirtyAction = dirtyAddAction(this._entityType);
 
     //#endregion
 

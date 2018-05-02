@@ -21,6 +21,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
     //#region private member
 
     private _all$: BehaviorSubject<ITransportationCategoryBiz[]> = new BehaviorSubject([]);
+    private _default: ITransportationCategoryBiz;
 
     //#endregion
 
@@ -31,6 +32,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
         super(_http, _uploader, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, [transportationCategory], `transportationCategories`);
 
         this.getAll(this._store).subscribe((value) => {
+            this._default = value.find(tpc => tpc.isDefault);
             this._all$.next(value);
         });
     }
@@ -38,13 +40,17 @@ export class TransportationCategoryService extends EntityService<ITransportation
 
     //#region implemented methods
     protected toTransfer(bizModel: ITransportationCategoryBiz) {
-        throw new Error('Method not implemented.');
+        return bizModel;
     }
     //#endregion
 
     //#region public methods
     public get all$(): Observable<ITransportationCategoryBiz[]> {
         return this._all$.asObservable();
+    }
+
+    public get default(): ITransportationCategoryBiz {
+        return this._default;
     }
 
     //#region CRUD methods

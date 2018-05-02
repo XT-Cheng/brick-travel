@@ -69,7 +69,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
 
     //#region implemented methods
     protected toTransfer(bizModel: IUserBiz) {
-        throw new Error('Method not implemented.');
+        return bizModel;
     }
     //#endregion
 

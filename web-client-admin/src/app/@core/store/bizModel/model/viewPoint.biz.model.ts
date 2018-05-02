@@ -1,4 +1,3 @@
-import { IViewPoint, IViewPointCategory } from '../../entity/model/viewPoint.model';
 import { IBiz } from '../biz.model';
 import { ICityBiz } from './city.biz.model';
 
@@ -31,32 +30,4 @@ export interface IViewPointCommentBiz extends IBiz {
     publishedAt: Date;
     images: string[];
     rate: number;
-}
-
-export function translateViewPointFromBiz(viewPoint: IViewPointBiz): IViewPoint {
-    return {
-        id: viewPoint.id,
-        city: viewPoint.city.id,
-        name: viewPoint.name,
-        description: viewPoint.description,
-        tips: viewPoint.tips,
-        timeNeeded: viewPoint.timeNeeded,
-        thumbnail: viewPoint.thumbnail,
-        address: viewPoint.address,
-        latitude: viewPoint.latitude,
-        longtitude: viewPoint.longtitude,
-        category: viewPoint.category.id,
-        rank: viewPoint.rank,
-        countOfComments: viewPoint.countOfComments,
-        images: viewPoint.images.map((image) => image),
-        tags: viewPoint.images.map((tag) => tag),
-        comments: viewPoint.comments.map((comment) => comment.id)
-    };
-}
-
-export function translateViewPointCategoryFromBiz(viewPoint: IViewPointCategoryBiz): IViewPointCategory {
-    return {
-        id: viewPoint.id,
-        name: viewPoint.name,
-    };
 }

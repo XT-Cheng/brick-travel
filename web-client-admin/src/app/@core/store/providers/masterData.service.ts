@@ -2,9 +2,8 @@ import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { transportationCategory } from '../../store.v0/entity/entity.schema';
 import { EntityTypeEnum } from '../entity/entity.model';
-import { city, viewPointCategory } from '../entity/entity.schema';
+import { city, viewPointCategory, transportationCategory } from '../entity/entity.schema';
 import { IAppState } from '../store.model';
 import { FetchService } from './fetch.service';
 

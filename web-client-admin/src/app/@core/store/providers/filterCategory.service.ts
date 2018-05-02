@@ -9,7 +9,7 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { IFilterCategoryBiz, translateFilterCategoryFromBiz } from '../bizModel/model/filterCategory.biz.model';
+import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { filterCategory } from '../entity/entity.schema';
 import { IFilterCategory } from '../entity/model/filterCategory.model';
@@ -38,7 +38,7 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
 
     //#region implemented methods
     protected toTransfer(bizModel: IFilterCategoryBiz) {
-        throw new Error('Method not implemented.');
+        return bizModel;
     }
     //#endregion
 

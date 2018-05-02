@@ -1,9 +1,9 @@
-import { IViewPoint, IViewPointCategory } from '../../store.v0/entity/viewPoint/viewPoint.model';
+
 import { ICity } from './model/city.model';
 import { IFilterCategory, IFilterCriteria } from './model/filterCategory.model';
 import { IDailyTrip, ITransportationCategory, ITravelAgenda, ITravelViewPoint } from './model/travelAgenda.model';
 import { IUser } from './model/user.model';
-import { IViewPointComment } from './model/viewPoint.model';
+import { IViewPointComment, IViewPoint, IViewPointCategory } from './model/viewPoint.model';
 
 export enum EntityTypeEnum {
     CITY = 'CITY',
