@@ -11,6 +11,7 @@ import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
 import { EntityEpics } from './entity/entity.epic';
 import { CityService } from './providers/city.service';
 import { CityUIService } from './providers/city.ui.service';
+import { DataFlushService } from './providers/dataFlush.service';
 import { ErrorService } from './providers/error.service';
 import { FilterCategoryService } from './providers/filterCategory.service';
 import { MasterDataService } from './providers/masterData.service';
@@ -39,7 +40,8 @@ const PROVIDERS = [
     ViewPointCategoryService,
     TransportationCategoryService,
     CityUIService,
-    ViewPointUIService
+    ViewPointUIService,
+    DataFlushService
 ];
 
 @NgModule({

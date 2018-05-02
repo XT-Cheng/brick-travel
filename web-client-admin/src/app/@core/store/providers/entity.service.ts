@@ -4,11 +4,12 @@ import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { catchError, filter, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, concat, filter, map, startWith, switchMap } from 'rxjs/operators';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { WEBAPI_HOST } from '../../utils/constants';
 import { IBiz } from '../bizModel/biz.model';
+import { dirtyAddAction, DirtyTypeEnum } from '../dirty/dirty.action';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -63,6 +64,12 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#endregion
 
+    //#region delete actions
+
+    private addDirtyAction = dirtyAddAction(this._entityType);
+
+    //#endregion
+
     //#endregion
 
     //#region UI Actions
@@ -71,7 +78,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region Epic
     public createEpic(): Epic<EntityAction, IAppState>[] {
-        return [...super.createEpic(), this.createEpicOfDML()];
+        return [...super.createEpic(), this.createEpicOfDML(), this.createEpicOfDMLForDirtyMode()];
     }
 
     private createEpicOfDML(): Epic<EntityAction, IAppState> {
@@ -79,7 +86,8 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
             .ofType(EntityActionTypeEnum.INSERT, EntityActionTypeEnum.DELETE, EntityActionTypeEnum.UPDATE).pipe(
                 filter(action =>
                     action.payload.entityType === this._entityType
-                    && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER),
+                    && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER
+                    && !action.payload.dirtyMode),
                 switchMap(action => {
                     const ent = <T>Object.values(action.payload.entities[getEntityKey(this._entityType)])[0];
                     let ret: Observable<IEntities>;
@@ -105,20 +113,70 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                         startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
                 }));
     }
+
+    private createEpicOfDMLForDirtyMode(): Epic<EntityAction, IAppState> {
+        return (action$, store) => action$
+            .ofType(EntityActionTypeEnum.INSERT, EntityActionTypeEnum.DELETE, EntityActionTypeEnum.UPDATE).pipe(
+                filter(action =>
+                    action.payload.entityType === this._entityType
+                    && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER
+                    && action.payload.dirtyMode),
+                switchMap(action => {
+                    const ent = <T>Object.values(action.payload.entities[getEntityKey(this._entityType)])[0];
+                    let ret: Observable<IEntities>;
+                    switch (action.type) {
+                        case EntityActionTypeEnum.INSERT: {
+                            ret = this.insert(ent);
+                            break;
+                        }
+                        case EntityActionTypeEnum.DELETE: {
+                            ret = this.delete(ent);
+                            break;
+                        }
+                        case EntityActionTypeEnum.UPDATE: {
+                            ret = this.update(ent);
+                            break;
+                        }
+                    }
+                    return ret.pipe(
+                        map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
+                        catchError(response => {
+                            let dirtyType: DirtyTypeEnum;
+                            switch (action.type) {
+                                case EntityActionTypeEnum.INSERT: {
+                                    dirtyType = DirtyTypeEnum.CREATED;
+                                    break;
+                                }
+                                case EntityActionTypeEnum.DELETE: {
+                                    dirtyType = DirtyTypeEnum.DELETED;
+                                    break;
+                                }
+                                case EntityActionTypeEnum.UPDATE: {
+                                    dirtyType = DirtyTypeEnum.UPDATED;
+                                    break;
+                                }
+                            }
+                            return of(this.addDirtyAction(ent.id, dirtyType)).pipe(
+                                concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), action.payload.entities),
+                                    this.failedAction(<EntityActionTypeEnum>(action.type), response))));
+                        }),
+                        startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
+                }));
+    }
     //#endregion
 
     //#region protected methods
 
-    protected insertEntity(entity: T) {
-        this._store.dispatch(this.insertAction(entity.id, entity));
+    protected insertEntity(entity: T, dirtyMode: boolean = false) {
+        this._store.dispatch(this.insertAction(entity.id, entity, dirtyMode));
     }
 
-    protected updateEntity(entity: T) {
-        this._store.dispatch(this.updateAction(entity.id, entity));
+    protected updateEntity(entity: T, dirtyMode: boolean = false) {
+        this._store.dispatch(this.updateAction(entity.id, entity, dirtyMode));
     }
 
-    protected deleteEntity(entity: T) {
-        this._store.dispatch(this.deleteAction(entity.id, entity));
+    protected deleteEntity(entity: T, dirtyMode: boolean = false) {
+        this._store.dispatch(this.deleteAction(entity.id, entity, dirtyMode));
     }
 
     //#endregion

@@ -35,6 +35,7 @@ export interface IEntityActionPayload extends IActionPayload {
     pagination: IPagination;
     entityType: EntityTypeEnum;
     phaseType: EntityActionPhaseEnum;
+    dirtyMode: boolean;
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
@@ -50,7 +51,8 @@ const defaultEntityActionPayload: IEntityActionPayload = {
     phaseType: null,
     error: null,
     entities: null,
-    queryCondition: null
+    queryCondition: null,
+    dirtyMode: false
 };
 
 export function getEntityKey(typeEnum: EntityTypeEnum): string {
@@ -183,7 +185,7 @@ export function entityLoadAction(entityType: EntityTypeEnum) {
 
 //#region Update action
 export function entityUpdateAction<T>(entityType: EntityTypeEnum) {
-    return (id: string, entity: T): EntityAction => ({
+    return (id: string, entity: T, dirtyMode: boolean): EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
@@ -197,7 +199,7 @@ export function entityUpdateAction<T>(entityType: EntityTypeEnum) {
 
 //#region Insert action
 export function entityInsertAction<T>(entityType: EntityTypeEnum) {
-    return (id: string, entity: T): EntityAction => ({
+    return (id: string, entity: T, dirtyMode: boolean): EntityAction => ({
         type: EntityActionTypeEnum.INSERT,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
@@ -211,7 +213,7 @@ export function entityInsertAction<T>(entityType: EntityTypeEnum) {
 
 //#region Delete action
 export function entityDeleteAction<T>(entityType: EntityTypeEnum) {
-    return (id: string, entity: T): EntityAction => ({
+    return (id: string, entity: T, dirtyMode: boolean): EntityAction => ({
         type: EntityActionTypeEnum.DELETE,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {

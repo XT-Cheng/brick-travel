@@ -73,6 +73,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     public byId(id: string): ICityBiz {
         return denormalize(id, city, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
+
     //#region CRUD methods
 
     public fetch() {
@@ -89,6 +90,27 @@ export class CityService extends EntityService<ICity, ICityBiz> {
 
     public remove(c: ICityBiz) {
         this.deleteEntity(translateCityFromBiz(c));
+    }
+
+    public addById(id: string) {
+        const toAdd = this.byId(id);
+        if (!toAdd) { throw new Error(`City Id ${id} not exist!`); }
+
+        this.add(toAdd);
+    }
+
+    public changeById(id: string) {
+        const toChange = this.byId(id);
+        if (!toChange) { throw new Error(`City Id ${id} not exist!`); }
+
+        this.change(toChange);
+    }
+
+    public removeById(id: string) {
+        const toRemove = this.byId(id);
+        if (!toRemove) { throw new Error(`City Id ${id} not exist!`); }
+
+        this.remove(toRemove);
     }
 
     //#endregion

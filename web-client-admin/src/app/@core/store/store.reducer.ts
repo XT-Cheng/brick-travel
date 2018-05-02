@@ -1,6 +1,7 @@
 import { FluxStandardAction } from 'flux-standard-action';
 import { combineReducers } from 'redux-seamless-immutable';
 
+import { dirtyReducer } from './dirty/dirty.reducer';
 import { entityReducer } from './entity/entity.reducer';
 import { IActionMetaInfo, IActionPayload } from './store.action';
 import { IError, IProgress } from './store.model';
@@ -13,7 +14,8 @@ export const rootReducer =
     entities: entityReducer,
     progress: progressReducer,
     ui: uiReducer,
-    error: errorReducer
+    error: errorReducer,
+    dirties: dirtyReducer
   });
 
 export function progressReducer(state: IProgress = { progressing: false },

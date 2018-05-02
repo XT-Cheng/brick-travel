@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { combineEpics } from 'redux-observable';
 
 import { CityService } from '../providers/city.service';
+import { DataFlushService } from '../providers/dataFlush.service';
 import { FilterCategoryService } from '../providers/filterCategory.service';
 import { MasterDataService } from '../providers/masterData.service';
 import { TransportationCategoryService } from '../providers/transportationCategory.service';
@@ -15,7 +16,7 @@ export class EntityEpics {
   constructor(private _cityService: CityService, private _viewPointService: ViewPointService,
     private _userService: UserService, private _filterCategoryService: FilterCategoryService,
     private _masterDataService: MasterDataService, private _travelAgendaService: TravelAgendaService,
-    private _viewPointCategoryService: ViewPointCategoryService,
+    private _viewPointCategoryService: ViewPointCategoryService, private _flushService: DataFlushService,
     private _transportationCategoryService: TransportationCategoryService) { }
 
   public createEpics() {
@@ -27,7 +28,8 @@ export class EntityEpics {
       ...this._masterDataService.createEpic(),
       ...this._travelAgendaService.createEpic(),
       ...this._viewPointCategoryService.createEpic(),
-      ...this._transportationCategoryService.createEpic()
+      ...this._transportationCategoryService.createEpic(),
+      ...this._flushService.createEpic()
     )];
   }
 }

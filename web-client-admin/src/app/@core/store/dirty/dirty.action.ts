@@ -1,13 +1,8 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
+import { EntityActionPhaseEnum } from '../entity/entity.action';
 import { EntityTypeEnum } from '../entity/entity.model';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
-
-// export interface IDirtyActionMetaInfo extends IActionMetaInfo {
-//     entityType: EntityTypeEnum;
-//     phaseType: DirtyActionPhaseEnum;
-//     dirtyType?: DirtyTypeEnum;
-// }
 
 export interface IDirtyActionPayload extends IActionPayload {
     dirtyId: string;
@@ -82,30 +77,29 @@ export function dirtyRemoveAction(entityType: EntityTypeEnum) {
 export function dirtyFlushAction() {
     return (): DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
-        meta: Object.assign({}, defaultDirtyActionMeta, {
-            phaseType: DirtyActionPhaseEnum.TRIGGER
-        }),
-        payload: defaultDirtyActionPayload
+        meta: Object.assign({}, defaultDirtyActionMeta, {}),
+        payload: Object.assign({}, defaultDirtyActionPayload, {
+            phaseType: EntityActionPhaseEnum.TRIGGER
+        })
     });
 }
 
 export function dirtyFlushActionStarted() {
     return (): DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
-        meta: Object.assign({}, defaultDirtyActionMeta, {
-            phaseType: DirtyActionPhaseEnum.START,
-        }),
-        payload: defaultDirtyActionPayload,
+        meta: Object.assign({}, defaultDirtyActionMeta, {}),
+        payload: Object.assign({}, defaultDirtyActionPayload, {
+            phaseType: EntityActionPhaseEnum.START
+        })
     });
 }
 
 export function dirtyFlushActionFailed() {
     return (error): DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
-        meta: Object.assign({}, defaultDirtyActionMeta, {
-            phaseType: DirtyActionPhaseEnum.FAIL
-        }),
+        meta: Object.assign({}, defaultDirtyActionMeta, {}),
         payload: Object.assign({}, defaultDirtyActionPayload, {
+            phaseType: EntityActionPhaseEnum.FAIL,
             error: error
         })
     });
@@ -114,10 +108,10 @@ export function dirtyFlushActionFailed() {
 export function dirtyFlushActionFinished() {
     return (): DirtyAction => ({
         type: DirtyActionTypeEnum.FLUSH,
-        meta: Object.assign({}, defaultDirtyActionMeta, {
-            phaseType: DirtyActionPhaseEnum.FINISHED
-        }),
-        payload: defaultDirtyActionPayload
+        meta: Object.assign({}, defaultDirtyActionMeta, {}),
+        payload: Object.assign({}, defaultDirtyActionPayload, {
+            phaseType: EntityActionPhaseEnum.SUCCEED
+        })
     });
 }
 //#endregion

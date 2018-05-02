@@ -5,7 +5,9 @@ import { DirtyAction, DirtyActionPhaseEnum, DirtyActionTypeEnum, DirtyTypeEnum }
 import { IDirties, INIT_DIRTY_STATE, STORE_DIRTIES_KEY } from './dirty.model';
 
 export function dirtyReducer(state: IDirties = INIT_DIRTY_STATE, action: DirtyAction): IDirties {
-  if (action.payload) {
+  if (action.type === DirtyActionTypeEnum.ADD
+    || action.type === DirtyActionTypeEnum.FLUSH
+    || action.type === DirtyActionTypeEnum.REMOVE) {
     let newDirtyIds: Array<string>;
 
     const key1 = getEntityKey(action.payload.entityType);
