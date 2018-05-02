@@ -48,23 +48,23 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region update actions
 
-    private updateAction = entityUpdateAction<T>(this._entityType);
+    private updateAction = entityUpdateAction<U>(this._entityType);
 
     //#endregion
 
     //#region insert actions
 
-    private insertAction = entityInsertAction<T>(this._entityType);
+    private insertAction = entityInsertAction<U>(this._entityType);
 
     //#endregion
 
     //#region delete actions
 
-    private deleteAction = entityDeleteAction<T>(this._entityType);
+    private deleteAction = entityDeleteAction<U>(this._entityType);
 
     //#endregion
 
-    //#region delete actions
+    //#region dirty actions
 
     private addDirtyAction = dirtyAddAction(this._entityType);
 
@@ -89,19 +89,19 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER
                     && !action.payload.dirtyMode),
                 switchMap(action => {
-                    const ent = <T>Object.values(action.payload.entities[getEntityKey(this._entityType)])[0];
+                    const bizModel = <U>action.payload.bizModel;
                     let ret: Observable<IEntities>;
                     switch (action.type) {
                         case EntityActionTypeEnum.INSERT: {
-                            ret = this.insert(ent);
+                            ret = this.insert(bizModel);
                             break;
                         }
                         case EntityActionTypeEnum.DELETE: {
-                            ret = this.delete(ent);
+                            ret = this.delete(bizModel);
                             break;
                         }
                         case EntityActionTypeEnum.UPDATE: {
-                            ret = this.update(ent);
+                            ret = this.update(bizModel);
                             break;
                         }
                     }
@@ -122,19 +122,19 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER
                     && action.payload.dirtyMode),
                 switchMap(action => {
-                    const ent = <T>Object.values(action.payload.entities[getEntityKey(this._entityType)])[0];
+                    const bizModel = <U>action.payload.bizModel;
                     let ret: Observable<IEntities>;
                     switch (action.type) {
                         case EntityActionTypeEnum.INSERT: {
-                            ret = this.insert(ent);
+                            ret = this.insert(bizModel);
                             break;
                         }
                         case EntityActionTypeEnum.DELETE: {
-                            ret = this.delete(ent);
+                            ret = this.delete(bizModel);
                             break;
                         }
                         case EntityActionTypeEnum.UPDATE: {
-                            ret = this.update(ent);
+                            ret = this.update(bizModel);
                             break;
                         }
                     }
@@ -156,7 +156,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                                     break;
                                 }
                             }
-                            return of(this.addDirtyAction(ent.id, dirtyType)).pipe(
+                            return of(this.addDirtyAction(bizModel.id, dirtyType)).pipe(
                                 concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), action.payload.entities),
                                     this.failedAction(<EntityActionTypeEnum>(action.type), response))));
                         }),
@@ -167,57 +167,64 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region protected methods
 
-    protected insertEntity(entity: T, dirtyMode: boolean = false) {
-        this._store.dispatch(this.insertAction(entity.id, entity, dirtyMode));
+    protected insertEntity(bizModel: U, dirtyMode: boolean = false) {
+        this._store.dispatch(this.insertAction(bizModel.id, bizModel, dirtyMode));
     }
 
-    protected updateEntity(entity: T, dirtyMode: boolean = false) {
-        this._store.dispatch(this.updateAction(entity.id, entity, dirtyMode));
+    protected updateEntity(bizModel: U, dirtyMode: boolean = false) {
+        this._store.dispatch(this.updateAction(bizModel.id, bizModel, dirtyMode));
     }
 
-    protected deleteEntity(entity: T, dirtyMode: boolean = false) {
-        this._store.dispatch(this.deleteAction(entity.id, entity, dirtyMode));
+    protected deleteEntity(bizModel: U, dirtyMode: boolean = false) {
+        this._store.dispatch(this.deleteAction(bizModel.id, bizModel, dirtyMode));
     }
+
+    protected abstract toTransfer(bizModel: U): any;
 
     //#endregion
 
     //#region private methods
 
-    private insert(ent: T): Observable<IEntities> {
+    private insert(bizModel: U): Observable<IEntities> {
+        const transfer = this.toTransfer(bizModel);
+
         const formData: FormData = new FormData();
 
-        formData.append(getEntityKey(this._entityType), JSON.stringify(ent));
+        formData.append(getEntityKey(this._entityType), JSON.stringify(transfer));
 
         for (let i = 0; i < this._uploader.queue.length; i++) {
             formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
         }
         this._uploader.clearQueue();
 
-        return this._http.post<T>(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
+        return this._http.post(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
                 return normalize(records, this._entitySchema).entities;
             })
         );
     }
 
-    private update(ent: T): Observable<IEntities> {
+    private update(bizModel: U): Observable<IEntities> {
+        const transfer = this.toTransfer(bizModel);
+
         const formData: FormData = new FormData();
 
-        formData.append(getEntityKey(this._entityType), JSON.stringify(ent));
+        formData.append(getEntityKey(this._entityType), JSON.stringify(transfer));
         for (let i = 0; i < this._uploader.queue.length; i++) {
             formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
         }
         this._uploader.clearQueue();
 
-        return this._http.put<T>(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
+        return this._http.put(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
                 return normalize(records, this._entitySchema).entities;
             })
         );
     }
 
-    private delete(ent: T): Observable<IEntities> {
-        return this._http.delete<T>(`${WEBAPI_HOST}/${this._url}/${ent.id}`).pipe(
+    private delete(bizModel: U): Observable<IEntities> {
+        const transfer = this.toTransfer(bizModel);
+        return this._http.delete(`${WEBAPI_HOST}/${this._url}/${transfer.id}`).pipe(
             map(records => {
                 return normalize(records, this._entitySchema).entities;
             })

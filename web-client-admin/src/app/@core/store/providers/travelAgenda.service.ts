@@ -72,6 +72,12 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
     //#endregion
 
+    //#region implemented methods
+    protected toTransfer(bizModel: ITravelAgendaBiz) {
+        throw new Error('Method not implemented.');
+    }
+    //#endregion
+
     //#region public methods
     public get selected$(): Observable<ITravelAgendaBiz> {
         return this._selected$.asObservable();
@@ -100,7 +106,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
 
     public add(c: ITravelAgendaBiz) {
-        this.insertEntity(translateTravelAgendaFromBiz(c));
+        this.insertEntity(c);
     }
 
     public addById(id: string) {
@@ -152,7 +158,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
 
     public change(c: ITravelAgendaBiz) {
-        this.updateEntity(translateTravelAgendaFromBiz(c));
+        this.updateEntity(c);
     }
 
     public changeById(id: string) {
@@ -163,7 +169,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
 
     public remove(c: ITravelAgendaBiz) {
-        this.deleteEntity(translateTravelAgendaFromBiz(c));
+        this.deleteEntity(c);
     }
 
     public removeById(id: string) {

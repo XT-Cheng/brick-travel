@@ -36,6 +36,12 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     }
     //#endregion
 
+    //#region implemented methods
+    protected toTransfer(bizModel: IFilterCategoryBiz) {
+        throw new Error('Method not implemented.');
+    }
+    //#endregion
+
     //#region public methods
     public get all$(): Observable<IFilterCategoryBiz[]> {
         return this._all$.asObservable();
@@ -48,15 +54,15 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     }
 
     public add(c: IFilterCategoryBiz) {
-        this.insertEntity(translateFilterCategoryFromBiz(c));
+        this.insertEntity(c);
     }
 
     public change(c: IFilterCategoryBiz) {
-        this.updateEntity(translateFilterCategoryFromBiz(c));
+        this.updateEntity(c);
     }
 
     public remove(c: IFilterCategoryBiz) {
-        this.deleteEntity(translateFilterCategoryFromBiz(c));
+        this.deleteEntity(c);
     }
 
     //#endregion

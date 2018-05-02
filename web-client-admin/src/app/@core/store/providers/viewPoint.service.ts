@@ -9,7 +9,7 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { IViewPointBiz, translateViewPointFromBiz } from '../bizModel/model/viewPoint.biz.model';
+import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { viewPoint } from '../entity/entity.schema';
 import { IViewPoint } from '../entity/model/viewPoint.model';
@@ -53,6 +53,12 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     }
     //#endregion
 
+    //#region implemented methods
+    protected toTransfer(bizModel: IViewPointBiz) {
+        throw new Error('Method not implemented.');
+    }
+    //#endregion
+
     //#region public methods
     public get selected$(): Observable<IViewPointBiz> {
         return this._selected$.asObservable();
@@ -81,15 +87,15 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     }
 
     public add(c: IViewPointBiz) {
-        this.insertEntity(translateViewPointFromBiz(c));
+        this.insertEntity(c);
     }
 
     public change(c: IViewPointBiz) {
-        this.updateEntity(translateViewPointFromBiz(c));
+        this.updateEntity(c);
     }
 
     public remove(c: IViewPointBiz) {
-        this.deleteEntity(translateViewPointFromBiz(c));
+        this.deleteEntity(c);
     }
 
     //#endregion

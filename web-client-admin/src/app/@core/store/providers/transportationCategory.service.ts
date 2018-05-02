@@ -9,10 +9,7 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import {
-    ITransportationCategoryBiz,
-    translateTransportationCategoryFromBiz,
-} from '../bizModel/model/travelAgenda.biz.model';
+import { ITransportationCategoryBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { transportationCategory } from '../entity/entity.schema';
 import { ITransportationCategory } from '../entity/model/travelAgenda.model';
@@ -39,6 +36,12 @@ export class TransportationCategoryService extends EntityService<ITransportation
     }
     //#endregion
 
+    //#region implemented methods
+    protected toTransfer(bizModel: ITransportationCategoryBiz) {
+        throw new Error('Method not implemented.');
+    }
+    //#endregion
+
     //#region public methods
     public get all$(): Observable<ITransportationCategoryBiz[]> {
         return this._all$.asObservable();
@@ -51,15 +54,15 @@ export class TransportationCategoryService extends EntityService<ITransportation
     }
 
     public add(c: ITransportationCategoryBiz) {
-        this.insertEntity(translateTransportationCategoryFromBiz(c));
+        this.insertEntity(c);
     }
 
     public change(c: ITransportationCategoryBiz) {
-        this.updateEntity(translateTransportationCategoryFromBiz(c));
+        this.updateEntity(c);
     }
 
     public remove(c: ITransportationCategoryBiz) {
-        this.deleteEntity(translateTransportationCategoryFromBiz(c));
+        this.deleteEntity(c);
     }
 
     //#endregion

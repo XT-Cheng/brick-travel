@@ -14,7 +14,7 @@ import { TokenService } from '../../auth/providers/tokenService';
 import { TokenStorage } from '../../auth/providers/tokenStorage';
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { IUserBiz, translateUserFromBiz } from '../bizModel/model/user.biz.model';
+import { IUserBiz } from '../bizModel/model/user.biz.model';
 import { EntityActionTypeEnum } from '../entity/entity.action';
 import { EntityTypeEnum, INIT_ENTITY_STATE, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { user } from '../entity/entity.schema';
@@ -67,6 +67,12 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     }
     //#endregion
 
+    //#region implemented methods
+    protected toTransfer(bizModel: IUserBiz) {
+        throw new Error('Method not implemented.');
+    }
+    //#endregion
+
     //#region public methods
     public get all$(): Observable<IUserBiz[]> {
         return this._all$.asObservable();
@@ -90,15 +96,15 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     }
 
     public add(c: IUserBiz) {
-        this.insertEntity(translateUserFromBiz(c));
+        this.insertEntity(c);
     }
 
     public change(c: IUserBiz) {
-        this.updateEntity(translateUserFromBiz(c));
+        this.updateEntity(c);
     }
 
     public remove(c: IUserBiz) {
-        this.deleteEntity(translateUserFromBiz(c));
+        this.deleteEntity(c);
     }
 
     //#endregion

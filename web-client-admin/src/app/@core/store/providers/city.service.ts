@@ -9,7 +9,7 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { ICityBiz, translateCityFromBiz } from '../bizModel/model/city.biz.model';
+import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { city } from '../entity/entity.schema';
 import { ICity } from '../entity/model/city.model';
@@ -53,6 +53,12 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     }
     //#endregion
 
+    //#region implemented methods
+    protected toTransfer(bizModel: ICityBiz) {
+        throw new Error('Method not implemented.');
+    }
+    //#endregion
+
     //#region public methods
     public get all$(): Observable<ICityBiz[]> {
         return this._all$.asObservable();
@@ -81,15 +87,15 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     }
 
     public add(c: ICityBiz) {
-        this.insertEntity(translateCityFromBiz(c));
+        this.insertEntity(c);
     }
 
     public change(c: ICityBiz) {
-        this.updateEntity(translateCityFromBiz(c));
+        this.updateEntity(c);
     }
 
     public remove(c: ICityBiz) {
-        this.deleteEntity(translateCityFromBiz(c));
+        this.deleteEntity(c);
     }
 
     public addById(id: string) {

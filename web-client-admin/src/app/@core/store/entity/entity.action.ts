@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { FluxStandardAction } from 'flux-standard-action';
 
+import { IBiz } from '../bizModel/biz.model';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { EntityTypeEnum, IEntities, STORE_ENTITIES_KEY } from './entity.model';
 
@@ -31,6 +32,7 @@ export interface IQueryCondition {
 
 export interface IEntityActionPayload extends IActionPayload {
     entities: IEntities;
+    bizModel: IBiz;
     queryCondition: IQueryCondition;
     pagination: IPagination;
     entityType: EntityTypeEnum;
@@ -51,6 +53,7 @@ const defaultEntityActionPayload: IEntityActionPayload = {
     phaseType: null,
     error: null,
     entities: null,
+    bizModel: null,
     queryCondition: null,
     dirtyMode: false
 };
@@ -184,42 +187,42 @@ export function entityLoadAction(entityType: EntityTypeEnum) {
 //#endregion
 
 //#region Update action
-export function entityUpdateAction<T>(entityType: EntityTypeEnum) {
-    return (id: string, entity: T, dirtyMode: boolean): EntityAction => ({
+export function entityUpdateAction<U>(entityType: EntityTypeEnum) {
+    return (id: string, bizModel: U, dirtyMode: boolean): EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
-            entities: { [getEntityKey(entityType)]: { [id]: entity } }
+            bizModel: bizModel
         })
     });
 }
 //#endregion
 
 //#region Insert action
-export function entityInsertAction<T>(entityType: EntityTypeEnum) {
-    return (id: string, entity: T, dirtyMode: boolean): EntityAction => ({
+export function entityInsertAction<U>(entityType: EntityTypeEnum) {
+    return (id: string, bizModel: U, dirtyMode: boolean): EntityAction => ({
         type: EntityActionTypeEnum.INSERT,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
-            entities: { [getEntityKey(entityType)]: { [id]: entity } }
+            bizModel: bizModel
         })
     });
 }
 //#endregion
 
 //#region Delete action
-export function entityDeleteAction<T>(entityType: EntityTypeEnum) {
-    return (id: string, entity: T, dirtyMode: boolean): EntityAction => ({
+export function entityDeleteAction<U>(entityType: EntityTypeEnum) {
+    return (id: string, bizModel: U, dirtyMode: boolean): EntityAction => ({
         type: EntityActionTypeEnum.DELETE,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
-            entities: { [getEntityKey(entityType)]: { [id]: entity } }
+            bizModel: bizModel
         })
     });
 }
