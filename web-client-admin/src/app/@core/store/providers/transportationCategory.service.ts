@@ -11,7 +11,7 @@ import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { ITransportationCategoryBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { transportationCategory } from '../entity/entity.schema';
+import { transportationCategorySchema } from '../entity/entity.schema';
 import { ITransportationCategory } from '../entity/model/travelAgenda.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { EntityService } from './entity.service';
@@ -29,7 +29,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, [transportationCategory], `transportationCategories`);
+        super(_http, _uploader, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, [transportationCategorySchema], `transportationCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._default = value.find(tpc => tpc.isDefault);
@@ -81,7 +81,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
         return store.select<{ [id: string]: ITransportationCategory }>(
             [STORE_KEY.entities, STORE_ENTITIES_KEY.transportationCatgories]).pipe(
                 map((data) => {
-                    return denormalize(Object.keys(data), [transportationCategory],
+                    return denormalize(Object.keys(data), [transportationCategorySchema],
                         Immutable(store.getState().entities).asMutable({ deep: true }));
                 })
             );

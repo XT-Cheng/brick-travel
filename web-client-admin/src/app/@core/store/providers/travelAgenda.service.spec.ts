@@ -4,22 +4,34 @@ import { cold } from 'jasmine-marbles';
 import { merge } from 'rxjs/operators';
 
 import { initTest } from '../../../../test';
+import { viewPoint } from '../../store.v0/entity/entity.schema';
+import { ICityBiz } from '../bizModel/model/city.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz, IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
+import { ITransportationCategory } from '../entity/model/travelAgenda.model';
 import { ErrorService } from './error.service';
+import { TransportationCategoryService } from './transportationCategory.service';
 import { TravelAgendaService } from './travelAgenda.service';
 
-const cityData = {
+const transportationData: ITransportationCategory = {
+    id: 'transportationCategoryId',
+    name: 'Bus',
+    isDefault: true
+};
+
+const cityData: ICityBiz = {
     id: '5a4b5756764fba2c80ef5ba1',
     name: '黄山',
     thumbnail: '',
     addressCode: '100'
 };
 
-const categoryData = {
+const categoryData: IViewPointCategoryBiz = {
     id: '5acc62fe6c251979dd67f0c1',
     name: 'View'
 };
 
-const viewPointData = {
+const viewPointData: IViewPointBiz = {
     city: cityData,
     name: '老大桥9',
     category: categoryData,
@@ -41,7 +53,7 @@ const viewPointData = {
     id: '5a4b5756764fba2c878a5ba9'
 };
 
-const travelAgendaData = {
+const travelAgendaData: ITravelAgendaBiz = {
     id: '5a4b5756764fb8u7c78a5ba9',
     name: '黄山',
     user: 'whoiscxt',
@@ -49,50 +61,39 @@ const travelAgendaData = {
     dailyTrips: []
 };
 
-const flushData = [
-    {
-        name: '黄山',
-        user: 'whoiscxt',
-        cover: 'assets/img/IMG_4201.jpg',
-        dailyTrips: [
-            // {
-            //     travelViewPoints: [
-            //         {
-            //             transportationToNext: {
-            //                 name: 'Bus',
-            //                 isDefault: true
-            //             },
-            //             viewPoint: viewPointData,
-            //             distanceToNext: 100,
-            //             id: '5a85287048294c00009ce922',
-            //             dailyTrip: '5a8523a448294c00009ce921'
-            //         }
-            //     ],
-            //     lastViewPoint: '5a4b5756764fba2c878a5ba9',
-            //     id: '5a8523a448294c00009ce921',
-            //     travelAgenda: '5a85232348294c00009ce91f'
-            // }
-        ],
-        id: '5a4b5756764fb8u7c78a5ba9'
-    }
-];
-
 const errorData = {
     status: 404,
     statusText: 'Not Found'
 };
 
 let service: TravelAgendaService;
+let transportationService: TransportationCategoryService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
+let AMap: any;
 
 describe('travelAgenda test', () => {
     beforeEach(() => {
         initTest();
 
+        AMap = {
+            LngLat: function (longtitude: number, latitude: number) { }
+        };
+
+        AMap.LngLat.prototype.distance = function () {
+            return Math.floor(Math.random() * 1000) + 1000;
+        };
+
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(TravelAgendaService);
         errorService = TestBed.get(ErrorService);
+        transportationService = TestBed.get(TransportationCategoryService);
+
+        transportationService.fetch();
+
+        const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
+
+        req.flush([transportationData]);
     });
 
     afterEach(() => {
@@ -100,8 +101,11 @@ describe('travelAgenda test', () => {
         httpTestingController.verify();
     });
 
-    fdescribe('fetch test', () => {
+    describe('fetch test', () => {
         it('#fetch - Success', () => {
+
+            const flushData = Object.assign({}, travelAgendaData);
+
             const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
@@ -114,16 +118,18 @@ describe('travelAgenda test', () => {
 
             const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
 
-            req.flush(flushData);
+            req.flush([flushData]);
 
             expect(provided).toBeObservable(expected);
         });
         it('#byId - Success', () => {
+            const flushData = Object.assign({}, travelAgendaData);
+
             service.fetch();
 
             const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
 
-            req.flush(flushData);
+            req.flush([flushData]);
 
             expect(service.byId(travelAgendaData.id)).toEqual(travelAgendaData);
         });
@@ -171,11 +177,11 @@ describe('travelAgenda test', () => {
 
             req.error(new ErrorEvent('network error'));
 
-
             expect(provided).toBeObservable(expected);
         });
 
         it('#fetch - Success after Failed', () => {
+            const flushData = Object.assign({}, travelAgendaData);
             const provided = errorService.error$.pipe(
                 merge(service.all$)
             );
@@ -195,107 +201,176 @@ describe('travelAgenda test', () => {
 
             req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
 
-            req.flush(flushData);
+            req.flush([flushData]);
 
             expect(provided).toBeObservable(expected);
         });
     });
 
-    // describe('add test', () => {
-    //     it('#add - Success', () => {
-    //         const provided = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
+    describe('add test', () => {
+        fit('#add - Success', () => {
+            const dailyTripData: IDailyTripBiz = {
+                travelViewPoints: [],
+                travelAgenda: null,
+                lastViewPoint: null,
+                id: 'dailyTripId'
+            };
+            const travelViewPointData: ITravelViewPointBiz = {
+                distanceToNext: -1,
+                dailyTrip: null,
+                transportationToNext: null,
+                viewPoint: viewPointData,
+                id: 'travelViewPointId'
+            };
 
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: travelAgendaData,
-    //                 b: null
-    //             });
+            const flushData = Object.assign({}, travelAgendaData);
+            const provided = service.all$.pipe(
+                merge(errorService.error$)
+            );
 
-    //         service.add(travelAgendaData[0]);
+            const expected = cold('(ab)',
+                {
+                    a: [travelAgendaData],
+                    b: null
+                });
 
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+            // 1. Add empty TravelAgenda
+            service.add(travelAgendaData);
 
-    //         req.flush(flushData);
+            const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
 
-    //         expect(provided).toBeObservable(expected);
-    //     });
+            req.flush([flushData]);
 
-    //     it('#add - Failed with backend error', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
+            // 2. Add empty Daily Trip
+            service.addDailyTrip(dailyTripData, travelAgendaData.id);
 
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: [],
-    //                 b: {
-    //                     network: false,
-    //                     description: 'error happened',
-    //                     stack: ''
-    //                 }
-    //             });
+            // 3. Add TravelViewPoint
+            service.addTravelViewPoint(travelViewPointData, dailyTripData.id);
 
-    //         service.add(travelAgendaData[0]);
+            expect(provided).toBeObservable(expected);
+        });
 
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+        // it('#add dailyTrip - Success', () => {
+        //     const provided = service.all$.pipe(
+        //         map(values => values[0].id),
+        //         merge(errorService.error$)
+        //     );
 
-    //         req.flush('error happened', errorData);
+        //     const expected = cold('(ab)',
+        //         {
+        //             a: '5a4b5756764fb8u7c78a5ba9',
+        //             b: null
+        //         });
 
-    //         expect(provide).toBeObservable(expected);
-    //     });
+        //     service.add(travelAgendaData);
 
-    //     it('#add - Failed with network error', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
+        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
 
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: [],
-    //                 b: {
-    //                     network: true,
-    //                     description: '',
-    //                     stack: ''
-    //                 }
-    //             });
+        //     req.flush(flushData);
 
-    //         service.add(travelAgendaData[0]);
+        //     service.addDailyTrip(travelAgendaData);
 
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+        //     expect(provided).toBeObservable(expected);
+        // });
 
-    //         req.error(new ErrorEvent('network error'));
+        // it('#add viewPoint - Success', () => {
+        //     const provided = service.all$.pipe(
+        //         map(values => values[0].dailyTrips[0].travelViewPoints.length),
+        //         merge(errorService.error$)
+        //     );
 
-    //         expect(provide).toBeObservable(expected);
-    //     });
+        //     const expected = cold('(ab)',
+        //         {
+        //             a: 1,
+        //             b: null
+        //         });
 
-    //     it('#add - Success after Failed', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
+        //     service.add(travelAgendaData);
 
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: travelAgendaData,
-    //                 b: null
-    //             });
+        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
 
-    //         service.add(travelAgendaData[0]);
+        //     req.flush(flushData);
 
-    //         let req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+        //     service.addDailyTrip(travelAgendaData);
+        //     service.addTravelViewPoint(viewPointData, travelAgendaData.dailyTrips[0]);
 
-    //         req.error(new ErrorEvent('network error'));
+        //     expect(provided).toBeObservable(expected);
+        // });
 
-    //         service.add(travelAgendaData[0]);
+        // it('#add - Failed with backend error', () => {
+        //     const provide = service.all$.pipe(
+        //         merge(errorService.error$)
+        //     );
 
-    //         req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+        //     const expected = cold('(ab)',
+        //         {
+        //             a: [],
+        //             b: {
+        //                 network: false,
+        //                 description: 'error happened',
+        //                 stack: ''
+        //             }
+        //         });
 
-    //         req.flush(flushData);
+        //     service.add(travelAgendaData[0]);
 
-    //         expect(provide).toBeObservable(expected);
-    //     });
-    // });
+        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+
+        //     req.flush('error happened', errorData);
+
+        //     expect(provide).toBeObservable(expected);
+        // });
+
+        // it('#add - Failed with network error', () => {
+        //     const provide = service.all$.pipe(
+        //         merge(errorService.error$)
+        //     );
+
+        //     const expected = cold('(ab)',
+        //         {
+        //             a: [],
+        //             b: {
+        //                 network: true,
+        //                 description: '',
+        //                 stack: ''
+        //             }
+        //         });
+
+        //     service.add(travelAgendaData[0]);
+
+        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+
+        //     req.error(new ErrorEvent('network error'));
+
+        //     expect(provide).toBeObservable(expected);
+        // });
+
+        // it('#add - Success after Failed', () => {
+        //     const provide = service.all$.pipe(
+        //         merge(errorService.error$)
+        //     );
+
+        //     const expected = cold('(ab)',
+        //         {
+        //             a: travelAgendaData,
+        //             b: null
+        //         });
+
+        //     service.add(travelAgendaData[0]);
+
+        //     let req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+
+        //     req.error(new ErrorEvent('network error'));
+
+        //     service.add(travelAgendaData[0]);
+
+        //     req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+
+        //     req.flush(flushData);
+
+        //     expect(provide).toBeObservable(expected);
+        // });
+    });
 
     // describe('update test', () => {
     //     beforeEach(() => {

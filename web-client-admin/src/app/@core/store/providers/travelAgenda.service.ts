@@ -1,8 +1,7 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { ObjectID } from 'bson';
-import { denormalize } from 'normalizr';
+import { denormalize, normalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest, map, switchMap } from 'rxjs/operators';
@@ -10,12 +9,11 @@ import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { IDailyTripBiz, ITravelAgendaBiz } from '../bizModel/model/travelAgenda.biz.model';
-import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { DirtyTypeEnum } from '../dirty/dirty.action';
-import { entityActionSucceeded, EntityActionTypeEnum } from '../entity/entity.action';
+import { EntityActionTypeEnum } from '../entity/entity.action';
 import { EntityTypeEnum, INIT_ENTITY_STATE, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { dailyTrip, travelAgenda } from '../entity/entity.schema';
+import { dailyTripSchema, travelAgendaSchema, travelViewPointSchema } from '../entity/entity.schema';
 import { ITravelAgenda } from '../entity/model/travelAgenda.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
@@ -38,13 +36,13 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     //#endregion
 
     //#region insert actions
-    private insertDataAction = entityActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
+    // private insertDataAction = entityActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
 
     //#endregion
 
     //#region insert actions
 
-    private updateDataAction = entityActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
+    // private updateDataAction = entityActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
 
     //#endregion
 
@@ -52,7 +50,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     constructor(protected _http: HttpClient, private _transportationCategoryService: TransportationCategoryService,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader, private _travelAgendaUISrv: TravelAgendaUIService,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.TRAVELAGENDA, [travelAgenda], `travelAgendas`);
+        super(_http, _uploader, _store, EntityTypeEnum.TRAVELAGENDA, [travelAgendaSchema], `travelAgendas`);
 
         this.getSelected(this._store).subscribe((value) => {
             this._selected = value;
@@ -76,14 +74,16 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
             name: bizModel.name,
             user: bizModel.user,
             cover: bizModel.cover,
-            dailyTrips: bizModel.dailyTrips.map(dt => {
+            dailyTrips: bizModel.dailyTrips.map(dailyTrip => {
                 return {
-                    id: dt.id,
-                    travelViewPoints: dt.travelViewPoints.map(tvp => {
+                    id: dailyTrip.id,
+                    travelAgenda: bizModel.id,
+                    travelViewPoints: dailyTrip.travelViewPoints.map(travelViewPoint => {
                         return {
-                            id: tvp.id,
-                            viewPoint: tvp.viewPoint.id,
-                            transportationToNext: tvp.transportationToNext.id
+                            id: travelViewPoint.id,
+                            dailyTrip: dailyTrip.id,
+                            viewPoint: travelViewPoint.viewPoint.id,
+                            transportationToNext: travelViewPoint.transportationToNext ? travelViewPoint.transportationToNext.id : ''
                         };
                     })
                 };
@@ -106,7 +106,15 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
 
     public byId(id: string): ITravelAgendaBiz {
-        return denormalize(id, travelAgenda, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        return denormalize(id, travelAgendaSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+    }
+
+    public dailyTripById(id: string): IDailyTripBiz {
+        return denormalize(id, dailyTripSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+    }
+
+    public travelViewPointById(id: string): ITravelViewPointBiz {
+        return denormalize(id, travelViewPointSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
 
     public get all$(): Observable<ITravelAgendaBiz[]> {
@@ -130,47 +138,44 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
         this.add(toAdd);
     }
 
-    public addViewPoint(s: IViewPointBiz, d: IDailyTripBiz) {
-        d.travelViewPoints.push({
-            id: new ObjectID().toHexString(),
-            viewPoint: s,
-            distanceToNext: -1,
-            dailyTrip: d,
-            transportationToNext: null
-        });
+    public addTravelViewPoint(travelViewPoint: ITravelViewPointBiz, dailyTripId: string) {
+        const dailyTrip = this.dailyTripById(dailyTripId);
+        if (!dailyTrip) { throw new Error(`DailyTrip Id ${dailyTripId} not exist!`); }
 
-        this.caculateDistance(d);
+        dailyTrip.travelViewPoints.push(travelViewPoint);
 
-        const entities = denormalize(d.id, dailyTrip, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        this.caculateDistance(dailyTrip);
 
-        this._store.dispatch(this.updateDataAction(
+        travelViewPoint.dailyTrip = dailyTrip;
+        const entities = normalize(this.toTransfer(dailyTrip.travelAgenda), travelAgendaSchema).entities;
+
+        this._store.dispatch(this.succeededAction(
             EntityActionTypeEnum.UPDATE,
             Object.assign({}, INIT_ENTITY_STATE, entities)
         ));
-        this.addDirtyAction(d.travelAgenda.id, DirtyTypeEnum.UPDATED);
+        this._store.dispatch(this.addDirtyAction(dailyTrip.travelAgenda.id, DirtyTypeEnum.UPDATED));
     }
 
-    public addDailyTrip(d: ITravelAgendaBiz) {
-        d.dailyTrips.push({
-            id: new ObjectID().toHexString(),
-            travelViewPoints: [],
-            lastViewPoint: '',
-            travelAgenda: d
-        });
+    public addDailyTrip(dailyTrip: IDailyTripBiz, travelAgendaId: string) {
+        const travelAgenda = this.byId(travelAgendaId);
+        if (!travelAgenda) { throw new Error(`TravelAgenda Id ${travelAgendaId} not exist!`); }
 
-        this.caculateDistance(d.dailyTrips[d.dailyTrips.length - 1]);
+        travelAgenda.dailyTrips.push(dailyTrip);
 
-        const entities = denormalize(d.id, travelAgenda, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        this.caculateDistance(travelAgenda.dailyTrips[travelAgenda.dailyTrips.length - 1]);
 
-        this._store.dispatch(this.updateDataAction(
+        dailyTrip.travelAgenda = travelAgenda;
+        const entities = normalize(this.toTransfer(travelAgenda), travelAgendaSchema).entities;
+
+        this._store.dispatch(this.succeededAction(
             EntityActionTypeEnum.UPDATE,
             Object.assign({}, INIT_ENTITY_STATE, entities)
         ));
-        this.addDirtyAction(d.id, DirtyTypeEnum.UPDATED);
+        this._store.dispatch(this.addDirtyAction(travelAgenda.id, DirtyTypeEnum.UPDATED));
     }
 
-    public change(c: ITravelAgendaBiz) {
-        this.updateEntity(c, true);
+    public change(travelAgenda: ITravelAgendaBiz) {
+        this.updateEntity(travelAgenda, true);
     }
 
     public changeById(id: string) {
@@ -180,8 +185,8 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
         this.change(toChange);
     }
 
-    public remove(c: ITravelAgendaBiz) {
-        this.deleteEntity(c, true);
+    public remove(travelAgenda: ITravelAgendaBiz) {
+        this.deleteEntity(travelAgenda, true);
     }
 
     public removeById(id: string) {
@@ -205,8 +210,9 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
             switchMap(id => {
                 return store.select<ITravelAgenda>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas, id]);
             }),
-            map(ct => {
-                return ct ? denormalize(ct.id, travelAgenda, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            map(travelAgenda => {
+                return travelAgenda ? denormalize(travelAgenda.id, travelAgendaSchema,
+                    Immutable(store.getState().entities).asMutable({ deep: true })) : null;
             })
         );
     }
@@ -229,32 +235,34 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     private getAll(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz[]> {
         return store.select<{ [id: string]: ITravelAgenda }>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas]).pipe(
             map((data) => {
-                return denormalize(Object.keys(data), [travelAgenda], Immutable(store.getState().entities).asMutable({ deep: true }));
+                return denormalize(Object.keys(data), [travelAgendaSchema], Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }
 
-    private caculateDistance(dt: IDailyTripBiz) {
-        if (!dt || !dt.travelViewPoints) { return; }
+    private caculateDistance(dailyTrip: IDailyTripBiz) {
+        if (!dailyTrip || !dailyTrip.travelViewPoints) { return; }
 
-        for (let i = 0; i < dt.travelViewPoints.length - 1; i++) {
-            const vp = dt.travelViewPoints[i];
-            const vpNext = dt.travelViewPoints[i + 1];
+        for (let i = 0; i < dailyTrip.travelViewPoints.length; i++) {
+            const vp = dailyTrip.travelViewPoints[i];
+            const vpNext = dailyTrip.travelViewPoints[i + 1];
 
-            vp.distanceToNext = Math.round(new AMap.LngLat(vp.viewPoint.longtitude, vp.viewPoint.latitude).distance(
-                new AMap.LngLat(vpNext.viewPoint.longtitude, vpNext.viewPoint.latitude)
-            ));
+            if (vpNext) {
+                vp.distanceToNext = Math.round(new AMap.LngLat(vp.viewPoint.longtitude, vp.viewPoint.latitude).distance(
+                    new AMap.LngLat(vpNext.viewPoint.longtitude, vpNext.viewPoint.latitude)
+                ));
+            }
 
             if (vp.transportationToNext == null) {
                 vp.transportationToNext = this._transportationCategoryService.default;
             }
         }
 
-        if (dt.travelViewPoints.length > 0) {
-            dt.travelViewPoints[dt.travelViewPoints.length - 1].transportationToNext = null;
-            dt.lastViewPoint = dt.travelViewPoints[dt.travelViewPoints.length - 1].id;
+        if (dailyTrip.travelViewPoints.length > 0) {
+            dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].transportationToNext = null;
+            dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
         } else {
-            dt.lastViewPoint = '';
+            dailyTrip.lastViewPoint = '';
         }
     }
 

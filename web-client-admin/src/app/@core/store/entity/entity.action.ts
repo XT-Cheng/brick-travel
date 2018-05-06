@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { FluxStandardAction } from 'flux-standard-action';
 
 import { IBiz } from '../bizModel/biz.model';
@@ -140,7 +139,7 @@ export function entityActionStarted(entityType: EntityTypeEnum) {
 }
 
 export function entityActionFailed(entityType: EntityTypeEnum) {
-    return (actionType: EntityActionTypeEnum, error: HttpErrorResponse): EntityAction => ({
+    return (actionType: EntityActionTypeEnum, error: any): EntityAction => ({
         type: actionType,
         error: true,
         meta: Object.assign({}, defaultEntityActionMeta, {

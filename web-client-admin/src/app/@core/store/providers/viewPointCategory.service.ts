@@ -11,7 +11,7 @@ import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { viewPointCategory } from '../entity/entity.schema';
+import { viewPointCategorySchema } from '../entity/entity.schema';
 import { IViewPointCategory } from '../entity/model/viewPoint.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { EntityService } from './entity.service';
@@ -28,7 +28,7 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINTCATEGORY, [viewPointCategory], `viewPointCategories`);
+        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINTCATEGORY, [viewPointCategorySchema], `viewPointCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
@@ -74,7 +74,8 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
     private getAll(store: NgRedux<IAppState>): Observable<IViewPointCategoryBiz[]> {
         return store.select<{ [id: string]: IViewPointCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPointCatgories]).pipe(
             map((data) => {
-                return denormalize(Object.keys(data), [viewPointCategory], Immutable(store.getState().entities).asMutable({ deep: true }));
+                return denormalize(Object.keys(data), [viewPointCategorySchema],
+                Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }

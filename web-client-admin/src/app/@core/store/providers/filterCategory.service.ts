@@ -11,7 +11,7 @@ import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { filterCategory } from '../entity/entity.schema';
+import { filterCategorySchema } from '../entity/entity.schema';
 import { IFilterCategory } from '../entity/model/filterCategory.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { EntityService } from './entity.service';
@@ -28,7 +28,7 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.FILTERCATEGORY, [filterCategory], `filterCategories`);
+        super(_http, _uploader, _store, EntityTypeEnum.FILTERCATEGORY, [filterCategorySchema], `filterCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
@@ -74,7 +74,8 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     private getAll(store: NgRedux<IAppState>): Observable<IFilterCategoryBiz[]> {
         return store.select<{ [id: string]: IFilterCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.filterCategories]).pipe(
             map((data) => {
-                return denormalize(Object.keys(data), [filterCategory], Immutable(store.getState().entities).asMutable({ deep: true }));
+                return denormalize(Object.keys(data), [filterCategorySchema],
+                    Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }

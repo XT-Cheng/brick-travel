@@ -11,7 +11,7 @@ import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { city } from '../entity/entity.schema';
+import { citySchema } from '../entity/entity.schema';
 import { ICity } from '../entity/model/city.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
@@ -36,7 +36,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>, private _uiService: CityUIService) {
-        super(_http, _uploader, _store, EntityTypeEnum.CITY, [city], `cities`);
+        super(_http, _uploader, _store, EntityTypeEnum.CITY, [citySchema], `cities`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
@@ -77,7 +77,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     }
 
     public byId(id: string): ICityBiz {
-        return denormalize(id, city, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        return denormalize(id, citySchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
 
     //#region CRUD methods
@@ -128,7 +128,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     private getAll(store: NgRedux<IAppState>): Observable<ICityBiz[]> {
         return store.select<{ [id: string]: ICity }>([STORE_KEY.entities, STORE_ENTITIES_KEY.cities]).pipe(
             map((data) => {
-                return denormalize(Object.keys(data), [city], Immutable(store.getState().entities).asMutable({ deep: true }));
+                return denormalize(Object.keys(data), [citySchema], Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }
@@ -143,7 +143,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
                 return store.select<ICity>([STORE_KEY.entities, STORE_ENTITIES_KEY.cities, id]);
             }),
             map(ct => {
-                return ct ? denormalize(ct.id, city, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+                return ct ? denormalize(ct.id, citySchema, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
             })
         );
     }

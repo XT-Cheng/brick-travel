@@ -17,7 +17,7 @@ import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IUserBiz } from '../bizModel/model/user.biz.model';
 import { EntityActionTypeEnum } from '../entity/entity.action';
 import { EntityTypeEnum, INIT_ENTITY_STATE, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { user } from '../entity/entity.schema';
+import { userSchema } from '../entity/entity.schema';
 import { IUser } from '../entity/model/user.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { userLoggedInAction } from '../ui/reducer/user.reducer';
@@ -39,7 +39,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         private _auth: AuthService, private _tokenService: TokenService, private _storage: Storage,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.USER, [user], `users`);
+        super(_http, _uploader, _store, EntityTypeEnum.USER, [userSchema], `users`);
 
         this._storage.get(TokenStorage.TOKEN_KEY).then((value) =>
             this._tokenService.setRaw(value)
@@ -87,7 +87,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     }
 
     public byId(id: string): IUserBiz {
-        return denormalize(id, user, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        return denormalize(id, userSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
     //#region CRUD methods
 
@@ -122,7 +122,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     private getAll(store: NgRedux<IAppState>): Observable<IUserBiz[]> {
         return store.select<{ [id: string]: IUser }>([STORE_KEY.entities, STORE_ENTITIES_KEY.users]).pipe(
             map((data) => {
-                return denormalize(Object.keys(data), [user], Immutable(store.getState().entities).asMutable({ deep: true }));
+                return denormalize(Object.keys(data), [userSchema], Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }
@@ -133,7 +133,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
                 return store.select<IUser>([STORE_KEY.entities, STORE_ENTITIES_KEY.users, id]);
             }),
             map(ct => {
-                return ct ? denormalize(ct.id, user, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+                return ct ? denormalize(ct.id, userSchema, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
             })
         );
     }

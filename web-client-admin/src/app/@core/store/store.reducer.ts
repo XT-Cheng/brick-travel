@@ -31,8 +31,8 @@ export function errorReducer(state: IError = null,
   action: FluxStandardAction<IActionPayload, IActionMetaInfo>): IError {
   if (action.error && action.payload.error) {
     return {
-      network: (action.payload.error.error instanceof ErrorEvent),
-      description: (action.payload.error.error instanceof ErrorEvent) ? action.payload.error.error.message : action.payload.error.error,
+      network: (action.payload.error instanceof ErrorEvent),
+      description: (action.payload.error instanceof ErrorEvent) ? action.payload.error.message : action.payload.error,
       stack: ''
     };
   }

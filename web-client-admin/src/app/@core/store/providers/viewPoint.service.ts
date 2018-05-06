@@ -11,7 +11,7 @@ import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
-import { viewPoint } from '../entity/entity.schema';
+import { viewPointSchema } from '../entity/entity.schema';
 import { IViewPoint } from '../entity/model/viewPoint.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
@@ -36,7 +36,7 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>, private _viewPointUISrv: ViewPointUIService) {
-        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINT, [viewPoint], `viewPoints`);
+        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINT, [viewPointSchema], `viewPoints`);
 
         this.getSelected(this._store).subscribe((value) => {
             this._selected = value;
@@ -79,7 +79,7 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     }
 
     public byId(id: string): IViewPointBiz {
-        return denormalize(id, viewPoint, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        return denormalize(id, viewPointSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
 
     //#region CRUD methods
@@ -116,7 +116,7 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
                 return store.select<IViewPoint>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints, id]);
             }),
             map(ct => {
-                return ct ? denormalize(ct.id, viewPoint, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+                return ct ? denormalize(ct.id, viewPointSchema, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
             })
         );
     }
@@ -139,7 +139,7 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     private getAll(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
         return store.select<{ [id: string]: IViewPoint }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPoints]).pipe(
             map((data) => {
-                return denormalize(Object.keys(data), [viewPoint], Immutable(store.getState().entities).asMutable({ deep: true }));
+                return denormalize(Object.keys(data), [viewPointSchema], Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }

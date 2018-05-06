@@ -2,40 +2,56 @@ import { schema } from 'normalizr';
 
 import { STORE_ENTITIES_KEY } from './entity.model';
 
-export const user = new schema.Entity(STORE_ENTITIES_KEY.users);
+export const userSchema = new schema.Entity(STORE_ENTITIES_KEY.users);
 
-export const city = new schema.Entity(STORE_ENTITIES_KEY.cities);
+export const citySchema = new schema.Entity(STORE_ENTITIES_KEY.cities);
 
-export const viewPointComment = new schema.Entity(STORE_ENTITIES_KEY.viewPointComments);
+export const viewPointCommentSchema = new schema.Entity(STORE_ENTITIES_KEY.viewPointComments);
 
-export const viewPointCategory = new schema.Entity(STORE_ENTITIES_KEY.viewPointCatgories);
+export const viewPointCategorySchema = new schema.Entity(STORE_ENTITIES_KEY.viewPointCatgories);
 
-export const viewPoint = new schema.Entity(STORE_ENTITIES_KEY.viewPoints, {
-    comments: [viewPointComment],
-    city: city,
-    category: viewPointCategory
+export const viewPointSchema = new schema.Entity(STORE_ENTITIES_KEY.viewPoints, {
+    comments: [viewPointCommentSchema],
+    city: citySchema,
+    category: viewPointCategorySchema
 });
 
-export const filterCriteria = new schema.Entity(STORE_ENTITIES_KEY.filterCriteries);
+export const filterCriteriaSchema = new schema.Entity(STORE_ENTITIES_KEY.filterCriteries);
 
-export const filterCategory = new schema.Entity(STORE_ENTITIES_KEY.filterCategories, {
-    criteries: [filterCriteria]
+export const filterCategorySchema = new schema.Entity(STORE_ENTITIES_KEY.filterCategories, {
+    criteries: [filterCriteriaSchema]
 });
 
-export const transportationCategory = new schema.Entity(STORE_ENTITIES_KEY.transportationCatgories);
+export const transportationCategorySchema = new schema.Entity(STORE_ENTITIES_KEY.transportationCatgories);
 
-export const travelViewPoint = new schema.Entity(STORE_ENTITIES_KEY.travelViewPoints, {
-    viewPoint: viewPoint,
-    transportationToNext: transportationCategory
+export const travelViewPointSchema = new schema.Entity(STORE_ENTITIES_KEY.travelViewPoints, {
+    viewPoint: viewPointSchema,
+    transportationToNext: transportationCategorySchema
 });
 
-export const dailyTrip = new schema.Entity(STORE_ENTITIES_KEY.dailyTrips, {
-    travelViewPoints: [travelViewPoint]
+// , {
+//     processStrategy: (value, parent, key) => {
+//         const ret = Object.assign({}, value);
+//         delete ret.dailyTrip;
+//         return ret;
+//     }
+// }
+
+export const dailyTripSchema = new schema.Entity(STORE_ENTITIES_KEY.dailyTrips, {
+    travelViewPoints: [travelViewPointSchema]
 });
 
-export const travelAgenda = new schema.Entity(STORE_ENTITIES_KEY.travelAgendas, {
-    dailyTrips: [dailyTrip]
+// , {
+//     processStrategy: (value, parent, key) => {
+//         const ret = Object.assign({}, value);
+//         delete ret.travelAgenda;
+//         return ret;
+//     }
+// }
+
+export const travelAgendaSchema = new schema.Entity(STORE_ENTITIES_KEY.travelAgendas, {
+    dailyTrips: [dailyTripSchema]
 });
 
-dailyTrip.define({ 'travelAgenda': travelAgenda });
-travelViewPoint.define({ 'dailyTrip': dailyTrip });
+dailyTripSchema.define({ 'travelAgenda': travelAgendaSchema });
+travelViewPointSchema.define({ 'dailyTrip': dailyTripSchema });

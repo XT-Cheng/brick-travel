@@ -4,7 +4,7 @@ import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { catchError, concat, filter, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, concat, filter, map, mergeMap, startWith } from 'rxjs/operators';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { WEBAPI_HOST } from '../../utils/constants';
@@ -48,19 +48,19 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region update actions
 
-    private updateAction = entityUpdateAction<U>(this._entityType);
+    protected updateAction = entityUpdateAction<U>(this._entityType);
 
     //#endregion
 
     //#region insert actions
 
-    private insertAction = entityInsertAction<U>(this._entityType);
+    protected insertAction = entityInsertAction<U>(this._entityType);
 
     //#endregion
 
     //#region delete actions
 
-    private deleteAction = entityDeleteAction<U>(this._entityType);
+    protected deleteAction = entityDeleteAction<U>(this._entityType);
 
     //#endregion
 
@@ -88,7 +88,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     action.payload.entityType === this._entityType
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER
                     && !action.payload.dirtyMode),
-                switchMap(action => {
+                mergeMap(action => {
                     const bizModel = <U>action.payload.bizModel;
                     let ret: Observable<IEntities>;
                     switch (action.type) {
@@ -121,7 +121,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     action.payload.entityType === this._entityType
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER
                     && action.payload.dirtyMode),
-                switchMap(action => {
+                mergeMap(action => {
                     const bizModel = <U>action.payload.bizModel;
                     let ret: Observable<IEntities>;
                     switch (action.type) {

@@ -4,7 +4,7 @@ import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { catchError, filter, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, startWith } from 'rxjs/operators';
 
 import { WEBAPI_HOST } from '../../utils/constants';
 import {
@@ -69,10 +69,10 @@ export abstract class FetchService {
                 filter(action =>
                     action.payload.entityType === this._entityType
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER),
-                switchMap(action => this.load(action.payload.pagination, action.payload.queryCondition).pipe(
+                mergeMap(action => this.load(action.payload.pagination, action.payload.queryCondition).pipe(
                     map(data => this.succeededAction(EntityActionTypeEnum.LOAD, data)),
                     catchError((errResponse: HttpErrorResponse) => {
-                        return of(this.failedAction(EntityActionTypeEnum.LOAD, errResponse));
+                        return of(this.failedAction(EntityActionTypeEnum.LOAD, errResponse.error));
                     }),
                     startWith(this.startedAction(EntityActionTypeEnum.LOAD)))
                 ));
