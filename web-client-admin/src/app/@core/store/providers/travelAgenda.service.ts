@@ -78,6 +78,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
                 return {
                     id: dailyTrip.id,
                     travelAgenda: bizModel.id,
+                    lastViewPoint: dailyTrip.lastViewPoint ? dailyTrip.lastViewPoint.id : null,
                     travelViewPoints: dailyTrip.travelViewPoints.map(travelViewPoint => {
                         return {
                             id: travelViewPoint.id,
@@ -260,9 +261,9 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
         if (dailyTrip.travelViewPoints.length > 0) {
             dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].transportationToNext = null;
-            dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1].id;
+            dailyTrip.lastViewPoint = dailyTrip.travelViewPoints[dailyTrip.travelViewPoints.length - 1];
         } else {
-            dailyTrip.lastViewPoint = '';
+            dailyTrip.lastViewPoint = null;
         }
     }
 

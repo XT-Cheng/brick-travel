@@ -86,16 +86,16 @@ export class CityService extends EntityService<ICity, ICityBiz> {
         this.loadEntities();
     }
 
-    public add(c: ICityBiz) {
-        this.insertEntity(c);
+    public add(city: ICityBiz) {
+        this.insertEntity(city);
     }
 
-    public change(c: ICityBiz) {
-        this.updateEntity(c);
+    public change(city: ICityBiz) {
+        this.updateEntity(city);
     }
 
-    public remove(c: ICityBiz) {
-        this.deleteEntity(c);
+    public remove(city: ICityBiz) {
+        this.deleteEntity(city);
     }
 
     public addById(id: string) {

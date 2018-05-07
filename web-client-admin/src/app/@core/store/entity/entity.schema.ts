@@ -29,25 +29,10 @@ export const travelViewPointSchema = new schema.Entity(STORE_ENTITIES_KEY.travel
     transportationToNext: transportationCategorySchema
 });
 
-// , {
-//     processStrategy: (value, parent, key) => {
-//         const ret = Object.assign({}, value);
-//         delete ret.dailyTrip;
-//         return ret;
-//     }
-// }
-
 export const dailyTripSchema = new schema.Entity(STORE_ENTITIES_KEY.dailyTrips, {
-    travelViewPoints: [travelViewPointSchema]
+    travelViewPoints: [travelViewPointSchema],
+    lastViewPoint: travelViewPointSchema
 });
-
-// , {
-//     processStrategy: (value, parent, key) => {
-//         const ret = Object.assign({}, value);
-//         delete ret.travelAgenda;
-//         return ret;
-//     }
-// }
 
 export const travelAgendaSchema = new schema.Entity(STORE_ENTITIES_KEY.travelAgendas, {
     dailyTrips: [dailyTripSchema]

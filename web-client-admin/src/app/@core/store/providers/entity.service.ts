@@ -1,5 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { normalize } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
@@ -107,8 +107,8 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     }
                     return ret.pipe(
                         map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
-                        catchError(response =>
-                            of(this.failedAction(<EntityActionTypeEnum>(action.type), response))
+                        catchError((errResponse: HttpErrorResponse) =>
+                            of(this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error))
                         ),
                         startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
                 }));
@@ -140,7 +140,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     }
                     return ret.pipe(
                         map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
-                        catchError(response => {
+                        catchError((errResponse: HttpErrorResponse) => {
                             let dirtyType: DirtyTypeEnum;
                             switch (action.type) {
                                 case EntityActionTypeEnum.INSERT: {
@@ -158,7 +158,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                             }
                             return of(this.addDirtyAction(bizModel.id, dirtyType)).pipe(
                                 concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), action.payload.entities),
-                                    this.failedAction(<EntityActionTypeEnum>(action.type), response))));
+                                    this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error))));
                         }),
                         startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
                 }));

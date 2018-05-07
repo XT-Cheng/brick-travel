@@ -30,9 +30,10 @@ export function progressReducer(state: IProgress = { progressing: false },
 export function errorReducer(state: IError = null,
   action: FluxStandardAction<IActionPayload, IActionMetaInfo>): IError {
   if (action.error && action.payload.error) {
+    const err = action.payload.error; // string or ErrorEvent
     return {
-      network: (action.payload.error instanceof ErrorEvent),
-      description: (action.payload.error instanceof ErrorEvent) ? action.payload.error.message : action.payload.error,
+      network: (err instanceof ErrorEvent),
+      description: (err instanceof ErrorEvent) ? err.message : err,
       stack: ''
     };
   }

@@ -15,7 +15,7 @@ export interface ITravelAgendaBiz extends IBiz {
 
 export interface IDailyTripBiz extends IBiz {
     travelViewPoints: ITravelViewPointBiz[];
-    lastViewPoint: string;
+    lastViewPoint: ITravelViewPointBiz;
     travelAgenda: ITravelAgendaBiz;
 }
 

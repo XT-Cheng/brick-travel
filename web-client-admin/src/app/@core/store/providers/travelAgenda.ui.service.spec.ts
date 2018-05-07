@@ -62,7 +62,7 @@ const travelViewPointsData = [
 const dailyTripsData = [
     {
         travelViewPoints: travelViewPointsData,
-        lastViewPoint: '5a4b5756764fba2c878a5ba9',
+        lastViewPoint: travelViewPointsData[0],
         id: '5a8523a448294c00009ce921',
         travelAgenda: null
     }

@@ -208,7 +208,7 @@ describe('travelAgenda test', () => {
     });
 
     describe('add test', () => {
-        fit('#add - Success', () => {
+        it('#add - Success', () => {
             const dailyTripData: IDailyTripBiz = {
                 travelViewPoints: [],
                 travelAgenda: null,
@@ -224,6 +224,11 @@ describe('travelAgenda test', () => {
             };
 
             const flushData = Object.assign({}, travelAgendaData);
+            let result: any;
+            service.all$.subscribe((value) => {
+                result = value;
+            });
+
             const provided = service.all$.pipe(
                 merge(errorService.error$)
             );
@@ -241,13 +246,23 @@ describe('travelAgenda test', () => {
 
             req.flush([flushData]);
 
+            expect(result).toEqual([travelAgendaData]);
+
             // 2. Add empty Daily Trip
             service.addDailyTrip(dailyTripData, travelAgendaData.id);
+            expect(result).toEqual([Object.assign({}, travelAgendaData, {
+                dailyTrips: [{
+                    travelViewPoints: [],
+                    travelAgenda: result[0],
+                    lastViewPoint: null,
+                    id: 'dailyTripId'
+                }]
+            })]);
 
             // 3. Add TravelViewPoint
-            service.addTravelViewPoint(travelViewPointData, dailyTripData.id);
+            // service.addTravelViewPoint(travelViewPointData, dailyTripData.id);
 
-            expect(provided).toBeObservable(expected);
+            // expect(provided).toBeObservable(expected);
         });
 
         // it('#add dailyTrip - Success', () => {
