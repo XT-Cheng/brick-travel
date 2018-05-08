@@ -29,7 +29,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, [transportationCategorySchema], `transportationCategories`);
+        super(_http, _uploader, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, transportationCategorySchema, `transportationCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._default = value.find(tpc => tpc.isDefault);

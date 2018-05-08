@@ -1,10 +1,11 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { normalize } from 'normalizr';
+import { denormalize, normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, concat, filter, map, mergeMap, startWith } from 'rxjs/operators';
+import * as Immutable from 'seamless-immutable';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { WEBAPI_HOST } from '../../utils/constants';
@@ -30,7 +31,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>,
         protected _entityType: EntityTypeEnum,
-        protected _entitySchema: any,
+        protected _entitySchema: schema.Entity,
         protected _url: string) {
         super(_http, _store, _entityType, _entitySchema, _url);
     }
@@ -199,7 +200,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
         return this._http.post(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, this._entitySchema).entities;
+                return normalize(records, [this.schema]).entities;
             })
         );
     }
@@ -217,7 +218,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
         return this._http.put(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, this._entitySchema).entities;
+                return normalize(records, [this.schema]).entities;
             })
         );
     }
@@ -226,9 +227,52 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         const transfer = this.toTransfer(bizModel);
         return this._http.delete(`${WEBAPI_HOST}/${this._url}/${transfer.id}`).pipe(
             map(records => {
-                return normalize(records, this._entitySchema).entities;
+                return normalize(records, [this.schema]).entities;
             })
         );
+    }
+    //#endregion
+
+    //#region Public methdos
+    public fetch() {
+        this.loadEntities();
+    }
+
+    public add(biz: U) {
+        this.insertEntity(biz);
+    }
+
+    public change(biz: U) {
+        this.updateEntity(biz);
+    }
+
+    public remove(biz: U) {
+        this.deleteEntity(biz);
+    }
+
+    public addById(id: string) {
+        const toAdd = this.byId(id);
+        if (!toAdd) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
+
+        this.add(toAdd);
+    }
+
+    public changeById(id: string) {
+        const toChange = this.byId(id);
+        if (!toChange) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
+
+        this.change(toChange);
+    }
+
+    public removeById(id: string) {
+        const toRemove = this.byId(id);
+        if (!toRemove) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
+
+        this.remove(toRemove);
+    }
+
+    public byId(id: string): U {
+        return denormalize(id, this.schema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
     //#endregion
 }

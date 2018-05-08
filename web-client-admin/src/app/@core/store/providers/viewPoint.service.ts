@@ -36,7 +36,7 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>, private _viewPointUISrv: ViewPointUIService) {
-        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINT, [viewPointSchema], `viewPoints`);
+        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINT, viewPointSchema, `viewPoints`);
 
         this.getSelected(this._store).subscribe((value) => {
             this._selected = value;

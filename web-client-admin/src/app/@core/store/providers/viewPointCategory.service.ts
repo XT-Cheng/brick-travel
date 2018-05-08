@@ -28,7 +28,7 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINTCATEGORY, [viewPointCategorySchema], `viewPointCategories`);
+        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINTCATEGORY, viewPointCategorySchema, `viewPointCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
@@ -75,7 +75,7 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
         return store.select<{ [id: string]: IViewPointCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.viewPointCatgories]).pipe(
             map((data) => {
                 return denormalize(Object.keys(data), [viewPointCategorySchema],
-                Immutable(store.getState().entities).asMutable({ deep: true }));
+                    Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
     }

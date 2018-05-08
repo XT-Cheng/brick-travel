@@ -1,6 +1,6 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { normalize } from 'normalizr';
+import { normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
@@ -87,13 +87,17 @@ export abstract class FetchService {
         this._store.dispatch(this.loadAction(pagination, queryCondition));
     }
 
+    protected get schema(): any {
+        return this._entitySchema;
+    }
+
     //#endregion
 
     //#region private methods
     private load(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
         return this._http.get(`${WEBAPI_HOST}/${this._url}`).pipe(
             map(records => {
-                return normalize(records, this._entitySchema).entities;
+                return normalize(records, [this.schema]).entities;
             })
         );
     }

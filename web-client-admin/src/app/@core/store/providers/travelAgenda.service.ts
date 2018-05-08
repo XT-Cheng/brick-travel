@@ -50,7 +50,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     constructor(protected _http: HttpClient, private _transportationCategoryService: TransportationCategoryService,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader, private _travelAgendaUISrv: TravelAgendaUIService,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.TRAVELAGENDA, [travelAgendaSchema], `travelAgendas`);
+        super(_http, _uploader, _store, EntityTypeEnum.TRAVELAGENDA, travelAgendaSchema, `travelAgendas`);
 
         this.getSelected(this._store).subscribe((value) => {
             this._selected = value;

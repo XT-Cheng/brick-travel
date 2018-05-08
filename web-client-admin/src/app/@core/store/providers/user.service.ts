@@ -39,7 +39,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         private _auth: AuthService, private _tokenService: TokenService, private _storage: Storage,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.USER, [userSchema], `users`);
+        super(_http, _uploader, _store, EntityTypeEnum.USER, userSchema, `users`);
 
         this._storage.get(TokenStorage.TOKEN_KEY).then((value) =>
             this._tokenService.setRaw(value)

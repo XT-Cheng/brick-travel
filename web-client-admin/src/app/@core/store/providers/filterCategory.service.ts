@@ -28,7 +28,7 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.FILTERCATEGORY, [filterCategorySchema], `filterCategories`);
+        super(_http, _uploader, _store, EntityTypeEnum.FILTERCATEGORY, filterCategorySchema, `filterCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
@@ -47,6 +47,10 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
         return this._all$.asObservable();
     }
 
+    public byId(id: string): IFilterCategoryBiz {
+        return denormalize(id, filterCategorySchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+    }
+
     //#region CRUD methods
 
     public fetch() {
@@ -63,6 +67,27 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
 
     public remove(c: IFilterCategoryBiz) {
         this.deleteEntity(c);
+    }
+
+    public addById(id: string) {
+        const toAdd = this.byId(id);
+        if (!toAdd) { throw new Error(`City Id ${id} not exist!`); }
+
+        this.add(toAdd);
+    }
+
+    public changeById(id: string) {
+        const toChange = this.byId(id);
+        if (!toChange) { throw new Error(`City Id ${id} not exist!`); }
+
+        this.change(toChange);
+    }
+
+    public removeById(id: string) {
+        const toRemove = this.byId(id);
+        if (!toRemove) { throw new Error(`City Id ${id} not exist!`); }
+
+        this.remove(toRemove);
     }
 
     //#endregion

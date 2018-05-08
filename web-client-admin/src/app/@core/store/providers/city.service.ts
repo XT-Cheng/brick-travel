@@ -36,7 +36,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     constructor(protected _http: HttpClient,
         @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>, private _uiService: CityUIService) {
-        super(_http, _uploader, _store, EntityTypeEnum.CITY, [citySchema], `cities`);
+        super(_http, _uploader, _store, EntityTypeEnum.CITY, citySchema, `cities`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
@@ -76,48 +76,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
         return this._searched$.asObservable();
     }
 
-    public byId(id: string): ICityBiz {
-        return denormalize(id, citySchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
-    }
-
     //#region CRUD methods
-
-    public fetch() {
-        this.loadEntities();
-    }
-
-    public add(city: ICityBiz) {
-        this.insertEntity(city);
-    }
-
-    public change(city: ICityBiz) {
-        this.updateEntity(city);
-    }
-
-    public remove(city: ICityBiz) {
-        this.deleteEntity(city);
-    }
-
-    public addById(id: string) {
-        const toAdd = this.byId(id);
-        if (!toAdd) { throw new Error(`City Id ${id} not exist!`); }
-
-        this.add(toAdd);
-    }
-
-    public changeById(id: string) {
-        const toChange = this.byId(id);
-        if (!toChange) { throw new Error(`City Id ${id} not exist!`); }
-
-        this.change(toChange);
-    }
-
-    public removeById(id: string) {
-        const toRemove = this.byId(id);
-        if (!toRemove) { throw new Error(`City Id ${id} not exist!`); }
-
-        this.remove(toRemove);
-    }
 
     //#endregion
 

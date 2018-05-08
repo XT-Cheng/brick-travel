@@ -36,6 +36,10 @@ export class MasterDataService extends FetchService {
 
     //#endregion
 
+    //#region protected methods
+
+    //#endregion
+
     //#region Entities Selector
 
     //#endregion
