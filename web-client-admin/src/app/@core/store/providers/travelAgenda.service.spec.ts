@@ -1,17 +1,18 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { cold } from 'jasmine-marbles';
-import { merge } from 'rxjs/operators';
 
 import { initTest } from '../../../../test';
-import { viewPoint } from '../../store.v0/entity/entity.schema';
 import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz, IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
 import { ITransportationCategory } from '../entity/model/travelAgenda.model';
+import { IError } from '../store.model';
 import { ErrorService } from './error.service';
 import { TransportationCategoryService } from './transportationCategory.service';
 import { TravelAgendaService } from './travelAgenda.service';
+import { ViewPointService } from './viewPoint.service';
+
+const url = 'http://localhost:3000/travelAgendas';
 
 const transportationData: ITransportationCategory = {
     id: 'transportationCategoryId',
@@ -53,24 +54,58 @@ const viewPointData: IViewPointBiz = {
     id: '5a4b5756764fba2c878a5ba9'
 };
 
+const travelViewPointData: ITravelViewPointBiz = {
+    id: '5a4b5756764fba2c878accc9',
+    distanceToNext: 100,
+    transportationToNext: null,
+    viewPoint: viewPointData,
+    dailyTrip: null
+};
+
+const dailyTripData: IDailyTripBiz = {
+    id: '5a4b5756764fba2c87dddba9',
+    travelViewPoints: [travelViewPointData],
+    lastViewPoint: travelViewPointData,
+    travelAgenda: null
+};
+
 const travelAgendaData: ITravelAgendaBiz = {
     id: '5a4b5756764fb8u7c78a5ba9',
     name: '黄山',
     user: 'whoiscxt',
     cover: 'assets/img/IMG_4201.jpg',
-    dailyTrips: []
+    dailyTrips: [dailyTripData]
 };
+
+travelViewPointData.dailyTrip = dailyTripData;
+dailyTripData.travelAgenda = travelAgendaData;
 
 const errorData = {
     status: 404,
     statusText: 'Not Found'
 };
 
+const backendError: IError = {
+    network: false,
+    description: 'error happened',
+    stack: ''
+};
+
+const networkError: IError = {
+    network: true,
+    description: '',
+    stack: ''
+};
+
 let service: TravelAgendaService;
 let transportationService: TransportationCategoryService;
+let viewPointService: ViewPointService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 let AMap: any;
+
+let result;
+let error;
 
 describe('travelAgenda test', () => {
     beforeEach(() => {
@@ -88,12 +123,23 @@ describe('travelAgenda test', () => {
         service = TestBed.get(TravelAgendaService);
         errorService = TestBed.get(ErrorService);
         transportationService = TestBed.get(TransportationCategoryService);
+        viewPointService = TestBed.get(ViewPointService);
+
+        errorService.error$.subscribe((value) => {
+            error = value;
+        });
+        service.all$.subscribe((value) => {
+            result = value;
+        });
 
         transportationService.fetch();
-
-        const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
+        let req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
         req.flush([transportationData]);
+
+        viewPointService.fetch();
+        req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
+        req.flush([viewPointData]);
+
     });
 
     afterEach(() => {
@@ -102,494 +148,94 @@ describe('travelAgenda test', () => {
     });
 
     describe('fetch test', () => {
-        it('#fetch - Success', () => {
-
-            const flushData = Object.assign({}, travelAgendaData);
-
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: [travelAgendaData],
-                    b: null
-                });
+        it('#fetch()', () => {
             service.fetch();
+            const req = httpTestingController.expectOne(url);
+            req.flush([service.toTransfer(travelAgendaData)]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-            req.flush([flushData]);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([travelAgendaData]);
         });
-        it('#byId - Success', () => {
-            const flushData = Object.assign({}, travelAgendaData);
-
+        it('#byId()', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-            req.flush([flushData]);
+            const req = httpTestingController.expectOne(url);
+            req.flush([service.toTransfer(travelAgendaData)]);
 
             expect(service.byId(travelAgendaData.id)).toEqual(travelAgendaData);
         });
-        it('#fetch - Failed with backend error', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    },
-                    a: []
-                });
+        it('#fetch() with backend error', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(backendError);
         });
-
-        it('#fetch - Failed with network error', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    },
-                    a: []
-                });
-
+        it('#fetch() with network error', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(provided).toBeObservable(expected);
-        });
-
-        it('#fetch - Success after Failed', () => {
-            const flushData = Object.assign({}, travelAgendaData);
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: null,
-                    b: [travelAgendaData]
-                });
-
-            service.fetch();
-
-            let req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.fetch();
-
-            req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-            req.flush([flushData]);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(networkError);
         });
     });
 
     describe('add test', () => {
-        it('#add - Success', () => {
-            const dailyTripData: IDailyTripBiz = {
-                travelViewPoints: [],
-                travelAgenda: null,
-                lastViewPoint: null,
-                id: 'dailyTripId'
-            };
-            const travelViewPointData: ITravelViewPointBiz = {
-                distanceToNext: -1,
-                dailyTrip: null,
-                transportationToNext: null,
-                viewPoint: viewPointData,
-                id: 'travelViewPointId'
-            };
-
-            const flushData = Object.assign({}, travelAgendaData);
-            let result: any;
-            service.all$.subscribe((value) => {
-                result = value;
-            });
-
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [travelAgendaData],
-                    b: null
-                });
-
+        it('#add()', () => {
+            const addedTravelAgenda = Object.assign({}, travelAgendaData, { dailyTrips: [] });
             // 1. Add empty TravelAgenda
-            service.add(travelAgendaData);
+            service.add(addedTravelAgenda);
+            const req = httpTestingController.expectOne(url);
+            req.flush([service.toTransfer(addedTravelAgenda)]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-            req.flush([flushData]);
-
-            expect(result).toEqual([travelAgendaData]);
+            expect(result).toEqual([addedTravelAgenda]);
 
             // 2. Add empty Daily Trip
-            service.addDailyTrip(dailyTripData, travelAgendaData.id);
-            expect(result).toEqual([Object.assign({}, travelAgendaData, {
-                dailyTrips: [{
-                    travelViewPoints: [],
-                    travelAgenda: result[0],
-                    lastViewPoint: null,
-                    id: 'dailyTripId'
-                }]
-            })]);
+            service.addDailyTrip(addedTravelAgenda.id);
+            expect(result[0].dailyTrips.length).toEqual(1);
+            let dailyTrip = result[0].dailyTrips[0];
+            expect(dailyTrip.travelAgenda.id).toEqual(addedTravelAgenda.id);
 
             // 3. Add TravelViewPoint
-            // service.addTravelViewPoint(travelViewPointData, dailyTripData.id);
-
-            // expect(provided).toBeObservable(expected);
+            service.addTravelViewPoint(viewPointData, dailyTrip.id);
+            dailyTrip = result[0].dailyTrips[0];
+            expect(dailyTrip.travelViewPoints.length).toEqual(1);
+            expect(dailyTrip.travelViewPoints[0].viewPoint.name).toEqual('老大桥9');
         });
-
-        // it('#add dailyTrip - Success', () => {
-        //     const provided = service.all$.pipe(
-        //         map(values => values[0].id),
-        //         merge(errorService.error$)
-        //     );
-
-        //     const expected = cold('(ab)',
-        //         {
-        //             a: '5a4b5756764fb8u7c78a5ba9',
-        //             b: null
-        //         });
-
-        //     service.add(travelAgendaData);
-
-        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-        //     req.flush(flushData);
-
-        //     service.addDailyTrip(travelAgendaData);
-
-        //     expect(provided).toBeObservable(expected);
-        // });
-
-        // it('#add viewPoint - Success', () => {
-        //     const provided = service.all$.pipe(
-        //         map(values => values[0].dailyTrips[0].travelViewPoints.length),
-        //         merge(errorService.error$)
-        //     );
-
-        //     const expected = cold('(ab)',
-        //         {
-        //             a: 1,
-        //             b: null
-        //         });
-
-        //     service.add(travelAgendaData);
-
-        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-        //     req.flush(flushData);
-
-        //     service.addDailyTrip(travelAgendaData);
-        //     service.addTravelViewPoint(viewPointData, travelAgendaData.dailyTrips[0]);
-
-        //     expect(provided).toBeObservable(expected);
-        // });
-
-        // it('#add - Failed with backend error', () => {
-        //     const provide = service.all$.pipe(
-        //         merge(errorService.error$)
-        //     );
-
-        //     const expected = cold('(ab)',
-        //         {
-        //             a: [],
-        //             b: {
-        //                 network: false,
-        //                 description: 'error happened',
-        //                 stack: ''
-        //             }
-        //         });
-
-        //     service.add(travelAgendaData[0]);
-
-        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-        //     req.flush('error happened', errorData);
-
-        //     expect(provide).toBeObservable(expected);
-        // });
-
-        // it('#add - Failed with network error', () => {
-        //     const provide = service.all$.pipe(
-        //         merge(errorService.error$)
-        //     );
-
-        //     const expected = cold('(ab)',
-        //         {
-        //             a: [],
-        //             b: {
-        //                 network: true,
-        //                 description: '',
-        //                 stack: ''
-        //             }
-        //         });
-
-        //     service.add(travelAgendaData[0]);
-
-        //     const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-        //     req.error(new ErrorEvent('network error'));
-
-        //     expect(provide).toBeObservable(expected);
-        // });
-
-        // it('#add - Success after Failed', () => {
-        //     const provide = service.all$.pipe(
-        //         merge(errorService.error$)
-        //     );
-
-        //     const expected = cold('(ab)',
-        //         {
-        //             a: travelAgendaData,
-        //             b: null
-        //         });
-
-        //     service.add(travelAgendaData[0]);
-
-        //     let req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-        //     req.error(new ErrorEvent('network error'));
-
-        //     service.add(travelAgendaData[0]);
-
-        //     req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-        //     req.flush(flushData);
-
-        //     expect(provide).toBeObservable(expected);
-        // });
     });
 
-    // describe('update test', () => {
-    //     beforeEach(() => {
-    //         service.add(travelAgendaData[0]);
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+    describe('change test', () => {
+        beforeEach(() => {
+            service.add(travelAgendaData);
+            const req = httpTestingController.expectOne(url);
 
-    //         req.flush(flushData);
-    //     });
+            req.flush([service.toTransfer(travelAgendaData)]);
+        });
 
-    //     it('#update - Success', () => {
-    //         const provided = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
+        it('#change()', () => {
+            const changedTravelAgenda = Object.assign({}, travelAgendaData, { name: '黄山1' });
+            service.change(changedTravelAgenda);
+            const req = httpTestingController.expectOne(url);
+            req.flush([service.toTransfer(changedTravelAgenda)]);
 
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: [updateData],
-    //                 b: null
-    //             });
+            expect(result[0].name).toEqual('黄山1');
+        });
+    });
 
-    //         service.change(updateData);
+    describe('delete test', () => {
+        beforeEach(() => {
+            service.add(travelAgendaData);
+            const req = httpTestingController.expectOne(url);
 
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+            req.flush([service.toTransfer(travelAgendaData)]);
+        });
 
-    //         req.flush(flushDataWithUpdate);
+        it('#delete()', () => {
+            service.remove(travelAgendaData);
+            const req = httpTestingController.expectOne(`${url}/${travelAgendaData.id}`);
+            req.flush([service.toTransfer(travelAgendaData)]);
 
-    //         expect(provided).toBeObservable(expected);
-    //     });
-
-    //     it('#update - Failed with backend error', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
-
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: travelAgendaData,
-    //                 b: {
-    //                     network: false,
-    //                     description: 'error happened',
-    //                     stack: ''
-    //                 }
-    //             });
-
-    //         service.change(updateData);
-
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-    //         req.flush('error happened', errorData);
-
-    //         expect(provide).toBeObservable(expected);
-    //     });
-
-    //     it('#update - Failed with network error', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
-
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: travelAgendaData,
-    //                 b: {
-    //                     network: true,
-    //                     description: '',
-    //                     stack: ''
-    //                 }
-    //             });
-
-    //         service.change(updateData);
-
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-    //         req.error(new ErrorEvent('network error'));
-
-    //         expect(provide).toBeObservable(expected);
-    //     });
-
-    //     it('#update - Success after Failed', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
-
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: [updateData],
-    //                 b: null
-    //             });
-
-    //         service.change(updateData);
-
-    //         let req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-    //         req.error(new ErrorEvent('network error'));
-
-    //         service.change(updateData);
-
-    //         req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-    //         req.flush(flushDataWithUpdate);
-
-    //         expect(provide).toBeObservable(expected);
-    //     });
-    // });
-
-    // describe('delete test', () => {
-    //     beforeEach(() => {
-    //         service.add(travelAgendaData[0]);
-    //         const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-
-    //         req.flush(flushData);
-    //     });
-
-    //     it('#delete - Success', () => {
-    //         const provided = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
-
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: [],
-    //                 b: null
-    //             });
-
-    //         service.remove(updateData);
-
-    //         const req = httpTestingController.expectOne(`http://localhost:3000/travelAgendas/${updateData.id}`);
-
-    //         req.flush(flushData);
-
-    //         expect(provided).toBeObservable(expected);
-    //     });
-
-    //     it('#delete - Failed with backend error', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
-
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: travelAgendaData,
-    //                 b: {
-    //                     network: false,
-    //                     description: 'error happened',
-    //                     stack: ''
-    //                 }
-    //             });
-
-    //         service.remove(updateData);
-
-    //         const req = httpTestingController.expectOne(`http://localhost:3000/travelAgendas/${updateData.id}`);
-
-    //         req.flush('error happened', errorData);
-
-    //         expect(provide).toBeObservable(expected);
-    //     });
-
-    //     it('#delete - Failed with network error', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
-
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: travelAgendaData,
-    //                 b: {
-    //                     network: true,
-    //                     description: '',
-    //                     stack: ''
-    //                 }
-    //             });
-
-    //         service.remove(updateData);
-
-    //         const req = httpTestingController.expectOne(`http://localhost:3000/travelAgendas/${updateData.id}`);
-
-    //         req.error(new ErrorEvent('network error'));
-
-    //         expect(provide).toBeObservable(expected);
-    //     });
-
-    //     it('#delete - Success after Failed', () => {
-    //         const provide = service.all$.pipe(
-    //             merge(errorService.error$)
-    //         );
-
-    //         const expected = cold('(ab)',
-    //             {
-    //                 a: [],
-    //                 b: null
-    //             });
-
-    //         service.remove(updateData);
-
-    //         let req = httpTestingController.expectOne(`http://localhost:3000/travelAgendas/${updateData.id}`);
-
-    //         req.error(new ErrorEvent('network error'));
-
-    //         service.remove(updateData);
-
-    //         req = httpTestingController.expectOne(`http://localhost:3000/travelAgendas/${updateData.id}`);
-
-    //         req.flush(flushData);
-
-    //         expect(provide).toBeObservable(expected);
-    //     });
-    // });
+            expect(result).toEqual([]);
+        });
+    });
 });

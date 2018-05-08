@@ -180,7 +180,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         this._store.dispatch(this.deleteAction(bizModel.id, bizModel, dirtyMode));
     }
 
-    protected abstract toTransfer(bizModel: U): any;
+    public abstract toTransfer(bizModel: U): any;
 
     //#endregion
 

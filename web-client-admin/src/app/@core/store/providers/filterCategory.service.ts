@@ -37,7 +37,7 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     //#endregion
 
     //#region implemented methods
-    protected toTransfer(bizModel: IFilterCategoryBiz) {
+    public toTransfer(bizModel: IFilterCategoryBiz) {
         return bizModel;
     }
     //#endregion
@@ -67,27 +67,6 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
 
     public remove(c: IFilterCategoryBiz) {
         this.deleteEntity(c);
-    }
-
-    public addById(id: string) {
-        const toAdd = this.byId(id);
-        if (!toAdd) { throw new Error(`City Id ${id} not exist!`); }
-
-        this.add(toAdd);
-    }
-
-    public changeById(id: string) {
-        const toChange = this.byId(id);
-        if (!toChange) { throw new Error(`City Id ${id} not exist!`); }
-
-        this.change(toChange);
-    }
-
-    public removeById(id: string) {
-        const toRemove = this.byId(id);
-        if (!toRemove) { throw new Error(`City Id ${id} not exist!`); }
-
-        this.remove(toRemove);
     }
 
     //#endregion

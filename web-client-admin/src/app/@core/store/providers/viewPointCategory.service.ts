@@ -37,7 +37,7 @@ export class ViewPointCategoryService extends EntityService<IViewPointCategory, 
     //#endregion
 
     //#region implemented methods
-    protected toTransfer(bizModel: IViewPointCategoryBiz) {
+    public toTransfer(bizModel: IViewPointCategoryBiz) {
         return bizModel;
     }
     //#endregion

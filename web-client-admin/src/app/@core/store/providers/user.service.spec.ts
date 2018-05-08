@@ -63,7 +63,7 @@ let httpTestingController: HttpTestingController;
 let result, loggedIn;
 let error;
 
-fdescribe('user test', () => {
+describe('user test', () => {
     beforeEach(() => {
         initTest();
 

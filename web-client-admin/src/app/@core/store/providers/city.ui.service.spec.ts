@@ -37,7 +37,7 @@ let httpTestingController: HttpTestingController;
 
 let error, result, searched;
 
-fdescribe('city ui test', () => {
+describe('city ui test', () => {
     beforeEach(() => {
         initTest();
 

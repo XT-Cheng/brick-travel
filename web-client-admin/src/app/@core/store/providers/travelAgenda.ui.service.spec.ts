@@ -1,33 +1,35 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { cold } from 'jasmine-marbles';
-import { merge } from 'rxjs/operators';
 
 import { initTest } from '../../../../test';
-import { deepExtend } from '../../utils/helpers';
+import { ICityBiz } from '../bizModel/model/city.biz.model';
+import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz, IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
+import { ITransportationCategory } from '../entity/model/travelAgenda.model';
 import { ErrorService } from './error.service';
 import { TravelAgendaService } from './travelAgenda.service';
 import { TravelAgendaUIService } from './travelAgenda.ui.service';
+import { ViewPointService } from './viewPoint.service';
 
-const cityData = {
+const transportationData: ITransportationCategory = {
+    id: 'transportationCategoryId',
+    name: 'Bus',
+    isDefault: true
+};
+
+const cityData: ICityBiz = {
     id: '5a4b5756764fba2c80ef5ba1',
     name: '黄山',
     thumbnail: '',
     addressCode: '100'
 };
 
-const categoryData = {
+const categoryData: IViewPointCategoryBiz = {
     id: '5acc62fe6c251979dd67f0c1',
     name: 'View'
 };
 
-const transportationToNextData = {
-    id: '5a4b5756764fbb9c80ef5ba1',
-    name: 'Bus',
-    isDefault: false
-};
-
-const viewPointData = {
+const viewPointData: IViewPointBiz = {
     city: cityData,
     name: '老大桥9',
     category: categoryData,
@@ -49,76 +51,49 @@ const viewPointData = {
     id: '5a4b5756764fba2c878a5ba9'
 };
 
-const travelViewPointsData = [
-    {
-        transportationToNext: transportationToNextData,
-        viewPoint: viewPointData,
-        distanceToNext: 100,
-        id: '5a85287048294c00009ce922',
-        dailyTrip: null
-    }
-];
+const travelViewPointData: ITravelViewPointBiz = {
+    id: '5a4b5756764fba2c878accc9',
+    distanceToNext: 100,
+    transportationToNext: null,
+    viewPoint: viewPointData,
+    dailyTrip: null
+};
 
-const dailyTripsData = [
-    {
-        travelViewPoints: travelViewPointsData,
-        lastViewPoint: travelViewPointsData[0],
-        id: '5a8523a448294c00009ce921',
-        travelAgenda: null
-    }
-];
+const dailyTripData: IDailyTripBiz = {
+    id: '5a4b5756764fba2c87dddba9',
+    travelViewPoints: [travelViewPointData],
+    lastViewPoint: travelViewPointData,
+    travelAgenda: null
+};
 
+const travelAgendaData: ITravelAgendaBiz = {
+    id: '5a4b5756764fb8u7c78a5ba9',
+    name: '黄山',
+    user: 'whoiscxt',
+    cover: 'assets/img/IMG_4201.jpg',
+    dailyTrips: [dailyTripData]
+};
 
-const travelAgendaData = [
-    {
-        name: '黄山',
-        user: 'whoiscxt',
-        cover: 'assets/img/IMG_4201.jpg',
-        dailyTrips: dailyTripsData,
-        id: '5a85232348294c00009ce91f'
-    }
-];
+const noExist: ITravelAgendaBiz = {
+    id: 'noExist',
+    name: 'noExist',
+    user: 'whoiscxt',
+    cover: 'assets/img/IMG_4201.jpg',
+    dailyTrips: []
+};
 
-const noExist = deepExtend({}, travelAgendaData[0]);
-noExist.dailyTrips[0].travelAgenda = noExist;
-noExist.dailyTrips[0].travelViewPoints[0].dailyTrip = noExist.dailyTrips[0];
-noExist.id = 'noExist';
-
-dailyTripsData[0].travelAgenda = travelAgendaData[0];
-travelViewPointsData[0].dailyTrip = dailyTripsData[0];
-
-
-const flushData = [
-    {
-        name: '黄山',
-        user: 'whoiscxt',
-        cover: 'assets/img/IMG_4201.jpg',
-        dailyTrips: [
-            {
-                travelViewPoints: [
-                    {
-                        transportationToNext: transportationToNextData,
-                        viewPoint: viewPointData,
-                        distanceToNext: 100,
-                        id: '5a85287048294c00009ce922',
-                        dailyTrip: '5a8523a448294c00009ce921'
-                    }
-                ],
-                lastViewPoint: '5a4b5756764fba2c878a5ba9',
-                id: '5a8523a448294c00009ce921',
-                travelAgenda: '5a85232348294c00009ce91f'
-            }
-        ],
-        id: '5a85232348294c00009ce91f'
-    }
-];
+travelViewPointData.dailyTrip = dailyTripData;
+dailyTripData.travelAgenda = travelAgendaData;
 
 let travelAgendaSrv: TravelAgendaService;
 let travelAgendaUISrv: TravelAgendaUIService;
+let viewPointService: ViewPointService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
-describe('travelAgenda test', () => {
+let error, result, searched;
+
+describe('travelAgenda ui test', () => {
     beforeEach(() => {
         initTest();
 
@@ -126,67 +101,54 @@ describe('travelAgenda test', () => {
         travelAgendaSrv = TestBed.get(TravelAgendaService);
         travelAgendaUISrv = TestBed.get(TravelAgendaUIService);
         errorService = TestBed.get(ErrorService);
+        viewPointService = TestBed.get(ViewPointService);
 
-        travelAgendaSrv.add(travelAgendaData[0]);
-        const req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-        req.flush(flushData);
+        errorService.error$.subscribe((value) => {
+            error = value;
+        });
+        travelAgendaSrv.selected$.subscribe((value) => {
+            result = value;
+        });
+        travelAgendaSrv.searched$.subscribe((value) => {
+            searched = value;
+        });
+
+        viewPointService.fetch();
+        let req = httpTestingController.expectOne('http://localhost:3000/viewPoints');
+        req.flush([viewPointData]);
+
+        travelAgendaSrv.add(travelAgendaData);
+        req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
+        req.flush([travelAgendaSrv.toTransfer(travelAgendaData)]);
     });
 
-    describe('travelAgenda ui test', () => {
-        it('#select - Success', () => {
-            const provided = travelAgendaSrv.selected$.pipe(
-                merge(errorService.error$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: travelAgendaData[0],
-                    b: null
-                });
-            travelAgendaUISrv.select(travelAgendaData[0]);
-            expect(travelAgendaSrv.selected).toEqual(travelAgendaData[0]);
-            expect(provided).toBeObservable(expected);
+    describe('select test', () => {
+        it('#select()', () => {
+            travelAgendaUISrv.select(travelAgendaData);
+
+            expect(travelAgendaSrv.selected).toEqual(travelAgendaData);
+            expect(result).toEqual(travelAgendaData);
         });
 
-        it('#select - not exist', () => {
-            const provided = travelAgendaSrv.selected$.pipe(
-                merge(errorService.error$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: null,
-                    b: null
-                });
+        it('#select() not exist', () => {
             travelAgendaUISrv.select(noExist);
             expect(travelAgendaSrv.selected).toEqual(null);
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual(null);
         });
+    });
 
-        it('#search - Success', () => {
-            const provided = travelAgendaSrv.searched$.pipe(
-                merge(errorService.error$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: travelAgendaData,
-                    b: null
-                });
+    describe('search test', () => {
+        it('#search()', () => {
             travelAgendaUISrv.search('黄山');
             expect(travelAgendaUISrv.searchKey).toEqual('黄山');
-            expect(provided).toBeObservable(expected);
+            expect(searched[0].name).toEqual('黄山');
         });
 
-        it('#search - no exist', () => {
-            const provided = travelAgendaSrv.searched$.pipe(
-                merge(errorService.error$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: null
-                });
+        it('#search() no exist', () => {
             travelAgendaUISrv.search('noExist');
+
             expect(travelAgendaUISrv.searchKey).toEqual('noExist');
-            expect(provided).toBeObservable(expected);
+            expect(searched).toEqual([]);
         });
     });
 });

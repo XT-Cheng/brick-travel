@@ -85,7 +85,7 @@ let httpTestingController: HttpTestingController;
 let result;
 let error;
 
-fdescribe('viewPoint test', () => {
+describe('viewPoint test', () => {
     beforeEach(() => {
         initTest();
 

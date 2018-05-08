@@ -54,7 +54,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     //#endregion
 
     //#region implemented methods
-    protected toTransfer(bizModel: ICityBiz) {
+    public toTransfer(bizModel: ICityBiz) {
         return bizModel;
     }
     //#endregion

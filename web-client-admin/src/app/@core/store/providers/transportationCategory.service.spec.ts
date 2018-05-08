@@ -43,7 +43,7 @@ let httpTestingController: HttpTestingController;
 let result;
 let error;
 
-fdescribe('transportation Category test', () => {
+describe('transportation Category test', () => {
     beforeEach(() => {
         initTest();
 

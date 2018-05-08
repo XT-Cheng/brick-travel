@@ -1,3 +1,5 @@
+import { ObjectID } from 'bson';
+
 import { IBiz } from '../biz.model';
 import { IViewPointBiz } from './viewPoint.biz.model';
 
@@ -24,4 +26,23 @@ export interface ITravelViewPointBiz extends IBiz {
     distanceToNext: number;
     dailyTrip: IDailyTripBiz;
     transportationToNext: ITransportationCategoryBiz;
+}
+
+export function newDailiyTrip(travelAgenda: ITravelAgendaBiz): IDailyTripBiz {
+    return {
+        id: new ObjectID().toHexString(),
+        travelViewPoints: [],
+        lastViewPoint: null,
+        travelAgenda: travelAgenda
+    };
+}
+
+export function newTravelViewPoint(viewPoint: IViewPointBiz, dailyTrip: IDailyTripBiz): ITravelViewPointBiz {
+    return {
+        id: new ObjectID().toHexString(),
+        viewPoint: viewPoint,
+        distanceToNext: -1,
+        dailyTrip: dailyTrip,
+        transportationToNext: null
+    };
 }

@@ -44,7 +44,7 @@ let httpTestingController: HttpTestingController;
 let result;
 let error;
 
-fdescribe('city test', () => {
+describe('city test', () => {
     beforeEach(() => {
         initTest();
 

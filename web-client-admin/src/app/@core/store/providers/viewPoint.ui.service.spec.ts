@@ -91,7 +91,7 @@ let httpTestingController: HttpTestingController;
 
 let error, result, searched;
 
-fdescribe('viewPoint ui test', () => {
+describe('viewPoint ui test', () => {
     beforeEach(() => {
         initTest();
 
@@ -113,7 +113,6 @@ fdescribe('viewPoint ui test', () => {
         viewPointSrv.add(viewPointData);
         const req = httpTestingController.expectOne(url);
         req.flush([viewPointData, searchData]);
-
     });
 
     describe('select test', () => {

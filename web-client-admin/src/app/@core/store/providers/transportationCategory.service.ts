@@ -39,7 +39,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
     //#endregion
 
     //#region implemented methods
-    protected toTransfer(bizModel: ITransportationCategoryBiz) {
+    public toTransfer(bizModel: ITransportationCategoryBiz) {
         return bizModel;
     }
     //#endregion

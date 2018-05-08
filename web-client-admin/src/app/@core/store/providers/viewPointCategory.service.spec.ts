@@ -41,7 +41,7 @@ let httpTestingController: HttpTestingController;
 let result;
 let error;
 
-fdescribe('viwePoint Category test', () => {
+describe('viwePoint Category test', () => {
     beforeEach(() => {
         initTest();
 

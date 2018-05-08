@@ -68,7 +68,7 @@ let httpTestingController: HttpTestingController;
 let result;
 let error;
 
-fdescribe('masterData test', () => {
+describe('masterData test', () => {
     beforeEach(() => {
         initTest();
 

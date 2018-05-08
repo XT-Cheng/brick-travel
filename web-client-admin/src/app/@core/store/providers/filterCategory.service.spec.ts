@@ -57,7 +57,7 @@ let httpTestingController: HttpTestingController;
 let result;
 let error;
 
-fdescribe('filterCategory test', () => {
+describe('filterCategory test', () => {
     beforeEach(() => {
         initTest();
 

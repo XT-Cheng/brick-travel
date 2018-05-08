@@ -54,7 +54,7 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     //#endregion
 
     //#region implemented methods
-    protected toTransfer(bizModel: IViewPointBiz) {
+    public toTransfer(bizModel: IViewPointBiz) {
         return Object.assign({}, bizModel, {
             city: bizModel.city.id
         });
