@@ -37,7 +37,9 @@ export class MasterDataService extends FetchService {
     //#endregion
 
     //#region protected methods
-
+    protected get schema(): any {
+        return this._entitySchema;
+    }
     //#endregion
 
     //#region Entities Selector

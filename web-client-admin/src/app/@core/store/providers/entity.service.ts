@@ -200,7 +200,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
         return this._http.post(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, [this.schema]).entities;
+                return normalize(records, this.schema).entities;
             })
         );
     }
@@ -218,7 +218,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
         return this._http.put(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, [this.schema]).entities;
+                return normalize(records, this.schema).entities;
             })
         );
     }
@@ -227,7 +227,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         const transfer = this.toTransfer(bizModel);
         return this._http.delete(`${WEBAPI_HOST}/${this._url}/${transfer.id}`).pipe(
             map(records => {
-                return normalize(records, [this.schema]).entities;
+                return normalize(records, this.schema).entities;
             })
         );
     }
@@ -272,7 +272,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     }
 
     public byId(id: string): U {
-        return denormalize(id, this.schema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        return denormalize(id, this._entitySchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
     //#endregion
 }

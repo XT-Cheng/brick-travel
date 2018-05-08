@@ -2,11 +2,14 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
+import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { IError } from '../store.model';
 import { ErrorService } from './error.service';
 import { FilterCategoryService } from './filterCategory.service';
 
-const filterCategoryData = {
+const url = 'http://localhost:3000/filterCategories';
+
+const filterCategoryData: IFilterCategoryBiz = {
     name: '类型',
     filterFunction: 'filterByCategory',
     criteries: [
@@ -26,7 +29,7 @@ const filterCategoryData = {
     id: '5a4b4d6030e1cf2b19b493d8'
 };
 
-const changeData = Object.assign({}, filterCategoryData, {
+const changeData: IFilterCategoryBiz = Object.assign({}, filterCategoryData, {
     name: '类型1'
 });
 
@@ -78,7 +81,7 @@ fdescribe('filterCategory test', () => {
     describe('fetch test', () => {
         it('#fetch()', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.flush([filterCategoryData]);
 
             expect(result).toEqual([filterCategoryData]);
@@ -86,14 +89,14 @@ fdescribe('filterCategory test', () => {
         });
         it('#byId()', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.flush([filterCategoryData]);
 
             expect(service.byId(filterCategoryData.id)).toEqual(filterCategoryData);
         });
         it('#fetch() with backend error', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
@@ -102,7 +105,7 @@ fdescribe('filterCategory test', () => {
 
         it('#fetch() with network error', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
@@ -113,7 +116,7 @@ fdescribe('filterCategory test', () => {
     describe('add test', () => {
         it('#add()', () => {
             service.add(filterCategoryData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.flush([filterCategoryData]);
 
             expect(service.byId(filterCategoryData.id)).toEqual(filterCategoryData);
@@ -121,7 +124,7 @@ fdescribe('filterCategory test', () => {
 
         it('#add() with backend error', () => {
             service.add(filterCategoryData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
@@ -130,7 +133,7 @@ fdescribe('filterCategory test', () => {
 
         it('#add() with network error', () => {
             service.add(filterCategoryData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
@@ -141,14 +144,14 @@ fdescribe('filterCategory test', () => {
     describe('change test', () => {
         beforeEach(() => {
             service.add(filterCategoryData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
 
             req.flush([filterCategoryData]);
         });
 
         it('#change()', () => {
             service.change(changeData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.flush([changeData]);
 
             expect(result).toEqual([changeData]);
@@ -157,7 +160,7 @@ fdescribe('filterCategory test', () => {
 
         it('#change() with backend error', () => {
             service.change(changeData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([filterCategoryData]);
@@ -166,7 +169,7 @@ fdescribe('filterCategory test', () => {
 
         it('#change() with network error', () => {
             service.change(changeData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([filterCategoryData]);
@@ -177,14 +180,14 @@ fdescribe('filterCategory test', () => {
     describe('delete test', () => {
         beforeEach(() => {
             service.add(filterCategoryData);
-            const req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+            const req = httpTestingController.expectOne(url);
 
             req.flush([filterCategoryData]);
         });
 
         it('#delete()', () => {
             service.remove(changeData);
-            const req = httpTestingController.expectOne(`http://localhost:3000/filterCategories/${changeData.id}`);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
             req.flush([changeData]);
 
             expect(result).toEqual([]);
@@ -193,7 +196,7 @@ fdescribe('filterCategory test', () => {
 
         it('#delete() with backend error', () => {
             service.remove(changeData);
-            const req = httpTestingController.expectOne(`http://localhost:3000/filterCategories/${changeData.id}`);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([filterCategoryData]);
@@ -202,7 +205,7 @@ fdescribe('filterCategory test', () => {
 
         it('#delete() with network error', () => {
             service.remove(changeData);
-            const req = httpTestingController.expectOne(`http://localhost:3000/filterCategories/${changeData.id}`);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([filterCategoryData]);

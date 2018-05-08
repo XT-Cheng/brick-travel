@@ -1,64 +1,61 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { cold } from 'jasmine-marbles';
-import { merge } from 'rxjs/operators';
+import { zip } from 'rxjs/operators';
 
 import { initTest } from '../../../../test';
+import { IError } from '../store.model';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 import { MasterDataService } from './masterData.service';
 import { TransportationCategoryService } from './transportationCategory.service';
 import { ViewPointCategoryService } from './viewPointCategory.service';
 
-const flushData = {
-    viewPointCategories: [
-        {
-            name: 'View',
-            id: '5a4b5756764fba2c80ef5ba1'
-        }
-    ],
-    transportationCategories: [
-        {
-            name: 'Bus',
-            id: '5a4b5756764cca2c80ef5ba1'
-        }
-    ],
-    cities: [
-        {
-            addressCode: '341000',
-            name: '黄山2',
-            thumbnail: 'assets/img/alan.png',
-            id: '5a4b5756764fba2c80ef5ba1'
-        }
-    ]
+const url = 'http://localhost:3000/masterData';
+
+const cityData = {
+    addressCode: '341000',
+    name: '黄山2',
+    thumbnail: 'assets/img/alan.png',
+    id: '5a4b5756764fba2c80ef5ba1'
 };
 
-const cityData = [
-    {
-        addressCode: '341000',
-        name: '黄山2',
-        thumbnail: 'assets/img/alan.png',
-        id: '5a4b5756764fba2c80ef5ba1'
-    }
-];
+const viewCategoryData = {
+    name: 'View',
+    id: '5a4b5756764fba2c80ef5ba1'
+};
 
-const viewCategoryData = [
-    {
-        name: 'View',
-        id: '5a4b5756764fba2c80ef5ba1'
-    }
-];
+const transportationCategoryData = {
+    name: 'Bus',
+    id: '5a4b5756764cca2c80ef5ba1'
+};
 
-const transportationCategoryData = [
-    {
-        name: 'Bus',
-        id: '5a4b5756764cca2c80ef5ba1'
-    }
-];
+const flushData = {
+    viewPointCategories: [
+        viewCategoryData
+    ],
+    transportationCategories: [
+        transportationCategoryData
+    ],
+    cities: [
+        cityData
+    ]
+};
 
 const errorData = {
     status: 404,
     statusText: 'Not Found'
+};
+
+const backendError: IError = {
+    network: false,
+    description: 'error happened',
+    stack: ''
+};
+
+const networkError: IError = {
+    network: true,
+    description: '',
+    stack: ''
 };
 
 let service: MasterDataService;
@@ -68,7 +65,10 @@ let errorService: ErrorService;
 let cityService: CityService;
 let httpTestingController: HttpTestingController;
 
-describe('masterData test', () => {
+let result;
+let error;
+
+fdescribe('masterData test', () => {
     beforeEach(() => {
         initTest();
 
@@ -78,6 +78,15 @@ describe('masterData test', () => {
         cityService = TestBed.get(CityService);
         errorService = TestBed.get(ErrorService);
         viewPointCatService = TestBed.get(ViewPointCategoryService);
+
+        errorService.error$.subscribe((value) => {
+            error = value;
+        });
+        viewPointCatService.all$.pipe(
+            zip(transportationCategoryService.all$, cityService.all$)
+        ).subscribe((value) => {
+            result = value;
+        });
     });
 
     afterEach(() => {
@@ -86,99 +95,30 @@ describe('masterData test', () => {
     });
 
     describe('fetch test', () => {
-        it('#fetch - Success', () => {
-            const provided = viewPointCatService.all$.pipe(
-                merge(transportationCategoryService.all$, cityService.all$, errorService.error$)
-            );
-            const expected = cold('(abcd)',
-                {
-                    a: viewCategoryData,
-                    b: transportationCategoryData,
-                    c: cityData,
-                    d: null
-                });
+        it('#fetch()', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/masterData');
-
+            const req = httpTestingController.expectOne(url);
             req.flush(flushData);
 
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([[viewCategoryData], [transportationCategoryData], [cityData]]);
+            expect(error).toEqual(null);
         });
-
-        it('#fetch - Failed with backend error', () => {
-            const provided = errorService.error$.pipe(
-                merge(viewPointCatService.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    },
-                    a: []
-                });
+        it('#fetch() with backend error', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/masterData');
-
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([[], [], []]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#fetch - Failed with network error', () => {
-            const provided = errorService.error$.pipe(
-                merge(viewPointCatService.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    },
-                    a: []
-                });
-
+        it('#fetch() with network error', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/masterData');
-
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(provided).toBeObservable(expected);
-        });
-
-        it('#fetch - Success after Failed', () => {
-            const provided = viewPointCatService.all$.pipe(
-                merge(transportationCategoryService.all$, cityService.all$, errorService.error$)
-            );
-            const expected = cold('(abcd)',
-                {
-                    a: viewCategoryData,
-                    b: transportationCategoryData,
-                    c: cityData,
-                    d: null
-                });
-
-            service.fetch();
-
-            let req = httpTestingController.expectOne('http://localhost:3000/masterData');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.fetch();
-
-            req = httpTestingController.expectOne('http://localhost:3000/masterData');
-
-            req.flush(flushData);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([[], [], []]);
+            expect(error).toEqual(networkError);
         });
     });
-
 });

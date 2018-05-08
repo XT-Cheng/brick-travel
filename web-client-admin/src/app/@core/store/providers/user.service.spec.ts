@@ -1,12 +1,15 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { cold } from 'jasmine-marbles';
-import { merge } from 'rxjs/operators';
 
 import { initTest } from '../../../../test';
 import { AuthService } from '../../auth/providers/authService';
+import { IUserBiz } from '../bizModel/model/user.biz.model';
+import { IError } from '../store.model';
 import { ErrorService } from './error.service';
 import { UserService } from './user.service';
+
+const url = 'http://localhost:3000/users';
+const loginUrl = `http://localhost:3000/auth/login`;
 
 const loginData = {
     username: 'cxt',
@@ -24,25 +27,32 @@ const loginRes = {
     crcZM8DfplL-_EzD36wBLVFKs2Q9ed0ij6JbtCZDzprIAV0ToBfqvWzshyznwSdV0xBE`
 };
 
-const userData = [
-    {
-        name: 'cxt',
-        picture: 'assets/img/jack.png',
-        nick: 'admin',
-        id: '5a4b5756764fba2c80ef5bab'
-    }
-];
-
-const updateData = {
-    name: 'cxt1',
+const userData: IUserBiz = {
+    name: 'cxt',
     picture: 'assets/img/jack.png',
     nick: 'admin',
     id: '5a4b5756764fba2c80ef5bab'
 };
 
+const changeData: IUserBiz = Object.assign({}, userData, {
+    name: 'cxt1'
+});
+
 const errorData = {
     status: 404,
     statusText: 'Not Found'
+};
+
+const backendError: IError = {
+    network: false,
+    description: 'error happened',
+    stack: ''
+};
+
+const networkError: IError = {
+    network: true,
+    description: '',
+    stack: ''
 };
 
 let service: UserService;
@@ -50,7 +60,10 @@ let auth: AuthService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
-describe('user test', () => {
+let result, loggedIn;
+let error;
+
+fdescribe('user test', () => {
     beforeEach(() => {
         initTest();
 
@@ -58,6 +71,16 @@ describe('user test', () => {
         service = TestBed.get(UserService);
         auth = TestBed.get(AuthService);
         errorService = TestBed.get(ErrorService);
+
+        errorService.error$.subscribe((value) => {
+            error = value;
+        });
+        service.all$.subscribe((value) => {
+            result = value;
+        });
+        service.loggedIn$.subscribe((value) => {
+            loggedIn = value;
+        });
     });
 
     afterEach(() => {
@@ -66,437 +89,157 @@ describe('user test', () => {
     });
 
     describe('fetch test', () => {
-        it('#fetch - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: userData,
-                    b: null
-                });
+        it('#fetch()', () => {
             service.fetch();
+            const req = httpTestingController.expectOne(url);
+            req.flush([userData]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.flush(userData);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([userData]);
+            expect(error).toEqual(null);
         });
-        it('#byId - Success', () => {
+        it('#byId()', () => {
             service.fetch();
+            const req = httpTestingController.expectOne(url);
+            req.flush([userData]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.flush(userData);
-
-            expect(service.byId(userData[0].id)).toEqual(userData[0]);
+            expect(service.byId(userData.id)).toEqual(userData);
         });
-        it('#fetch - Failed with backend error', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    },
-                    a: []
-                });
+        it('#fetch() with backend error', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#fetch - Failed with network error', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    },
-                    a: []
-                });
-
+        it('#fetch() with network error', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-
-            expect(provided).toBeObservable(expected);
-        });
-
-        it('#fetch - Success after Failed', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: null,
-                    b: userData
-                });
-
-            service.fetch();
-
-            let req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.fetch();
-
-            req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.flush(userData);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(networkError);
         });
     });
 
     describe('add test', () => {
-        it('#add - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
+        it('#add()', () => {
+            service.add(userData);
+            const req = httpTestingController.expectOne(url);
+            req.flush([userData]);
 
-            const expected = cold('(ab)',
-                {
-                    a: userData,
-                    b: null
-                });
-
-            service.add(userData[0]);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.flush(userData);
-
-            expect(provided).toBeObservable(expected);
+            expect(service.byId(userData.id)).toEqual(userData);
         });
 
-        it('#add - Failed with backend error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    }
-                });
-
-            service.add(userData[0]);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
+        it('#add() with backend error', () => {
+            service.add(userData);
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#add - Failed with network error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    }
-                });
-
-            service.add(userData[0]);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
+        it('#add() with network error', () => {
+            service.add(userData);
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(provide).toBeObservable(expected);
-        });
-
-        it('#add - Success after Failed', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: userData,
-                    b: null
-                });
-
-            service.add(userData[0]);
-
-            let req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.add(userData[0]);
-
-            req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.flush(userData);
-
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(networkError);
         });
     });
 
-    describe('update test', () => {
+    describe('change test', () => {
         beforeEach(() => {
-            service.add(userData[0]);
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
+            service.add(userData);
+            const req = httpTestingController.expectOne(url);
 
-            req.flush(userData);
+            req.flush([userData]);
+        });
+        it('#change()', () => {
+            service.change(changeData);
+            const req = httpTestingController.expectOne(url);
+            req.flush([changeData]);
+
+            expect(result).toEqual([changeData]);
+            expect(error).toEqual(null);
         });
 
-        it('#update - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [updateData],
-                    b: null
-                });
-
-            service.change(updateData);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.flush([updateData]);
-
-            expect(provided).toBeObservable(expected);
-        });
-
-        it('#update - Failed with backend error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: userData,
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    }
-                });
-
-            service.change(updateData);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
+        it('#change() with backend error', () => {
+            service.change(changeData);
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([userData]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#update - Failed with network error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: userData,
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    }
-                });
-
-            service.change(updateData);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
-
+        it('#change() with network error', () => {
+            service.change(changeData);
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(provide).toBeObservable(expected);
-        });
-
-        it('#update - Success after Failed', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [updateData],
-                    b: null
-                });
-
-            service.change(updateData);
-
-            let req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.change(updateData);
-
-            req = httpTestingController.expectOne('http://localhost:3000/users');
-
-            req.flush([updateData]);
-
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([userData]);
+            expect(error).toEqual(networkError);
         });
     });
 
     describe('delete test', () => {
         beforeEach(() => {
-            service.add(userData[0]);
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
+            service.add(userData);
+            const req = httpTestingController.expectOne(url);
 
-            req.flush(userData);
+            req.flush([userData]);
+        });
+        it('#delete()', () => {
+            service.remove(changeData);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
+            req.flush([changeData]);
+
+            expect(result).toEqual([]);
+            expect(error).toEqual(null);
         });
 
-        it('#delete - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: null
-                });
-
-            service.remove(updateData);
-
-            const req = httpTestingController.expectOne(`http://localhost:3000/users/${updateData.id}`);
-
-            req.flush([updateData]);
-
-            expect(provided).toBeObservable(expected);
-        });
-
-        it('#delete - Failed with backend error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: userData,
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    }
-                });
-
-            service.remove(updateData);
-
-            const req = httpTestingController.expectOne(`http://localhost:3000/users/${updateData.id}`);
-
+        it('#delete() with backend error', () => {
+            service.remove(changeData);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
             req.flush('error happened', errorData);
 
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([userData]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#delete - Failed with network error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: userData,
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    }
-                });
-
-            service.remove(updateData);
-
-            const req = httpTestingController.expectOne(`http://localhost:3000/users/${updateData.id}`);
-
+        it('#delete() with network error', () => {
+            service.remove(changeData);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
             req.error(new ErrorEvent('network error'));
 
-            expect(provide).toBeObservable(expected);
-        });
-
-        it('#delete - Success after Failed', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: null
-                });
-
-            service.remove(updateData);
-
-            let req = httpTestingController.expectOne(`http://localhost:3000/users/${updateData.id}`);
-
-            req.error(new ErrorEvent('network error'));
-
-            service.remove(updateData);
-
-            req = httpTestingController.expectOne(`http://localhost:3000/users/${updateData.id}`);
-
-            req.flush([updateData]);
-
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([userData]);
+            expect(error).toEqual(networkError);
         });
     });
 
     describe('user login test', () => {
         beforeEach(() => {
-            service.add(userData[0]);
-            const req = httpTestingController.expectOne('http://localhost:3000/users');
+            service.add(userData);
+            const req = httpTestingController.expectOne(url);
 
-            req.flush(userData);
+            req.flush([userData]);
         });
 
-        it('#login - Success', () => {
-            const provided = service.loggedIn$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: userData[0],
-                    b: null
-                });
-
+        it('#login()', () => {
             auth.authenticate(loginData).subscribe((value) => {
                 console.log(value);
             });
 
-            const req = httpTestingController.expectOne(`http://localhost:3000/auth/login`);
+            const req = httpTestingController.expectOne(loginUrl);
 
             req.flush(loginRes);
 
-            expect(service.loggedIn).toEqual(userData[0]);
-            expect(provided).toBeObservable(expected);
+            expect(service.loggedIn).toEqual(userData);
+            expect(loggedIn).toEqual(userData);
         });
     });
 });

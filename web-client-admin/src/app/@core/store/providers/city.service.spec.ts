@@ -7,6 +7,8 @@ import { IError } from '../store.model';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 
+const url = 'http://localhost:3000/cities';
+
 const cityData: ICityBiz = {
     addressCode: '341000',
     name: '黄山2',
@@ -66,7 +68,7 @@ fdescribe('city test', () => {
     describe('fetch test', () => {
         it('#fetch()', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.flush([cityData]);
 
             expect(result).toEqual([cityData]);
@@ -74,14 +76,14 @@ fdescribe('city test', () => {
         });
         it('#byId()', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.flush([cityData]);
 
             expect(service.byId(cityData.id)).toEqual(cityData);
         });
         it('#fetch() with backend error', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
@@ -89,7 +91,7 @@ fdescribe('city test', () => {
         });
         it('#fetch() with network error', () => {
             service.fetch();
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
@@ -100,7 +102,7 @@ fdescribe('city test', () => {
     describe('add test', () => {
         it('#add()', () => {
             service.add(cityData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.flush([cityData]);
 
             expect(service.byId(cityData.id)).toEqual(cityData);
@@ -108,7 +110,7 @@ fdescribe('city test', () => {
 
         it('#add() with backend error', () => {
             service.add(cityData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
@@ -117,7 +119,7 @@ fdescribe('city test', () => {
 
         it('#add() with network error', () => {
             service.add(cityData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
@@ -128,14 +130,14 @@ fdescribe('city test', () => {
     describe('change test', () => {
         beforeEach(() => {
             service.add(cityData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
 
             req.flush([cityData]);
         });
 
         it('#change()', () => {
             service.change(changeData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.flush([changeData]);
 
             expect(result).toEqual([changeData]);
@@ -144,7 +146,7 @@ fdescribe('city test', () => {
 
         it('#change() with backend error', () => {
             service.change(changeData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([cityData]);
@@ -153,7 +155,7 @@ fdescribe('city test', () => {
 
         it('#change() with network error', () => {
             service.change(changeData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([cityData]);
@@ -164,14 +166,14 @@ fdescribe('city test', () => {
     describe('delete test', () => {
         beforeEach(() => {
             service.add(cityData);
-            const req = httpTestingController.expectOne('http://localhost:3000/cities');
+            const req = httpTestingController.expectOne(url);
 
             req.flush([cityData]);
         });
 
         it('#delete()', () => {
             service.remove(cityData);
-            const req = httpTestingController.expectOne(`http://localhost:3000/cities/${cityData.id}`);
+            const req = httpTestingController.expectOne(`${url}/${cityData.id}`);
             req.flush([cityData]);
 
             expect(result).toEqual([]);
@@ -180,7 +182,7 @@ fdescribe('city test', () => {
 
         it('#delete() with backend error', () => {
             service.remove(cityData);
-            const req = httpTestingController.expectOne(`http://localhost:3000/cities/${cityData.id}`);
+            const req = httpTestingController.expectOne(`${url}/${cityData.id}`);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([cityData]);
@@ -189,7 +191,7 @@ fdescribe('city test', () => {
 
         it('#delete() with network error', () => {
             service.remove(cityData);
-            const req = httpTestingController.expectOne(`http://localhost:3000/cities/${cityData.id}`);
+            const req = httpTestingController.expectOne(`${url}/${cityData.id}`);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([cityData]);

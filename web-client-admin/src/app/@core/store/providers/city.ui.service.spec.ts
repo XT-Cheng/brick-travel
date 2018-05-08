@@ -7,6 +7,8 @@ import { CityService } from './city.service';
 import { CityUIService } from './city.ui.service';
 import { ErrorService } from './error.service';
 
+const url = 'http://localhost:3000/cities';
+
 const noExist: ICityBiz = {
     addressCode: '341000',
     name: '黄山1',
@@ -33,9 +35,9 @@ let cityUISrv: CityUIService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
-let error, result;
+let error, result, searched;
 
-describe('city ui test', () => {
+fdescribe('city ui test', () => {
     beforeEach(() => {
         initTest();
 
@@ -51,15 +53,15 @@ describe('city ui test', () => {
             result = value;
         });
         citySrv.searched$.subscribe((value) => {
-            result = value;
+            searched = value;
         });
 
         citySrv.add(cityData);
-        const req = httpTestingController.expectOne('http://localhost:3000/cities');
+        const req = httpTestingController.expectOne(url);
         req.flush([cityData, searchData]);
     });
 
-    describe('select() test', () => {
+    describe('select test', () => {
         it('#select()', () => {
             cityUISrv.select(cityData);
 
@@ -75,19 +77,19 @@ describe('city ui test', () => {
         });
     });
 
-    describe('search() test', () => {
+    describe('search test', () => {
         it('#search()', () => {
             cityUISrv.search('Search');
 
             expect(cityUISrv.searchKey).toEqual('Search');
-            expect(result).toEqual([searchData]);
+            expect(searched).toEqual([searchData]);
         });
 
         it('#search() no exist', () => {
             cityUISrv.search('noExist');
 
             expect(cityUISrv.searchKey).toEqual('noExist');
-            expect(result).toEqual([]);
+            expect(searched).toEqual([]);
         });
     });
 });

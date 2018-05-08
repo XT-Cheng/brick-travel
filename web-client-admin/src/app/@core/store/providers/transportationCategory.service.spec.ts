@@ -1,42 +1,62 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { cold } from 'jasmine-marbles';
-import { merge } from 'rxjs/operators';
 
 import { initTest } from '../../../../test';
+import { ITransportationCategoryBiz } from '../bizModel/model/travelAgenda.biz.model';
+import { IError } from '../store.model';
 import { ErrorService } from './error.service';
 import { TransportationCategoryService } from './transportationCategory.service';
 
-const transportationCategoryData = [
-    {
-        name: 'Bus',
-        isDefault: false,
-        id: '5a4b5756764fba2c80ef5ba1'
-    }
-];
+const url = 'http://localhost:3000/transportationCategories';
 
-const updateData = {
-    name: 'Walk',
+const transportationCategoryData: ITransportationCategoryBiz = {
+    name: 'Bus',
     isDefault: false,
     id: '5a4b5756764fba2c80ef5ba1'
 };
+
+const changeData: ITransportationCategoryBiz = Object.assign({}, transportationCategoryData, {
+    name: 'Walk'
+});
 
 const errorData = {
     status: 404,
     statusText: 'Not Found'
 };
 
+const backendError: IError = {
+    network: false,
+    description: 'error happened',
+    stack: ''
+};
+
+const networkError: IError = {
+    network: true,
+    description: '',
+    stack: ''
+};
+
 let service: TransportationCategoryService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
-describe('transportation Category test', () => {
+let result;
+let error;
+
+fdescribe('transportation Category test', () => {
     beforeEach(() => {
         initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(TransportationCategoryService);
         errorService = TestBed.get(ErrorService);
+
+        errorService.error$.subscribe((value) => {
+            error = value;
+        });
+        service.all$.subscribe((value) => {
+            result = value;
+        });
     });
 
     afterEach(() => {
@@ -45,397 +65,137 @@ describe('transportation Category test', () => {
     });
 
     describe('fetch test', () => {
-        it('#fetch - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: transportationCategoryData,
-                    b: null
-                });
+        it('#fetch()', () => {
             service.fetch();
+            const req = httpTestingController.expectOne(url);
+            req.flush([transportationCategoryData]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.flush(transportationCategoryData);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([transportationCategoryData]);
+            expect(error).toEqual(null);
         });
-
-        it('#fetch - Failed with backend error', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    },
-                    a: []
-                });
+        it('#byId()', () => {
             service.fetch();
+            const req = httpTestingController.expectOne(url);
+            req.flush([transportationCategoryData]);
 
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
+            expect(service.byId(transportationCategoryData.id)).toEqual(transportationCategoryData);
+        });
+        it('#fetch() with backend error', () => {
+            service.fetch();
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#fetch - Failed with network error', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-
-            const expected = cold('(ba)',
-                {
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    },
-                    a: []
-                });
-
+        it('#fetch() with network error', () => {
             service.fetch();
-
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-
-            expect(provided).toBeObservable(expected);
-        });
-
-        it('#fetch - Success after Failed', () => {
-            const provided = errorService.error$.pipe(
-                merge(service.all$)
-            );
-            const expected = cold('(ab)',
-                {
-                    a: null,
-                    b: transportationCategoryData
-                });
-
-            service.fetch();
-
-            let req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.fetch();
-
-            req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.flush(transportationCategoryData);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(networkError);
         });
     });
 
     describe('add test', () => {
-        it('#add - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
+        it('#add()', () => {
+            service.add(transportationCategoryData);
+            const req = httpTestingController.expectOne(url);
+            req.flush([transportationCategoryData]);
 
-            const expected = cold('(ab)',
-                {
-                    a: transportationCategoryData,
-                    b: null
-                });
-
-            service.add(transportationCategoryData[0]);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.flush(transportationCategoryData);
-
-            expect(provided).toBeObservable(expected);
+            expect(service.byId(transportationCategoryData.id)).toEqual(transportationCategoryData);
         });
 
-        it('#add - Failed with backend error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    }
-                });
-
-            service.add(transportationCategoryData[0]);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
+        it('#add() with backend error', () => {
+            service.add(transportationCategoryData);
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#add - Failed with network error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    }
-                });
-
-            service.add(transportationCategoryData[0]);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
+        it('#add() with network error', () => {
+            service.add(transportationCategoryData);
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(provide).toBeObservable(expected);
-        });
-
-        it('#add - Success after Failed', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: transportationCategoryData,
-                    b: null
-                });
-
-            service.add(transportationCategoryData[0]);
-
-            let req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.add(transportationCategoryData[0]);
-
-            req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.flush(transportationCategoryData);
-
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(networkError);
         });
     });
 
-    describe('update test', () => {
+    describe('change test', () => {
         beforeEach(() => {
-            service.add(transportationCategoryData[0]);
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
+            service.add(transportationCategoryData);
+            const req = httpTestingController.expectOne(url);
 
-            req.flush(transportationCategoryData);
+            req.flush([transportationCategoryData]);
         });
 
-        it('#update - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
+        it('#change()', () => {
+            service.change(changeData);
+            const req = httpTestingController.expectOne(url);
+            req.flush([changeData]);
 
-            const expected = cold('(ab)',
-                {
-                    a: [updateData],
-                    b: null
-                });
-
-            service.change(updateData);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.flush([updateData]);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([changeData]);
+            expect(error).toEqual(null);
         });
 
-        it('#update - Failed with backend error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: transportationCategoryData,
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    }
-                });
-
-            service.change(updateData);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
+        it('#change() with backend error', () => {
+            service.change(changeData);
+            const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([transportationCategoryData]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#update - Failed with network error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: transportationCategoryData,
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    }
-                });
-
-            service.change(updateData);
-
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
+        it('#change() with network error', () => {
+            service.change(changeData);
+            const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(provide).toBeObservable(expected);
-        });
-
-        it('#update - Success after Failed', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [updateData],
-                    b: null
-                });
-
-            service.change(updateData);
-
-            let req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.error(new ErrorEvent('network error'));
-
-            service.change(updateData);
-
-            req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
-
-            req.flush([updateData]);
-
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([transportationCategoryData]);
+            expect(error).toEqual(networkError);
         });
     });
 
     describe('delete test', () => {
         beforeEach(() => {
-            service.add(transportationCategoryData[0]);
-            const req = httpTestingController.expectOne('http://localhost:3000/transportationCategories');
+            service.add(transportationCategoryData);
+            const req = httpTestingController.expectOne(url);
 
-            req.flush(transportationCategoryData);
+            req.flush([transportationCategoryData]);
         });
 
-        it('#delete - Success', () => {
-            const provided = service.all$.pipe(
-                merge(errorService.error$)
-            );
+        it('#delete()', () => {
+            service.remove(changeData);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
+            req.flush([changeData]);
 
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: null
-                });
-
-            service.remove(updateData);
-
-            const req = httpTestingController.expectOne(`http://localhost:3000/transportationCategories/${updateData.id}`);
-
-            req.flush([updateData]);
-
-            expect(provided).toBeObservable(expected);
+            expect(result).toEqual([]);
+            expect(error).toEqual(null);
         });
 
-        it('#delete - Failed with backend error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: transportationCategoryData,
-                    b: {
-                        network: false,
-                        description: 'error happened',
-                        stack: ''
-                    }
-                });
-
-            service.remove(updateData);
-
-            const req = httpTestingController.expectOne(`http://localhost:3000/transportationCategories/${updateData.id}`);
-
+        it('#delete() with backend error', () => {
+            service.remove(changeData);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
             req.flush('error happened', errorData);
 
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([transportationCategoryData]);
+            expect(error).toEqual(backendError);
         });
 
-        it('#delete - Failed with network error', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: transportationCategoryData,
-                    b: {
-                        network: true,
-                        description: '',
-                        stack: ''
-                    }
-                });
-
-            service.remove(updateData);
-
-            const req = httpTestingController.expectOne(`http://localhost:3000/transportationCategories/${updateData.id}`);
-
+        it('#delete() with network error', () => {
+            service.remove(changeData);
+            const req = httpTestingController.expectOne(`${url}/${changeData.id}`);
             req.error(new ErrorEvent('network error'));
 
-            expect(provide).toBeObservable(expected);
-        });
-
-        it('#delete - Success after Failed', () => {
-            const provide = service.all$.pipe(
-                merge(errorService.error$)
-            );
-
-            const expected = cold('(ab)',
-                {
-                    a: [],
-                    b: null
-                });
-
-            service.remove(updateData);
-
-            let req = httpTestingController.expectOne(`http://localhost:3000/transportationCategories/${updateData.id}`);
-
-            req.error(new ErrorEvent('network error'));
-
-            service.remove(updateData);
-
-            req = httpTestingController.expectOne(`http://localhost:3000/transportationCategories/${updateData.id}`);
-
-            req.flush([updateData]);
-
-            expect(provide).toBeObservable(expected);
+            expect(result).toEqual([transportationCategoryData]);
+            expect(error).toEqual(networkError);
         });
     });
 });

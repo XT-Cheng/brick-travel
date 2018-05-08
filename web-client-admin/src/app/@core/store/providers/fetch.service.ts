@@ -88,7 +88,7 @@ export abstract class FetchService {
     }
 
     protected get schema(): any {
-        return this._entitySchema;
+        return [this._entitySchema];
     }
 
     //#endregion
@@ -97,7 +97,7 @@ export abstract class FetchService {
     private load(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
         return this._http.get(`${WEBAPI_HOST}/${this._url}`).pipe(
             map(records => {
-                return normalize(records, [this.schema]).entities;
+                return normalize(records, this.schema).entities;
             })
         );
     }
