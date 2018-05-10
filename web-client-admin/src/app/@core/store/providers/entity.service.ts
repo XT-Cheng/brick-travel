@@ -10,7 +10,7 @@ import * as Immutable from 'seamless-immutable';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { WEBAPI_HOST } from '../../utils/constants';
 import { IBiz } from '../bizModel/biz.model';
-import { dirtyAddAction, DirtyTypeEnum } from '../dirty/dirty.action';
+import { dirtyAddAction, dirtyRemoveAction, DirtyTypeEnum } from '../dirty/dirty.action';
 import {
     EntityAction,
     EntityActionPhaseEnum,
@@ -69,6 +69,8 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     protected addDirtyAction = dirtyAddAction(this._entityType);
 
+    protected removeDirtyAction = dirtyRemoveAction(this._entityType);
+
     //#endregion
 
     //#endregion
@@ -91,6 +93,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     && !action.payload.dirtyMode),
                 mergeMap(action => {
                     const bizModel = <U>action.payload.bizModel;
+                    const bizModelId = action.payload.bizModelId;
                     let ret: Observable<IEntities>;
                     switch (action.type) {
                         case EntityActionTypeEnum.INSERT: {
@@ -98,7 +101,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                             break;
                         }
                         case EntityActionTypeEnum.DELETE: {
-                            ret = this.delete(bizModel);
+                            ret = this.delete(bizModelId);
                             break;
                         }
                         case EntityActionTypeEnum.UPDATE: {
@@ -124,17 +127,22 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     && action.payload.dirtyMode),
                 mergeMap(action => {
                     const bizModel = <U>action.payload.bizModel;
+                    const bizModelId = action.payload.bizModelId;
+                    let dirtyType: DirtyTypeEnum;
                     let ret: Observable<IEntities>;
                     switch (action.type) {
                         case EntityActionTypeEnum.INSERT: {
+                            dirtyType = DirtyTypeEnum.CREATED;
                             ret = this.insert(bizModel);
                             break;
                         }
                         case EntityActionTypeEnum.DELETE: {
-                            ret = this.delete(bizModel);
+                            dirtyType = DirtyTypeEnum.DELETED;
+                            ret = this.delete(bizModelId);
                             break;
                         }
                         case EntityActionTypeEnum.UPDATE: {
+                            dirtyType = DirtyTypeEnum.UPDATED;
                             ret = this.update(bizModel);
                             break;
                         }
@@ -142,26 +150,13 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     return ret.pipe(
                         map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
                         catchError((errResponse: HttpErrorResponse) => {
-                            let dirtyType: DirtyTypeEnum;
-                            switch (action.type) {
-                                case EntityActionTypeEnum.INSERT: {
-                                    dirtyType = DirtyTypeEnum.CREATED;
-                                    break;
-                                }
-                                case EntityActionTypeEnum.DELETE: {
-                                    dirtyType = DirtyTypeEnum.DELETED;
-                                    break;
-                                }
-                                case EntityActionTypeEnum.UPDATE: {
-                                    dirtyType = DirtyTypeEnum.UPDATED;
-                                    break;
-                                }
-                            }
+                            const entities = normalize([this.toTransfer(bizModel)], this.schema).entities;
                             return of(this.addDirtyAction(bizModel.id, dirtyType)).pipe(
-                                concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), action.payload.entities),
+                                concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), entities),
                                     this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error))));
                         }),
-                        startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
+                        startWith<any>(this.startedAction(<EntityActionTypeEnum>(action.type)),
+                            this.removeDirtyAction(bizModel.id)));
                 }));
     }
     //#endregion
@@ -173,11 +168,21 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     }
 
     protected updateEntity(bizModel: U, dirtyMode: boolean = false) {
-        this._store.dispatch(this.updateAction(bizModel.id, bizModel, dirtyMode));
+        if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
+            this.insertEntity(bizModel, dirtyMode);
+        } else {
+            this._store.dispatch(this.updateAction(bizModel.id, bizModel, dirtyMode));
+        }
     }
 
-    protected deleteEntity(bizModel: U, dirtyMode: boolean = false) {
-        this._store.dispatch(this.deleteAction(bizModel.id, bizModel, dirtyMode));
+    protected deleteEntity(bizModel: U | IBiz, dirtyMode: boolean = false) {
+        if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
+            const entities = normalize(this.toTransfer(<U>bizModel), this._entitySchema).entities;
+            this._store.dispatch(this.removeDirtyAction(bizModel.id));
+            this._store.dispatch(this.succeededAction(<EntityActionTypeEnum>(EntityActionTypeEnum.DELETE), entities));
+        } else {
+            this._store.dispatch(this.deleteAction(bizModel.id, <U>bizModel, dirtyMode));
+        }
     }
 
     public abstract toTransfer(bizModel: U): any;
@@ -185,6 +190,20 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     //#endregion
 
     //#region private methods
+    private isDirtyExist(dirtyId: string, dirtyType: DirtyTypeEnum): boolean {
+        let found = false;
+        const dirtyIds = this._store.getState().dirties.dirtyIds[getEntityKey(this._entityType)];
+
+        if (dirtyIds && dirtyIds[dirtyType]) {
+            Object.keys(dirtyIds[dirtyType]).forEach((key) => {
+                if (dirtyIds[dirtyType][key] === dirtyId) {
+                    found = true;
+                }
+            });
+        }
+
+        return found;
+    }
 
     private insert(bizModel: U): Observable<IEntities> {
         const transfer = this.toTransfer(bizModel);
@@ -223,9 +242,8 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         );
     }
 
-    private delete(bizModel: U): Observable<IEntities> {
-        const transfer = this.toTransfer(bizModel);
-        return this._http.delete(`${WEBAPI_HOST}/${this._url}/${transfer.id}`).pipe(
+    private delete(id: string): Observable<IEntities> {
+        return this._http.delete(`${WEBAPI_HOST}/${this._url}/${id}`).pipe(
             map(records => {
                 return normalize(records, this.schema).entities;
             })
@@ -254,21 +272,18 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         const toAdd = this.byId(id);
         if (!toAdd) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
 
-        this.add(toAdd);
+        this.insertEntity(toAdd, true);
     }
 
     public changeById(id: string) {
         const toChange = this.byId(id);
         if (!toChange) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
 
-        this.change(toChange);
+        this.updateEntity(toChange, true);
     }
 
     public removeById(id: string) {
-        const toRemove = this.byId(id);
-        if (!toRemove) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
-
-        this.remove(toRemove);
+        this.deleteEntity({ id: id }, true);
     }
 
     public byId(id: string): U {

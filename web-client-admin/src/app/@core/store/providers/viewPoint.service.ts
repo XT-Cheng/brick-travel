@@ -84,22 +84,6 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
 
     //#region CRUD methods
 
-    public fetch() {
-        this.loadEntities();
-    }
-
-    public add(c: IViewPointBiz) {
-        this.insertEntity(c);
-    }
-
-    public change(c: IViewPointBiz) {
-        this.updateEntity(c);
-    }
-
-    public remove(c: IViewPointBiz) {
-        this.deleteEntity(c);
-    }
-
     //#endregion
 
     //#endregion

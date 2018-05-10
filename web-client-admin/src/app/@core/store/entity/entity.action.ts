@@ -32,6 +32,7 @@ export interface IQueryCondition {
 export interface IEntityActionPayload extends IActionPayload {
     entities: IEntities;
     bizModel: IBiz;
+    bizModelId: string;
     queryCondition: IQueryCondition;
     pagination: IPagination;
     entityType: EntityTypeEnum;
@@ -53,6 +54,7 @@ const defaultEntityActionPayload: IEntityActionPayload = {
     error: null,
     entities: null,
     bizModel: null,
+    bizModelId: '',
     queryCondition: null,
     dirtyMode: false
 };
@@ -193,7 +195,8 @@ export function entityUpdateAction<U>(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
-            bizModel: bizModel
+            bizModel: bizModel,
+            dirtyMode: dirtyMode
         })
     });
 }
@@ -207,7 +210,8 @@ export function entityInsertAction<U>(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
-            bizModel: bizModel
+            bizModel: bizModel,
+            dirtyMode: dirtyMode
         })
     });
 }
@@ -221,7 +225,9 @@ export function entityDeleteAction<U>(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
-            bizModel: bizModel
+            bizModel: bizModel,
+            bizModelId: id,
+            dirtyMode: dirtyMode
         })
     });
 }

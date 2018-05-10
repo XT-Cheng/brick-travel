@@ -8,7 +8,7 @@ export interface IDirtyActionPayload extends IActionPayload {
     dirtyId: string;
     entityType: EntityTypeEnum;
     phaseType: DirtyActionPhaseEnum;
-    dirtyType?: DirtyTypeEnum;
+    dirtyType: DirtyTypeEnum;
 }
 
 export enum DirtyActionPhaseEnum {
@@ -28,7 +28,8 @@ export enum DirtyActionTypeEnum {
 export enum DirtyTypeEnum {
     CREATED = 'created',
     UPDATED = 'updated',
-    DELETED = 'deleted'
+    DELETED = 'deleted',
+    ALL = 'all'
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
@@ -38,6 +39,7 @@ const defaultDirtyActionPayload: IDirtyActionPayload = {
     error: null,
     dirtyId: '',
     entityType: null,
+    dirtyType: null,
     phaseType: DirtyActionPhaseEnum.EXECUTE,
 };
 
@@ -61,7 +63,7 @@ export function dirtyAddAction(entityType: EntityTypeEnum) {
 
 //#region Remove action
 export function dirtyRemoveAction(entityType: EntityTypeEnum) {
-    return (id: string, dirtyType: DirtyTypeEnum): DirtyAction => ({
+    return (id: string, dirtyType: DirtyTypeEnum = DirtyTypeEnum.ALL): DirtyAction => ({
         type: DirtyActionTypeEnum.REMOVE,
         meta: Object.assign({}, defaultDirtyActionMeta),
         payload: Object.assign({}, defaultDirtyActionPayload, {
@@ -99,8 +101,7 @@ export function dirtyFlushActionFailed() {
         type: DirtyActionTypeEnum.FLUSH,
         meta: Object.assign({}, defaultDirtyActionMeta, {}),
         payload: Object.assign({}, defaultDirtyActionPayload, {
-            phaseType: EntityActionPhaseEnum.FAIL,
-            error: error
+            phaseType: EntityActionPhaseEnum.FAIL
         })
     });
 }

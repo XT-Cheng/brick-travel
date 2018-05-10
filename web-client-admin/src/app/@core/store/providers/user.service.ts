@@ -91,22 +91,6 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     }
     //#region CRUD methods
 
-    public fetch() {
-        this.loadEntities();
-    }
-
-    public add(c: IUserBiz) {
-        this.insertEntity(c);
-    }
-
-    public change(c: IUserBiz) {
-        this.updateEntity(c);
-    }
-
-    public remove(c: IUserBiz) {
-        this.deleteEntity(c);
-    }
-
     //#endregion
 
     //#endregion

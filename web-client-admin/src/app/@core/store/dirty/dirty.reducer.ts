@@ -10,30 +10,30 @@ export function dirtyReducer(state: IDirties = INIT_DIRTY_STATE, action: DirtyAc
     || action.type === DirtyActionTypeEnum.REMOVE) {
     let newDirtyIds: Array<string>;
 
-    const key1 = getEntityKey(action.payload.entityType);
-    const key2 = action.payload.dirtyType;
+    const entityType = (action.payload.entityType) ? getEntityKey(action.payload.entityType) : null;
+    const dirtyType = action.payload.dirtyType;
 
     const dirtyIds = state.dirtyIds;
 
     switch (action.type) {
       case DirtyActionTypeEnum.ADD: {
-        if (dirtyIds[key1][DirtyTypeEnum.CREATED].find(id => id === action.payload.dirtyId)) {
+        if (dirtyIds[entityType][DirtyTypeEnum.CREATED].find(id => id === action.payload.dirtyId)) {
           return state;
         }
-        state = Immutable(state).setIn([STORE_DIRTIES_KEY.dirtyIds, key1],
-          clear(Immutable(state.dirtyIds[key1]).asMutable(), action.payload.dirtyId));
-        newDirtyIds = state.dirtyIds[key1][key2].concat(action.payload.dirtyId);
+        state = Immutable(state).setIn([STORE_DIRTIES_KEY.dirtyIds, entityType],
+          clear(Immutable(state.dirtyIds[entityType]).asMutable(), action.payload.dirtyId));
+        newDirtyIds = state.dirtyIds[entityType][dirtyType].concat(action.payload.dirtyId);
         break;
       }
       case DirtyActionTypeEnum.REMOVE: {
-        newDirtyIds = state.dirtyIds[key1][key2].filter((id) => action.payload.dirtyId !== id);
+        state = Immutable(state).setIn([STORE_DIRTIES_KEY.dirtyIds, entityType],
+          clear(Immutable(state.dirtyIds[entityType]).asMutable(), action.payload.dirtyId));
         break;
       }
       case DirtyActionTypeEnum.FLUSH: {
         switch (action.payload.phaseType) {
           case DirtyActionPhaseEnum.START: {
             state = Immutable(state).set(STORE_DIRTIES_KEY.syncing, true);
-            state = Immutable(state).set(STORE_DIRTIES_KEY.lastError, null);
             break;
           }
           case DirtyActionPhaseEnum.TRIGGER: {
@@ -45,7 +45,6 @@ export function dirtyReducer(state: IDirties = INIT_DIRTY_STATE, action: DirtyAc
             break;
           }
           case DirtyActionPhaseEnum.FAIL: {
-            state = Immutable(state).set(STORE_DIRTIES_KEY.lastError, action.payload.error);
             break;
           }
         }
@@ -54,7 +53,7 @@ export function dirtyReducer(state: IDirties = INIT_DIRTY_STATE, action: DirtyAc
     }
 
     if (newDirtyIds) {
-      state = Immutable(state).setIn([STORE_DIRTIES_KEY.dirtyIds, key1, key2], newDirtyIds);
+      state = Immutable(state).setIn([STORE_DIRTIES_KEY.dirtyIds, entityType, dirtyType], newDirtyIds);
     }
   }
   return state;

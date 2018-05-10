@@ -53,22 +53,6 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
 
     //#region CRUD methods
 
-    public fetch() {
-        this.loadEntities();
-    }
-
-    public add(c: IFilterCategoryBiz) {
-        this.insertEntity(c);
-    }
-
-    public change(c: IFilterCategoryBiz) {
-        this.updateEntity(c);
-    }
-
-    public remove(c: IFilterCategoryBiz) {
-        this.deleteEntity(c);
-    }
-
     //#endregion
 
     //#endregion

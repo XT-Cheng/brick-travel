@@ -131,20 +131,16 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
 
     //#region CRUD methods
-
-    public fetch() {
-        this.loadEntities();
+    public add(travelAgenda: ITravelAgendaBiz) {
+        this.insertEntity(travelAgenda, true);
     }
 
-    public add(c: ITravelAgendaBiz) {
-        this.insertEntity(c, true);
+    public change(travelAgenda: ITravelAgendaBiz) {
+        this.updateEntity(travelAgenda, true);
     }
 
-    public addById(id: string) {
-        const toAdd = this.byId(id);
-        if (!toAdd) { throw new Error(`TravelAgenda Id ${id} not exist!`); }
-
-        this.add(toAdd);
+    public remove(travelAgenda: ITravelAgendaBiz) {
+        this.deleteEntity(travelAgenda, true);
     }
 
     public addTravelViewPoint(viewPoint: IViewPointBiz, dailyTripId: string) {
@@ -182,28 +178,6 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
             Object.assign({}, INIT_ENTITY_STATE, entities)
         ));
         this._store.dispatch(this.addDirtyAction(travelAgenda.id, DirtyTypeEnum.UPDATED));
-    }
-
-    public change(travelAgenda: ITravelAgendaBiz) {
-        this.updateEntity(travelAgenda, true);
-    }
-
-    public changeById(id: string) {
-        const toChange = this.byId(id);
-        if (!toChange) { throw new Error(`TravelAgenda Id ${id} not exist!`); }
-
-        this.change(toChange);
-    }
-
-    public remove(travelAgenda: ITravelAgendaBiz) {
-        this.deleteEntity(travelAgenda, true);
-    }
-
-    public removeById(id: string) {
-        const toRemove = this.byId(id);
-        if (!toRemove) { throw new Error(`TravelAgenda Id ${id} not exist!`); }
-
-        this.remove(toRemove);
     }
 
     //#endregion
@@ -252,8 +226,6 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
 
     private caculateDistance(dailyTrip: IDailyTripBiz) {
-        if (!dailyTrip || !dailyTrip.travelViewPoints) { return; }
-
         for (let i = 0; i < dailyTrip.travelViewPoints.length; i++) {
             const vp = dailyTrip.travelViewPoints[i];
             const vpNext = dailyTrip.travelViewPoints[i + 1];
@@ -262,10 +234,13 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
                 vp.distanceToNext = Math.round(new AMap.LngLat(vp.viewPoint.longtitude, vp.viewPoint.latitude).distance(
                     new AMap.LngLat(vpNext.viewPoint.longtitude, vpNext.viewPoint.latitude)
                 ));
-            }
 
-            if (vp.transportationToNext == null) {
-                vp.transportationToNext = this._transportationCategoryService.default;
+                if (vp.transportationToNext === null) {
+                    vp.transportationToNext = this._transportationCategoryService.default;
+                }
+            } else {
+                vp.distanceToNext = -1;
+                vp.transportationToNext = null;
             }
         }
 

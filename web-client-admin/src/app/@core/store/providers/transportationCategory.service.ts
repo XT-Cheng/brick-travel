@@ -55,22 +55,6 @@ export class TransportationCategoryService extends EntityService<ITransportation
 
     //#region CRUD methods
 
-    public fetch() {
-        this.loadEntities();
-    }
-
-    public add(c: ITransportationCategoryBiz) {
-        this.insertEntity(c);
-    }
-
-    public change(c: ITransportationCategoryBiz) {
-        this.updateEntity(c);
-    }
-
-    public remove(c: ITransportationCategoryBiz) {
-        this.deleteEntity(c);
-    }
-
     //#endregion
 
     //#endregion
