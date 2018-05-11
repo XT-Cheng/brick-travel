@@ -12,6 +12,7 @@ interface IUIUserActionPayload extends IActionPayload {
 const defaultUIUserActionPayload: IUIUserActionPayload = {
     userLoggedIn: '',
     error: null,
+    actionId: ''
 };
 
 type UIUserAction = FluxStandardAction<IUIUserActionPayload, IActionMetaInfo>;

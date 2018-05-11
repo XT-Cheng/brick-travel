@@ -41,6 +41,7 @@ const defaultDirtyActionPayload: IDirtyActionPayload = {
     entityType: null,
     dirtyType: null,
     phaseType: DirtyActionPhaseEnum.EXECUTE,
+    actionId: ''
 };
 
 const defaultDirtyActionMeta: IActionMetaInfo = {

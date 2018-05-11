@@ -2,9 +2,9 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
-import { IError } from '../store.model';
 import { ErrorService } from './error.service';
 import { ViewPointCategoryService } from './viewPointCategory.service';
+import { IError } from '../error/error.model';
 
 const url = 'http://localhost:3000/viewPointCategories';
 
@@ -25,13 +25,15 @@ const errorData = {
 const backendError: IError = {
     network: false,
     description: 'error happened',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 const networkError: IError = {
     network: true,
     description: '',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 let service: ViewPointCategoryService;
@@ -49,7 +51,7 @@ describe('viwePoint Category test', () => {
         service = TestBed.get(ViewPointCategoryService);
         errorService = TestBed.get(ErrorService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         service.all$.subscribe((value) => {

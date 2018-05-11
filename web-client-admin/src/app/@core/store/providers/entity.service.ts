@@ -1,5 +1,6 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ObjectID } from 'bson';
 import { denormalize, normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
@@ -112,7 +113,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     return ret.pipe(
                         map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
                         catchError((errResponse: HttpErrorResponse) =>
-                            of(this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error))
+                            of(this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error, action.payload.actionId))
                         ),
                         startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
                 }));
@@ -153,7 +154,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                             const entities = normalize([this.toTransfer(bizModel)], this.schema).entities;
                             return of(this.addDirtyAction(bizModel.id, dirtyType)).pipe(
                                 concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), entities),
-                                    this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error))));
+                                    this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error, action.payload.actionId))));
                         }),
                         startWith<any>(this.startedAction(<EntityActionTypeEnum>(action.type)),
                             this.removeDirtyAction(bizModel.id)));
@@ -163,25 +164,31 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region protected methods
 
-    protected insertEntity(bizModel: U, dirtyMode: boolean = false) {
-        this._store.dispatch(this.insertAction(bizModel.id, bizModel, dirtyMode));
+    protected insertEntity(bizModel: U, dirtyMode: boolean = false): string {
+        const actionId = new ObjectID().toHexString();
+        this._store.dispatch(this.insertAction(bizModel.id, bizModel, dirtyMode, actionId));
+        return actionId;
     }
 
-    protected updateEntity(bizModel: U, dirtyMode: boolean = false) {
+    protected updateEntity(bizModel: U, dirtyMode: boolean = false): string {
         if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
-            this.insertEntity(bizModel, dirtyMode);
+            return this.insertEntity(bizModel, dirtyMode);
         } else {
-            this._store.dispatch(this.updateAction(bizModel.id, bizModel, dirtyMode));
+            const actionId = new ObjectID().toHexString();
+            this._store.dispatch(this.updateAction(bizModel.id, bizModel, dirtyMode, actionId));
+            return actionId;
         }
     }
 
-    protected deleteEntity(bizModel: U | IBiz, dirtyMode: boolean = false) {
+    protected deleteEntity(bizModel: U | IBiz, dirtyMode: boolean = false): string {
         if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
             const entities = normalize(this.toTransfer(<U>bizModel), this._entitySchema).entities;
             this._store.dispatch(this.removeDirtyAction(bizModel.id));
             this._store.dispatch(this.succeededAction(<EntityActionTypeEnum>(EntityActionTypeEnum.DELETE), entities));
         } else {
-            this._store.dispatch(this.deleteAction(bizModel.id, <U>bizModel, dirtyMode));
+            const actionId = new ObjectID().toHexString();
+            this._store.dispatch(this.deleteAction(bizModel.id, <U>bizModel, dirtyMode, actionId));
+            return actionId;
         }
     }
 
@@ -252,20 +259,22 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     //#endregion
 
     //#region Public methdos
-    public fetch() {
-        this.loadEntities();
+    public fetch(): string {
+        return this.loadEntities();
     }
 
-    public add(biz: U) {
-        this.insertEntity(biz);
+    public add(biz: U): string {
+        return this.insertEntity(biz);
     }
 
-    public change(biz: U) {
-        this.updateEntity(biz);
+    public change(biz: U): string {
+        return this.updateEntity(biz);
     }
 
-    public remove(biz: U) {
-        this.deleteEntity(biz);
+    public remove(biz: U): string {
+        const actionId = this.deleteEntity(biz);
+        if (!actionId) { throw new Error(`Missing Action Id!`); }
+        return actionId;
     }
 
     public addById(id: string) {

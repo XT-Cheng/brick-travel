@@ -2,13 +2,14 @@ import { Component, Inject, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
 import { ObjectID } from 'bson';
+import { filter } from 'rxjs/operators';
 
 import { FILE_UPLOADER } from '../../../../@core/fileUpload/fileUpload.module';
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
 import { ICityBiz } from '../../../../@core/store/bizModel/model/city.biz.model';
-import { ICity } from '../../../../@core/store/entity/model/city.model';
 import { CityService } from '../../../../@core/store/providers/city.service';
+import { ErrorService } from '../../../../@core/store/providers/error.service';
 import { EntityFormMode } from '../../../../page.component';
 
 @Component({
@@ -53,11 +54,25 @@ export class CityFormComponent {
 
   //#region Constructor
 
-  constructor(private _cityService: CityService,
+  constructor(private _cityService: CityService, private _errorService: ErrorService,
     @Inject(FILE_UPLOADER) public uploader: FileUploader, private toasterService: ToasterService,
     private activeModal: NgbActiveModal) {
     this.uploader.clearQueue();
     this.uploader.setOptions({ allowedMimeType: ['image/png'] });
+
+    this._cityService.all$.pipe(
+      filter((cities) => !!(cities.find((city) => city.id === this._newCity.id)))
+    ).subscribe(() => {
+      this.toasterService.pop('success', 'Success', `City ${this._newCity.name} created`);
+      this.activeModal.close();
+    });
+
+    this._errorService.lastError$.pipe(
+      filter((error) => !!(error))
+    ).subscribe(() => {
+      this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);
+      this.activeModal.close();
+    });
   }
 
   //#endregion
@@ -88,25 +103,9 @@ export class CityFormComponent {
 
   action() {
     if (this.mode === EntityFormMode.create) {
-      this._cityService.insertCity(this._newCity)
-        .subscribe((ret: Error | ICity) => {
-          if (ret instanceof Error) {
-            this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);
-          } else {
-            this.toasterService.pop('success', 'Success', `City ${this._newCity.name} created`);
-          }
-          this.activeModal.close();
-        });
+      this._cityService.add(this._newCity);
     } else {
-      this._cityService.updateCity(this._newCity)
-        .subscribe((ret: Error | ICity) => {
-          if (ret instanceof Error) {
-            this.toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
-          } else {
-            this.toasterService.pop('success', 'Success', `City ${this._newCity.name} edited`);
-          }
-          this.activeModal.close();
-        });
+      this._cityService.change(this._newCity);
     }
   }
 

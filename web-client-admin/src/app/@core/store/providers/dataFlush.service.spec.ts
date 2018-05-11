@@ -6,7 +6,7 @@ import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz, IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
 import { ITransportationCategory } from '../entity/model/travelAgenda.model';
-import { IError } from '../store.model';
+import { IError } from '../error/error.model';
 import { DataFlushService } from './dataFlush.service';
 import { ErrorService } from './error.service';
 import { TransportationCategoryService } from './transportationCategory.service';
@@ -94,13 +94,15 @@ const errorData = {
 const backendError: IError = {
     network: false,
     description: 'error happened',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 const networkError: IError = {
     network: true,
     description: '',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 let service: TravelAgendaService;
@@ -125,7 +127,7 @@ describe('flush test', () => {
         viewPointService = TestBed.get(ViewPointService);
         flushService = TestBed.get(DataFlushService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         service.all$.subscribe((value) => {

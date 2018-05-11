@@ -1,5 +1,6 @@
 import { IDirties, INIT_DIRTY_STATE } from './dirty/dirty.model';
 import { IEntities, INIT_ENTITY_STATE } from './entity/entity.model';
+import { IErrorHub, INIT_ERROR_STATE } from './error/error.model';
 import { INIT_UI_STATE, IUIState } from './ui/ui.model';
 
 export enum STORE_KEY {
@@ -13,14 +14,8 @@ export interface IAppState {
     entities: IEntities;
     dirties: IDirties;
     ui: IUIState;
-    error: IError;
+    error: IErrorHub;
     progress: IProgress;
-}
-
-export interface IError {
-    description: string;
-    stack: string;
-    network: boolean;
 }
 
 export interface IProgress {
@@ -31,10 +26,6 @@ export const INIT_APP_STATE: IAppState = {
     entities: INIT_ENTITY_STATE,
     dirties: INIT_DIRTY_STATE,
     ui: INIT_UI_STATE,
-    error: null,
+    error: INIT_ERROR_STATE,
     progress: { progressing: false }
 };
-
-/*
-    entities: {},
-*/

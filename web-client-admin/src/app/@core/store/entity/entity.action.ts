@@ -56,7 +56,8 @@ const defaultEntityActionPayload: IEntityActionPayload = {
     bizModel: null,
     bizModelId: '',
     queryCondition: null,
-    dirtyMode: false
+    dirtyMode: false,
+    actionId: ''
 };
 
 export function getEntityKey(typeEnum: EntityTypeEnum): string {
@@ -141,16 +142,15 @@ export function entityActionStarted(entityType: EntityTypeEnum) {
 }
 
 export function entityActionFailed(entityType: EntityTypeEnum) {
-    return (actionType: EntityActionTypeEnum, error: any): EntityAction => ({
+    return (actionType: EntityActionTypeEnum, error: any, actionId: string): EntityAction => ({
         type: actionType,
         error: true,
-        meta: Object.assign({}, defaultEntityActionMeta, {
-            progressing: false,
-        }),
+        meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.FAIL,
-            error: error
+            error: error,
+            actionId: actionId
         })
     });
 }
@@ -158,9 +158,7 @@ export function entityActionFailed(entityType: EntityTypeEnum) {
 export function entityActionSucceeded(entityType: EntityTypeEnum) {
     return (actionType: EntityActionTypeEnum, entities: IEntities): EntityAction => ({
         type: actionType,
-        meta: Object.assign({}, defaultEntityActionMeta, {
-            progressing: false,
-        }),
+        meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.SUCCEED,
@@ -171,7 +169,7 @@ export function entityActionSucceeded(entityType: EntityTypeEnum) {
 
 //#region Load Actions
 export function entityLoadAction(entityType: EntityTypeEnum) {
-    return (pagination: IPagination, queryCondition: IQueryCondition): EntityAction => ({
+    return (pagination: IPagination, queryCondition: IQueryCondition, actionId: string): EntityAction => ({
         type: EntityActionTypeEnum.LOAD,
         meta: Object.assign({}, defaultEntityActionMeta, {
             progressing: true,
@@ -180,7 +178,8 @@ export function entityLoadAction(entityType: EntityTypeEnum) {
             pagination: pagination,
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
-            queryCondition: queryCondition
+            queryCondition: queryCondition,
+            actionId: actionId
         })
     });
 }
@@ -189,14 +188,15 @@ export function entityLoadAction(entityType: EntityTypeEnum) {
 
 //#region Update action
 export function entityUpdateAction<U>(entityType: EntityTypeEnum) {
-    return (id: string, bizModel: U, dirtyMode: boolean): EntityAction => ({
+    return (id: string, bizModel: U, dirtyMode: boolean, actionId: string): EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
             bizModel: bizModel,
-            dirtyMode: dirtyMode
+            dirtyMode: dirtyMode,
+            actionId: actionId
         })
     });
 }
@@ -204,14 +204,15 @@ export function entityUpdateAction<U>(entityType: EntityTypeEnum) {
 
 //#region Insert action
 export function entityInsertAction<U>(entityType: EntityTypeEnum) {
-    return (id: string, bizModel: U, dirtyMode: boolean): EntityAction => ({
+    return (id: string, bizModel: U, dirtyMode: boolean, actionId: string): EntityAction => ({
         type: EntityActionTypeEnum.INSERT,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.TRIGGER,
             bizModel: bizModel,
-            dirtyMode: dirtyMode
+            dirtyMode: dirtyMode,
+            actionId: actionId
         })
     });
 }
@@ -219,7 +220,7 @@ export function entityInsertAction<U>(entityType: EntityTypeEnum) {
 
 //#region Delete action
 export function entityDeleteAction<U>(entityType: EntityTypeEnum) {
-    return (id: string, bizModel: U, dirtyMode: boolean): EntityAction => ({
+    return (id: string, bizModel: U, dirtyMode: boolean, actionId: string): EntityAction => ({
         type: EntityActionTypeEnum.DELETE,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
 import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
-import { IError } from '../store.model';
+import { IError } from '../error/error.model';
 import { ErrorService } from './error.service';
 import { FilterCategoryService } from './filterCategory.service';
 
@@ -41,13 +41,15 @@ const errorData = {
 const backendError: IError = {
     network: false,
     description: 'error happened',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 const networkError: IError = {
     network: true,
     description: '',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 let service: FilterCategoryService;
@@ -65,7 +67,7 @@ describe('filterCategory test', () => {
         service = TestBed.get(FilterCategoryService);
         errorService = TestBed.get(ErrorService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         service.all$.subscribe((value) => {

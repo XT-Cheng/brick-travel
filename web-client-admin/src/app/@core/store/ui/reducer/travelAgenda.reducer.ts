@@ -17,7 +17,8 @@ const defaultUIAgendaActionPayload: IUITravelAgendaActionPayload = {
     selectedDailyTripId: '',
     selectedTravelViewPointId: '',
     error: null,
-    entityType: null
+    entityType: null,
+    actionId: ''
 };
 
 type UITravelAgendaAction = FluxStandardAction<IUITravelAgendaActionPayload, IActionMetaInfo>;

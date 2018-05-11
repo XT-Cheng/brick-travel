@@ -103,7 +103,7 @@ describe('travelAgenda ui test', () => {
         errorService = TestBed.get(ErrorService);
         viewPointService = TestBed.get(ViewPointService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         travelAgendaSrv.selected$.subscribe((value) => {

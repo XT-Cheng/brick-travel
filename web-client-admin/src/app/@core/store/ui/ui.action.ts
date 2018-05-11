@@ -21,7 +21,8 @@ export const defaultUIActionPayload: IUIActionPayload = {
     error: null,
     entityType: null,
     searchKey: '',
-    selectedId: ''
+    selectedId: '',
+    actionId: ''
 };
 
 //#region Search Actions

@@ -109,7 +109,8 @@ export class DataFlushService {
         const { entityType, type, id } = value;
         switch (entityType) {
             case EntityTypeEnum.TRAVELAGENDA: {
-                return this.requestFlushTravelAgenda(type, id);
+                this.requestFlushTravelAgenda(type, id);
+                break;
             }
         }
     }
@@ -117,13 +118,16 @@ export class DataFlushService {
     private requestFlushTravelAgenda(type: string, id: string) {
         switch (type) {
             case DirtyTypeEnum.CREATED: {
-                return this._travelAgendaService.addById(id);
+                 this._travelAgendaService.addById(id);
+                 break;
             }
             case DirtyTypeEnum.UPDATED: {
-                return this._travelAgendaService.changeById(id);
+                 this._travelAgendaService.changeById(id);
+                 break;
             }
             case DirtyTypeEnum.DELETED: {
-                return this._travelAgendaService.removeById(id);
+                 this._travelAgendaService.removeById(id);
+                 break;
             }
         }
     }

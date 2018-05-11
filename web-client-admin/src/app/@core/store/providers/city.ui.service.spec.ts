@@ -46,7 +46,7 @@ describe('city ui test', () => {
         cityUISrv = TestBed.get(CityUIService);
         errorService = TestBed.get(ErrorService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         citySrv.selected$.subscribe((value) => {

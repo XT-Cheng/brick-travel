@@ -6,6 +6,7 @@ export interface IActionMetaInfo {
 
 export interface IActionPayload {
     error: any;
+    actionId: string;
 }
 
 // Flux-standard-action gives us stronger typing of our actions.

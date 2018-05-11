@@ -100,7 +100,7 @@ describe('viewPoint ui test', () => {
         viewPointUISrv = TestBed.get(ViewPointUIService);
         errorService = TestBed.get(ErrorService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         viewPointSrv.selected$.subscribe((value) => {

@@ -1,5 +1,6 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ObjectID } from 'bson';
 import { normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
@@ -72,7 +73,7 @@ export abstract class FetchService {
                 mergeMap(action => this.load(action.payload.pagination, action.payload.queryCondition).pipe(
                     map(data => this.succeededAction(EntityActionTypeEnum.LOAD, data)),
                     catchError((errResponse: HttpErrorResponse) => {
-                        return of(this.failedAction(EntityActionTypeEnum.LOAD, errResponse.error));
+                        return of(this.failedAction(EntityActionTypeEnum.LOAD, errResponse.error, action.payload.actionId));
                     }),
                     startWith(this.startedAction(EntityActionTypeEnum.LOAD)))
                 ));
@@ -83,8 +84,10 @@ export abstract class FetchService {
     //#region protected methods
 
     protected loadEntities(pagination: IPagination = { page: this.DEFAULT_PAGE, limit: this.DEFAULT_LIMIT },
-        queryCondition: IQueryCondition = {}) {
-        this._store.dispatch(this.loadAction(pagination, queryCondition));
+        queryCondition: IQueryCondition = {}): string {
+        const actionId = new ObjectID().toHexString();
+        this._store.dispatch(this.loadAction(pagination, queryCondition, actionId));
+        return actionId;
     }
 
     protected get schema(): any {

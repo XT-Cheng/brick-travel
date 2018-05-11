@@ -3,7 +3,7 @@ import { getTestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
 import { ICityBiz } from '../bizModel/model/city.biz.model';
-import { IError } from '../store.model';
+import { IError } from '../error/error.model';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 
@@ -28,13 +28,15 @@ const errorData = {
 const backendError: IError = {
     network: false,
     description: 'error happened',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 const networkError: IError = {
     network: true,
     description: '',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 let service: CityService;
@@ -42,7 +44,7 @@ let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
 let result;
-let error;
+let error, actionError;
 
 describe('city test', () => {
     beforeEach(() => {
@@ -52,7 +54,7 @@ describe('city test', () => {
         service = getTestBed().get(CityService);
         errorService = getTestBed().get(ErrorService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         service.all$.subscribe((value) => {
@@ -109,12 +111,31 @@ describe('city test', () => {
         });
 
         it('#add() with backend error', () => {
-            service.add(cityData);
-            const req = httpTestingController.expectOne(url);
+            let actionId = service.add(cityData);
+            let req = httpTestingController.expectOne(url);
+
+            errorService.getActionError$(actionId).subscribe((e) => {
+                actionError = e;
+            });
+
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
             expect(error).toEqual(backendError);
+            expect(actionError.actionId).toEqual(actionId);
+
+            actionId = service.add(cityData);
+            req = httpTestingController.expectOne(url);
+
+            req.flush('error happened', errorData);
+
+            errorService.getActionError$(actionId).subscribe((e) => {
+                actionError = e;
+            });
+
+            expect(result).toEqual([]);
+            expect(error).toEqual(backendError);
+            expect(actionError.actionId).toEqual(actionId);
         });
 
         it('#add() with network error', () => {

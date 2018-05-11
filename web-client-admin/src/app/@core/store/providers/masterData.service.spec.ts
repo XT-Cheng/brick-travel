@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { zip } from 'rxjs/operators';
 
 import { initTest } from '../../../../test';
-import { IError } from '../store.model';
+import { IError } from '../error/error.model';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 import { MasterDataService } from './masterData.service';
@@ -49,13 +49,15 @@ const errorData = {
 const backendError: IError = {
     network: false,
     description: 'error happened',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 const networkError: IError = {
     network: true,
     description: '',
-    stack: ''
+    stack: '',
+    actionId: ''
 };
 
 let service: MasterDataService;
@@ -79,7 +81,7 @@ describe('masterData test', () => {
         errorService = TestBed.get(ErrorService);
         viewPointCatService = TestBed.get(ViewPointCategoryService);
 
-        errorService.error$.subscribe((value) => {
+        errorService.lastError$.subscribe((value) => {
             error = value;
         });
         viewPointCatService.all$.pipe(
