@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ICityBiz } from './@core/store/bizModel/city.biz.model';
-import { SelectorService } from './@core/store/providers/selector.service';
+import { ICityBiz } from './@core/store/bizModel/model/city.biz.model';
+import { CityService } from './@core/store/providers/city.service';
 import { AMapComponent } from './@ui/components/a-map/a-map.component';
 
 @Component({
@@ -28,8 +28,8 @@ export class TestComponent {
 
   //#region Constructor
 
-  constructor(private modalService: NgbModal, public selector: SelectorService) {
-    this.selector.cities$.subscribe(cities => {
+  constructor(private _modalService: NgbModal, public _cityService: CityService) {
+    this._cityService.all$.subscribe(cities => {
       this.city = cities[0];
     });
   }
@@ -39,7 +39,7 @@ export class TestComponent {
   //#region Pubic methods
   test() {
     // nb-layout
-    const activeModal = this.modalService.open(AMapComponent, { backdrop: true, size: 'lg', container: '.scrollable-container' });
+    const activeModal = this._modalService.open(AMapComponent, { backdrop: true, size: 'lg', container: '.scrollable-container' });
     activeModal.componentInstance.minHeight = 500;
     activeModal.componentInstance.allowSelectPoint = true;
   }

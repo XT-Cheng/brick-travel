@@ -98,7 +98,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     let ret: Observable<IEntities>;
                     switch (action.type) {
                         case EntityActionTypeEnum.INSERT: {
-                            ret = this.insert(bizModel);
+                            ret = this.insert(bizModel, action.payload.files);
                             break;
                         }
                         case EntityActionTypeEnum.DELETE: {
@@ -106,7 +106,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                             break;
                         }
                         case EntityActionTypeEnum.UPDATE: {
-                            ret = this.update(bizModel);
+                            ret = this.update(bizModel, action.payload.files);
                             break;
                         }
                     }
@@ -134,7 +134,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     switch (action.type) {
                         case EntityActionTypeEnum.INSERT: {
                             dirtyType = DirtyTypeEnum.CREATED;
-                            ret = this.insert(bizModel);
+                            ret = this.insert(bizModel, action.payload.files);
                             break;
                         }
                         case EntityActionTypeEnum.DELETE: {
@@ -144,7 +144,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                         }
                         case EntityActionTypeEnum.UPDATE: {
                             dirtyType = DirtyTypeEnum.UPDATED;
-                            ret = this.update(bizModel);
+                            ret = this.update(bizModel, action.payload.files);
                             break;
                         }
                     }
@@ -164,18 +164,18 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region protected methods
 
-    protected insertEntity(bizModel: U, dirtyMode: boolean = false): string {
+    protected insertEntity(bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean = false): string {
         const actionId = new ObjectID().toHexString();
-        this._store.dispatch(this.insertAction(bizModel.id, bizModel, dirtyMode, actionId));
+        this._store.dispatch(this.insertAction(bizModel.id, bizModel, files, dirtyMode, actionId));
         return actionId;
     }
 
-    protected updateEntity(bizModel: U, dirtyMode: boolean = false): string {
+    protected updateEntity(bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean = false): string {
         if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
-            return this.insertEntity(bizModel, dirtyMode);
+            return this.insertEntity(bizModel, files, dirtyMode);
         } else {
             const actionId = new ObjectID().toHexString();
-            this._store.dispatch(this.updateAction(bizModel.id, bizModel, dirtyMode, actionId));
+            this._store.dispatch(this.updateAction(bizModel.id, bizModel, files, dirtyMode, actionId));
             return actionId;
         }
     }
@@ -212,17 +212,21 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         return found;
     }
 
-    private insert(bizModel: U): Observable<IEntities> {
+    private insert(bizModel: U, files: Map<string, FileUploader>, ): Observable<IEntities> {
         const transfer = this.toTransfer(bizModel);
 
         const formData: FormData = new FormData();
 
         formData.append(getEntityKey(this._entityType), JSON.stringify(transfer));
 
-        for (let i = 0; i < this._uploader.queue.length; i++) {
-            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+        if (files) {
+            for (const key of Array.from(files.keys())) {
+                for (let i = 0; i < files.get(key).queue.length; i++) {
+                    formData.append(`${key}${i}`, files.get(key).queue[i]._file, files.get(key).queue[i].file.name);
+                }
+                files.get(key).clearQueue();
+            }
         }
-        this._uploader.clearQueue();
 
         return this._http.post(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
@@ -231,16 +235,21 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         );
     }
 
-    private update(bizModel: U): Observable<IEntities> {
+    private update(bizModel: U, files: Map<string, FileUploader>, ): Observable<IEntities> {
         const transfer = this.toTransfer(bizModel);
 
         const formData: FormData = new FormData();
 
         formData.append(getEntityKey(this._entityType), JSON.stringify(transfer));
-        for (let i = 0; i < this._uploader.queue.length; i++) {
-            formData.append(i.toString(), this._uploader.queue[i]._file, this._uploader.queue[i].file.name);
+
+        if (files) {
+            for (const key of Array.from(files.keys())) {
+                for (let i = 0; i < files.get(key).queue.length; i++) {
+                    formData.append(`${key}${i}`, files.get(key).queue[i]._file, files.get(key).queue[i].file.name);
+                }
+                files.get(key).clearQueue();
+            }
         }
-        this._uploader.clearQueue();
 
         return this._http.put(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
@@ -263,12 +272,12 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         return this.loadEntities();
     }
 
-    public add(biz: U): string {
-        return this.insertEntity(biz);
+    public add(biz: U, files: Map<string, FileUploader> = null): string {
+        return this.insertEntity(biz, files);
     }
 
-    public change(biz: U): string {
-        return this.updateEntity(biz);
+    public change(biz: U, files: Map<string, FileUploader> = null): string {
+        return this.updateEntity(biz, files);
     }
 
     public remove(biz: U): string {
@@ -281,14 +290,14 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         const toAdd = this.byId(id);
         if (!toAdd) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
 
-        this.insertEntity(toAdd, true);
+        this.insertEntity(toAdd, null, true);
     }
 
     public changeById(id: string) {
         const toChange = this.byId(id);
         if (!toChange) { throw new Error(`${this._entityType} Id ${id} not exist!`); }
 
-        this.updateEntity(toChange, true);
+        this.updateEntity(toChange, null, true);
     }
 
     public removeById(id: string) {

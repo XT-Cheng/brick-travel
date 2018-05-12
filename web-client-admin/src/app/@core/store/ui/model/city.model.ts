@@ -1,9 +1,10 @@
+import { ICommonUI } from '../ui.model';
+
 export const INIT_UI_CITY_STATE: ICityUI = {
   selectedId: '',
-  searchKey: ''
+  searchKey: '',
+  filterIds: []
 };
 
-export interface ICityUI {
-  selectedId: string;
-  searchKey: string;
+export interface ICityUI extends ICommonUI {
 }

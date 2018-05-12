@@ -2,8 +2,8 @@ import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@ang
 import { Router } from '@angular/router';
 import { NbSidebarService } from '@nebular/theme';
 
-import { IUserBiz } from '../../../@core/store/bizModel/user.biz.model';
-import { SelectorService } from '../../../@core/store/providers/selector.service';
+import { IUserBiz } from '../../../@core/store/bizModel/model/user.biz.model';
+import { UserService } from '../../../@core/store/providers/user.service';
 import { SearchService } from '../../providers/search.service';
 
 @Component({
@@ -21,35 +21,35 @@ export class HeaderComponent implements OnInit {
 
   userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
-  constructor(private sidebarService: NbSidebarService,
-    private renderer: Renderer2,
-    private searchService: SearchService,
-    public selectorService: SelectorService,
-    protected router: Router) {
+  constructor(private _sidebarService: NbSidebarService,
+    private _renderer: Renderer2,
+    private _userService: UserService,
+    private _searchService: SearchService,
+    protected _router: Router) {
   }
 
   ngOnInit() {
-    this.selectorService.userLoggedIn$
+    this._userService.loggedIn$
       .subscribe((user: IUserBiz) => {
         this.user = user;
       });
 
-    this.searchService.onSearchSubmit().subscribe(({ term, tag }) => {
+    this._searchService.onSearchSubmit().subscribe(({ term, tag }) => {
       if (term !== '') {
-        this.renderer.addClass(this.search.nativeElement, 'markable');
+        this._renderer.addClass(this.search.nativeElement, 'markable');
       } else {
-        this.renderer.removeClass(this.search.nativeElement, 'markable');
+        this._renderer.removeClass(this.search.nativeElement, 'markable');
       }
     });
   }
 
   toggleSidebar(): boolean {
-    this.sidebarService.toggle(true, 'menu-sidebar');
+    this._sidebarService.toggle(true, 'menu-sidebar');
     return false;
   }
 
   toggleSettings(): boolean {
-    this.sidebarService.toggle(false, 'settings-sidebar');
+    this._sidebarService.toggle(false, 'settings-sidebar');
     return false;
   }
 }

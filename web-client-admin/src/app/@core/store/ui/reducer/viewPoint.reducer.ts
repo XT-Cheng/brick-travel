@@ -1,21 +1,27 @@
-import * as Immutable from 'seamless-immutable';
+import { FluxStandardAction } from 'flux-standard-action';
 
 import { EntityTypeEnum } from '../../entity/entity.model';
-import { ICityUI } from '../model/city.model';
-import { INIT_UI_VIEWPOINT_STATE } from '../model/viewPoint.model';
-import { UIAction, UIActionTypeEnum } from '../ui.action';
-import { STORE_UI_COMMON_KEY } from '../ui.model';
+import { IActionMetaInfo } from '../../store.action';
+import { INIT_UI_VIEWPOINT_STATE, IViewPointUI } from '../model/viewPoint.model';
+import { IUIActionPayload } from '../ui.action';
+import { commonUIReducer } from '../ui.reducer';
 
-export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIAction): ICityUI {
-    if (!action.payload || action.payload.entityType !== EntityTypeEnum.VIEWPOINT) { return <any>state; }
+interface IUIViewPointActionPayload extends IUIActionPayload {
+}
 
-    switch (action.type) {
-        case UIActionTypeEnum.SELECT: {
-            return <any>Immutable(state).set(STORE_UI_COMMON_KEY.selectedId, action.payload.selectedId);
-        }
-        case UIActionTypeEnum.SEARCH: {
-            return <any>Immutable(state).set(STORE_UI_COMMON_KEY.searchKey, action.payload.searchKey);
-        }
-    }
-    return <any>state;
+const defaultUIViewPointActionPayload: IUIViewPointActionPayload = {
+    searchKey: '',
+    selectedId: '',
+    error: null,
+    entityType: null,
+    actionId: '',
+    filter: null
+};
+
+type UIViewPointAction = FluxStandardAction<IUIViewPointActionPayload, IActionMetaInfo>;
+
+export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIViewPointAction): IViewPointUI {
+    if (!action.payload || action.payload.entityType !== EntityTypeEnum.VIEWPOINT) { return state; }
+
+    return commonUIReducer(state, action);
 }

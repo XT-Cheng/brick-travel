@@ -6,12 +6,17 @@ import { IActionMetaInfo, IActionPayload } from '../store.action';
 export enum UIActionTypeEnum {
     SELECT = 'UI:SELECT',
     SEARCH = 'UI:SEARCH',
+    FILTER = 'UI:FILTER'
 }
 
 export interface IUIActionPayload extends IActionPayload {
     entityType: EntityTypeEnum;
     searchKey: string;
     selectedId: string;
+    filter: {
+        selectedCriteriaId: string,
+        unSelectedCriteriaIds: string[]
+    };
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
@@ -22,6 +27,7 @@ export const defaultUIActionPayload: IUIActionPayload = {
     entityType: null,
     searchKey: '',
     selectedId: '',
+    filter: null,
     actionId: ''
 };
 
@@ -44,6 +50,20 @@ export function entitySelectAction(entityType: EntityTypeEnum) {
         payload: Object.assign({}, defaultUIActionPayload, {
             entityType: entityType,
             selectedId: selectedId
+        })
+    });
+}
+
+export function entityFilterAction(entityType: EntityTypeEnum) {
+    return (selectedCriteriaId: string, unSelectedCriteriaIds: string[]) => ({
+        type: UIActionTypeEnum.FILTER,
+        meta: { progressing: false },
+        payload: Object.assign({}, defaultUIActionPayload, {
+            entityType: entityType,
+            filter: {
+                selectedCriteriaId: selectedCriteriaId,
+                unSelectedCriteriaIds: unSelectedCriteriaIds
+            }
         })
     });
 }

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NbMenuItem } from '@nebular/theme';
 import { ToasterConfig } from 'angular2-toaster';
 
-import { SelectorService } from './@core/store/providers/selector.service';
+import { CityService } from './@core/store/providers/city.service';
 
 export interface ComponentType {
   createEntity();
@@ -87,9 +87,9 @@ export class PageComponent {
 
   //#region Constructor
 
-  constructor(private _selectorService: SelectorService) {
+  constructor(private _cityservice: CityService) {
 
-    this._selectorService.cities$.subscribe(cities => {
+    this._cityservice.all$.subscribe(cities => {
       cities.forEach((city) => {
         this.viewPointMenuItem.children.push({
           title: city.name,

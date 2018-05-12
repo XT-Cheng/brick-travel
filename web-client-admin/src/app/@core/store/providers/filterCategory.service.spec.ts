@@ -2,7 +2,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
-import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
+import { FilterTypeEnum, IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { IError } from '../error/error.model';
 import { ErrorService } from './error.service';
 import { FilterCategoryService } from './filterCategory.service';
@@ -11,17 +11,18 @@ const url = 'http://localhost:3000/filterCategories';
 
 const filterCategoryData: IFilterCategoryBiz = {
     name: '类型',
+    filterType: FilterTypeEnum.ViewPoint,
     filterFunction: 'filterByCategory',
     criteries: [
         {
             name: '景点',
-            criteria: '0',
+            criteria: '景点',
             isChecked: false,
             id: '5a4b4d6030e1cf2b19b493da'
         },
         {
             name: '美食',
-            criteria: '1',
+            criteria: '美食',
             isChecked: false,
             id: '5a4b4d6030e1cf2b19b493d9'
         }
@@ -88,6 +89,7 @@ describe('filterCategory test', () => {
 
             expect(result).toEqual([filterCategoryData]);
             expect(error).toEqual(null);
+            expect(service.byType(FilterTypeEnum.ViewPoint)).toEqual([filterCategoryData]);
         });
         it('#byId()', () => {
             service.fetch();

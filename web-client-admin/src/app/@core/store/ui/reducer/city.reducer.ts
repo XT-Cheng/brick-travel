@@ -1,20 +1,18 @@
-import * as Immutable from 'seamless-immutable';
+import { FluxStandardAction } from 'flux-standard-action';
 
 import { EntityTypeEnum } from '../../entity/entity.model';
+import { IActionMetaInfo } from '../../store.action';
 import { ICityUI, INIT_UI_CITY_STATE } from '../model/city.model';
-import { UIAction, UIActionTypeEnum } from '../ui.action';
-import { STORE_UI_COMMON_KEY } from '../ui.model';
+import { IUIActionPayload } from '../ui.action';
+import { commonUIReducer } from '../ui.reducer';
 
-export function cityReducer(state = INIT_UI_CITY_STATE, action: UIAction): ICityUI {
-    if (!action.payload || action.payload.entityType !== EntityTypeEnum.CITY) { return <any>state; }
+interface IUICityActionPayload extends IUIActionPayload {
+}
 
-    switch (action.type) {
-        case UIActionTypeEnum.SELECT: {
-            return <any>Immutable(state).set(STORE_UI_COMMON_KEY.selectedId, action.payload.selectedId);
-        }
-        case UIActionTypeEnum.SEARCH: {
-            return <any>Immutable(state).set(STORE_UI_COMMON_KEY.searchKey, action.payload.searchKey);
-        }
-    }
-    return <any>state;
+type UICityAction = FluxStandardAction<IUICityActionPayload, IActionMetaInfo>;
+
+export function cityReducer(state = INIT_UI_CITY_STATE, action: UICityAction): ICityUI {
+    if (!action.payload || action.payload.entityType !== EntityTypeEnum.CITY) { return state; }
+
+    return commonUIReducer(state, action);
 }

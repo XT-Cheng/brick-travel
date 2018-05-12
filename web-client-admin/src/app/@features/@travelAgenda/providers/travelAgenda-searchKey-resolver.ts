@@ -3,13 +3,13 @@ import { Resolve } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
-import { SelectorService } from '../../../@core/store/providers/selector.service';
+import { TravelAgendaUIService } from '../../../@core/store/providers/travelAgenda.ui.service';
 
 @Injectable()
 export class TravelAgendaSearchKeyResolver implements Resolve<string> {
-  constructor(private selectorService: SelectorService) { }
+  constructor(private _travelAgendaUIService: TravelAgendaUIService) { }
 
   resolve(): Observable<string> {
-    return of(this.selectorService.travelAgendaSearchKey);
+    return of(this._travelAgendaUIService.searchKey);
   }
 }

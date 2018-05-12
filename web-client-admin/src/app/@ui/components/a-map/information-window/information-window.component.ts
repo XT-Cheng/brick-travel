@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input, Output } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
-import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
+import { IViewPointBiz } from '../../../../@core/store/bizModel/model/viewPoint.biz.model';
 
 export enum ActionAllowed {
   ADD,

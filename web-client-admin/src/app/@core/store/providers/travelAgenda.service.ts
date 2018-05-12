@@ -132,11 +132,11 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
     //#region CRUD methods
     public add(travelAgenda: ITravelAgendaBiz): string {
-        return this.insertEntity(travelAgenda, true);
+        return this.insertEntity(travelAgenda, null, true);
     }
 
     public change(travelAgenda: ITravelAgendaBiz): string {
-        return this.updateEntity(travelAgenda, true);
+        return this.updateEntity(travelAgenda, null, true);
     }
 
     public remove(travelAgenda: ITravelAgendaBiz): string {

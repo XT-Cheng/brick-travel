@@ -7,9 +7,8 @@ import { ObjectID } from 'bson';
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
 import { IViewPointBiz } from '../../../../@core/store/bizModel/model/viewPoint.biz.model';
-import { IViewPoint } from '../../../../@core/store/entity/model/viewPoint.model';
-import { SelectorService } from '../../../../@core/store/providers/selector.service';
 import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
+import { ViewPointUIService } from '../../../../@core/store/providers/viewPoint.ui.service';
 import { WEBAPI_HOST } from '../../../../@core/utils/constants';
 import { EntityFormMode } from '../../../../page.component';
 import { MapModalComponent } from '../mapModal.component';
@@ -76,10 +75,10 @@ export class ViewPointFormComponent implements AfterViewInit {
 
   //#region Constructor
 
-  constructor(private _viewPointService: ViewPointService, private modalService: NgbModal, private element: ElementRef,
-    public selectorService: SelectorService,
-    private toasterService: ToasterService, private menuService: NbMenuService,
-    private activeModal: NgbActiveModal) {
+  constructor(private _viewPointService: ViewPointService, private _modalService: NgbModal, private _element: ElementRef,
+    public _viewPointUIService: ViewPointUIService,
+    private _toasterService: ToasterService, private _menuService: NbMenuService,
+    private _activeModal: NgbActiveModal) {
     this._imageFiles = new Map<string, FileItem>();
 
     this.imagesUploader.clearQueue();
@@ -91,7 +90,7 @@ export class ViewPointFormComponent implements AfterViewInit {
     this.filesMap.set('images', this.imagesUploader);
     this.filesMap.set('thumbnail', this.thumbnailUploader);
 
-    this.menuService.onItemClick().subscribe(menuBag => {
+    this._menuService.onItemClick().subscribe(menuBag => {
       if (this.newViewPoint == null) { return; }
 
       const { file, source } = menuBag.item.data;
@@ -129,7 +128,7 @@ export class ViewPointFormComponent implements AfterViewInit {
   }
 
   getClientHeight() {
-    return this.element.nativeElement.clientHeight;
+    return this._element.nativeElement.clientHeight;
   }
 
   hasCity(): boolean {
@@ -196,38 +195,40 @@ export class ViewPointFormComponent implements AfterViewInit {
     this.newViewPoint.thumbnail = '';
 
     if (this.mode === EntityFormMode.create) {
-      this._viewPointService.addViewPoint(this.newViewPoint, this.filesMap)
-        .subscribe((ret: Error | IViewPoint) => {
-          if (ret instanceof Error) {
-            this.toasterService.pop('error', 'Error', `Can't create view point, pls try later`);
-          } else {
-            this.toasterService.pop('success', 'Success', `View Point ${this.newViewPoint.name} created`);
-          }
-          this.activeModal.close();
-        });
+      this._viewPointService.add(this.newViewPoint, this.filesMap);
+      // this._viewPointService.add(this.newViewPoint, this._filesMap)
+      //   .subscribe((ret: Error | IViewPoint) => {
+      //     if (ret instanceof Error) {
+      //       this._toasterService.pop('error', 'Error', `Can't create view point, pls try later`);
+      //     } else {
+      //       this._toasterService.pop('success', 'Success', `View Point ${this.newViewPoint.name} created`);
+      //     }
+      //     this._activeModal.close();
+      //   });
     } else {
-      this._viewPointService.updateViewPoint(this.newViewPoint, this.filesMap)
-        .subscribe((ret: Error | IViewPoint) => {
-          if (ret instanceof Error) {
-            this.toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
-          } else {
-            this.toasterService.pop('success', 'Success', `View Point ${this.newViewPoint.name} edited`);
-          }
-          this.activeModal.close();
-        });
+      this._viewPointService.change(this.newViewPoint, this.filesMap);
+      // this._viewPointService.change(this.newViewPoint, this._filesMap)
+      //   .subscribe((ret: Error | IViewPoint) => {
+      //     if (ret instanceof Error) {
+      //       this._toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
+      //     } else {
+      //       this._toasterService.pop('success', 'Success', `View Point ${this.newViewPoint.name} edited`);
+      //     }
+      //     this._activeModal.close();
+      //   });
     }
   }
 
   close() {
-    this.activeModal.close();
+    this._activeModal.close();
   }
 
   openMap() {
-    const activeModal = this.modalService.open(MapModalComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
+    const activeModal = this._modalService.open(MapModalComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
     activeModal.componentInstance.minHeight = 500;
     activeModal.componentInstance.city = this.newViewPoint.city;
 
-    this.element.nativeElement.style.display = 'none';
+    this._element.nativeElement.style.display = 'none';
 
     if (this.newViewPoint.latitude) {
       activeModal.componentInstance.pointChoosed = new AMap.LngLat(this.newViewPoint.longtitude, this.newViewPoint.latitude);
@@ -235,11 +236,11 @@ export class ViewPointFormComponent implements AfterViewInit {
     activeModal.result.then((pos: AMap.LngLat) => {
       this.newViewPoint.latitude = pos.getLat();
       this.newViewPoint.longtitude = pos.getLng();
-      this.element.nativeElement.style.display = 'block';
-      this.element.nativeElement.ownerDocument.body.classList.add('modal-open');
+      this._element.nativeElement.style.display = 'block';
+      this._element.nativeElement.ownerDocument.body.classList.add('modal-open');
     }, (cancel) => {
-      this.element.nativeElement.style.display = 'block';
-      this.element.nativeElement.ownerDocument.body.classList.add('modal-open');
+      this._element.nativeElement.style.display = 'block';
+      this._element.nativeElement.ownerDocument.body.classList.add('modal-open');
     });
   }
 

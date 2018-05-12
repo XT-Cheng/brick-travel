@@ -1,9 +1,11 @@
-export const INIT_UI_VIEWPOINT_STATE = {
+import { ICommonUI } from '../ui.model';
+
+export const INIT_UI_VIEWPOINT_STATE: IViewPointUI = {
   selectedId: '',
-  searchKey: ''
+  searchKey: '',
+  filterIds: []
 };
 
-export interface IViewPointUI {
-  selectedId: string;
-  searchKey: string;
+export interface IViewPointUI extends ICommonUI {
+  filterIds: string[];
 }

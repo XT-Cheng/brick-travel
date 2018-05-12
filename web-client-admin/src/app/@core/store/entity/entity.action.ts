@@ -1,5 +1,6 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
+import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IBiz } from '../bizModel/biz.model';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
 import { EntityTypeEnum, IEntities, STORE_ENTITIES_KEY } from './entity.model';
@@ -38,6 +39,7 @@ export interface IEntityActionPayload extends IActionPayload {
     entityType: EntityTypeEnum;
     phaseType: EntityActionPhaseEnum;
     dirtyMode: boolean;
+    files: Map<string, FileUploader>;
 }
 
 // Flux-standard-action gives us stronger typing of our actions.
@@ -57,7 +59,8 @@ const defaultEntityActionPayload: IEntityActionPayload = {
     bizModelId: '',
     queryCondition: null,
     dirtyMode: false,
-    actionId: ''
+    actionId: '',
+    files: null
 };
 
 export function getEntityKey(typeEnum: EntityTypeEnum): string {
@@ -188,7 +191,7 @@ export function entityLoadAction(entityType: EntityTypeEnum) {
 
 //#region Update action
 export function entityUpdateAction<U>(entityType: EntityTypeEnum) {
-    return (id: string, bizModel: U, dirtyMode: boolean, actionId: string): EntityAction => ({
+    return (id: string, bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean, actionId: string): EntityAction => ({
         type: EntityActionTypeEnum.UPDATE,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
@@ -196,7 +199,8 @@ export function entityUpdateAction<U>(entityType: EntityTypeEnum) {
             phaseType: EntityActionPhaseEnum.TRIGGER,
             bizModel: bizModel,
             dirtyMode: dirtyMode,
-            actionId: actionId
+            actionId: actionId,
+            files: files
         })
     });
 }
@@ -204,7 +208,7 @@ export function entityUpdateAction<U>(entityType: EntityTypeEnum) {
 
 //#region Insert action
 export function entityInsertAction<U>(entityType: EntityTypeEnum) {
-    return (id: string, bizModel: U, dirtyMode: boolean, actionId: string): EntityAction => ({
+    return (id: string, bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean, actionId: string): EntityAction => ({
         type: EntityActionTypeEnum.INSERT,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
@@ -212,7 +216,8 @@ export function entityInsertAction<U>(entityType: EntityTypeEnum) {
             phaseType: EntityActionPhaseEnum.TRIGGER,
             bizModel: bizModel,
             dirtyMode: dirtyMode,
-            actionId: actionId
+            actionId: actionId,
+            files: files
         })
     });
 }

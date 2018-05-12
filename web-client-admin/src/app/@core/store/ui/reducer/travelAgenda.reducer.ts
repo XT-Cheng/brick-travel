@@ -1,10 +1,11 @@
 import { FluxStandardAction } from 'flux-standard-action';
 import * as Immutable from 'seamless-immutable';
 
+import { EntityTypeEnum } from '../../entity/entity.model';
 import { IActionMetaInfo } from '../../store.action';
 import { INIT_UI_TRAVELAGENDA_STATE, ITravelAgendaUI, STORE_UI_TRAVELAGENDA_KEY } from '../model/travelAgenda.model';
-import { IUIActionPayload, UIActionTypeEnum } from '../ui.action';
-import { STORE_UI_COMMON_KEY } from '../ui.model';
+import { IUIActionPayload } from '../ui.action';
+import { commonUIReducer } from '../ui.reducer';
 
 interface IUITravelAgendaActionPayload extends IUIActionPayload {
     selectedDailyTripId: string;
@@ -18,7 +19,8 @@ const defaultUIAgendaActionPayload: IUITravelAgendaActionPayload = {
     selectedTravelViewPointId: '',
     error: null,
     entityType: null,
-    actionId: ''
+    actionId: '',
+    filter: null
 };
 
 type UITravelAgendaAction = FluxStandardAction<IUITravelAgendaActionPayload, IActionMetaInfo>;
@@ -29,19 +31,17 @@ enum UITravelAgendaActionTypeEnum {
 }
 
 export function travelAgendaReducer(state = INIT_UI_TRAVELAGENDA_STATE, action: UITravelAgendaAction): ITravelAgendaUI {
+    if (!action.payload || action.payload.entityType !== EntityTypeEnum.TRAVELAGENDA) { return state; }
+
+    state = commonUIReducer(state, action);
+
     switch (action.type) {
-        case UIActionTypeEnum.SEARCH: {
-            return <any>Immutable(state).set(STORE_UI_COMMON_KEY.searchKey, action.payload.searchKey);
-        }
-        case UIActionTypeEnum.SELECT: {
-            return <any>Immutable(state).set(STORE_UI_COMMON_KEY.selectedId, action.payload.selectedId);
-        }
         case UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP: {
-            return <any>Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedDailyTripId, action.payload.selectedDailyTripId);
+            return Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedDailyTripId, action.payload.selectedDailyTripId);
         }
         case UITravelAgendaActionTypeEnum.SELECT_TRAVELVIEWPOINT: {
-            return <any>Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedTravelViewPointId, action.payload.selectedTravelViewPointId);
+            return Immutable(state).set(STORE_UI_TRAVELAGENDA_KEY.selectedTravelViewPointId, action.payload.selectedTravelViewPointId);
         }
     }
-    return <any>state;
+    return state;
 }

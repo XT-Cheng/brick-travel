@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 
-import { IViewPointBiz } from '../../../../@core/store/bizModel/viewPoint.biz.model';
+import { IViewPointBiz } from '../../../../@core/store/bizModel/model/viewPoint.biz.model';
 
 @Component({
   selector: 'bt-vp-marker-a',

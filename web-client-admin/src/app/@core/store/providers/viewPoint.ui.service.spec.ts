@@ -2,17 +2,38 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
+import { FilterTypeEnum, IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { ErrorService } from './error.service';
+import { FilterCategoryService } from './filterCategory.service';
 import { ViewPointService } from './viewPoint.service';
 import { ViewPointUIService } from './viewPoint.ui.service';
 
 const url = 'http://localhost:3000/viewPoints';
 
-const noExist = {
+const filterCategoryData: IFilterCategoryBiz = {
+    id: '5a4b4d6030e1cf2b19b493d8',
+    filterType: FilterTypeEnum.ViewPoint,
+    name: '类型',
+    filterFunction: 'filterByCategory',
+    criteries: [
+        {
+            name: '景点',
+            criteria: '景点',
+            isChecked: false,
+            id: '5a4b4d6030e1cf2b19b493da'
+        },
+        {
+            name: '美食',
+            criteria: '美食',
+            isChecked: false,
+            id: '5a4b4d6030e1cf2b19b493d9'
+        }
+    ],
+};
+
+const noExist: IViewPointBiz = {
     city: null,
-    updatedAt: '2017-12-31T16:41:34.724Z',
-    createdAt: '2017-12-31T16:37:36.733Z',
     name: '老街',
     category: null,
     tags: [],
@@ -30,15 +51,13 @@ const noExist = {
     id: 'noexist'
 };
 
-const viewPointData = {
+const viewPointData: IViewPointBiz = {
     city: {
         addressCode: '341000',
         name: '黄山2',
         thumbnail: 'assets/img/alan.png',
         id: '5a4b5756764fba2c80ef5ba1'
     },
-    updatedAt: '2017-12-31T16:41:34.724Z',
-    createdAt: '2017-12-31T16:37:36.733Z',
     name: '老街',
     category: {
         id: '5acc62fe6c251979dd67f0c1',
@@ -86,10 +105,11 @@ const searchData: IViewPointBiz = Object.assign({}, viewPointData, {
 
 let viewPointSrv: ViewPointService;
 let viewPointUISrv: ViewPointUIService;
+let filterCategorySrv: FilterCategoryService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
-let error, result, searched;
+let error, result, searched, filtered;
 
 describe('viewPoint ui test', () => {
     beforeEach(() => {
@@ -99,6 +119,7 @@ describe('viewPoint ui test', () => {
         viewPointSrv = TestBed.get(ViewPointService);
         viewPointUISrv = TestBed.get(ViewPointUIService);
         errorService = TestBed.get(ErrorService);
+        filterCategorySrv = TestBed.get(FilterCategoryService);
 
         errorService.lastError$.subscribe((value) => {
             error = value;
@@ -109,9 +130,16 @@ describe('viewPoint ui test', () => {
         viewPointSrv.searched$.subscribe((value) => {
             searched = value;
         });
+        viewPointSrv.filtered$.subscribe((value) => {
+            filtered = value;
+        });
+
+        filterCategorySrv.add(filterCategoryData);
+        let req = httpTestingController.expectOne('http://localhost:3000/filterCategories');
+        req.flush([filterCategoryData]);
 
         viewPointSrv.add(viewPointData);
-        const req = httpTestingController.expectOne(url);
+        req = httpTestingController.expectOne(url);
         req.flush([viewPointData, searchData]);
     });
 
@@ -144,6 +172,20 @@ describe('viewPoint ui test', () => {
 
             expect(viewPointUISrv.searchKey).toEqual('noExist');
             expect(searched).toEqual([]);
+        });
+    });
+
+    describe('filter test', () => {
+        it('#filter()', () => {
+            viewPointUISrv.filter('5a4b4d6030e1cf2b19b493da');
+
+            expect(filtered).toEqual([viewPointData, searchData]);
+        });
+
+        it('#filter() no exist', () => {
+            viewPointUISrv.filter('5a4b4d6030e1cf2b19b493d9');
+
+            expect(filtered).toEqual([]);
         });
     });
 });

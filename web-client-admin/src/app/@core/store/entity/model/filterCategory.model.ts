@@ -9,4 +9,5 @@ export interface IFilterCategory extends IEntity {
     name: string;
     criteries: string[];
     filterFunction: string;
+    filterType: string;
 }

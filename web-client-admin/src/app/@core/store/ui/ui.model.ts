@@ -12,7 +12,8 @@ export enum STORE_UI_KEY {
 
 export enum STORE_UI_COMMON_KEY {
   selectedId = 'selectedId',
-  searchKey = 'searchKey'
+  searchKey = 'searchKey',
+  filterIds = 'filterIds'
 }
 
 export const INIT_UI_STATE: IUIState = {
@@ -27,4 +28,10 @@ export interface IUIState {
   viewPoint: IViewPointUI;
   user: IUserUI;
   travelAgenda: ITravelAgendaUI;
+}
+
+export interface ICommonUI {
+  selectedId: string;
+  searchKey: string;
+  filterIds: string[];
 }

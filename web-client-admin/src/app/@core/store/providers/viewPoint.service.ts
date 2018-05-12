@@ -15,6 +15,7 @@ import { viewPointSchema } from '../entity/entity.schema';
 import { IViewPoint } from '../entity/model/viewPoint.model';
 import { IAppState, STORE_KEY } from '../store.model';
 import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
+import { ViewPointFilterEx } from '../utils/viewPointFilterEx';
 import { EntityService } from './entity.service';
 import { ViewPointUIService } from './viewPoint.ui.service';
 
@@ -30,6 +31,9 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     private _searched: IViewPointBiz[];
     private _searched$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject(null);
 
+    private _filtered: IViewPointBiz[];
+    private _filtered$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject(null);
+
     //#endregion
 
     //#region Constructor
@@ -44,11 +48,17 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
         });
 
         this.getSearched(this._store).subscribe((value) => {
+            this._searched = value;
             this._searched$.next(value);
         });
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
+        });
+
+        this.getFiltered(this._store).subscribe((value) => {
+            this._filtered = value;
+            this._filtered$.next(value);
         });
     }
     //#endregion
@@ -74,8 +84,20 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
         return this._searched$.asObservable();
     }
 
+    public get searched(): IViewPointBiz[] {
+        return this._searched;
+    }
+
     public get all$(): Observable<IViewPointBiz[]> {
         return this._all$.asObservable();
+    }
+
+    public get filtered(): IViewPointBiz[] {
+        return this._filtered;
+    }
+
+    public get filtered$(): Observable<IViewPointBiz[]> {
+        return this._filtered$.asObservable();
     }
 
     public byId(id: string): IViewPointBiz {
@@ -117,6 +139,26 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
                     return matchSearchKey;
                 });
             })
+        );
+    }
+
+    private getFiltered(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
+        return this._viewPointUISrv.filters$.pipe(
+            combineLatest(this.all$,
+                (filterCategories, viewPoints) => {
+                    return viewPoints.filter(vp => {
+                        const isFiltered = filterCategories.every(category => {
+                            return category.criteries.every(criteria => {
+                                if (criteria.isChecked && ViewPointFilterEx[category.filterFunction]) {
+                                    return ViewPointFilterEx[category.filterFunction](vp, criteria);
+                                }
+                                return true;
+                            });
+                        });
+
+                        return isFiltered;
+                    });
+                })
         );
     }
 

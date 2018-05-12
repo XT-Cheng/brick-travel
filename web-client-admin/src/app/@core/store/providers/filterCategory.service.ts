@@ -4,12 +4,12 @@ import { Inject, Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
+import { map, combineLatest } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
-import { IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
+import { FilterTypeEnum, IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { filterCategorySchema } from '../entity/entity.schema';
 import { IFilterCategory } from '../entity/model/filterCategory.model';
@@ -22,6 +22,8 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
 
     private _all$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
 
+    private _all: IFilterCategoryBiz[] = [];
+
     //#endregion
 
     //#region Constructor
@@ -31,6 +33,7 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
         super(_http, _uploader, _store, EntityTypeEnum.FILTERCATEGORY, filterCategorySchema, `filterCategories`);
 
         this.getAll(this._store).subscribe((value) => {
+            this._all = value;
             this._all$.next(value);
         });
     }
@@ -47,8 +50,20 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
         return this._all$.asObservable();
     }
 
+    public byType(type: FilterTypeEnum): IFilterCategoryBiz[] {
+        return this._all.filter((cat) => cat.filterType === type);
+    }
+
     public byId(id: string): IFilterCategoryBiz {
         return denormalize(id, filterCategorySchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+    }
+
+    public getFilters(filterIds: Observable<string[]>): Observable<IFilterCategoryBiz[]> {
+        return filterIds.pipe(
+            combineLatest(this._all$, (v1, v2) => {
+                return this.buildCurrentFilterCategories(v1, v2);
+            })
+        );
     }
 
     //#region CRUD methods
@@ -66,6 +81,16 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
                     Immutable(store.getState().entities).asMutable({ deep: true }));
             })
         );
+    }
+
+    private buildCurrentFilterCategories(checkIds: string[], categories: IFilterCategoryBiz[]) {
+        categories.forEach(category => {
+            category.criteries.forEach(criteria => {
+                criteria.isChecked = !!checkIds.find(id => id === criteria.id);
+            });
+        });
+
+        return categories;
     }
 
     //#endregion

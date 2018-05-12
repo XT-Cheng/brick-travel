@@ -15,9 +15,13 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ICityBiz } from '../../../@core/store/bizModel/city.biz.model';
-import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../../../@core/store/bizModel/travelAgenda.biz.model';
-import { IViewPointBiz } from '../../../@core/store/bizModel/viewPoint.biz.model';
+import { ICityBiz } from '../../../@core/store/bizModel/model/city.biz.model';
+import {
+  IDailyTripBiz,
+  ITravelAgendaBiz,
+  ITravelViewPointBiz,
+} from '../../../@core/store/bizModel/model/travelAgenda.biz.model';
+import { IViewPointBiz } from '../../../@core/store/bizModel/model/viewPoint.biz.model';
 import { ActionAllowed, InformationWindowComponent } from './information-window/information-window.component';
 import { ViewPointMarkerComponent } from './viewpoint-marker/viewpoint-marker.component';
 
@@ -90,7 +94,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
       this._city = city;
       if (this._map == null && this._markers.size > 0) { return; }
 
-      this._map.setCity(this._city.adressCode);
+      this._map.setCity(this._city.addressCode);
     }
   }
 
@@ -200,7 +204,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   //#region Private method
   private setCity() {
     if (this._map && this._city) {
-      this._map.setCity(this._city.adressCode);
+      this._map.setCity(this._city.addressCode);
     }
   }
 

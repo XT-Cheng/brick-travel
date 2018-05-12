@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ICityBiz } from '../../../@core/store/bizModel/city.biz.model';
+import { ICityBiz } from '../../../@core/store/bizModel/model/city.biz.model';
 
 @Component({
   selector: 'bt-map-modal',

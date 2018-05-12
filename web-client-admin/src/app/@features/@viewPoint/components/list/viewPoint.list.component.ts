@@ -8,9 +8,8 @@ import { combineLatest, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 
 import { IViewPointBiz } from '../../../../@core/store/bizModel/model/viewPoint.biz.model';
-import { IViewPoint } from '../../../../@core/store/entity/model/viewPoint.model';
-import { SelectorService } from '../../../../@core/store/providers/selector.service';
 import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
+import { ViewPointUIService } from '../../../../@core/store/providers/viewPoint.ui.service';
 import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
 import { SearchService } from '../../../../@ui/providers/search.service';
 import { ComponentType, EntityFormMode } from '../../../../page.component';
@@ -37,10 +36,10 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy 
   //#endregion
 
   //#region Constructor
-  constructor(private route: ActivatedRoute, public selector: SelectorService,
-    private _searchService: SearchService, private modalService: NgbModal, private _viewPointService: ViewPointService,
-    private toasterService: ToasterService) {
-    this.viewPoints$ = this.selector.filterAndSearchedViewPoints$.pipe(
+  constructor(private _route: ActivatedRoute, public _viewPointUIService: ViewPointUIService,
+    private _searchService: SearchService, private _modalService: NgbModal, private _viewPointService: ViewPointService,
+    private _toasterService: ToasterService) {
+    this.viewPoints$ = this._viewPointUIService.filterAndSearchedViewPoints$.pipe(
       combineLatest(this.cityId$), map(([vps, cityId]) => {
         const ret = vps.filter((vp) => {
           if (cityId === '') { return true; }
@@ -50,10 +49,10 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy 
         return ret;
       })
     );
-    this._viewPointService.load();
+    this._viewPointService.fetch();
     this._searchService.onSearchSubmit().pipe(takeUntil(this.destroyed$)).subscribe(value => {
       this._searchService.currentSearchKey = value.term;
-      this._viewPointService.search(value.term);
+      this._viewPointUIService.search(value.term);
     });
   }
 
@@ -66,15 +65,15 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy 
   }
 
   ngOnInit(): void {
-    this.route.data.pipe(takeUntil(this.destroyed$))
+    this._route.data.pipe(takeUntil(this.destroyed$))
       .subscribe((data: { searchKey: string, city: string }) => {
         this.cityId$.next(data.city);
-        this._searchService.currentSearchKey = this.selector.viewPointSearchKey;
+        this._searchService.currentSearchKey = this._viewPointUIService.searchKey;
       });
   }
 
   createEntity() {
-    const activeModal = this.modalService.open(ViewPointFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
+    const activeModal = this._modalService.open(ViewPointFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
     activeModal.componentInstance.originalViewPoint = {
       id: '',
       name: '',
@@ -98,25 +97,19 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy 
 
   //#region Protected method
   edit(viewPoint: IViewPointBiz) {
-    const activeModal = this.modalService.open(ViewPointFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
+    const activeModal = this._modalService.open(ViewPointFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
     activeModal.componentInstance.originalViewPoint = viewPoint;
     activeModal.componentInstance.title = 'Edit View Point';
     activeModal.componentInstance.mode = EntityFormMode.edit;
   }
 
   delete(viewPoint: IViewPointBiz) {
-    const activeModal = this.modalService.open(ModalComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
+    const activeModal = this._modalService.open(ModalComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
     activeModal.componentInstance.modalHeader = `Confrim`;
     activeModal.componentInstance.modalContent = `Delete view point : ${viewPoint.name} ?`;
 
     activeModal.result.then((result) => {
-      this._viewPointService.deleteViewPoint(viewPoint).subscribe((ret: Error | IViewPoint) => {
-        if (ret instanceof Error) {
-          this.toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
-        } else {
-          this.toasterService.pop('success', 'Success', `View point ${viewPoint.name} deleted`);
-        }
-      });
+      this._viewPointService.remove(viewPoint);
     }, (cancel) => {
       // do nothing
     });

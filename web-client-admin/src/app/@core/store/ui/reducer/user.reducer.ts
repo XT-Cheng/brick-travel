@@ -34,8 +34,8 @@ export function userLoggedInAction(u: IUserBiz): UIUserAction {
 export function userReducer(state = INIT_UI_USER_STATE, action: UIUserAction): IUserUI {
     switch (action.type) {
         case UIUserActionTypeEnum.USER_LOGGED_IN: {
-            return <any>Immutable(state).set(STORE_UI_USER_KEY.userLoggedIn, action.payload[STORE_UI_USER_KEY.userLoggedIn]);
+            return Immutable(state).set(STORE_UI_USER_KEY.userLoggedIn, action.payload[STORE_UI_USER_KEY.userLoggedIn]);
         }
     }
-    return <any>state;
+    return state;
 }

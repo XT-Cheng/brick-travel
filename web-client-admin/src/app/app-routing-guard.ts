@@ -4,17 +4,17 @@ import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { filter, map, take } from 'rxjs/operators';
 
-import { DataSyncService } from './@core/store/providers/dataSync.service';
-import { SelectorService } from './@core/store/providers/selector.service';
+import { CityService } from './@core/store/providers/city.service';
+import { DataFlushService } from './@core/store/providers/dataFlush.service';
 
 @Injectable()
 export class AppRoutingGuard implements CanActivate {
-  constructor(private _dataSyncService: DataSyncService, private _selectorService: SelectorService) { }
+  constructor(private _dataSyncService: DataFlushService, private _cityService: CityService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     // TODO: We need refactor activate logic later
     return forkJoin(this.checkStateRestored(),
-      this._selectorService.cities$.pipe(
+      this._cityService.all$.pipe(
         filter((cities => cities.length > 0)),
         map(() => true),
         take(1)))
