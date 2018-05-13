@@ -109,7 +109,7 @@ let filterCategorySrv: FilterCategoryService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
-let error, result, searched, filtered;
+let error, result, searched, filtered, filteredAndSearched;
 
 describe('viewPoint ui test', () => {
     beforeEach(() => {
@@ -132,6 +132,9 @@ describe('viewPoint ui test', () => {
         });
         viewPointSrv.filtered$.subscribe((value) => {
             filtered = value;
+        });
+        viewPointSrv.filteredAndSearched$.subscribe((value) => {
+            filteredAndSearched = value;
         });
 
         filterCategorySrv.add(filterCategoryData);
@@ -186,6 +189,25 @@ describe('viewPoint ui test', () => {
             viewPointUISrv.filter('5a4b4d6030e1cf2b19b493d9');
 
             expect(filtered).toEqual([]);
+        });
+    });
+
+    describe('filter and search test', () => {
+        it('#filtered and searched', () => {
+            viewPointUISrv.filter('5a4b4d6030e1cf2b19b493da');
+            viewPointUISrv.search('Search');
+
+            expect(filtered).toEqual([viewPointData, searchData]);
+            expect(filteredAndSearched).toEqual([searchData]);
+        });
+
+        it('#filtered and searched, no exist', () => {
+            viewPointUISrv.filter('5a4b4d6030e1cf2b19b493d9');
+            viewPointUISrv.search('Search');
+
+            expect(filtered).toEqual([]);
+            expect(searched).toEqual([searchData]);
+            expect(filteredAndSearched).toEqual([]);
         });
     });
 });

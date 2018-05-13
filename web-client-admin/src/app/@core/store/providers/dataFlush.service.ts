@@ -9,15 +9,15 @@ import { of } from 'rxjs/observable/of';
 import { concat, filter, map, mergeMap, startWith, switchMap } from 'rxjs/operators';
 
 import {
-  DirtyAction,
-  DirtyActionPhaseEnum,
-  DirtyActionTypeEnum,
-  dirtyFlushAction,
-  dirtyFlushActionFailed,
-  dirtyFlushActionFinished,
-  dirtyFlushActionStarted,
-  dirtyRemoveAction,
-  DirtyTypeEnum,
+    DirtyAction,
+    DirtyActionPhaseEnum,
+    DirtyActionTypeEnum,
+    dirtyFlushAction,
+    dirtyFlushActionFailed,
+    dirtyFlushActionFinished,
+    dirtyFlushActionStarted,
+    dirtyRemoveAction,
+    DirtyTypeEnum,
 } from '../dirty/dirty.action';
 import { STORE_DIRTIES_KEY } from '../dirty/dirty.model';
 import { getEntityType } from '../entity/entity.action';
@@ -31,7 +31,7 @@ export class DataFlushService {
     //#region private members
 
     private _dirtyIds$: BehaviorSubject<any> = new BehaviorSubject(null);
-
+    private _stateRestored$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
     //#endregion
 
     //#region Actions
@@ -81,6 +81,22 @@ export class DataFlushService {
         this._store.dispatch(this.flushDirtyAction());
     }
 
+    public async restoreState() {
+        const value = await this._storage.get('state');
+        return value ? value : {};
+    }
+
+    public stateRestored() {
+        this._stateRestored$.next(true);
+    }
+
+    public syncData() {
+        this.flushDirtyAction();
+    }
+
+    public isStateRestored(): Observable<boolean> {
+        return this._stateRestored$.pipe(filter(value => !!value)).share();
+    }
     //#endregion
 
     //#region Private methods
@@ -118,16 +134,16 @@ export class DataFlushService {
     private requestFlushTravelAgenda(type: string, id: string) {
         switch (type) {
             case DirtyTypeEnum.CREATED: {
-                 this._travelAgendaService.addById(id);
-                 break;
+                this._travelAgendaService.addById(id);
+                break;
             }
             case DirtyTypeEnum.UPDATED: {
-                 this._travelAgendaService.changeById(id);
-                 break;
+                this._travelAgendaService.changeById(id);
+                break;
             }
             case DirtyTypeEnum.DELETED: {
-                 this._travelAgendaService.removeById(id);
-                 break;
+                this._travelAgendaService.removeById(id);
+                break;
             }
         }
     }

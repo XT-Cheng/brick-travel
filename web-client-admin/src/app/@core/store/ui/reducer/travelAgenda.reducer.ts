@@ -5,7 +5,7 @@ import { EntityTypeEnum } from '../../entity/entity.model';
 import { IActionMetaInfo } from '../../store.action';
 import { INIT_UI_TRAVELAGENDA_STATE, ITravelAgendaUI, STORE_UI_TRAVELAGENDA_KEY } from '../model/travelAgenda.model';
 import { IUIActionPayload } from '../ui.action';
-import { commonUIReducer } from '../ui.reducer';
+import { shareUIReducer } from './share.reducer';
 
 interface IUITravelAgendaActionPayload extends IUIActionPayload {
     selectedDailyTripId: string;
@@ -33,7 +33,7 @@ enum UITravelAgendaActionTypeEnum {
 export function travelAgendaReducer(state = INIT_UI_TRAVELAGENDA_STATE, action: UITravelAgendaAction): ITravelAgendaUI {
     if (!action.payload || action.payload.entityType !== EntityTypeEnum.TRAVELAGENDA) { return state; }
 
-    state = commonUIReducer(state, action);
+    state = shareUIReducer(state, action);
 
     switch (action.type) {
         case UITravelAgendaActionTypeEnum.SELECT_DAILYTRIP: {

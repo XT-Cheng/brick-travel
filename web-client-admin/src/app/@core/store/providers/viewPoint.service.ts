@@ -34,6 +34,9 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     private _filtered: IViewPointBiz[];
     private _filtered$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject(null);
 
+    private _filteredAndSearched: IViewPointBiz[];
+    private _filteredAndSearched$: BehaviorSubject<IViewPointBiz[]> = new BehaviorSubject(null);
+
     //#endregion
 
     //#region Constructor
@@ -59,6 +62,11 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
         this.getFiltered(this._store).subscribe((value) => {
             this._filtered = value;
             this._filtered$.next(value);
+        });
+
+        this.getFilteredAndSearched(this._store).subscribe((value) => {
+            this._filteredAndSearched = value;
+            this._filteredAndSearched$.next(value);
         });
     }
     //#endregion
@@ -99,6 +107,11 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     public get filtered$(): Observable<IViewPointBiz[]> {
         return this._filtered$.asObservable();
     }
+
+    public get filteredAndSearched$(): Observable<IViewPointBiz[]> {
+        return this._filteredAndSearched$.asObservable();
+    }
+
 
     public byId(id: string): IViewPointBiz {
         return denormalize(id, viewPointSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
@@ -157,6 +170,32 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
                         });
 
                         return isFiltered;
+                    });
+                })
+        );
+    }
+
+    private getFilteredAndSearched(store: NgRedux<IAppState>): Observable<IViewPointBiz[]> {
+        return this._viewPointUISrv.filters$.pipe(
+            combineLatest(this.all$, this._viewPointUISrv.searchKey$,
+                (filterCategories, viewPoints, searchKey) => {
+                    return viewPoints.filter(vp => {
+                        const isFiltered = filterCategories.every(category => {
+                            return category.criteries.every(criteria => {
+                                if (criteria.isChecked && ViewPointFilterEx[category.filterFunction]) {
+                                    return ViewPointFilterEx[category.filterFunction](vp, criteria);
+                                }
+                                return true;
+                            });
+                        });
+
+                        let matchSearchKey = true;
+                        if (searchKey !== '') {
+                            matchSearchKey = vp.name.indexOf(searchKey) !== -1 ||
+                                vp.tags.findIndex((value) => value === searchKey) !== -1;
+                        }
+
+                        return isFiltered && matchSearchKey;
                     });
                 })
         );

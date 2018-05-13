@@ -9,7 +9,7 @@ import { DataFlushService } from './@core/store/providers/dataFlush.service';
 
 @Injectable()
 export class AppRoutingGuard implements CanActivate {
-  constructor(private _dataSyncService: DataFlushService, private _cityService: CityService) { }
+  constructor(private _dataFlushService: DataFlushService, private _cityService: CityService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     // TODO: We need refactor activate logic later
@@ -22,6 +22,6 @@ export class AppRoutingGuard implements CanActivate {
   }
 
   checkStateRestored(): Observable<boolean> {
-    return this._dataSyncService.isStateRestored().pipe(take(1));
+    return this._dataFlushService.isStateRestored().pipe(take(1));
   }
 }

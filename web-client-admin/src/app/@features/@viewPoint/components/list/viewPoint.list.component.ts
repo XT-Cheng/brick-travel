@@ -39,7 +39,7 @@ export class ViewPointListComponent implements ComponentType, OnInit, OnDestroy 
   constructor(private _route: ActivatedRoute, public _viewPointUIService: ViewPointUIService,
     private _searchService: SearchService, private _modalService: NgbModal, private _viewPointService: ViewPointService,
     private _toasterService: ToasterService) {
-    this.viewPoints$ = this._viewPointUIService.filterAndSearchedViewPoints$.pipe(
+    this.viewPoints$ = this._viewPointService.filteredAndSearched$.pipe(
       combineLatest(this.cityId$), map(([vps, cityId]) => {
         const ret = vps.filter((vp) => {
           if (cityId === '') { return true; }

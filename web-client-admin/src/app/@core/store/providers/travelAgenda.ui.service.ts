@@ -1,62 +1,34 @@
 import { NgRedux } from '@angular-redux/store';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
 
 import { ITravelAgendaBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { EntityTypeEnum } from '../entity/entity.model';
-import { IAppState, STORE_KEY } from '../store.model';
-import { entitySearchAction, entitySelectAction } from '../ui/ui.action';
-import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
+import { ITravelAgenda } from '../entity/model/travelAgenda.model';
+import { IAppState } from '../store.model';
+import { STORE_UI_KEY } from '../ui/ui.model';
+import { FilterCategoryService } from './filterCategory.service';
+import { UIService } from './ui.service';
 
 @Injectable()
-export class TravelAgendaUIService {
+export class TravelAgendaUIService extends UIService<ITravelAgenda, ITravelAgendaBiz> {
     //#region Private members
-
-    private _searchKey: string;
-    private _searchKey$: BehaviorSubject<string> = new BehaviorSubject(null);
-
-    private _searchAction = entitySearchAction(EntityTypeEnum.TRAVELAGENDA);
-    private _selectAction = entitySelectAction(EntityTypeEnum.TRAVELAGENDA);
 
     //#region Constructor
 
-    constructor(private _store: NgRedux<IAppState>) {
-        this.getSearchKey(this._store).subscribe(value => {
-            this._searchKey = value;
-            this._searchKey$.next(value);
-        });
+    constructor(protected _store: NgRedux<IAppState>, protected _filterCategoryService: FilterCategoryService) {
+        super(_store, EntityTypeEnum.TRAVELAGENDA, STORE_UI_KEY.travelAgenda, _filterCategoryService);
     }
     //#endregion
 
     //#region Public property
 
-    public get searchKey(): string {
-        return this._searchKey;
-    }
-
-    public get searchKey$(): Observable<string> {
-        return this._searchKey$.asObservable();
-    }
     //#endregion
 
     //#region Public methods
 
-    public search(searchKey: string) {
-        this._store.dispatch(this._searchAction(searchKey));
-    }
-
-    public select(c: ITravelAgendaBiz) {
-        this._store.dispatch(this._selectAction(c.id));
-    }
-
     //#endregion
 
     //#region Private methods
-
-    private getSearchKey(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.travelAgenda, STORE_UI_COMMON_KEY.searchKey]);
-    }
 
     //#endregion
 }

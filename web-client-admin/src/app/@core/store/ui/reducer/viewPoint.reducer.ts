@@ -4,7 +4,7 @@ import { EntityTypeEnum } from '../../entity/entity.model';
 import { IActionMetaInfo } from '../../store.action';
 import { INIT_UI_VIEWPOINT_STATE, IViewPointUI } from '../model/viewPoint.model';
 import { IUIActionPayload } from '../ui.action';
-import { commonUIReducer } from '../ui.reducer';
+import { shareUIReducer } from './share.reducer';
 
 interface IUIViewPointActionPayload extends IUIActionPayload {
 }
@@ -23,5 +23,5 @@ type UIViewPointAction = FluxStandardAction<IUIViewPointActionPayload, IActionMe
 export function viewPointReducer(state = INIT_UI_VIEWPOINT_STATE, action: UIViewPointAction): IViewPointUI {
     if (!action.payload || action.payload.entityType !== EntityTypeEnum.VIEWPOINT) { return state; }
 
-    return commonUIReducer(state, action);
+    return shareUIReducer(state, action);
 }
