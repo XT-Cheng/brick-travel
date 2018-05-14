@@ -1,12 +1,15 @@
 import { NgRedux, NgReduxModule } from '@angular-redux/store';
 import { HttpClientModule } from '@angular/common/http';
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
-import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule, Storage } from '@ionic/storage';
 import { createLogger } from 'redux-logger';
 import { createEpicMiddleware } from 'redux-observable';
 import { stateTransformer } from 'redux-seamless-immutable';
 import * as Immutable from 'seamless-immutable';
 
+import { TokenService } from '../auth/providers/tokenService';
+import { TokenStorage } from '../auth/providers/tokenStorage';
+import { deepExtend } from '../utils/helpers';
 import { throwIfAlreadyLoaded } from '../utils/module-import-guard';
 import { EntityEpics } from './entity/entity.epic';
 import { CityService } from './providers/city.service';
@@ -49,15 +52,27 @@ const PROVIDERS = [
 })
 export class StoreModule {
     constructor(@Optional() @SkipSelf() parentModule: StoreModule, private _rootEpics: RootEpics,
+        private _masterDataService: MasterDataService,
+        private _dataFlushService: DataFlushService, private _tokenService: TokenService,
+        private _storage: Storage,
         private _store: NgRedux<IAppState>) {
         throwIfAlreadyLoaded(parentModule, 'StoreModule');
 
-        this._store.configureStore(
-            rootReducer,
-            <any>Immutable(INIT_APP_STATE),
-            [createLogger({ stateTransformer: stateTransformer }), createEpicMiddleware(this._rootEpics.createEpics())]);
+        this._dataFlushService.restoreState().then((restoredState) => {
+            this._store.configureStore(
+                rootReducer,
+                <any>Immutable(deepExtend(INIT_APP_STATE, restoredState)),
+                [createLogger({ stateTransformer: stateTransformer }), createEpicMiddleware(this._rootEpics.createEpics())]);
+        }).then(() =>
+            this._storage.get(TokenStorage.TOKEN_KEY)
+        ).then((value) =>
+            this._tokenService.setRaw(value)
+        ).then(() => {
+            // this._dataFlushService.stateRestored();
+            this._masterDataService.fetch();
+        });
+        console.log('after asynce');
     }
-    // ,
 
     static forRoot(): ModuleWithProviders {
         return {

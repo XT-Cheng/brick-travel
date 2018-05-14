@@ -83,11 +83,10 @@ export class DataFlushService {
 
     public async restoreState() {
         const value = await this._storage.get('state');
-        return value ? value : {};
-    }
 
-    public stateRestored() {
         this._stateRestored$.next(true);
+
+        return value ? value : {};
     }
 
     public syncData() {
@@ -95,7 +94,7 @@ export class DataFlushService {
     }
 
     public isStateRestored(): Observable<boolean> {
-        return this._stateRestored$.pipe(filter(value => !!value)).share();
+        return this._stateRestored$.pipe(filter(value => !!value));
     }
     //#endregion
 

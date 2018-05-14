@@ -11,7 +11,6 @@ import * as Immutable from 'seamless-immutable';
 import { AuthService } from '../../auth/providers/authService';
 import { AuthToken } from '../../auth/providers/authToken';
 import { TokenService } from '../../auth/providers/tokenService';
-import { TokenStorage } from '../../auth/providers/tokenStorage';
 import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IUserBiz } from '../bizModel/model/user.biz.model';
@@ -40,10 +39,6 @@ export class UserService extends EntityService<IUser, IUserBiz> {
         private _auth: AuthService, private _tokenService: TokenService, private _storage: Storage,
         protected _store: NgRedux<IAppState>) {
         super(_http, _uploader, _store, EntityTypeEnum.USER, userSchema, `users`);
-
-        this._storage.get(TokenStorage.TOKEN_KEY).then((value) =>
-            this._tokenService.setRaw(value)
-        );
 
         this._auth.onTokenChange()
             .subscribe((token: AuthToken) => {
