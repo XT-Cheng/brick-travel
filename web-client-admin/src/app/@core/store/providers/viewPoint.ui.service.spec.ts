@@ -112,8 +112,8 @@ let httpTestingController: HttpTestingController;
 let error, result, searched, filtered, filteredAndSearched;
 
 describe('viewPoint ui test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         viewPointSrv = TestBed.get(ViewPointService);

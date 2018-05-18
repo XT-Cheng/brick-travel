@@ -46,8 +46,8 @@ let result;
 let error;
 
 describe('transportation Category test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(TransportationCategoryService);

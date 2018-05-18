@@ -1,14 +1,12 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { map, combineLatest } from 'rxjs/operators';
+import { combineLatest, map } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
-import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
-import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { FilterTypeEnum, IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { filterCategorySchema } from '../entity/entity.schema';
@@ -21,16 +19,14 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     //#region private member
 
     private _all$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
-
     private _all: IFilterCategoryBiz[] = [];
 
     //#endregion
 
     //#region Constructor
     constructor(protected _http: HttpClient,
-        @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.FILTERCATEGORY, filterCategorySchema, `filterCategories`);
+        super(_http, _store, EntityTypeEnum.FILTERCATEGORY, filterCategorySchema, `filterCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all = value;
@@ -40,9 +36,7 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
     //#endregion
 
     //#region implemented methods
-    public toTransfer(bizModel: IFilterCategoryBiz) {
-        return bizModel;
-    }
+
     //#endregion
 
     //#region public methods

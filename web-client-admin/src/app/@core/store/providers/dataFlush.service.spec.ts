@@ -117,8 +117,8 @@ let error;
 let dirtyIds;
 
 describe('flush test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(TravelAgendaService);
@@ -158,7 +158,7 @@ describe('flush test', () => {
             // 1. Add empty TravelAgenda
             service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(addedTravelAgenda)]);
+            req.flush([addedTravelAgenda]);
 
             expect(result).toEqual([addedTravelAgenda]);
             expect(error).toEqual(null);
@@ -180,7 +180,7 @@ describe('flush test', () => {
             // 1. Add empty TravelAgenda
             service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(addedTravelAgenda)]);
+            req.flush([addedTravelAgenda]);
 
             expect(result).toEqual([addedTravelAgenda]);
             expect(error).toEqual(null);
@@ -201,7 +201,7 @@ describe('flush test', () => {
             // 1. Add empty TravelAgenda
             service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(addedTravelAgenda)]);
+            req.flush([addedTravelAgenda]);
 
             expect(result).toEqual([addedTravelAgenda]);
             expect(error).toEqual(null);
@@ -221,7 +221,7 @@ describe('flush test', () => {
             // 2. Delete
             service.remove(result[0]);
             req = httpTestingController.expectOne(`${url}/${result[0].id}`);
-            req.flush([service.toTransfer(result[0])]);
+            req.flush([result[0]]);
 
             expect(result.length).toEqual(0);
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
@@ -268,7 +268,7 @@ describe('flush test', () => {
             const changedTravelAgenda = Object.assign({}, travelAgendaData, { name: '黄山1' });
             service.change(changedTravelAgenda);
             req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(changedTravelAgenda)]);
+            req.flush([changedTravelAgenda]);
 
             expect(result[0].name).toEqual('黄山1');
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
@@ -314,7 +314,7 @@ describe('flush test', () => {
             // 2. Flush
             flushService.flush();
             req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(result[0])]);
+            req.flush([result[0]]);
 
             expect(result[0].name).toEqual('黄山');
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
@@ -327,7 +327,7 @@ describe('flush test', () => {
             // 1. Add empty TravelAgenda
             service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(addedTravelAgenda)]);
+            req.flush([addedTravelAgenda]);
 
             expect(result).toEqual([addedTravelAgenda]);
             expect(error).toEqual(null);
@@ -347,7 +347,7 @@ describe('flush test', () => {
             // 3. Flush
             flushService.flush();
             req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(result[0])]);
+            req.flush([result[0]]);
 
             expect(result[0].name).toEqual('黄山1');
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
@@ -360,7 +360,7 @@ describe('flush test', () => {
             // 1. Add empty TravelAgenda
             service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(addedTravelAgenda)]);
+            req.flush([addedTravelAgenda]);
 
             expect(result).toEqual([addedTravelAgenda]);
             expect(error).toEqual(null);
@@ -380,7 +380,7 @@ describe('flush test', () => {
             // 3. Flush
             flushService.flush();
             req = httpTestingController.expectOne(`${url}/${addedTravelAgenda.id}`);
-            req.flush([service.toTransfer(addedTravelAgenda)]);
+            req.flush([addedTravelAgenda]);
 
             expect(result.length).toEqual(0);
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);

@@ -44,8 +44,8 @@ let result;
 let error;
 
 describe('viwePoint Category test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+         await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(ViewPointCategoryService);

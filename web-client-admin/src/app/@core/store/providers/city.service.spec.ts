@@ -47,8 +47,8 @@ let result;
 let error, actionError;
 
 describe('city test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = getTestBed().get(HttpTestingController);
         service = getTestBed().get(CityService);

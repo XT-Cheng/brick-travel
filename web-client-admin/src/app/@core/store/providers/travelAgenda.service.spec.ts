@@ -117,8 +117,8 @@ let error;
 let dirtyIds;
 
 describe('travelAgenda test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(TravelAgendaService);
@@ -156,14 +156,14 @@ describe('travelAgenda test', () => {
         it('#fetch()', () => {
             service.fetch();
             const req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(travelAgendaData)]);
+            req.flush([travelAgendaData]);
 
             expect(result).toEqual([travelAgendaData]);
         });
         it('#byId()', () => {
             service.fetch();
             const req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(travelAgendaData)]);
+            req.flush([travelAgendaData]);
 
             expect(service.byId(travelAgendaData.id)).toEqual(travelAgendaData);
         });
@@ -191,7 +191,7 @@ describe('travelAgenda test', () => {
             // 1. Add empty TravelAgenda
             service.add(addedTravelAgenda);
             const req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(addedTravelAgenda)]);
+            req.flush([addedTravelAgenda]);
 
             expect(result).toEqual([addedTravelAgenda]);
 
@@ -265,14 +265,14 @@ describe('travelAgenda test', () => {
             service.add(travelAgendaData);
             const req = httpTestingController.expectOne(url);
 
-            req.flush([service.toTransfer(travelAgendaData)]);
+            req.flush([travelAgendaData]);
         });
 
         it('#change()', () => {
             const changedTravelAgenda = Object.assign({}, travelAgendaData, { name: '黄山1' });
             service.change(changedTravelAgenda);
             const req = httpTestingController.expectOne(url);
-            req.flush([service.toTransfer(changedTravelAgenda)]);
+            req.flush([changedTravelAgenda]);
 
             expect(result[0].name).toEqual('黄山1');
         });
@@ -307,13 +307,13 @@ describe('travelAgenda test', () => {
             service.add(travelAgendaData);
             const req = httpTestingController.expectOne(url);
 
-            req.flush([service.toTransfer(travelAgendaData)]);
+            req.flush([travelAgendaData]);
         });
 
         it('#delete()', () => {
             service.remove(travelAgendaData);
             const req = httpTestingController.expectOne(`${url}/${travelAgendaData.id}`);
-            req.flush([service.toTransfer(travelAgendaData)]);
+            req.flush([travelAgendaData]);
 
             expect(result).toEqual([]);
         });

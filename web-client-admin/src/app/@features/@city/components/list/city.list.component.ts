@@ -1,16 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
 
-import { ICityBiz } from '../../../../@core/store/bizModel/model/city.biz.model';
+import { ICityBiz, newCity } from '../../../../@core/store/bizModel/model/city.biz.model';
+import { ICity } from '../../../../@core/store/entity/model/city.model';
 import { CityService } from '../../../../@core/store/providers/city.service';
 import { CityUIService } from '../../../../@core/store/providers/city.ui.service';
-import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
 import { SearchService } from '../../../../@ui/providers/search.service';
-import { ComponentType, EntityFormMode } from '../../../../page.component';
+import { EntityListComponent } from '../../../entity.list.component';
 import { CityFormComponent } from '../form/city.form.component';
 
 @Component({
@@ -19,68 +17,41 @@ import { CityFormComponent } from '../form/city.form.component';
   styleUrls: ['./city.list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CityListComponent implements ComponentType, OnInit, OnDestroy {
+export class CityListComponent extends EntityListComponent<ICity, ICityBiz> {
   //#region Private members
-
-  private destroyed$: Subject<boolean> = new Subject();
 
   //#endregion
 
   //#region Constructor
-  constructor(private _route: ActivatedRoute, private _cityUIService: CityUIService,
-    private _searchService: SearchService, private _modalService: NgbModal, private _cityService: CityService,
-    private _toasterService: ToasterService) {
-    this._cityService.fetch();
-    this._searchService.onSearchSubmit().pipe(takeUntil(this.destroyed$))
-      .subscribe(value => {
-        this._searchService.currentSearchKey = value.term;
-        this._cityUIService.search(value.term);
-      });
+  constructor(protected _route: ActivatedRoute, protected _cityUIService: CityUIService,
+    protected _searchService: SearchService, protected _modalService: NgbModal, protected _cityService: CityService,
+    protected _toasterService: ToasterService) {
+    super(_route, _cityUIService, _searchService, _modalService, _cityService, _toasterService);
   }
   //#endregion
 
   //#region Interface implementation
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
+  protected get componentType(): any {
+    return CityFormComponent;
   }
 
-  ngOnInit(): void {
-    this._route.data.pipe(takeUntil(this.destroyed$))
-      .subscribe((data: { searchKey: string }) => {
-        this._searchService.currentSearchKey = this._cityUIService.searchKey;
-      });
+  protected get newEntity(): ICityBiz {
+    return newCity();
   }
 
-  createEntity() {
-    const activeModal = this._modalService.open(CityFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.originalCity = {
-      name: '',
-      thumbnail: '',
-      adressCode: '',
-      id: ''
-    };
+  protected get entityType(): string {
+    return 'City';
   }
+
   //#endregion
 
-  //#region Protected method
+  //#region Public method
   edit(city: ICityBiz) {
-    const activeModal = this._modalService.open(CityFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.originalCity = city;
-    activeModal.componentInstance.title = 'Edit City';
-    activeModal.componentInstance.mode = EntityFormMode.edit;
+    this.editEntity(city, city.name);
   }
 
   delete(city: ICityBiz) {
-    const activeModal = this._modalService.open(ModalComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.modalHeader = `Confrim`;
-    activeModal.componentInstance.modalContent = `Delete city : ${city.name} ?`;
-
-    activeModal.result.then((result) => {
-      this._cityService.remove(city);
-    }, (cancel) => {
-      // do nothing
-    });
+    this.deleteEntity(city, city.name);
   }
   //#endregion
 }

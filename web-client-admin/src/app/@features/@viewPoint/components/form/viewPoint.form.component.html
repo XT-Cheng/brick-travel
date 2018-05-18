@@ -19,7 +19,7 @@
               <label for="input-category">Category</label>
               <select #category='ngModel' required id='input-category' [compareWith]="compareCityFn" [(ngModel)]='newViewPoint.category'
                 name='category' class="form-control" [class.danger]="category.invalid">
-                <option *ngFor="let category of (selectorService?.viewPointCategories$ | async)" [ngValue]="category">{{category.name}}</option>
+                <option *ngFor="let category of (_viewPointCategoryService.all$ | async)" [ngValue]="category">{{category.name}}</option>
               </select>
               <small style='margin-left: 0;' class="form-text error" *ngIf="category.invalid && category?.errors?.required">
                 Category is required!
@@ -60,7 +60,7 @@
             <label for="input-city">City</label>
             <select #city='ngModel' required id='input-city' [compareWith]="compareCityFn" [(ngModel)]='newViewPoint.city' name='city'
               class="form-control" [class.danger]="city.invalid">
-              <option *ngFor="let city of (selectorService?.cities$ | async)" [ngValue]="city">{{city.name}}</option>
+              <option *ngFor="let city of (_cityService.all$ | async)" [ngValue]="city">{{city.name}}</option>
             </select>
             <small style='margin-left: 0;' class="form-text error" *ngIf="city.invalid && city?.errors?.required">
               City is required!

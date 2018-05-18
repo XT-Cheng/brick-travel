@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, concat, filter, map, mergeMap, startWith } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
+import { isArray } from 'util';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { WEBAPI_HOST } from '../../utils/constants';
@@ -29,7 +30,6 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region Constructor
     constructor(protected _http: HttpClient,
-        protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>,
         protected _entityType: EntityTypeEnum,
         protected _entitySchema: schema.Entity,
@@ -151,7 +151,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     return ret.pipe(
                         map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
                         catchError((errResponse: HttpErrorResponse) => {
-                            const entities = normalize([this.toTransfer(bizModel)], this.schema).entities;
+                            const entities = normalize([this.afterReceiveInner(bizModel)], this.schema).entities;
                             return of(this.addDirtyAction(bizModel.id, dirtyType)).pipe(
                                 concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), entities),
                                     this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error, action.payload.actionId))));
@@ -182,7 +182,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     protected deleteEntity(bizModel: U | IBiz, dirtyMode: boolean = false): string {
         if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
-            const entities = normalize(this.toTransfer(<U>bizModel), this._entitySchema).entities;
+            const entities = normalize(this.afterReceiveInner(<U>bizModel), this._entitySchema).entities;
             this._store.dispatch(this.removeDirtyAction(bizModel.id));
             this._store.dispatch(this.succeededAction(<EntityActionTypeEnum>(EntityActionTypeEnum.DELETE), entities));
         } else {
@@ -192,11 +192,28 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         }
     }
 
-    public abstract toTransfer(bizModel: U): any;
+    protected beforeSend(bizModel: U): any {
+        return Object.assign({}, bizModel);
+    }
+
+
+    protected beforeSendInner(record: U | U[]): any {
+        if (isArray(record)) {
+            const ret = [];
+            (<U[]>record).forEach((item) => {
+                ret.push(this.beforeSend(<U>item));
+            });
+            return ret;
+        } else {
+            return this.beforeSend(<U>record);
+        }
+    }
 
     //#endregion
 
     //#region private methods
+
+
     private isDirtyExist(dirtyId: string, dirtyType: DirtyTypeEnum): boolean {
         let found = false;
         const dirtyIds = this._store.getState().dirties.dirtyIds[getEntityKey(this._entityType)];
@@ -213,11 +230,9 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     }
 
     private insert(bizModel: U, files: Map<string, FileUploader>, ): Observable<IEntities> {
-        const transfer = this.toTransfer(bizModel);
-
         const formData: FormData = new FormData();
 
-        formData.append(getEntityKey(this._entityType), JSON.stringify(transfer));
+        formData.append(getEntityKey(this._entityType), JSON.stringify(this.beforeSendInner(bizModel)));
 
         if (files) {
             for (const key of Array.from(files.keys())) {
@@ -230,17 +245,15 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
         return this._http.post(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, this.schema).entities;
+                return normalize(this.afterReceiveInner(records), this.schema).entities;
             })
         );
     }
 
     private update(bizModel: U, files: Map<string, FileUploader>, ): Observable<IEntities> {
-        const transfer = this.toTransfer(bizModel);
-
         const formData: FormData = new FormData();
 
-        formData.append(getEntityKey(this._entityType), JSON.stringify(transfer));
+        formData.append(getEntityKey(this._entityType), JSON.stringify(this.beforeSendInner(bizModel)));
 
         if (files) {
             for (const key of Array.from(files.keys())) {
@@ -253,7 +266,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
         return this._http.put(`${WEBAPI_HOST}/${this._url}`, formData).pipe(
             map(records => {
-                return normalize(records, this.schema).entities;
+                return normalize(this.afterReceiveInner(records), this.schema).entities;
             })
         );
     }
@@ -261,13 +274,14 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     private delete(id: string): Observable<IEntities> {
         return this._http.delete(`${WEBAPI_HOST}/${this._url}/${id}`).pipe(
             map(records => {
-                return normalize(records, this.schema).entities;
+                return normalize(this.afterReceiveInner(records), this.schema).entities;
             })
         );
     }
     //#endregion
 
     //#region Public methdos
+
     public fetch(): string {
         return this.loadEntities();
     }

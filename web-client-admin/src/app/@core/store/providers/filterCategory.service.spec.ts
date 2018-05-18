@@ -61,8 +61,8 @@ let result;
 let error;
 
 describe('filterCategory test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(FilterCategoryService);

@@ -7,8 +7,10 @@ import { ObjectID } from 'bson';
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
 import { IViewPointBiz } from '../../../../@core/store/bizModel/model/viewPoint.biz.model';
+import { CityService } from '../../../../@core/store/providers/city.service';
 import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
 import { ViewPointUIService } from '../../../../@core/store/providers/viewPoint.ui.service';
+import { ViewPointCategoryService } from '../../../../@core/store/providers/viewPointCategory.service';
 import { WEBAPI_HOST } from '../../../../@core/utils/constants';
 import { EntityFormMode } from '../../../../page.component';
 import { MapModalComponent } from '../mapModal.component';
@@ -76,7 +78,8 @@ export class ViewPointFormComponent implements AfterViewInit {
   //#region Constructor
 
   constructor(private _viewPointService: ViewPointService, private _modalService: NgbModal, private _element: ElementRef,
-    public _viewPointUIService: ViewPointUIService,
+    public _viewPointUIService: ViewPointUIService, public _viewPointCategoryService: ViewPointCategoryService,
+    public _cityService: CityService,
     private _toasterService: ToasterService, private _menuService: NbMenuService,
     private _activeModal: NgbActiveModal) {
     this._imageFiles = new Map<string, FileItem>();

@@ -71,8 +71,8 @@ let result;
 let error;
 
 describe('masterData test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(MasterDataService);

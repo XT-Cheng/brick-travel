@@ -94,8 +94,8 @@ let httpTestingController: HttpTestingController;
 let error, result, searched;
 
 describe('travelAgenda ui test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         travelAgendaSrv = TestBed.get(TravelAgendaService);
@@ -119,7 +119,7 @@ describe('travelAgenda ui test', () => {
 
         travelAgendaSrv.add(travelAgendaData);
         req = httpTestingController.expectOne('http://localhost:3000/travelAgendas');
-        req.flush([travelAgendaSrv.toTransfer(travelAgendaData)]);
+        req.flush([travelAgendaData]);
     });
 
     describe('select test', () => {

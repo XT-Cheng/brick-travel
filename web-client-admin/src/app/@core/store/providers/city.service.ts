@@ -1,14 +1,12 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest, map, switchMap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
-import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
-import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { citySchema } from '../entity/entity.schema';
@@ -34,9 +32,8 @@ export class CityService extends EntityService<ICity, ICityBiz> {
 
     //#region Constructor
     constructor(protected _http: HttpClient,
-        @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>, private _uiService: CityUIService) {
-        super(_http, _uploader, _store, EntityTypeEnum.CITY, citySchema, `cities`);
+        super(_http, _store, EntityTypeEnum.CITY, citySchema, `cities`);
 
         this.getAll(this._store).subscribe((value) => {
             this._all$.next(value);
@@ -54,9 +51,7 @@ export class CityService extends EntityService<ICity, ICityBiz> {
     //#endregion
 
     //#region implemented methods
-    public toTransfer(bizModel: ICityBiz) {
-        return bizModel;
-    }
+
     //#endregion
 
     //#region public methods

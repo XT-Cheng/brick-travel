@@ -38,8 +38,8 @@ let httpTestingController: HttpTestingController;
 let error, result, searched;
 
 describe('city ui test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         citySrv = TestBed.get(CityService);

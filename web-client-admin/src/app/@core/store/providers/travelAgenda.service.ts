@@ -1,14 +1,12 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { denormalize, normalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest, map, switchMap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
-import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
-import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import {
     IDailyTripBiz,
     ITravelAgendaBiz,
@@ -55,9 +53,9 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
     //#region Constructor
     constructor(protected _http: HttpClient, private _transportationCategoryService: TransportationCategoryService,
-        @Inject(FILE_UPLOADER) protected _uploader: FileUploader, private _travelAgendaUISrv: TravelAgendaUIService,
+        private _travelAgendaUISrv: TravelAgendaUIService,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.TRAVELAGENDA, travelAgendaSchema, `travelAgendas`);
+        super(_http, _store, EntityTypeEnum.TRAVELAGENDA, travelAgendaSchema, `travelAgendas`);
 
         this.getSelected(this._store).subscribe((value) => {
             this._selected = value;
@@ -75,7 +73,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     //#endregion
 
     //#region implemented methods
-    public toTransfer(bizModel: ITravelAgendaBiz) {
+    protected beforeSend(bizModel: ITravelAgendaBiz) {
         return {
             id: bizModel.id,
             name: bizModel.name,
@@ -93,6 +91,37 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
                             viewPoint: travelViewPoint.viewPoint.id,
                             distanceToNext: travelViewPoint.distanceToNext,
                             transportationToNext: travelViewPoint.transportationToNext ? travelViewPoint.transportationToNext.id : null
+                        };
+                    })
+                };
+            })
+        };
+    }
+
+    protected afterReceive(record: any) {
+        return {
+            id: record.id,
+            name: record.name,
+            user: record.user,
+            cover: record.cover,
+            dailyTrips: record.dailyTrips.map(dailyTrip => {
+                return {
+                    id: dailyTrip.id,
+                    travelAgenda: record.id,
+                    lastViewPoint: dailyTrip.lastViewPoint ?
+                        (dailyTrip.lastViewPoint.id ?
+                            dailyTrip.lastViewPoint.id : dailyTrip.lastViewPoint)
+                        : null,
+                    travelViewPoints: dailyTrip.travelViewPoints.map(travelViewPoint => {
+                        return {
+                            id: travelViewPoint.id,
+                            dailyTrip: dailyTrip.id,
+                            viewPoint: travelViewPoint.viewPoint.id ? travelViewPoint.viewPoint.id : travelViewPoint.viewPoint,
+                            distanceToNext: travelViewPoint.distanceToNext,
+                            transportationToNext: travelViewPoint.transportationToNext ?
+                                (travelViewPoint.transportationToNext.id ?
+                                    travelViewPoint.transportationToNext.id : travelViewPoint.transportationToNext)
+                                : null
                         };
                     })
                 };
@@ -153,7 +182,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
         this.caculateDistance(dailyTrip);
 
         travelViewPoint.dailyTrip = dailyTrip;
-        const entities = normalize(this.toTransfer(dailyTrip.travelAgenda), travelAgendaSchema).entities;
+        const entities = normalize(this.afterReceive(dailyTrip.travelAgenda), travelAgendaSchema).entities;
 
         this._store.dispatch(this.succeededAction(
             EntityActionTypeEnum.UPDATE,
@@ -171,7 +200,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
         this.caculateDistance(travelAgenda.dailyTrips[travelAgenda.dailyTrips.length - 1]);
 
-        const entities = normalize(this.toTransfer(travelAgenda), travelAgendaSchema).entities;
+        const entities = normalize(this.afterReceive(travelAgenda), travelAgendaSchema).entities;
 
         this._store.dispatch(this.succeededAction(
             EntityActionTypeEnum.UPDATE,

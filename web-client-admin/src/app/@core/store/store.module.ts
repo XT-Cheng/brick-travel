@@ -71,7 +71,6 @@ export class StoreModule {
             // this._dataFlushService.stateRestored();
             this._masterDataService.fetch();
         });
-        console.log('after asynce');
     }
 
     static forRoot(): ModuleWithProviders {

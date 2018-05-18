@@ -66,8 +66,8 @@ let result, loggedIn;
 let error;
 
 describe('user test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(UserService);

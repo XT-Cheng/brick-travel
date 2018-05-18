@@ -1,6 +1,6 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -11,8 +11,6 @@ import * as Immutable from 'seamless-immutable';
 import { AuthService } from '../../auth/providers/authService';
 import { AuthToken } from '../../auth/providers/authToken';
 import { TokenService } from '../../auth/providers/tokenService';
-import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
-import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IUserBiz } from '../bizModel/model/user.biz.model';
 import { EntityActionTypeEnum } from '../entity/entity.action';
 import { EntityTypeEnum, INIT_ENTITY_STATE, STORE_ENTITIES_KEY } from '../entity/entity.model';
@@ -35,10 +33,9 @@ export class UserService extends EntityService<IUser, IUserBiz> {
 
     //#region Constructor
     constructor(protected _http: HttpClient,
-        @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         private _auth: AuthService, private _tokenService: TokenService, private _storage: Storage,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.USER, userSchema, `users`);
+        super(_http, _store, EntityTypeEnum.USER, userSchema, `users`);
 
         this._auth.onTokenChange()
             .subscribe((token: AuthToken) => {
@@ -63,9 +60,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     //#endregion
 
     //#region implemented methods
-    public toTransfer(bizModel: IUserBiz) {
-        return bizModel;
-    }
+
     //#endregion
 
     //#region public methods

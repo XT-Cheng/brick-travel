@@ -1,14 +1,12 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest, map, switchMap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
-import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
-import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { viewPointSchema } from '../entity/entity.schema';
@@ -41,9 +39,8 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
 
     //#region Constructor
     constructor(protected _http: HttpClient,
-        @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>, private _viewPointUISrv: ViewPointUIService) {
-        super(_http, _uploader, _store, EntityTypeEnum.VIEWPOINT, viewPointSchema, `viewPoints`);
+        super(_http, _store, EntityTypeEnum.VIEWPOINT, viewPointSchema, `viewPoints`);
 
         this.getSelected(this._store).subscribe((value) => {
             this._selected = value;
@@ -72,11 +69,13 @@ export class ViewPointService extends EntityService<IViewPoint, IViewPointBiz> {
     //#endregion
 
     //#region implemented methods
-    public toTransfer(bizModel: IViewPointBiz) {
+
+    protected beforeSend(bizModel: IViewPointBiz) {
         return Object.assign({}, bizModel, {
             city: bizModel.city.id
         });
     }
+
     //#endregion
 
     //#region public methods

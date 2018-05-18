@@ -1,18 +1,17 @@
 import { NextFunction, Request, Response, Router } from 'express';
+import * as multer from 'multer';
 
 import { CityModel } from '../data-model/city.model';
 import { asyncMiddleware } from '../utils/utility';
 
-import * as multer from 'multer';
-
-var upload = multer({dest: './uploads/'})
+var upload = multer({ dest: './uploads/' })
 
 export class CityRoute {
     public static create(router: Router) {
         console.log('City route create');
 
         //Load Cities
-        router.get('/cities', asyncMiddleware(async(req: Request, res: Response, next: NextFunction) => {
+        router.get('/cities', asyncMiddleware(async (req: Request, res: Response, next: NextFunction) => {
             CityRoute.load(req, res, next);
         }));
 
@@ -33,16 +32,16 @@ export class CityRoute {
     }
 
     private static async update(req: Request, res: Response, next: NextFunction) {
-        let city : any;
+        let city: any;
         if (req.is('application/json')) {
             city = req.body;
         }
         else {
-            city = JSON.parse(req.body.city);
+            city = JSON.parse(req.body);
             if (req.files[0])
                 city.thumbnail = `assets/img/${req.files[0].filename}`;
         }
-       
+
         await CityModel.updateCity(city);
         res.json(city);
     }
@@ -53,7 +52,7 @@ export class CityRoute {
     }
 
     private static async insert(req: Request, res: Response, next: NextFunction) {
-        let city = JSON.parse(req.body.city);
+        let city = JSON.parse(req.body.cities);
         city.thumbnail = `assets/img/${req.files[0].filename}`;
         await CityModel.createCities(city);
         res.json(city);

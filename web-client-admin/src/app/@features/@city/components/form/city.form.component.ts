@@ -1,78 +1,48 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
-import { ObjectID } from 'bson';
-import { filter } from 'rxjs/operators';
 
-import { FILE_UPLOADER } from '../../../../@core/fileUpload/fileUpload.module';
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
 import { ICityBiz } from '../../../../@core/store/bizModel/model/city.biz.model';
+import { ICity } from '../../../../@core/store/entity/model/city.model';
 import { CityService } from '../../../../@core/store/providers/city.service';
 import { ErrorService } from '../../../../@core/store/providers/error.service';
-import { EntityFormMode } from '../../../../page.component';
+import { WEBAPI_HOST } from '../../../../@core/utils/constants';
+import { EntityFormComponent } from '../../../entity.form.component';
 
 @Component({
   selector: 'bt-city-form',
   templateUrl: 'city.form.component.html',
   styleUrls: ['./city.form.component.scss']
 })
-export class CityFormComponent {
+export class CityFormComponent extends EntityFormComponent<ICity, ICityBiz> {
   //#region Private member
-
-  private _newCity: ICityBiz;
-  private _originalCity: ICityBiz;
 
   //#endregion
 
   //#region Public member
 
   hasBaseDropZoneOver = false;
+  thumbnailUploader: FileUploader = new FileUploader({ url: `${WEBAPI_HOST}/fileUpload` });
 
   //#endregion
 
   //#region Public property
-  @Input()
-  mode: EntityFormMode = EntityFormMode.create;
-
-  @Input()
-  set originalCity(city: ICityBiz) {
-    if (city.id === '') {
-      city.id = new ObjectID().toHexString();
-    }
-    this._originalCity = city;
-    this._newCity = Object.assign({}, city);
-  }
-  get newCity(): ICityBiz {
-    return this._newCity;
-  }
-
-  @Input()
-  title = 'Create City';
 
   //#endregion
 
   //#region Constructor
 
-  constructor(private _cityService: CityService, private _errorService: ErrorService,
-    @Inject(FILE_UPLOADER) public uploader: FileUploader, private toasterService: ToasterService,
-    private activeModal: NgbActiveModal) {
-    this.uploader.clearQueue();
-    this.uploader.setOptions({ allowedMimeType: ['image/png'] });
+  constructor(protected _cityService: CityService, protected _errorService: ErrorService,
+    protected _toasterService: ToasterService,
+    protected _activeModal: NgbActiveModal) {
+    super(_cityService, _errorService, _toasterService, _activeModal);
 
-    this._cityService.all$.pipe(
-      filter((cities) => !!(cities.find((city) => city.id === this._newCity.id)))
-    ).subscribe(() => {
-      this.toasterService.pop('success', 'Success', `City ${this._newCity.name} created`);
-      this.activeModal.close();
-    });
+    this.thumbnailUploader.clearQueue();
+    this.thumbnailUploader.setOptions({ allowedMimeType: ['image/png'] });
 
-    this._errorService.lastError$.pipe(
-      filter((error) => !!(error))
-    ).subscribe(() => {
-      this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);
-      this.activeModal.close();
-    });
+    this.addFile('thumbnail', this.thumbnailUploader);
   }
 
   //#endregion
@@ -80,11 +50,11 @@ export class CityFormComponent {
   //#region Public method
 
   hasFile(): boolean {
-    return this._newCity.thumbnail !== '';
+    return this.newEntity.thumbnail !== '';
   }
 
   isSubmitDisAllowed(form): boolean {
-    return !this.isChanged() || !form.valid || (this.uploader.queue.length === 0 && this._newCity.thumbnail === '');
+    return !this.isChanged() || !form.valid || (this.thumbnailUploader.queue.length === 0 && this.newEntity.thumbnail === '');
   }
 
   fileOverBase(e: boolean): void {
@@ -95,22 +65,10 @@ export class CityFormComponent {
     const reader = new FileReader();
 
     reader.onloadend = (e: any) => {
-      this._newCity.thumbnail = e.target.result;
+      this.newEntity.thumbnail = e.target.result;
     };
 
     reader.readAsDataURL(fileItems[0]._file);
-  }
-
-  action() {
-    if (this.mode === EntityFormMode.create) {
-      this._cityService.add(this._newCity);
-    } else {
-      this._cityService.change(this._newCity);
-    }
-  }
-
-  close() {
-    this.activeModal.close();
   }
 
   //#endregion
@@ -118,8 +76,8 @@ export class CityFormComponent {
   //#region Private method
 
   private isChanged(): boolean {
-    return !(this._newCity.name === this._originalCity.name &&
-      this._newCity.addressCode === this._originalCity.addressCode &&
-      this._newCity.thumbnail === this._originalCity.thumbnail);
+    return !(this.newEntity.name === this.originalEntity.name &&
+      this.newEntity.addressCode === this.originalEntity.addressCode &&
+      this.newEntity.thumbnail === this.originalEntity.thumbnail);
   }
 }

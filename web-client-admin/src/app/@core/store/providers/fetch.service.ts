@@ -6,6 +6,7 @@ import { Epic } from 'redux-observable';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, filter, map, mergeMap, startWith } from 'rxjs/operators';
+import { isArray } from 'util';
 
 import { WEBAPI_HOST } from '../../utils/constants';
 import {
@@ -81,6 +82,10 @@ export abstract class FetchService {
 
     //#endregion
 
+    //#region public methods
+
+    //#endregion
+
     //#region protected methods
 
     protected loadEntities(pagination: IPagination = { page: this.DEFAULT_PAGE, limit: this.DEFAULT_LIMIT },
@@ -94,16 +99,34 @@ export abstract class FetchService {
         return [this._entitySchema];
     }
 
+    protected afterReceive(record: any): any {
+        return Object.assign({}, record);
+    }
+
+
+    protected afterReceiveInner(record: any): any {
+        if (isArray(record)) {
+            const ret = [];
+            Array.from(record).forEach((item) => {
+                ret.push(this.afterReceive(item));
+            });
+            return ret;
+        } else {
+            return this.afterReceive(record);
+        }
+    }
+
     //#endregion
 
     //#region private methods
     private load(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
         return this._http.get(`${WEBAPI_HOST}/${this._url}`).pipe(
             map(records => {
-                return normalize(records, this.schema).entities;
+                return normalize(this.afterReceiveInner(records), this.schema).entities;
             })
         );
     }
+
 
     //#endregion
 }

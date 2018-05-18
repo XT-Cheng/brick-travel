@@ -2,9 +2,9 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
+import { IError } from '../error/error.model';
 import { ErrorService } from './error.service';
 import { ViewPointService } from './viewPoint.service';
-import { IError } from '../error/error.model';
 
 const url = 'http://localhost:3000/viewPoints';
 
@@ -88,8 +88,8 @@ let result;
 let error;
 
 describe('viewPoint test', () => {
-    beforeEach(() => {
-        initTest();
+    beforeEach(async () => {
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(ViewPointService);

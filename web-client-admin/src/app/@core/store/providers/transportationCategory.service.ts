@@ -1,14 +1,12 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
-import { FILE_UPLOADER } from '../../fileUpload/fileUpload.module';
-import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { ITransportationCategoryBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
 import { transportationCategorySchema } from '../entity/entity.schema';
@@ -27,9 +25,8 @@ export class TransportationCategoryService extends EntityService<ITransportation
 
     //#region Constructor
     constructor(protected _http: HttpClient,
-        @Inject(FILE_UPLOADER) protected _uploader: FileUploader,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _uploader, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, transportationCategorySchema, `transportationCategories`);
+        super(_http, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, transportationCategorySchema, `transportationCategories`);
 
         this.getAll(this._store).subscribe((value) => {
             this._default = value.find(tpc => tpc.isDefault);
@@ -39,9 +36,7 @@ export class TransportationCategoryService extends EntityService<ITransportation
     //#endregion
 
     //#region implemented methods
-    public toTransfer(bizModel: ITransportationCategoryBiz) {
-        return bizModel;
-    }
+
     //#endregion
 
     //#region public methods
