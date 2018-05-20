@@ -6,7 +6,6 @@ import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz, IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
 import { ITransportationCategory } from '../entity/model/travelAgenda.model';
-import { IError } from '../error/error.model';
 import { DataFlushService } from './dataFlush.service';
 import { ErrorService } from './error.service';
 import { TransportationCategoryService } from './transportationCategory.service';
@@ -91,20 +90,6 @@ const errorData = {
     statusText: 'Not Found'
 };
 
-const backendError: IError = {
-    network: false,
-    description: 'error happened',
-    stack: '',
-    actionId: ''
-};
-
-const networkError: IError = {
-    network: true,
-    description: '',
-    stack: '',
-    actionId: ''
-};
-
 let service: TravelAgendaService;
 let transportationService: TransportationCategoryService;
 let viewPointService: ViewPointService;
@@ -173,7 +158,8 @@ describe('travelAgenda test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
+            expect(error.description).toEqual('error happened');
         });
         it('#fetch() with network error', () => {
             service.fetch();
@@ -181,7 +167,7 @@ describe('travelAgenda test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -241,7 +227,7 @@ describe('travelAgenda test', () => {
             const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
             expect(result).toEqual([addedTravelAgenda]);
             expect(dirtyIds.travelAgendas.created.length).toEqual(1);
             expect(dirtyIds.travelAgendas.created[0]).toEqual(result[0].id);
@@ -253,7 +239,7 @@ describe('travelAgenda test', () => {
             const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
             expect(result).toEqual([addedTravelAgenda]);
             expect(dirtyIds.travelAgendas.created.length).toEqual(1);
             expect(dirtyIds.travelAgendas.created[0]).toEqual(result[0].id);
@@ -282,7 +268,7 @@ describe('travelAgenda test', () => {
             const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
             expect(result[0].name).toEqual('黄山1');
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
             expect(dirtyIds.travelAgendas.updated.length).toEqual(1);
@@ -294,7 +280,7 @@ describe('travelAgenda test', () => {
             const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
             expect(result[0].name).toEqual('黄山1');
             expect(dirtyIds.travelAgendas.deleted.length).toEqual(0);
             expect(dirtyIds.travelAgendas.updated.length).toEqual(1);
@@ -322,7 +308,7 @@ describe('travelAgenda test', () => {
             const req = httpTestingController.expectOne(`${url}/${travelAgendaData.id}`);
             req.flush('error happened', errorData);
 
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
             expect(result).toEqual([]);
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
             expect(dirtyIds.travelAgendas.deleted.length).toEqual(1);
@@ -333,7 +319,7 @@ describe('travelAgenda test', () => {
             const req = httpTestingController.expectOne(`${url}/${travelAgendaData.id}`);
             req.error(new ErrorEvent('network error'));
 
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
             expect(result).toEqual([]);
             expect(dirtyIds.travelAgendas.updated.length).toEqual(0);
             expect(dirtyIds.travelAgendas.deleted.length).toEqual(1);

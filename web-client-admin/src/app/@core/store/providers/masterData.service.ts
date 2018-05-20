@@ -9,9 +9,6 @@ import { FetchService } from './fetch.service';
 
 @Injectable()
 export class MasterDataService extends FetchService {
-    //#region private member
-
-    //#endregion
 
     //#region Constructor
     constructor(protected _http: HttpClient,
@@ -24,25 +21,9 @@ export class MasterDataService extends FetchService {
     }
     //#endregion
 
-    //#region public methods
-
-    //#region CRUD methods
-
-    public fetch() {
-        this.loadEntities();
-    }
-
-    //#endregion
-
-    //#endregion
-
     //#region protected methods
     protected get schema(): any {
         return this._entitySchema;
     }
-    //#endregion
-
-    //#region Entities Selector
-
     //#endregion
 }

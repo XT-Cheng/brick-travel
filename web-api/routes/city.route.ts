@@ -59,8 +59,12 @@ export class CityRoute {
     }
 
     private static async delete(req: Request, res: Response, next: NextFunction) {
+        let city = await CityModel.findById(req.params.id);
         await CityModel.deleteCity(req.params.id);
-        res.json(true);
+        res.json([city]);
+        // res.statusCode = 500;
+        // res.statusMessage = 'Error happened';
+        // res.json('Errors!');
     }
 
 }

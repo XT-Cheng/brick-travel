@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 import { initTest } from '../../../../test';
 import { AuthService } from '../../auth/providers/authService';
 import { IUserBiz } from '../bizModel/model/user.biz.model';
-import { IError } from '../error/error.model';
 import { ErrorService } from './error.service';
 import { UserService } from './user.service';
 
@@ -41,20 +40,6 @@ const changeData: IUserBiz = Object.assign({}, userData, {
 const errorData = {
     status: 404,
     statusText: 'Not Found'
-};
-
-const backendError: IError = {
-    network: false,
-    description: 'error happened',
-    stack: '',
-    actionId: ''
-};
-
-const networkError: IError = {
-    network: true,
-    description: '',
-    stack: '',
-    actionId: ''
 };
 
 let service: UserService;
@@ -112,7 +97,8 @@ describe('user test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
+            expect(error.description).toEqual('error happened');
         });
 
         it('#fetch() with network error', () => {
@@ -121,7 +107,7 @@ describe('user test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -140,7 +126,7 @@ describe('user test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#add() with network error', () => {
@@ -149,7 +135,7 @@ describe('user test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -175,7 +161,7 @@ describe('user test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([userData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#change() with network error', () => {
@@ -184,7 +170,7 @@ describe('user test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([userData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -210,7 +196,7 @@ describe('user test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([userData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#delete() with network error', () => {
@@ -219,7 +205,7 @@ describe('user test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([userData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 

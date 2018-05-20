@@ -6,7 +6,6 @@ import { ICityBiz } from '../bizModel/model/city.biz.model';
 import { IDailyTripBiz, ITravelAgendaBiz, ITravelViewPointBiz } from '../bizModel/model/travelAgenda.biz.model';
 import { IViewPointBiz, IViewPointCategoryBiz } from '../bizModel/model/viewPoint.biz.model';
 import { ITransportationCategory } from '../entity/model/travelAgenda.model';
-import { IError } from '../error/error.model';
 import { DataFlushService } from './dataFlush.service';
 import { ErrorService } from './error.service';
 import { TransportationCategoryService } from './transportationCategory.service';
@@ -89,20 +88,6 @@ dailyTripData.travelAgenda = travelAgendaData;
 const errorData = {
     status: 404,
     statusText: 'Not Found'
-};
-
-const backendError: IError = {
-    network: false,
-    description: 'error happened',
-    stack: '',
-    actionId: ''
-};
-
-const networkError: IError = {
-    network: true,
-    description: '',
-    stack: '',
-    actionId: ''
 };
 
 let service: TravelAgendaService;
@@ -231,12 +216,13 @@ describe('flush test', () => {
         it('#failed add(), followed by failed change()', () => {
             const addedTravelAgenda = Object.assign({}, travelAgendaData, { dailyTrips: [] });
             // 1. Add empty TravelAgenda
-            service.add(addedTravelAgenda);
+            const actionId = service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([addedTravelAgenda]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
+            expect(error.description).toEqual('error happened');
             expect(dirtyIds.travelAgendas.created.length).toEqual(1);
             expect(dirtyIds.travelAgendas.created[0]).toEqual(result[0].id);
 
@@ -255,12 +241,12 @@ describe('flush test', () => {
         it('#failed add(), followed by successfully change()', () => {
             const addedTravelAgenda = Object.assign({}, travelAgendaData, { dailyTrips: [] });
             // 1. Add empty TravelAgenda
-            service.add(addedTravelAgenda);
+            const actionId = service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([addedTravelAgenda]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
             expect(dirtyIds.travelAgendas.created.length).toEqual(1);
             expect(dirtyIds.travelAgendas.created[0]).toEqual(result[0].id);
 
@@ -278,12 +264,12 @@ describe('flush test', () => {
         it('#failed add(), followed by delete()', () => {
             const addedTravelAgenda = Object.assign({}, travelAgendaData, { dailyTrips: [] });
             // 1. Add empty TravelAgenda
-            service.add(addedTravelAgenda);
+            const actionId = service.add(addedTravelAgenda);
             const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([addedTravelAgenda]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
             expect(dirtyIds.travelAgendas.created.length).toEqual(1);
             expect(dirtyIds.travelAgendas.created[0]).toEqual(result[0].id);
 
@@ -302,12 +288,12 @@ describe('flush test', () => {
         it('#failed add(), followed by flush', () => {
             const addedTravelAgenda = Object.assign({}, travelAgendaData, { dailyTrips: [] });
             // 1. Add empty TravelAgenda
-            service.add(addedTravelAgenda);
+            const actionId = service.add(addedTravelAgenda);
             let req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([addedTravelAgenda]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
             expect(dirtyIds.travelAgendas.created.length).toEqual(1);
             expect(dirtyIds.travelAgendas.created[0]).toEqual(result[0].id);
 
@@ -367,7 +353,7 @@ describe('flush test', () => {
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
 
             // 2. Delete
-            service.remove(result[0]);
+            const actionId = service.remove(result[0]);
             req = httpTestingController.expectOne(`${url}/${result[0].id}`);
             req.flush('error happened', errorData);
 
@@ -375,7 +361,7 @@ describe('flush test', () => {
             expect(dirtyIds.travelAgendas.created.length).toEqual(0);
             expect(dirtyIds.travelAgendas.deleted[0]).toEqual(addedTravelAgenda.id);
             expect(dirtyIds.travelAgendas.deleted.length).toEqual(1);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
 
             // 3. Flush
             flushService.flush();

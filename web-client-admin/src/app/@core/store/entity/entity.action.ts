@@ -2,7 +2,9 @@ import { FluxStandardAction } from 'flux-standard-action';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import { IBiz } from '../bizModel/biz.model';
+import { IError } from '../error/error.model';
 import { IActionMetaInfo, IActionPayload } from '../store.action';
+import { STORE_UI_KEY } from '../ui/ui.model';
 import { EntityTypeEnum, IEntities, STORE_ENTITIES_KEY } from './entity.model';
 
 export enum EntityActionPhaseEnum {
@@ -97,6 +99,40 @@ export function getEntityKey(typeEnum: EntityTypeEnum): string {
     }
 }
 
+export function getUIKey(typeEnum: EntityTypeEnum): string {
+    switch (typeEnum) {
+        case EntityTypeEnum.CITY: {
+            return STORE_UI_KEY.city;
+        }
+        case EntityTypeEnum.VIEWPOINT: {
+            return STORE_UI_KEY.viewPoint;
+        }
+        case EntityTypeEnum.USER: {
+            return STORE_UI_KEY.user;
+        }
+        case EntityTypeEnum.FILTERCATEGORY: {
+            return '';
+        }
+        case EntityTypeEnum.TRAVELAGENDA: {
+            return STORE_UI_KEY.travelAgenda;
+        }
+        case EntityTypeEnum.TRAVELVIEWPOINT: {
+            return '';
+        }
+        case EntityTypeEnum.DAILYTRIP: {
+            return '';
+        }
+        case EntityTypeEnum.VIEWPOINTCATEGORY: {
+            return '';
+        }
+        case EntityTypeEnum.TRANSPORTATIONCATEGORY: {
+            return '';
+        }
+        default:
+            throw new Error(`Unknown EntityType ${typeEnum}`);
+    }
+}
+
 export function getEntityType(type: string): EntityTypeEnum {
     switch (type) {
         case STORE_ENTITIES_KEY.cities: {
@@ -145,14 +181,14 @@ export function entityActionStarted(entityType: EntityTypeEnum) {
 }
 
 export function entityActionFailed(entityType: EntityTypeEnum) {
-    return (actionType: EntityActionTypeEnum, error: any, actionId: string): EntityAction => ({
+    return (actionType: EntityActionTypeEnum, error: IError, actionId: string): EntityAction => ({
         type: actionType,
         error: true,
         meta: defaultEntityActionMeta,
         payload: Object.assign({}, defaultEntityActionPayload, {
             entityType: entityType,
             phaseType: EntityActionPhaseEnum.FAIL,
-            error: error,
+            error: Object.assign({}, error, { actionId: actionId }),
             actionId: actionId
         })
     });
@@ -233,6 +269,7 @@ export function entityDeleteAction<U>(entityType: EntityTypeEnum) {
             phaseType: EntityActionPhaseEnum.TRIGGER,
             bizModel: bizModel,
             bizModelId: id,
+            actionId: actionId,
             dirtyMode: dirtyMode
         })
     });

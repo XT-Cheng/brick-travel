@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { IonicStorageModule } from '@ionic/storage';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -31,6 +32,7 @@ const BOOTSTRAPS = [
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     IonicStorageModule.forRoot(),
     StoreModule.forRoot(),

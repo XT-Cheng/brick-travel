@@ -1,11 +1,12 @@
 import { NgRedux } from '@angular-redux/store';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ObjectID } from 'bson';
 import { denormalize, normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { catchError, concat, filter, map, mergeMap, startWith } from 'rxjs/operators';
+import { catchError, combineLatest, concat, filter, map, mergeMap, race, startWith, switchMap } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 import { isArray } from 'util';
 
@@ -21,58 +22,216 @@ import {
     entityInsertAction,
     entityUpdateAction,
     getEntityKey,
+    getUIKey,
 } from '../entity/entity.action';
 import { EntityTypeEnum, IEntities, IEntity } from '../entity/entity.model';
-import { IAppState } from '../store.model';
+import { IAppState, STORE_KEY } from '../store.model';
+import { STORE_UI_COMMON_KEY } from '../ui/ui.model';
+import { FilterEx } from '../utils/filterEx';
+import { ErrorService } from './error.service';
 import { FetchService } from './fetch.service';
+import { UIService } from './ui.service';
 
 export abstract class EntityService<T extends IEntity, U extends IBiz> extends FetchService {
-
     //#region Constructor
+
     constructor(protected _http: HttpClient,
         protected _store: NgRedux<IAppState>,
         protected _entityType: EntityTypeEnum,
         protected _entitySchema: schema.Entity,
-        protected _url: string) {
+        protected _url: string,
+        protected _errorService: ErrorService,
+        protected _uiService: UIService<T, U> = null) {
         super(_http, _store, _entityType, _entitySchema, _url);
+
+        this.getAll(this._store).subscribe((value) => {
+            this._all = value;
+            this._all$.next(value);
+        });
+
+        this.getSelected(this._store).subscribe((value) => {
+            this._selected = value;
+            this._selected$.next(value);
+        });
+
+        if (this._uiService) {
+            this.getSearched(this._store).subscribe((value) => {
+                this._searched$.next(value);
+            });
+
+            this.getFiltered(this._store).subscribe((value) => {
+                this._filtered = value;
+                this._filtered$.next(value);
+            });
+
+            this.getFilteredAndSearched(this._store).subscribe((value) => {
+                this._filteredAndSearched = value;
+                this._filteredAndSearched$.next(value);
+            });
+        }
     }
+
+    //#endregion
+
+    //#region Protected member
+
+    protected _all$: BehaviorSubject<U[]> = new BehaviorSubject([]);
+    protected _all: U[] = [];
+
+    protected _selected: U;
+    protected _selected$: BehaviorSubject<U> = new BehaviorSubject(null);
+
+    protected _searched: U[];
+    protected _searched$: BehaviorSubject<U[]> = new BehaviorSubject(null);
+
+    protected _filtered: U[];
+    protected _filtered$: BehaviorSubject<U[]> = new BehaviorSubject(null);
+
+    protected _filteredAndSearched: U[];
+    protected _filteredAndSearched$: BehaviorSubject<U[]> = new BehaviorSubject(null);
+
+    //#endregion
+
+    //#region Entity Selector
+
+    protected getById(store: NgRedux<IAppState>, id: string): Observable<U> {
+        return store.select<T>([STORE_KEY.ui, getEntityKey(this._entityType), id]).pipe(
+            map(ct => {
+                return ct ? denormalize(ct.id, this._entitySchema, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            })
+        );
+    }
+
+    private getAll(store: NgRedux<IAppState>): Observable<U[]> {
+        return store.select<{ [id: string]: T }>([STORE_KEY.entities, getEntityKey(this._entityType)]).pipe(
+            map((data) => {
+                return denormalize(Object.keys(data), [this._entitySchema], Immutable(store.getState().entities).asMutable({ deep: true }));
+            })
+        );
+    }
+
+    private getSelectedId(store: NgRedux<IAppState>): Observable<string> {
+        return store.select<string>([STORE_KEY.ui, getUIKey(this._entityType), STORE_UI_COMMON_KEY.selectedId]);
+    }
+
+    private getSelected(store: NgRedux<IAppState>): Observable<U> {
+        return this.getSelectedId(store).pipe(
+            switchMap(id => {
+                return store.select<T>([STORE_KEY.entities, getEntityKey(this._entityType), id]);
+            }),
+            map(ct => {
+                return ct ? denormalize(ct.id, this._entitySchema, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
+            })
+        );
+    }
+
+    private getSearched(store: NgRedux<IAppState>): Observable<U[]> {
+        return this.all$.pipe(
+            combineLatest(this._uiService.searchKey$, (cities, searchKey) => {
+                return cities.filter(c => {
+                    let matchSearchKey = true;
+                    if (searchKey !== '') {
+                        matchSearchKey = this.search(c, searchKey);
+                    }
+
+                    return matchSearchKey;
+                });
+            })
+        );
+    }
+
+    private getFiltered(store: NgRedux<IAppState>): Observable<U[]> {
+        return this._uiService.filters$.pipe(
+            combineLatest(this.all$,
+                (filterCategories, viewPoints) => {
+                    return viewPoints.filter(vp => {
+                        const isFiltered = filterCategories.every(category => {
+                            return category.criteries.every(criteria => {
+                                if (criteria.isChecked && FilterEx[category.filterFunction]) {
+                                    return FilterEx[category.filterFunction](vp, criteria);
+                                }
+                                return true;
+                            });
+                        });
+
+                        return isFiltered;
+                    });
+                })
+        );
+    }
+
+    private getFilteredAndSearched(store: NgRedux<IAppState>): Observable<U[]> {
+        return this._uiService.filters$.pipe(
+            combineLatest(this.all$, this._uiService.searchKey$,
+                (filterCategories, viewPoints, searchKey) => {
+                    return viewPoints.filter(vp => {
+                        const isFiltered = filterCategories.every(category => {
+                            return category.criteries.every(criteria => {
+                                if (criteria.isChecked && FilterEx[category.filterFunction]) {
+                                    return FilterEx[category.filterFunction](vp, criteria);
+                                }
+                                return true;
+                            });
+                        });
+
+                        let matchSearchKey = true;
+                        if (searchKey !== '') {
+                            matchSearchKey = this.search(vp, searchKey);
+                        }
+
+                        return isFiltered && matchSearchKey;
+                    });
+                })
+        );
+    }
+
+    //#endregion
+
+    //#region Entity Selector
+
+    public get all$(): Observable<U[]> {
+        return this._all$.asObservable();
+    }
+
+    public get selected$(): Observable<U> {
+        return this._selected$.asObservable();
+    }
+
+    public get selected(): U {
+        return this._selected;
+    }
+
+    public get searched$(): Observable<U[]> {
+        return this._searched$.asObservable();
+    }
+
+    public get filtered(): U[] {
+        return this._filtered;
+    }
+
+    public get filtered$(): Observable<U[]> {
+        return this._filtered$.asObservable();
+    }
+
+    public get filteredAndSearched$(): Observable<U[]> {
+        return this._filteredAndSearched$.asObservable();
+    }
+
     //#endregion
 
     //#region Actions
 
     //#region Entity Actions
 
-    //#endregion
-
-    //#region load actions
-
-    //#endregion
-
-    //#region update actions
-
     protected updateAction = entityUpdateAction<U>(this._entityType);
-
-    //#endregion
-
-    //#region insert actions
 
     protected insertAction = entityInsertAction<U>(this._entityType);
 
-    //#endregion
-
-    //#region delete actions
-
     protected deleteAction = entityDeleteAction<U>(this._entityType);
-
-    //#endregion
-
-    //#region dirty actions
 
     protected addDirtyAction = dirtyAddAction(this._entityType);
 
     protected removeDirtyAction = dirtyRemoveAction(this._entityType);
-
-    //#endregion
 
     //#endregion
 
@@ -112,9 +271,10 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     }
                     return ret.pipe(
                         map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
-                        catchError((errResponse: HttpErrorResponse) =>
-                            of(this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error, action.payload.actionId))
-                        ),
+                        catchError((errResponse: any) => {
+                            return of(this.failedAction(<EntityActionTypeEnum>(action.type),
+                                errResponse.actionError, action.payload.actionId));
+                        }),
                         startWith(this.startedAction(<EntityActionTypeEnum>(action.type))));
                 }));
     }
@@ -150,11 +310,12 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
                     }
                     return ret.pipe(
                         map(data => this.succeededAction(<EntityActionTypeEnum>(action.type), data)),
-                        catchError((errResponse: HttpErrorResponse) => {
+                        catchError((errResponse: any) => {
                             const entities = normalize([this.afterReceiveInner(bizModel)], this.schema).entities;
                             return of(this.addDirtyAction(bizModel.id, dirtyType)).pipe(
                                 concat(of(this.succeededAction(<EntityActionTypeEnum>(action.type), entities),
-                                    this.failedAction(<EntityActionTypeEnum>(action.type), errResponse.error, action.payload.actionId))));
+                                    this.failedAction(<EntityActionTypeEnum>(action.type),
+                                        errResponse.actionError, action.payload.actionId))));
                         }),
                         startWith<any>(this.startedAction(<EntityActionTypeEnum>(action.type)),
                             this.removeDirtyAction(bizModel.id)));
@@ -162,7 +323,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     }
     //#endregion
 
-    //#region protected methods
+    //#region Protected methods
 
     protected insertEntity(bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean = false): string {
         const actionId = new ObjectID().toHexString();
@@ -209,10 +370,13 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
         }
     }
 
+    protected search(bizModel: U, searchKey: any): boolean {
+        return false;
+    }
+
     //#endregion
 
-    //#region private methods
-
+    //#region Private methods
 
     private isDirtyExist(dirtyId: string, dirtyType: DirtyTypeEnum): boolean {
         let found = false;
@@ -282,22 +446,39 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region Public methdos
 
-    public fetch(): string {
-        return this.loadEntities();
+    public add(biz: U, files: Map<string, FileUploader> = null): Observable<U> {
+        const actionId = this.insertEntity(biz, files);
+
+        return this.getById(this._store, biz.id).pipe(
+            filter((found) => !!found),
+            race(this._errorService.getActionError$(actionId).pipe(
+                map((err) => {
+                    throw err;
+                })))
+        );
     }
 
-    public add(biz: U, files: Map<string, FileUploader> = null): string {
-        return this.insertEntity(biz, files);
+    public change(biz: U, files: Map<string, FileUploader> = null): Observable<U> {
+        const actionId = this.updateEntity(biz, files);
+
+        return this.getById(this._store, biz.id).pipe(
+            race(this._errorService.getActionError$(actionId).pipe(
+                map((err) => {
+                    throw err;
+                })))
+        );
     }
 
-    public change(biz: U, files: Map<string, FileUploader> = null): string {
-        return this.updateEntity(biz, files);
-    }
-
-    public remove(biz: U): string {
+    public remove(biz: U): Observable<U> {
         const actionId = this.deleteEntity(biz);
-        if (!actionId) { throw new Error(`Missing Action Id!`); }
-        return actionId;
+
+        return this.getById(this._store, biz.id).pipe(
+            filter((found) => !found),
+            race(this._errorService.getActionError$(actionId).pipe(
+                map((err) => {
+                    throw err;
+                })))
+        );
     }
 
     public addById(id: string) {

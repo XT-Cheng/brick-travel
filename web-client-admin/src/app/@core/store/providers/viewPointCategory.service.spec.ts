@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 import { initTest } from '../../../../test';
 import { ErrorService } from './error.service';
 import { ViewPointCategoryService } from './viewPointCategory.service';
-import { IError } from '../error/error.model';
 
 const url = 'http://localhost:3000/viewPointCategories';
 
@@ -22,20 +21,6 @@ const errorData = {
     statusText: 'Not Found'
 };
 
-const backendError: IError = {
-    network: false,
-    description: 'error happened',
-    stack: '',
-    actionId: ''
-};
-
-const networkError: IError = {
-    network: true,
-    description: '',
-    stack: '',
-    actionId: ''
-};
-
 let service: ViewPointCategoryService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
@@ -45,7 +30,7 @@ let error;
 
 describe('viwePoint Category test', () => {
     beforeEach(async () => {
-         await initTest();
+        await initTest();
 
         httpTestingController = TestBed.get(HttpTestingController);
         service = TestBed.get(ViewPointCategoryService);
@@ -86,7 +71,8 @@ describe('viwePoint Category test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
+            expect(error.description).toEqual('error happened');
         });
 
         it('#fetch() with network error', () => {
@@ -95,7 +81,7 @@ describe('viwePoint Category test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -114,7 +100,7 @@ describe('viwePoint Category test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#add() with network error', () => {
@@ -123,7 +109,7 @@ describe('viwePoint Category test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -149,7 +135,7 @@ describe('viwePoint Category test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([viewPointCategoryData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#change() with network error', () => {
@@ -158,7 +144,7 @@ describe('viwePoint Category test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([viewPointCategoryData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -184,7 +170,7 @@ describe('viwePoint Category test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([viewPointCategoryData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#delete() with network error', () => {
@@ -193,7 +179,7 @@ describe('viwePoint Category test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([viewPointCategoryData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 });

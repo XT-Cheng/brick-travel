@@ -106,21 +106,21 @@ describe('masterData test', () => {
             expect(error).toEqual(null);
         });
         it('#fetch() with backend error', () => {
-            service.fetch();
+            const actionId = service.fetch();
             const req = httpTestingController.expectOne(url);
             req.flush('error happened', errorData);
 
             expect(result).toEqual([[], [], []]);
-            expect(error).toEqual(backendError);
+            expect(error).toEqual({ ...backendError, actionId });
         });
 
         it('#fetch() with network error', () => {
-            service.fetch();
+            const actionId = service.fetch();
             const req = httpTestingController.expectOne(url);
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([[], [], []]);
-            expect(error).toEqual(networkError);
+            expect(error).toEqual({ ...networkError, actionId });
         });
     });
 });

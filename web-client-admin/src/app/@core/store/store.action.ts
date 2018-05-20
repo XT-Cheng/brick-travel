@@ -1,11 +1,13 @@
 import { FluxStandardAction } from 'flux-standard-action';
 
+import { IError } from './error/error.model';
+
 export interface IActionMetaInfo {
     progressing: boolean;
 }
 
 export interface IActionPayload {
-    error: any;
+    error: IError;
     actionId: string;
 }
 

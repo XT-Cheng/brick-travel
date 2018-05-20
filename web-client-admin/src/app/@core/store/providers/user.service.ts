@@ -20,22 +20,22 @@ import { IAppState, STORE_KEY } from '../store.model';
 import { userLoggedInAction } from '../ui/reducer/user.reducer';
 import { STORE_UI_KEY } from '../ui/ui.model';
 import { EntityService } from './entity.service';
+import { ErrorService } from './error.service';
 
 @Injectable()
 export class UserService extends EntityService<IUser, IUserBiz> {
-    //#region private member
+    //#region Private member
 
-    private _all$: BehaviorSubject<IUserBiz[]> = new BehaviorSubject([]);
     private _loggedIn$: BehaviorSubject<IUserBiz> = new BehaviorSubject(null);
     private _loggedIn: IUserBiz;
 
     //#endregion
 
     //#region Constructor
-    constructor(protected _http: HttpClient,
+    constructor(protected _http: HttpClient, protected _errorService: ErrorService,
         private _auth: AuthService, private _tokenService: TokenService, private _storage: Storage,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _store, EntityTypeEnum.USER, userSchema, `users`);
+        super(_http, _store, EntityTypeEnum.USER, userSchema, `users`, _errorService);
 
         this._auth.onTokenChange()
             .subscribe((token: AuthToken) => {
@@ -48,10 +48,6 @@ export class UserService extends EntityService<IUser, IUserBiz> {
                 }
             });
 
-        this.getAll(this._store).subscribe((value) => {
-            this._all$.next(value);
-        });
-
         this.getLoggedIn(this._store).subscribe((value) => {
             this._loggedIn = value;
             this._loggedIn$.next(value);
@@ -59,14 +55,7 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     }
     //#endregion
 
-    //#region implemented methods
-
-    //#endregion
-
-    //#region public methods
-    public get all$(): Observable<IUserBiz[]> {
-        return this._all$.asObservable();
-    }
+    //#region Public methods
 
     public get loggedIn$(): Observable<IUserBiz> {
         return this._loggedIn$;
@@ -79,26 +68,16 @@ export class UserService extends EntityService<IUser, IUserBiz> {
     public byId(id: string): IUserBiz {
         return denormalize(id, userSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
     }
-    //#region CRUD methods
 
     //#endregion
 
-    //#endregion
+    //#region Private methods
 
-    //#region Entities Selector
     private setCurrentUser(u: IUserBiz) {
         this._store.dispatch(this.succeededAction(EntityActionTypeEnum.LOAD, Object.assign({}, INIT_ENTITY_STATE,
             { users: { [u.id]: u } })));
 
         this._store.dispatch(userLoggedInAction(u));
-    }
-
-    private getAll(store: NgRedux<IAppState>): Observable<IUserBiz[]> {
-        return store.select<{ [id: string]: IUser }>([STORE_KEY.entities, STORE_ENTITIES_KEY.users]).pipe(
-            map((data) => {
-                return denormalize(Object.keys(data), [userSchema], Immutable(store.getState().entities).asMutable({ deep: true }));
-            })
-        );
     }
 
     private getLoggedIn(store: NgRedux<IAppState>): Observable<IUserBiz> {

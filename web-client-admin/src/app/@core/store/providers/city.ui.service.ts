@@ -11,24 +11,13 @@ import { UIService } from './ui.service';
 
 @Injectable()
 export class CityUIService extends UIService<ICity, ICityBiz> {
-    //#region Private members
 
     //#region Constructor
 
     constructor(protected _store: NgRedux<IAppState>, protected _filterCategoryService: FilterCategoryService) {
         super(_store, EntityTypeEnum.CITY, STORE_UI_KEY.city, _filterCategoryService);
     }
-    //#endregion
-
-    //#region Public property
 
     //#endregion
 
-    //#region Public methods
-
-    //#endregion
-
-    //#region Private methods
-
-    //#endregion
 }

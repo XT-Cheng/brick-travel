@@ -23,6 +23,8 @@ export abstract class UIService<T extends IEntity, U extends IBiz> {
     private _selectAction;
     private _filterAction;
 
+    //#endregion
+
     //#region Constructor
 
     constructor(protected _store: NgRedux<IAppState>, protected _entityType: EntityTypeEnum,
@@ -43,6 +45,7 @@ export abstract class UIService<T extends IEntity, U extends IBiz> {
             this._filters$.next(value);
         });
     }
+
     //#endregion
 
     //#region Public property

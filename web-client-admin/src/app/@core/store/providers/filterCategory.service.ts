@@ -2,47 +2,29 @@ import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { denormalize } from 'normalizr';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { combineLatest, map } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { FilterTypeEnum, IFilterCategoryBiz } from '../bizModel/model/filterCategory.biz.model';
-import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
+import { EntityTypeEnum } from '../entity/entity.model';
 import { filterCategorySchema } from '../entity/entity.schema';
 import { IFilterCategory } from '../entity/model/filterCategory.model';
-import { IAppState, STORE_KEY } from '../store.model';
+import { IAppState } from '../store.model';
 import { EntityService } from './entity.service';
+import { ErrorService } from './error.service';
 
 @Injectable()
 export class FilterCategoryService extends EntityService<IFilterCategory, IFilterCategoryBiz> {
-    //#region private member
-
-    private _all$: BehaviorSubject<IFilterCategoryBiz[]> = new BehaviorSubject([]);
-    private _all: IFilterCategoryBiz[] = [];
-
-    //#endregion
 
     //#region Constructor
-    constructor(protected _http: HttpClient,
+    constructor(protected _http: HttpClient, protected _errorService: ErrorService,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _store, EntityTypeEnum.FILTERCATEGORY, filterCategorySchema, `filterCategories`);
-
-        this.getAll(this._store).subscribe((value) => {
-            this._all = value;
-            this._all$.next(value);
-        });
+        super(_http, _store, EntityTypeEnum.FILTERCATEGORY, filterCategorySchema, `filterCategories`, _errorService);
     }
     //#endregion
 
-    //#region implemented methods
-
-    //#endregion
-
-    //#region public methods
-    public get all$(): Observable<IFilterCategoryBiz[]> {
-        return this._all$.asObservable();
-    }
+    //#region Public methods
 
     public byType(type: FilterTypeEnum): IFilterCategoryBiz[] {
         return this._all.filter((cat) => cat.filterType === type);
@@ -60,22 +42,9 @@ export class FilterCategoryService extends EntityService<IFilterCategory, IFilte
         );
     }
 
-    //#region CRUD methods
-
     //#endregion
 
-    //#endregion
-
-    //#region Entities Selector
-
-    private getAll(store: NgRedux<IAppState>): Observable<IFilterCategoryBiz[]> {
-        return store.select<{ [id: string]: IFilterCategory }>([STORE_KEY.entities, STORE_ENTITIES_KEY.filterCategories]).pipe(
-            map((data) => {
-                return denormalize(Object.keys(data), [filterCategorySchema],
-                    Immutable(store.getState().entities).asMutable({ deep: true }));
-            })
-        );
-    }
+    //#region Private methods
 
     private buildCurrentFilterCategories(checkIds: string[], categories: IFilterCategoryBiz[]) {
         categories.forEach(category => {

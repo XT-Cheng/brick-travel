@@ -28,10 +28,12 @@ import { TravelAgendaService } from './travelAgenda.service';
 
 @Injectable()
 export class DataFlushService {
-    //#region private members
+
+    //#region Private members
 
     private _dirtyIds$: BehaviorSubject<any> = new BehaviorSubject(null);
     private _stateRestored$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
+
     //#endregion
 
     //#region Actions
@@ -44,15 +46,18 @@ export class DataFlushService {
     //#endregion
 
     //#region Constructor
+
     constructor(private _travelAgendaService: TravelAgendaService, private _cityService: CityService,
         private _storage: Storage, private _store: NgRedux<IAppState>) {
         this.getDirtyIds(this._store).subscribe((value) => {
             this._dirtyIds$.next(value);
         });
     }
+
     //#endregion
 
     //#region Epic
+
     public createEpic(): any[] {
         return [this.createFlushEpic()];
     }
@@ -73,6 +78,7 @@ export class DataFlushService {
     //#endregion
 
     //#region Public methods
+
     public get dirtyIds$(): Observable<any> {
         return this._dirtyIds$.asObservable();
     }
@@ -96,9 +102,11 @@ export class DataFlushService {
     public isStateRestored(): Observable<boolean> {
         return this._stateRestored$.pipe(filter(value => !!value));
     }
+
     //#endregion
 
     //#region Private methods
+
     private getDirtyIds(store: NgRedux<IAppState>): Observable<any> {
         return store.select<any>([STORE_KEY.dirties, STORE_DIRTIES_KEY.dirtyIds]).pipe(
             map((data) => {
@@ -148,4 +156,5 @@ export class DataFlushService {
     }
 
     //#endregion
+
 }

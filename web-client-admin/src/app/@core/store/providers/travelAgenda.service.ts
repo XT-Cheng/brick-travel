@@ -2,11 +2,11 @@ import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { denormalize, normalize } from 'normalizr';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { combineLatest, map, switchMap } from 'rxjs/operators';
+import { filter, map, race } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
+import { FileUploader } from '../../fileUpload/providers/file-uploader';
 import {
     IDailyTripBiz,
     ITravelAgendaBiz,
@@ -17,62 +17,33 @@ import {
 import { IViewPointBiz } from '../bizModel/model/viewPoint.biz.model';
 import { DirtyTypeEnum } from '../dirty/dirty.action';
 import { EntityActionTypeEnum } from '../entity/entity.action';
-import { EntityTypeEnum, INIT_ENTITY_STATE, STORE_ENTITIES_KEY } from '../entity/entity.model';
+import { EntityTypeEnum, INIT_ENTITY_STATE } from '../entity/entity.model';
 import { dailyTripSchema, travelAgendaSchema, travelViewPointSchema } from '../entity/entity.schema';
 import { ITravelAgenda } from '../entity/model/travelAgenda.model';
-import { IAppState, STORE_KEY } from '../store.model';
-import { STORE_UI_COMMON_KEY, STORE_UI_KEY } from '../ui/ui.model';
+import { IAppState } from '../store.model';
 import { EntityService } from './entity.service';
+import { ErrorService } from './error.service';
 import { TransportationCategoryService } from './transportationCategory.service';
 import { TravelAgendaUIService } from './travelAgenda.ui.service';
 
 @Injectable()
 export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAgendaBiz> {
-    //#region private member
-
-    private _all$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject([]);
-
-    private _selected: ITravelAgendaBiz;
-    private _selected$: BehaviorSubject<ITravelAgendaBiz> = new BehaviorSubject(null);
-
-    private _searched: ITravelAgendaBiz[];
-    private _searched$: BehaviorSubject<ITravelAgendaBiz[]> = new BehaviorSubject(null);
-
-    //#endregion
-
-    //#region insert actions
-    // private insertDataAction = entityActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
-
-    //#endregion
-
-    //#region insert actions
-
-    // private updateDataAction = entityActionSucceeded(EntityTypeEnum.TRAVELAGENDA);
-
-    //#endregion
 
     //#region Constructor
-    constructor(protected _http: HttpClient, private _transportationCategoryService: TransportationCategoryService,
+    constructor(protected _http: HttpClient, protected _errorService: ErrorService,
+        private _transportationCategoryService: TransportationCategoryService,
         private _travelAgendaUISrv: TravelAgendaUIService,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _store, EntityTypeEnum.TRAVELAGENDA, travelAgendaSchema, `travelAgendas`);
-
-        this.getSelected(this._store).subscribe((value) => {
-            this._selected = value;
-            this._selected$.next(value);
-        });
-
-        this.getSearched(this._store).subscribe((value) => {
-            this._searched$.next(value);
-        });
-
-        this.getAll(this._store).subscribe((value) => {
-            this._all$.next(value);
-        });
+        super(_http, _store, EntityTypeEnum.TRAVELAGENDA, travelAgendaSchema, `travelAgendas`, _errorService, _travelAgendaUISrv);
     }
     //#endregion
 
-    //#region implemented methods
+    //#region Protected methods
+
+    protected search(bizModel: ITravelAgendaBiz, searchKey: any): boolean {
+        return bizModel.name.indexOf(searchKey) !== -1;
+    }
+
     protected beforeSend(bizModel: ITravelAgendaBiz) {
         return {
             id: bizModel.id,
@@ -130,21 +101,40 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
     }
     //#endregion
 
-    //#region public methods
-    public get selected$(): Observable<ITravelAgendaBiz> {
-        return this._selected$.asObservable();
+    //#region Public methods
+    public add(biz: ITravelAgendaBiz, files: Map<string, FileUploader> = null): Observable<ITravelAgendaBiz> {
+        const actionId = this.insertEntity(biz, files, true);
+
+        return this.getById(this._store, biz.id).pipe(
+            filter((found) => !!found),
+            race(this._errorService.getActionError$(actionId).pipe(
+                map((err) => {
+                    throw err;
+                })))
+        );
     }
 
-    public get selected(): ITravelAgendaBiz {
-        return this._selected;
+    public change(biz: ITravelAgendaBiz, files: Map<string, FileUploader> = null): Observable<ITravelAgendaBiz> {
+        const actionId = this.updateEntity(biz, files, true);
+
+        return this.getById(this._store, biz.id).pipe(
+            race(this._errorService.getActionError$(actionId).pipe(
+                map((err) => {
+                    throw err;
+                })))
+        );
     }
 
-    public get searched$(): Observable<ITravelAgendaBiz[]> {
-        return this._searched$.asObservable();
-    }
+    public remove(biz: ITravelAgendaBiz): Observable<ITravelAgendaBiz> {
+        const actionId = this.deleteEntity(biz, true);
 
-    public byId(id: string): ITravelAgendaBiz {
-        return denormalize(id, travelAgendaSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
+        return this.getById(this._store, biz.id).pipe(
+            filter((found) => !found),
+            race(this._errorService.getActionError$(actionId).pipe(
+                map((err) => {
+                    throw err;
+                })))
+        );
     }
 
     public dailyTripById(id: string): IDailyTripBiz {
@@ -153,23 +143,6 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
     public travelViewPointById(id: string): ITravelViewPointBiz {
         return denormalize(id, travelViewPointSchema, Immutable(this._store.getState().entities).asMutable({ deep: true }));
-    }
-
-    public get all$(): Observable<ITravelAgendaBiz[]> {
-        return this._all$.asObservable();
-    }
-
-    //#region CRUD methods
-    public add(travelAgenda: ITravelAgendaBiz): string {
-        return this.insertEntity(travelAgenda, null, true);
-    }
-
-    public change(travelAgenda: ITravelAgendaBiz): string {
-        return this.updateEntity(travelAgenda, null, true);
-    }
-
-    public remove(travelAgenda: ITravelAgendaBiz): string {
-        return this.deleteEntity(travelAgenda, true);
     }
 
     public addTravelViewPoint(viewPoint: IViewPointBiz, dailyTripId: string) {
@@ -211,48 +184,7 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
     //#endregion
 
-    //#endregion
-
-    //#region Entities Selector
-    private getSelectedId(store: NgRedux<IAppState>): Observable<string> {
-        return store.select<string>([STORE_KEY.ui, STORE_UI_KEY.travelAgenda, STORE_UI_COMMON_KEY.selectedId]);
-    }
-
-    private getSelected(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz> {
-        return this.getSelectedId(store).pipe(
-            switchMap(id => {
-                return store.select<ITravelAgenda>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas, id]);
-            }),
-            map(travelAgenda => {
-                return travelAgenda ? denormalize(travelAgenda.id, travelAgendaSchema,
-                    Immutable(store.getState().entities).asMutable({ deep: true })) : null;
-            })
-        );
-    }
-
-    private getSearched(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz[]> {
-        return this.all$.pipe(
-            combineLatest(this._travelAgendaUISrv.searchKey$, (travelAgendas, searchKey) => {
-                return travelAgendas.filter(v => {
-                    let matchSearchKey = true;
-                    if (searchKey !== '') {
-                        matchSearchKey = v.name.indexOf(searchKey) !== -1;
-                    }
-
-                    return matchSearchKey;
-                });
-            })
-        );
-    }
-
-    private getAll(store: NgRedux<IAppState>): Observable<ITravelAgendaBiz[]> {
-        return store.select<{ [id: string]: ITravelAgenda }>([STORE_KEY.entities, STORE_ENTITIES_KEY.travelAgendas]).pipe(
-            map((data) => {
-                return denormalize(Object.keys(data), [travelAgendaSchema],
-                    Immutable(store.getState().entities).asMutable({ deep: true }));
-            })
-        );
-    }
+    //#region Private methods
 
     private caculateDistance(dailyTrip: IDailyTripBiz) {
         for (let i = 0; i < dailyTrip.travelViewPoints.length; i++) {

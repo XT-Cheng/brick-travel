@@ -1,69 +1,39 @@
 import { NgRedux } from '@angular-redux/store';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { denormalize } from 'normalizr';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
-import * as Immutable from 'seamless-immutable';
 
 import { ITransportationCategoryBiz } from '../bizModel/model/travelAgenda.biz.model';
-import { EntityTypeEnum, STORE_ENTITIES_KEY } from '../entity/entity.model';
+import { EntityTypeEnum } from '../entity/entity.model';
 import { transportationCategorySchema } from '../entity/entity.schema';
 import { ITransportationCategory } from '../entity/model/travelAgenda.model';
-import { IAppState, STORE_KEY } from '../store.model';
+import { IAppState } from '../store.model';
 import { EntityService } from './entity.service';
+import { ErrorService } from './error.service';
 
 @Injectable()
 export class TransportationCategoryService extends EntityService<ITransportationCategory, ITransportationCategoryBiz> {
     //#region private member
 
-    private _all$: BehaviorSubject<ITransportationCategoryBiz[]> = new BehaviorSubject([]);
     private _default: ITransportationCategoryBiz;
 
     //#endregion
 
     //#region Constructor
-    constructor(protected _http: HttpClient,
+    constructor(protected _http: HttpClient, protected _errorService: ErrorService,
         protected _store: NgRedux<IAppState>) {
-        super(_http, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, transportationCategorySchema, `transportationCategories`);
+        super(_http, _store, EntityTypeEnum.TRANSPORTATIONCATEGORY, transportationCategorySchema,
+            `transportationCategories`, _errorService);
 
-        this.getAll(this._store).subscribe((value) => {
+        this.all$.subscribe((value) => {
             this._default = value.find(tpc => tpc.isDefault);
-            this._all$.next(value);
         });
     }
     //#endregion
 
-    //#region implemented methods
-
-    //#endregion
-
-    //#region public methods
-    public get all$(): Observable<ITransportationCategoryBiz[]> {
-        return this._all$.asObservable();
-    }
+    //#region Public methods
 
     public get default(): ITransportationCategoryBiz {
         return this._default;
-    }
-
-    //#region CRUD methods
-
-    //#endregion
-
-    //#endregion
-
-    //#region Entities Selector
-
-    private getAll(store: NgRedux<IAppState>): Observable<ITransportationCategoryBiz[]> {
-        return store.select<{ [id: string]: ITransportationCategory }>(
-            [STORE_KEY.entities, STORE_ENTITIES_KEY.transportationCatgories]).pipe(
-                map((data) => {
-                    return denormalize(Object.keys(data), [transportationCategorySchema],
-                        Immutable(store.getState().entities).asMutable({ deep: true }));
-                })
-            );
     }
 
     //#endregion

@@ -11,24 +11,13 @@ import { UIService } from './ui.service';
 
 @Injectable()
 export class TravelAgendaUIService extends UIService<ITravelAgenda, ITravelAgendaBiz> {
-    //#region Private members
 
     //#region Constructor
 
     constructor(protected _store: NgRedux<IAppState>, protected _filterCategoryService: FilterCategoryService) {
         super(_store, EntityTypeEnum.TRAVELAGENDA, STORE_UI_KEY.travelAgenda, _filterCategoryService);
     }
-    //#endregion
-
-    //#region Public property
 
     //#endregion
 
-    //#region Public methods
-
-    //#endregion
-
-    //#region Private methods
-
-    //#endregion
 }

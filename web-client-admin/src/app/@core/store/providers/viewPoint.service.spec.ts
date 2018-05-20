@@ -2,7 +2,6 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
-import { IError } from '../error/error.model';
 import { ErrorService } from './error.service';
 import { ViewPointService } from './viewPoint.service';
 
@@ -66,20 +65,6 @@ const errorData = {
     statusText: 'Not Found'
 };
 
-const backendError: IError = {
-    network: false,
-    description: 'error happened',
-    stack: '',
-    actionId: ''
-};
-
-const networkError: IError = {
-    network: true,
-    description: '',
-    stack: '',
-    actionId: ''
-};
-
 let service: ViewPointService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
@@ -130,7 +115,8 @@ describe('viewPoint test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
+            expect(error.description).toEqual('error happened');
         });
 
         it('#fetch() with network error', () => {
@@ -139,7 +125,7 @@ describe('viewPoint test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -158,7 +144,7 @@ describe('viewPoint test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#add() with network error', () => {
@@ -167,7 +153,7 @@ describe('viewPoint test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -193,7 +179,7 @@ describe('viewPoint test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([viewPointData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#change() with network error', () => {
@@ -202,7 +188,7 @@ describe('viewPoint test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([viewPointData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -228,7 +214,7 @@ describe('viewPoint test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([viewPointData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#delete() with network error', () => {
@@ -237,7 +223,7 @@ describe('viewPoint test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([viewPointData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 });

@@ -11,7 +11,6 @@ import { UIService } from './ui.service';
 
 @Injectable()
 export class ViewPointUIService extends UIService<IViewPoint, IViewPointBiz> {
-    //#region Private members
 
     //#region Constructor
 
@@ -20,15 +19,4 @@ export class ViewPointUIService extends UIService<IViewPoint, IViewPointBiz> {
     }
     //#endregion
 
-    //#region Public property
-
-    //#endregion
-
-    //#region Public methods
-
-    //#endregion
-
-    //#region Private methods
-
-    //#endregion
 }

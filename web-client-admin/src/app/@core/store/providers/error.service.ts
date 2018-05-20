@@ -2,7 +2,7 @@ import { NgRedux } from '@angular-redux/store';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { IError, STORE_ERRORS_KEY } from '../error/error.model';
@@ -10,7 +10,7 @@ import { IAppState, STORE_KEY } from '../store.model';
 
 @Injectable()
 export class ErrorService {
-    //#region private member
+    //#region Private member
 
     private _lastError$: BehaviorSubject<IError> = new BehaviorSubject(null);
 
@@ -24,7 +24,7 @@ export class ErrorService {
     }
     //#endregion
 
-    //#region public methods
+    //#region Public methods
 
     public get lastError$(): Observable<IError> {
         return this._lastError$.asObservable();
@@ -40,7 +40,8 @@ export class ErrorService {
 
                 return null;
             }),
-            filter((value) => !!value)
+            filter((value) => !!value),
+            take(1)
         );
     }
 

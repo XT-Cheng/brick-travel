@@ -1,5 +1,5 @@
 import { NgRedux } from '@angular-redux/store';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ObjectID } from 'bson';
 import { normalize, schema } from 'normalizr';
 import { Epic } from 'redux-observable';
@@ -38,25 +38,13 @@ export abstract class FetchService {
 
     //#region Actions
 
-    //#region Entity Actions
-
     protected startedAction = entityActionStarted(this._entityType);
 
     protected succeededAction = entityActionSucceeded(this._entityType);
 
     protected failedAction = entityActionFailed(this._entityType);
 
-    //#endregion
-
-    //#region load actions
-
     protected loadAction = entityLoadAction(this._entityType);
-
-    //#endregion
-
-    //#endregion
-
-    //#region UI Actions
 
     //#endregion
 
@@ -73,8 +61,8 @@ export abstract class FetchService {
                     && action.payload.phaseType === EntityActionPhaseEnum.TRIGGER),
                 mergeMap(action => this.load(action.payload.pagination, action.payload.queryCondition).pipe(
                     map(data => this.succeededAction(EntityActionTypeEnum.LOAD, data)),
-                    catchError((errResponse: HttpErrorResponse) => {
-                        return of(this.failedAction(EntityActionTypeEnum.LOAD, errResponse.error, action.payload.actionId));
+                    catchError((errResponse: any) => {
+                        return of(this.failedAction(EntityActionTypeEnum.LOAD, errResponse.actionError, action.payload.actionId));
                     }),
                     startWith(this.startedAction(EntityActionTypeEnum.LOAD)))
                 ));
@@ -82,11 +70,11 @@ export abstract class FetchService {
 
     //#endregion
 
-    //#region public methods
+    //#region Public methods
 
     //#endregion
 
-    //#region protected methods
+    //#region Protected methods
 
     protected loadEntities(pagination: IPagination = { page: this.DEFAULT_PAGE, limit: this.DEFAULT_LIMIT },
         queryCondition: IQueryCondition = {}): string {
@@ -118,7 +106,7 @@ export abstract class FetchService {
 
     //#endregion
 
-    //#region private methods
+    //#region Private methods
     private load(pagination: IPagination, queryCondition: IQueryCondition): Observable<IEntities> {
         return this._http.get(`${WEBAPI_HOST}/${this._url}`).pipe(
             map(records => {
@@ -127,6 +115,13 @@ export abstract class FetchService {
         );
     }
 
+    //#endregion
+
+    //#region Public methods
+
+    public fetch(): string {
+        return this.loadEntities();
+    }
 
     //#endregion
 }

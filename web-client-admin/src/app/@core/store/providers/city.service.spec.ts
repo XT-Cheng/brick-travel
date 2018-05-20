@@ -3,7 +3,6 @@ import { getTestBed } from '@angular/core/testing';
 
 import { initTest } from '../../../../test';
 import { ICityBiz } from '../bizModel/model/city.biz.model';
-import { IError } from '../error/error.model';
 import { CityService } from './city.service';
 import { ErrorService } from './error.service';
 
@@ -25,26 +24,12 @@ const errorData = {
     statusText: 'Not Found'
 };
 
-const backendError: IError = {
-    network: false,
-    description: 'error happened',
-    stack: '',
-    actionId: ''
-};
-
-const networkError: IError = {
-    network: true,
-    description: '',
-    stack: '',
-    actionId: ''
-};
-
 let service: CityService;
 let errorService: ErrorService;
 let httpTestingController: HttpTestingController;
 
 let result;
-let error, actionError;
+let error; // actionError;
 
 describe('city test', () => {
     beforeEach(async () => {
@@ -89,7 +74,8 @@ describe('city test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
+            expect(error.description).toEqual('error happened');
         });
         it('#fetch() with network error', () => {
             service.fetch();
@@ -97,7 +83,7 @@ describe('city test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -111,31 +97,13 @@ describe('city test', () => {
         });
 
         it('#add() with backend error', () => {
-            let actionId = service.add(cityData);
-            let req = httpTestingController.expectOne(url);
-
-            errorService.getActionError$(actionId).subscribe((e) => {
-                actionError = e;
-            });
+            service.add(cityData);
+            const req = httpTestingController.expectOne(url);
 
             req.flush('error happened', errorData);
 
             expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
-            expect(actionError.actionId).toEqual(actionId);
-
-            actionId = service.add(cityData);
-            req = httpTestingController.expectOne(url);
-
-            req.flush('error happened', errorData);
-
-            errorService.getActionError$(actionId).subscribe((e) => {
-                actionError = e;
-            });
-
-            expect(result).toEqual([]);
-            expect(error).toEqual(backendError);
-            expect(actionError.actionId).toEqual(actionId);
+            expect(error.network).toBeFalsy();
         });
 
         it('#add() with network error', () => {
@@ -144,7 +112,7 @@ describe('city test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -171,7 +139,7 @@ describe('city test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([cityData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#change() with network error', () => {
@@ -180,7 +148,7 @@ describe('city test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([cityData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 
@@ -207,7 +175,7 @@ describe('city test', () => {
             req.flush('error happened', errorData);
 
             expect(result).toEqual([cityData]);
-            expect(error).toEqual(backendError);
+            expect(error.network).toBeFalsy();
         });
 
         it('#delete() with network error', () => {
@@ -216,7 +184,7 @@ describe('city test', () => {
             req.error(new ErrorEvent('network error'));
 
             expect(result).toEqual([cityData]);
-            expect(error).toEqual(networkError);
+            expect(error.network).toBeTruthy();
         });
     });
 });
