@@ -70,11 +70,11 @@ export abstract class EntityFormComponent<T extends IEntity, U extends IBiz> {
         this._filesMap.set(key, uploader);
     }
 
-    public action(): void {
+    public async action() {
         if (this.mode === EntityFormMode.create) {
-            this._service.add(this._newEntity, this._filesMap);
+            return await this._service.add(this._newEntity, this._filesMap).toPromise();
         } else {
-            this._service.change(this._newEntity, this._filesMap);
+            return await this._service.change(this._newEntity, this._filesMap).toPromise();
         }
     }
 

@@ -27,6 +27,10 @@ export class CityService extends EntityService<ICity, ICityBiz> {
         return bizModel.name.indexOf(searchKey) !== -1;
     }
 
+    protected beforeSend(bizModel: ICityBiz): any {
+        return Object.assign({}, bizModel, {thumbnail: ''});
+    }
+
     //#endregion
 
 }

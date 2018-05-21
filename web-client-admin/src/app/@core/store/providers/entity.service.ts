@@ -6,7 +6,19 @@ import { Epic } from 'redux-observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { catchError, combineLatest, concat, filter, map, mergeMap, race, startWith, switchMap } from 'rxjs/operators';
+import {
+    catchError,
+    combineLatest,
+    concat,
+    filter,
+    map,
+    mapTo,
+    mergeMap,
+    race,
+    startWith,
+    switchMap,
+    take,
+} from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 import { isArray } from 'util';
 
@@ -95,7 +107,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     //#region Entity Selector
 
     protected getById(store: NgRedux<IAppState>, id: string): Observable<U> {
-        return store.select<T>([STORE_KEY.ui, getEntityKey(this._entityType), id]).pipe(
+        return store.select<T>([STORE_KEY.entities, getEntityKey(this._entityType), id]).pipe(
             map(ct => {
                 return ct ? denormalize(ct.id, this._entitySchema, Immutable(store.getState().entities).asMutable({ deep: true })) : null;
             })
@@ -325,31 +337,60 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
     //#region Protected methods
 
-    protected insertEntity(bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean = false): string {
+    protected insertEntity(bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean = false): Observable<U> {
         const actionId = new ObjectID().toHexString();
         this._store.dispatch(this.insertAction(bizModel.id, bizModel, files, dirtyMode, actionId));
-        return actionId;
+
+        return this.getById(this._store, bizModel.id).pipe(
+            filter((found) => !!found),
+            race(this._errorService.getActionError$(actionId).pipe(
+                map((err) => {
+                    throw err;
+                }))),
+            take(1)
+        );
     }
 
-    protected updateEntity(bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean = false): string {
+    protected updateEntity(bizModel: U, files: Map<string, FileUploader>, dirtyMode: boolean = false): Observable<U> {
         if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
             return this.insertEntity(bizModel, files, dirtyMode);
         } else {
             const actionId = new ObjectID().toHexString();
             this._store.dispatch(this.updateAction(bizModel.id, bizModel, files, dirtyMode, actionId));
-            return actionId;
+
+            return this.getById(this._store, bizModel.id).pipe(
+                race(this._errorService.getActionError$(actionId).pipe(
+                    map((err) => {
+                        throw err;
+                    }))),
+                take(1)
+            );
         }
     }
 
-    protected deleteEntity(bizModel: U | IBiz, dirtyMode: boolean = false): string {
+    protected deleteEntity(bizModel: U | IBiz, dirtyMode: boolean = false): Observable<U> {
         if (dirtyMode && this.isDirtyExist(bizModel.id, DirtyTypeEnum.CREATED)) {
             const entities = normalize(this.afterReceiveInner(<U>bizModel), this._entitySchema).entities;
             this._store.dispatch(this.removeDirtyAction(bizModel.id));
             this._store.dispatch(this.succeededAction(<EntityActionTypeEnum>(EntityActionTypeEnum.DELETE), entities));
+
+            return this.getById(this._store, bizModel.id).pipe(
+                filter((found) => !found),
+                mapTo(<U>bizModel),
+                take(1));
         } else {
             const actionId = new ObjectID().toHexString();
             this._store.dispatch(this.deleteAction(bizModel.id, <U>bizModel, dirtyMode, actionId));
-            return actionId;
+
+            return this.getById(this._store, bizModel.id).pipe(
+                filter((found) => !found),
+                mapTo(<U>bizModel),
+                race(this._errorService.getActionError$(actionId).pipe(
+                    map((err) => {
+                        throw err;
+                    }))),
+                take(1)
+            );
         }
     }
 
@@ -447,38 +488,15 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     //#region Public methdos
 
     public add(biz: U, files: Map<string, FileUploader> = null): Observable<U> {
-        const actionId = this.insertEntity(biz, files);
-
-        return this.getById(this._store, biz.id).pipe(
-            filter((found) => !!found),
-            race(this._errorService.getActionError$(actionId).pipe(
-                map((err) => {
-                    throw err;
-                })))
-        );
+        return this.insertEntity(biz, files);
     }
 
     public change(biz: U, files: Map<string, FileUploader> = null): Observable<U> {
-        const actionId = this.updateEntity(biz, files);
-
-        return this.getById(this._store, biz.id).pipe(
-            race(this._errorService.getActionError$(actionId).pipe(
-                map((err) => {
-                    throw err;
-                })))
-        );
+        return this.updateEntity(biz, files);
     }
 
     public remove(biz: U): Observable<U> {
-        const actionId = this.deleteEntity(biz);
-
-        return this.getById(this._store, biz.id).pipe(
-            filter((found) => !found),
-            race(this._errorService.getActionError$(actionId).pipe(
-                map((err) => {
-                    throw err;
-                })))
-        );
+        return this.deleteEntity(biz);
     }
 
     public addById(id: string) {

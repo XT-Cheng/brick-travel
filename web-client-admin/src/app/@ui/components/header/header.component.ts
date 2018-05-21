@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(private _sidebarService: NbSidebarService,
     private _renderer: Renderer2,
-    protected _userService: UserService,
+    public _userService: UserService,
     private _searchService: SearchService,
     protected _router: Router) {
   }

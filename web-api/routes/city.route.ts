@@ -43,7 +43,7 @@ export class CityRoute {
         }
 
         await CityModel.updateCity(city);
-        res.json(city);
+        res.json([city]);
     }
 
     private static async load(req: Request, res: Response, next: NextFunction) {
@@ -55,16 +55,13 @@ export class CityRoute {
         let city = JSON.parse(req.body.cities);
         city.thumbnail = `assets/img/${req.files[0].filename}`;
         await CityModel.createCities(city);
-        res.json(city);
+        res.json([city]);
     }
 
     private static async delete(req: Request, res: Response, next: NextFunction) {
         let city = await CityModel.findById(req.params.id);
         await CityModel.deleteCity(req.params.id);
         res.json([city]);
-        // res.statusCode = 500;
-        // res.statusMessage = 'Error happened';
-        // res.json('Errors!');
     }
 
 }

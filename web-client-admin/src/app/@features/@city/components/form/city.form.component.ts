@@ -71,6 +71,14 @@ export class CityFormComponent extends EntityFormComponent<ICity, ICityBiz> {
     reader.readAsDataURL(fileItems[0]._file);
   }
 
+  createOrUpdate() {
+    this.action().then((ret) => {
+      this._toasterService.pop('success', 'Success', `City ${this.newEntity.name} created`);
+      this.close();
+    }, (err) => {
+      this._toasterService.pop('error', 'Error', `Can't create city, pls try later`);
+    });
+  }
   //#endregion
 
   //#region Private method

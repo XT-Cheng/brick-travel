@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { denormalize, normalize } from 'normalizr';
 import { Observable } from 'rxjs/Observable';
-import { filter, map, race } from 'rxjs/operators';
 import * as Immutable from 'seamless-immutable';
 
 import { FileUploader } from '../../fileUpload/providers/file-uploader';
@@ -103,38 +102,15 @@ export class TravelAgendaService extends EntityService<ITravelAgenda, ITravelAge
 
     //#region Public methods
     public add(biz: ITravelAgendaBiz, files: Map<string, FileUploader> = null): Observable<ITravelAgendaBiz> {
-        const actionId = this.insertEntity(biz, files, true);
-
-        return this.getById(this._store, biz.id).pipe(
-            filter((found) => !!found),
-            race(this._errorService.getActionError$(actionId).pipe(
-                map((err) => {
-                    throw err;
-                })))
-        );
+        return this.insertEntity(biz, files, true);
     }
 
     public change(biz: ITravelAgendaBiz, files: Map<string, FileUploader> = null): Observable<ITravelAgendaBiz> {
-        const actionId = this.updateEntity(biz, files, true);
-
-        return this.getById(this._store, biz.id).pipe(
-            race(this._errorService.getActionError$(actionId).pipe(
-                map((err) => {
-                    throw err;
-                })))
-        );
+        return this.updateEntity(biz, files, true);
     }
 
     public remove(biz: ITravelAgendaBiz): Observable<ITravelAgendaBiz> {
-        const actionId = this.deleteEntity(biz, true);
-
-        return this.getById(this._store, biz.id).pipe(
-            filter((found) => !found),
-            race(this._errorService.getActionError$(actionId).pipe(
-                map((err) => {
-                    throw err;
-                })))
-        );
+        return this.deleteEntity(biz, true);
     }
 
     public dailyTripById(id: string): IDailyTripBiz {

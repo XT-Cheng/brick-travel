@@ -67,19 +67,17 @@ export abstract class EntityListComponent<T extends IEntity, U extends IBiz> imp
         activeModal.componentInstance.mode = EntityFormMode.edit;
     }
 
-    deleteEntity(entity: U, name: string) {
+    async deleteEntity(entity: U, name: string) {
         const activeModal = this._modalService.open(ModalComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
         activeModal.componentInstance.modalHeader = `Confrim`;
         activeModal.componentInstance.modalContent = `Delete ${name}, are you sure?`;
 
-        activeModal.result.then((result) => {
-            const actionId = this._service.remove(entity);
-            this._errorService.getActionError$(actionId).subscribe((error) => {
-                this._toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
-            });
-        }, (cancel) => {
-            // do nothing
-        });
+        try {
+            await activeModal.result;
+        } catch {
+            return;
+        }
+        return await this._service.remove(entity).toPromise();
     }
 
     createEntity() {

@@ -1,4 +1,5 @@
-2018/4/12
-    1. Finish ViewPoint form    Done
-2018/4/13
-    1. Change share code mode   Done
+2018/5/21
+    1. Change ViewPoint Form and List;
+    2. Check why sometimes City Form'name input lost focus;
+    3. Finish TravelAgenda List;
+    4. Start TravelAgenda Form;

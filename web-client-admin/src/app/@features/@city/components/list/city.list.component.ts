@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
-import { filter } from 'rxjs/operators';
 
 import { ICityBiz, newCity } from '../../../../@core/store/bizModel/model/city.biz.model';
 import { ICity } from '../../../../@core/store/entity/model/city.model';
@@ -27,7 +26,7 @@ export class CityListComponent extends EntityListComponent<ICity, ICityBiz> {
   //#region Constructor
   constructor(protected _route: ActivatedRoute, protected _cityUIService: CityUIService,
     protected _errorService: ErrorService,
-    protected _searchService: SearchService, protected _modalService: NgbModal, protected _cityService: CityService,
+    protected _searchService: SearchService, protected _modalService: NgbModal, public _cityService: CityService,
     protected _toasterService: ToasterService) {
     super(_route, _cityUIService, _errorService, _searchService, _modalService, _cityService, _toasterService);
   }
@@ -54,20 +53,14 @@ export class CityListComponent extends EntityListComponent<ICity, ICityBiz> {
   }
 
   delete(city: ICityBiz) {
-    this.deleteEntity(city, city.name);
-    this._cityService.all$.pipe(
-      filter((cities) => {
-        return !cities.some((value) => value.id === city.id);
-      })
-    ).subscribe(() => this._toasterService.pop('success', 'Success', `City ${city.name} deleted`));
+    this.deleteEntity(city, city.name).then((ret) => {
+      if (ret) {
+        this._toasterService.pop('success', 'Success', `City ${city.name} deleted`);
+      }
+    }, (err) => {
+      this._toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
+    });
   }
 
-  // this._cityService.deleteCity(city).subscribe((ret: Error | ICityBiz) => {
-  //   if (ret instanceof Error) {
-  //     this.toasterService.pop('error', 'Error', `Can't delete city, pls try later`);
-  //   } else {
-  //     this.toasterService.pop('success', 'Success', `City ${city.name} deleted`);
-  //   }
-  // });
   //#endregion
 }

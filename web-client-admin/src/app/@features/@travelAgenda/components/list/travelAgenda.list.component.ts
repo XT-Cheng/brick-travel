@@ -24,7 +24,7 @@ import { ComponentType } from '../../../../page.component';
 export class TravelAgendaListComponent implements ComponentType, OnInit, OnDestroy {
   //#region Private members
 
-  private _travelAgendas$: Observable<ITravelAgendaBiz[]>;
+  public _travelAgendas$: Observable<ITravelAgendaBiz[]>;
 
   //#endregion
 
@@ -37,7 +37,7 @@ export class TravelAgendaListComponent implements ComponentType, OnInit, OnDestr
   //#region Constructor
   constructor(private _route: ActivatedRoute,
     private _searchService: SearchService, private _modalService: NgbModal, private _viewPointService: ViewPointService,
-    private _travelAgendaService: TravelAgendaService, private _travelAgendaUIService: TravelAgendaUIService,
+    public _travelAgendaService: TravelAgendaService, private _travelAgendaUIService: TravelAgendaUIService,
     private _toasterService: ToasterService) {
     this._travelAgendas$ = this._travelAgendaService.all$;
     this._travelAgendaService.fetch();

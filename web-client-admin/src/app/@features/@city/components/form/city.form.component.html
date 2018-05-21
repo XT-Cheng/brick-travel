@@ -18,7 +18,7 @@
         <div *ngIf='!hasFile()'>Drop File</div>
         <img *ngIf='hasFile()' [src]='newEntity.thumbnail' />
       </div>
-      <button (click)='action()' type="button" [disabled]="isSubmitDisAllowed(form)" class="btn btn-primary">Submit</button>
+      <button (click)='createOrUpdate()' type="button" [disabled]="isSubmitDisAllowed(form)" class="btn btn-primary">Submit</button>
       <button (click)='close()' type="button" class="btn btn-danger">Close</button>
     </form>
 
