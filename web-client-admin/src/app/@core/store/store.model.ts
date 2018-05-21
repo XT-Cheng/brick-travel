@@ -10,6 +10,7 @@ export enum STORE_KEY {
     dirties = 'dirties'
 }
 
+
 export interface IAppState {
     entities: IEntities;
     dirties: IDirties;
