@@ -1,6 +1,2 @@
-2018/5/21
-    1. Change ViewPoint Form and List; Done
-    2. Check why sometimes City Form'name input lost focus; Done
-    3. Finish TravelAgenda List; Done
-    4. No redirect after successfully logged in;
-    4. Start TravelAgenda Form;
+2018/5/22
+    1. TravelAgenda Component

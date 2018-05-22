@@ -34,8 +34,8 @@ export class HeaderComponent implements OnInit {
         this.user = user;
       });
 
-    this._searchService.onSearchSubmit().subscribe(({ term, tag }) => {
-      if (term !== '') {
+    this._searchService.onSearchKeyChanged().subscribe((change) => {
+      if (change.newValue !== '') {
         this._renderer.addClass(this.search.nativeElement, 'markable');
       } else {
         this._renderer.removeClass(this.search.nativeElement, 'markable');

@@ -1,5 +1,5 @@
 <div class="row">
-  <nb-card *ngFor='let city of (_cityService.all$ | async)' class='city-card'>
+  <nb-card *ngFor='let city of (_cityService.filteredAndSearched$ | async)' class='city-card'>
     <nb-card-body>
       <img [src]="city.thumbnail" />
       <div class="card-title">{{city.name}}</div>

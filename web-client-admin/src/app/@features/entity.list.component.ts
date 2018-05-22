@@ -16,9 +16,9 @@ import { ComponentType, EntityFormMode } from '../page.component';
 
 export abstract class EntityListComponent<T extends IEntity, U extends IBiz> implements ComponentType,
     OnInit, OnDestroy {
-    //#region Private members
+    //#region Protected members
 
-    private destroyed$: Subject<boolean> = new Subject();
+    protected destroyed$: Subject<boolean> = new Subject();
 
     //#endregion
 
@@ -53,10 +53,7 @@ export abstract class EntityListComponent<T extends IEntity, U extends IBiz> imp
     }
 
     ngOnInit(): void {
-        this._route.data.pipe(takeUntil(this.destroyed$))
-            .subscribe((data: { searchKey: string }) => {
-                this._searchService.currentSearchKey = this._uiService.searchKey;
-            });
+        this._searchService.currentSearchKey = this._uiService.searchKey;
     }
 
     editEntity(entity: U, name: string) {

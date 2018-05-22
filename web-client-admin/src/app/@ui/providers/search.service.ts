@@ -11,10 +11,15 @@ export class SearchService {
   private searchSubmittings$ = new Subject<{ term: string, tag?: string }>();
   private searchActivations$ = new Subject<{ searchType: string, tag?: string }>();
   private searchDeactivations$ = new Subject<{ searchType: string, tag?: string }>();
+  private searcKeyChanged$ = new Subject<{ oldValue: string, newValue: string }>();
 
   private _currentSearchKey: string;
 
   public set currentSearchKey(value: string) {
+    if (this._currentSearchKey !== value) {
+      this.searcKeyChanged$.next({ oldValue: this._currentSearchKey, newValue: value });
+    }
+
     this._currentSearchKey = value;
   }
 
@@ -71,5 +76,9 @@ export class SearchService {
    */
   onSearchSubmit(): Observable<{ term: string, tag?: string }> {
     return this.searchSubmittings$.pipe(share());
+  }
+
+  onSearchKeyChanged(): Observable<{ oldValue: string, newValue: string }> {
+    return this.searcKeyChanged$.asObservable();
   }
 }

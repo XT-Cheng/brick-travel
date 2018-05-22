@@ -175,12 +175,12 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
     private getFilteredAndSearched(store: NgRedux<IAppState>): Observable<U[]> {
         return this._uiService.filters$.pipe(
             combineLatest(this.all$, this._uiService.searchKey$,
-                (filterCategories, viewPoints, searchKey) => {
-                    return viewPoints.filter(vp => {
+                (filterCategories, bizModels, searchKey) => {
+                    return bizModels.filter(bizModel => {
                         const isFiltered = filterCategories.every(category => {
                             return category.criteries.every(criteria => {
                                 if (criteria.isChecked && FilterEx[category.filterFunction]) {
-                                    return FilterEx[category.filterFunction](vp, criteria);
+                                    return FilterEx[category.filterFunction](bizModel, criteria);
                                 }
                                 return true;
                             });
@@ -188,7 +188,7 @@ export abstract class EntityService<T extends IEntity, U extends IBiz> extends F
 
                         let matchSearchKey = true;
                         if (searchKey !== '') {
-                            matchSearchKey = this.search(vp, searchKey);
+                            matchSearchKey = this.search(bizModel, searchKey);
                         }
 
                         return isFiltered && matchSearchKey;
