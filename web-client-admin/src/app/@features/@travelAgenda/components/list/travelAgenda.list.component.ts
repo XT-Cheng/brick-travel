@@ -14,6 +14,9 @@ import { ViewPointService } from '../../../../@core/store/providers/viewPoint.se
 import { ModalComponent } from '../../../../@ui/components/modal/modal.component';
 import { SearchService } from '../../../../@ui/providers/search.service';
 import { ComponentType } from '../../../../page.component';
+import { EntityListComponent } from '../../../entity.list.component';
+import { ITravelAgenda } from '../../../../@core/store/entity/model/travelAgenda.model';
+import { ErrorService } from '../../../../@core/store/providers/error.service';
 
 @Component({
   selector: 'bt-ta-list',
@@ -21,88 +24,56 @@ import { ComponentType } from '../../../../page.component';
   styleUrls: ['./travelAgenda.list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TravelAgendaListComponent implements ComponentType, OnInit, OnDestroy {
+export class TravelAgendaListComponent extends EntityListComponent<ITravelAgenda, ITravelAgendaBiz> {
   //#region Private members
-
-  public _travelAgendas$: Observable<ITravelAgendaBiz[]>;
 
   //#endregion
 
   //#region Private members
-
-  private destroyed$: Subject<boolean> = new Subject();
 
   //#endregion
 
   //#region Constructor
-  constructor(private _route: ActivatedRoute,
-    private _searchService: SearchService, private _modalService: NgbModal, private _viewPointService: ViewPointService,
-    public _travelAgendaService: TravelAgendaService, private _travelAgendaUIService: TravelAgendaUIService,
-    private _toasterService: ToasterService) {
-    this._travelAgendas$ = this._travelAgendaService.all$;
-    this._travelAgendaService.fetch();
-    this._searchService.onSearchSubmit().pipe(takeUntil(this.destroyed$)).subscribe(value => {
-      this._searchService.currentSearchKey = value.term;
-      this._travelAgendaUIService.search(value.term);
-    });
+  constructor(protected _route: ActivatedRoute,
+    protected _searchService: SearchService, protected _modalService: NgbModal, protected _viewPointService: ViewPointService,
+    protected _errorService: ErrorService,
+    public _travelAgendaService: TravelAgendaService, protected _travelAgendaUIService: TravelAgendaUIService,
+    protected _toasterService: ToasterService) {
+      super(_route, _travelAgendaUIService, _errorService, _searchService, _modalService, _travelAgendaService, _toasterService);
   }
 
   //#endregion
 
   //#region Interface implementation
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
+
+  protected get componentType(): any {
+    throw new Error('not implemented');
   }
 
-  ngOnInit(): void {
-    this._route.data.pipe(takeUntil(this.destroyed$))
-      .subscribe((data: { searchKey: string }) => {
-        this._searchService.currentSearchKey = this._travelAgendaUIService.searchKey;
-      });
+  protected get newEntity(): ITravelAgendaBiz {
+    throw new Error('not implemented');
   }
 
-  createEntity() {
-    // const activeModal = this.modalService.open(ViewPointFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    // activeModal.componentInstance.originalViewPoint = {
-    //   id: '',
-    //   name: '',
-    //   city: null,
-    //   description: '',
-    //   tips: '',
-    //   timeNeeded: '',
-    //   thumbnail: '',
-    //   address: '',
-    //   latitude: null,
-    //   longtitude: null,
-    //   category: null,
-    //   rank: null,
-    //   countOfComments: 0,
-    //   images: [],
-    //   tags: [],
-    //   comments: []
-    // };
+  protected get entityDescription(): string {
+    return 'Travel Agenda';
   }
+
   //#endregion
 
-  //#region Protected method
-  edit(viewPoint: IViewPointBiz) {
-    // const activeModal = this.modalService.open(ViewPointFormComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    // activeModal.componentInstance.originalViewPoint = viewPoint;
-    // activeModal.componentInstance.title = 'Edit View Point';
-    // activeModal.componentInstance.mode = EntityFormMode.edit;
+   //#region Public method
+   edit(travelAgenda: ITravelAgendaBiz) {
+    this.editEntity(travelAgenda, travelAgenda.name);
   }
 
   delete(travelAgenda: ITravelAgendaBiz) {
-    const activeModal = this._modalService.open(ModalComponent, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
-    activeModal.componentInstance.modalHeader = `Confrim`;
-    activeModal.componentInstance.modalContent = `Delete view point : ${travelAgenda.name} ?`;
-
-    activeModal.result.then((result) => {
-      this._travelAgendaService.remove(travelAgenda);
-    }, (cancel) => {
-      // do nothing
+    this.deleteEntity(travelAgenda, travelAgenda.name).then((ret) => {
+      if (ret) {
+        this._toasterService.pop('success', 'Success', `Travel Agenda ${travelAgenda.name} deleted`);
+      }
+    }, (err) => {
+      this._toasterService.pop('error', 'Error', `Can't delete Travel Agenda, pls try later`);
     });
   }
+
   //#endregion
 }

@@ -14,19 +14,18 @@ import { ViewPointCategoryService } from '../../../../@core/store/providers/view
 import { WEBAPI_HOST } from '../../../../@core/utils/constants';
 import { EntityFormMode } from '../../../../page.component';
 import { MapModalComponent } from '../mapModal.component';
+import { EntityFormComponent } from '../../../entity.form.component';
+import { IViewPoint } from '../../../../@core/store/entity/model/viewPoint.model';
+import { ErrorService } from '../../../../@core/store/providers/error.service';
 
 @Component({
   selector: 'bt-vp-form',
   templateUrl: 'viewPoint.form.component.html',
   styleUrls: ['./viewPoint.form.component.scss']
 })
-export class ViewPointFormComponent implements AfterViewInit {
-
-  //#region Private member
-
-  private _originalViewPoint: IViewPointBiz = null;
-  private _imageFiles: Map<string, FileItem>;
-  private _thumbnailFile: FileItem;
+export class ViewPointFormComponent extends EntityFormComponent<IViewPoint, IViewPointBiz> {
+   //#region Private member
+   private _imagesFiles: Map<string, FileItem> = new Map<string, FileItem>();
   //#endregion
 
   //#region Public member
@@ -40,49 +39,25 @@ export class ViewPointFormComponent implements AfterViewInit {
   imagesUploader: FileUploader = new FileUploader({ url: `${WEBAPI_HOST}/fileUpload` });
   thumbnailUploader: FileUploader = new FileUploader({ url: `${WEBAPI_HOST}/fileUpload` });
 
-  filesMap: Map<string, FileUploader> = new Map<string, FileUploader>();
-
-  //#endregion
-
-  //#region Interface implementation
-  ngAfterViewInit(): void {
-    this.nameInput.nativeElement.focus();
-  }
   //#endregion
 
   //#region Public property
-  newViewPoint: IViewPointBiz = null;
   selectedCity: any = null;
 
   @ViewChild('name', { read: ElementRef }) nameInput: ElementRef;
 
   @ViewChildren(NbContextMenuDirective) contextMenus;
 
-  @Input()
-  mode: EntityFormMode = EntityFormMode.create;
-
-  @Input()
-  set originalViewPoint(viewPoint: IViewPointBiz) {
-    if (viewPoint.id === '') {
-      viewPoint.id = new ObjectID().toHexString();
-    }
-    this._originalViewPoint = viewPoint;
-    this.newViewPoint = JSON.parse(JSON.stringify(this._originalViewPoint));
-  }
-
-  @Input()
-  title = 'Create View Point';
-
   //#endregion
 
   //#region Constructor
 
-  constructor(private _viewPointService: ViewPointService, private _modalService: NgbModal, private _element: ElementRef,
+  constructor(public _viewPointService: ViewPointService, private _modalService: NgbModal, private _element: ElementRef,
     public _viewPointUIService: ViewPointUIService, public _viewPointCategoryService: ViewPointCategoryService,
-    public _cityService: CityService,
-    private _toasterService: ToasterService, private _menuService: NbMenuService,
-    private _activeModal: NgbActiveModal) {
-    this._imageFiles = new Map<string, FileItem>();
+    public _cityService: CityService, protected _errorService: ErrorService,
+    protected _toasterService: ToasterService, private _menuService: NbMenuService,
+    protected _activeModal: NgbActiveModal) {
+    super(_viewPointService, _errorService, _toasterService, _activeModal);
 
     this.imagesUploader.clearQueue();
     this.imagesUploader.setOptions({ allowedMimeType: ['image/png'] });
@@ -90,22 +65,22 @@ export class ViewPointFormComponent implements AfterViewInit {
     this.thumbnailUploader.clearQueue();
     this.thumbnailUploader.setOptions({ allowedMimeType: ['image/png'] });
 
-    this.filesMap.set('images', this.imagesUploader);
-    this.filesMap.set('thumbnail', this.thumbnailUploader);
+    this.addFile('images', this.imagesUploader);
+    this.addFile('thumbnail', this.thumbnailUploader);
 
     this._menuService.onItemClick().subscribe(menuBag => {
-      if (this.newViewPoint == null) { return; }
+      if (this.newEntity == null) { return; }
 
       const { file, source } = menuBag.item.data;
 
       if (file) {
         this.imagesUploader.removeFromQueue(file);
       }
-      const index = this.newViewPoint.images.findIndex((img) => {
+      const index = this.newEntity.images.findIndex((img) => {
         return img === source;
       });
       if (index !== -1) {
-        this.newViewPoint.images.splice(index, 1);
+        this.newEntity.images.splice(index, 1);
       }
 
       this.contextMenus.forEach(item => {
@@ -122,7 +97,7 @@ export class ViewPointFormComponent implements AfterViewInit {
   }
 
   getMenuItem(img: string): NbMenuItem[] {
-    const fileItem = this._imageFiles.get(img);
+    const fileItem = this._imagesFiles.get(img);
 
     return [{
       title: 'Delete',
@@ -135,27 +110,23 @@ export class ViewPointFormComponent implements AfterViewInit {
   }
 
   hasCity(): boolean {
-    return !!this.newViewPoint.city;
-  }
-
-  cityCheck(city) {
-    console.log(city);
+    return !!this.newEntity.city;
   }
 
   hasPosition(): boolean {
-    return (!!this.newViewPoint.latitude && !!this.newViewPoint.longtitude);
+    return (!!this.newEntity.latitude && !!this.newEntity.longtitude);
   }
 
   hasImageFiles(): boolean {
-    return this.newViewPoint.images.length > 0;
+    return this.newEntity.images.length > 0;
   }
 
   hasThumbnailFile(): boolean {
-    return !!this.newViewPoint.thumbnail;
+    return !!this.newEntity.thumbnail;
   }
 
   isSubmitDisAllowed(form): boolean {
-    return !this.isChanged() || !form.valid || (this.newViewPoint.images.length === 0);
+    return !this.isChanged() || !form.valid || (this.newEntity.images.length === 0);
   }
 
   imageFileOver(e: boolean): void {
@@ -170,10 +141,8 @@ export class ViewPointFormComponent implements AfterViewInit {
     const reader = new FileReader();
 
     reader.onloadend = (e: any) => {
-      this.newViewPoint.images.push(e.target.result);
-      fileItems.forEach(item => {
-        this._imageFiles.set(e.target.result, item);
-      });
+      this.newEntity.images.push(e.target.result);
+      this._imagesFiles.set(e.target.result, fileItems[0]);
     };
 
     reader.readAsDataURL(fileItems[0]._file);
@@ -183,62 +152,44 @@ export class ViewPointFormComponent implements AfterViewInit {
     const reader = new FileReader();
 
     reader.onloadend = (e: any) => {
-      this.newViewPoint.thumbnail = e.target.result;
-      this._thumbnailFile = fileItems[0];
+      this.newEntity.thumbnail = e.target.result;
     };
 
     reader.readAsDataURL(fileItems[0]._file);
   }
 
-  action() {
-    this.newViewPoint.images = this.newViewPoint.images.filter(img => {
-      return !img.startsWith('data:');
-    });
-
-    this.newViewPoint.thumbnail = '';
+  createOrUpdate() {
+    let successMsg, failMsg;
 
     if (this.mode === EntityFormMode.create) {
-      this._viewPointService.add(this.newViewPoint, this.filesMap);
-      // this._viewPointService.add(this.newViewPoint, this._filesMap)
-      //   .subscribe((ret: Error | IViewPoint) => {
-      //     if (ret instanceof Error) {
-      //       this._toasterService.pop('error', 'Error', `Can't create view point, pls try later`);
-      //     } else {
-      //       this._toasterService.pop('success', 'Success', `View Point ${this.newViewPoint.name} created`);
-      //     }
-      //     this._activeModal.close();
-      //   });
+      successMsg = `View Point ${this.newEntity.name} created`;
+      failMsg = `Can't create view point, pls try later`;
     } else {
-      this._viewPointService.change(this.newViewPoint, this.filesMap);
-      // this._viewPointService.change(this.newViewPoint, this._filesMap)
-      //   .subscribe((ret: Error | IViewPoint) => {
-      //     if (ret instanceof Error) {
-      //       this._toasterService.pop('error', 'Error', `Can't edit city, pls try later`);
-      //     } else {
-      //       this._toasterService.pop('success', 'Success', `View Point ${this.newViewPoint.name} edited`);
-      //     }
-      //     this._activeModal.close();
-      //   });
+      successMsg = `View Point ${this.newEntity.name} updated`;
+      failMsg = `Can't change view point, pls try later`;
     }
-  }
 
-  close() {
-    this._activeModal.close();
+    this.action().then((ret) => {
+      this._toasterService.pop('success', 'Success', successMsg);
+      this.close();
+    }, (err) => {
+      this._toasterService.pop('error', 'Error', failMsg);
+    });
   }
 
   openMap() {
     const activeModal = this._modalService.open(MapModalComponent, { backdrop: false, size: 'lg', container: 'nb-layout' });
     activeModal.componentInstance.minHeight = 500;
-    activeModal.componentInstance.city = this.newViewPoint.city;
+    activeModal.componentInstance.city = this.newEntity.city;
 
     this._element.nativeElement.style.display = 'none';
 
-    if (this.newViewPoint.latitude) {
-      activeModal.componentInstance.pointChoosed = new AMap.LngLat(this.newViewPoint.longtitude, this.newViewPoint.latitude);
+    if (this.newEntity.latitude) {
+      activeModal.componentInstance.pointChoosed = new AMap.LngLat(this.newEntity.longtitude, this.newEntity.latitude);
     }
     activeModal.result.then((pos: AMap.LngLat) => {
-      this.newViewPoint.latitude = pos.getLat();
-      this.newViewPoint.longtitude = pos.getLng();
+      this.newEntity.latitude = pos.getLat();
+      this.newEntity.longtitude = pos.getLng();
       this._element.nativeElement.style.display = 'block';
       this._element.nativeElement.ownerDocument.body.classList.add('modal-open');
     }, (cancel) => {
@@ -254,24 +205,24 @@ export class ViewPointFormComponent implements AfterViewInit {
   private isChanged(): boolean {
     if (this.mode === EntityFormMode.create) { return true; }
 
-    const changed = !(this.newViewPoint.name === this._originalViewPoint.name &&
-      this.newViewPoint.city.id === this._originalViewPoint.city.id &&
-      this.newViewPoint.category.id === this._originalViewPoint.category.id &&
-      this.newViewPoint.address === this._originalViewPoint.address &&
-      this.newViewPoint.description === this._originalViewPoint.description &&
-      this.newViewPoint.latitude === this._originalViewPoint.latitude &&
-      this.newViewPoint.longtitude === this._originalViewPoint.longtitude &&
-      this.newViewPoint.rank === this._originalViewPoint.rank &&
-      this.newViewPoint.tags === this._originalViewPoint.tags &&
-      this.newViewPoint.timeNeeded === this._originalViewPoint.timeNeeded &&
-      this.newViewPoint.tips === this._originalViewPoint.tips &&
-      this.newViewPoint.thumbnail === this._originalViewPoint.thumbnail &&
-      this.newViewPoint.images.length === this._originalViewPoint.images.length);
+    const changed = !(this.newEntity.name === this.originalEntity.name &&
+      this.newEntity.city.id === this.originalEntity.city.id &&
+      this.newEntity.category.id === this.originalEntity.category.id &&
+      this.newEntity.address === this.originalEntity.address &&
+      this.newEntity.description === this.originalEntity.description &&
+      this.newEntity.latitude === this.originalEntity.latitude &&
+      this.newEntity.longtitude === this.originalEntity.longtitude &&
+      this.newEntity.rank === this.originalEntity.rank &&
+      this.newEntity.tags === this.originalEntity.tags &&
+      this.newEntity.timeNeeded === this.originalEntity.timeNeeded &&
+      this.newEntity.tips === this.originalEntity.tips &&
+      this.newEntity.thumbnail === this.originalEntity.thumbnail &&
+      this.newEntity.images.length === this.originalEntity.images.length);
 
     if (changed) { return changed; }
 
-    for (let i = 0; i < this.newViewPoint.images.length; i++) {
-      if (this.newViewPoint.images[i] !== this._originalViewPoint.images[i]) {
+    for (let i = 0; i < this.newEntity.images.length; i++) {
+      if (this.newEntity.images[i] !== this.originalEntity.images[i]) {
         return true;
       }
     }

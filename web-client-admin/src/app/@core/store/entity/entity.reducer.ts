@@ -9,10 +9,11 @@ export function entityReducer(state: IEntities = INIT_ENTITY_STATE, action: Enti
       case EntityActionTypeEnum.LOAD: {
         // Only action while success
         if (action.payload.phaseType === EntityActionPhaseEnum.SUCCEED) {
-          Object.keys(action.payload.entities).forEach(key => {
-            state = Immutable(state).set(key, (<any>Immutable(state[key])).replace(action.payload.entities[key], { deep: true }));
-          });
-          return state;
+          return Immutable(state).merge(action.payload.entities, { deep: true });
+          // Object.keys(action.payload.entities).forEach(key => {
+          //   state = Immutable(state).set(key, (<any>Immutable(state[key])).replace(action.payload.entities[key], { deep: true }));
+          // });
+          // return state;
         }
         break;
       }

@@ -9,15 +9,15 @@
           <div class="form-group row">
             <div class="col-6">
               <label for="input-name">View Point Name</label>
-              <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="newViewPoint.name"
-                name='name' required bt-autofocus [class.danger]="name.invalid && name.touched" />
+              <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="newEntity.name"
+                name='name' required btAutofocus [class.danger]="name.invalid && name.touched" />
               <small style='margin-left: 0;' class="form-text error" *ngIf="name.invalid && name.touched && name?.errors?.required">
                 Name is required!
               </small>
             </div>
             <div class="col-6">
               <label for="input-category">Category</label>
-              <select #category='ngModel' required id='input-category' [compareWith]="compareCityFn" [(ngModel)]='newViewPoint.category'
+              <select #category='ngModel' required id='input-category' [compareWith]="compareCityFn" [(ngModel)]='newEntity.category'
                 name='category' class="form-control" [class.danger]="category.invalid">
                 <option *ngFor="let category of (_viewPointCategoryService.all$ | async)" [ngValue]="category">{{category.name}}</option>
               </select>
@@ -29,7 +29,7 @@
           <div class="form-group">
             <label for="input-rank">Rank</label>
             <bt-rate required #rank='ngModel' id='input-rank' class="form-control" [class.danger]="rank.invalid" max=5 [readonly]='false'
-              name='rank' [(ngModel)]="newViewPoint.rank">
+              name='rank' [(ngModel)]="newEntity.rank">
               <ng-template let-fill="fill">
                 <svg class="bt-icon-small" aria-hidden="true" *ngIf="fill === 0">
                   <use xlink:href='#icon-empty-star'></use>
@@ -48,7 +48,7 @@
           </div>
           <div class="form-group">
             <label for="input-timeNeeded">Time Needed</label>
-            <input #timeNeeded='ngModel' required type="text" id='input-timeNeeded' placeholder="Time Needed" class="form-control" [(ngModel)]="newViewPoint.timeNeeded"
+            <input #timeNeeded='ngModel' required type="text" id='input-timeNeeded' placeholder="Time Needed" class="form-control" [(ngModel)]="newEntity.timeNeeded"
               name='timeNeeded' [class.danger]="timeNeeded.invalid" />
             <small style='margin-left: 0;' class="form-text error" *ngIf="timeNeeded.invalid && timeNeeded?.errors?.required">
               Time Needed is required!
@@ -58,7 +58,7 @@
         <nb-tab tabTitle='Location'>
           <div class="form-group">
             <label for="input-city">City</label>
-            <select #city='ngModel' required id='input-city' [compareWith]="compareCityFn" [(ngModel)]='newViewPoint.city' name='city'
+            <select #city='ngModel' required id='input-city' [compareWith]="compareCityFn" [(ngModel)]='newEntity.city' name='city'
               class="form-control" [class.danger]="city.invalid">
               <option *ngFor="let city of (_cityService.all$ | async)" [ngValue]="city">{{city.name}}</option>
             </select>
@@ -68,7 +68,7 @@
           </div>
           <div class="form-group">
             <label for="input-address">Address</label>
-            <input #address='ngModel' type="text" id='input-address' placeholder="Address" class="form-control" [(ngModel)]="newViewPoint.address"
+            <input #address='ngModel' type="text" id='input-address' placeholder="Address" class="form-control" [(ngModel)]="newEntity.address"
               name='address' required [class.danger]="address.invalid && address.touched" />
             <small style='margin-left: 0;' class="form-text error" *ngIf="address.invalid && address?.errors?.required">
               Address is required!
@@ -77,12 +77,12 @@
           <div class="form-group row">
             <div class="col-4">
               <label for="input-latitude">Latitude</label>
-              <input #latitude='ngModel' type="text" id='input-latitude' placeholder="Lat." class="form-control" [(ngModel)]="newViewPoint.latitude"
+              <input #latitude='ngModel' type="text" id='input-latitude' placeholder="Lat." class="form-control" [(ngModel)]="newEntity.latitude"
                 name='latitude' required [disabled]='true' [class.danger]="form.touched && !hasPosition()" />
             </div>
             <div class="col-4">
               <label for="input-longtitude">Longtitude</label>
-              <input #longtitude='ngModel' type="text" id='input-longtitude' placeholder="Lng." class="form-control" [(ngModel)]="newViewPoint.longtitude"
+              <input #longtitude='ngModel' type="text" id='input-longtitude' placeholder="Lng." class="form-control" [(ngModel)]="newEntity.longtitude"
                 name='longtitude' required [disabled]='true' [class.danger]="form.touched && !hasPosition()" />
             </div>
             <button (click)='openMap()' type="button" [disabled]='!hasCity()' class="btn btn-success btn-icon" style='align-self: flex-end;'>
@@ -100,7 +100,7 @@
               (onFileDrop)="thumbnailFileDropped($event)" name='thumbnail' [uploader]="thumbnailUploader" class="my-drop-zone"
               [class.danger]="!hasThumbnailFile()">
               <div style='margin-left: 10px;' *ngIf='!hasThumbnailFile()'>Drop Thumbnail File</div>
-              <img *ngIf='hasThumbnailFile()' [src]='newViewPoint.thumbnail' />
+              <img *ngIf='hasThumbnailFile()' [src]='newEntity.thumbnail' />
             </div>
             <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasThumbnailFile()">
               Thumbnail is required!
@@ -112,7 +112,7 @@
               (onFileDrop)="imageFileDropped($event)" name='images' [uploader]="imagesUploader" class="my-drop-zone" [class.danger]="!hasImageFiles()">
               <div style='margin-left: 10px;' *ngIf='!hasImageFiles()'>Drop Image Files</div>
               <ng-container *ngIf='hasImageFiles()'>
-                <img *ngFor='let image of newViewPoint.images' [src]='image' [nbContextMenu]="getMenuItem(image)" />
+                <img *ngFor='let image of newEntity.images' [src]='image' [nbContextMenu]="getMenuItem(image)" />
               </ng-container>
             </div>
             <small style='margin-left: 0;margin-bottom: 20px;' class="form-text error" *ngIf="!hasImageFiles()">
@@ -123,14 +123,14 @@
         <nb-tab tabTitle='Others'>
           <div class="form-group">
             <label for="input-tips">Tips</label>
-            <textarea style='resize: none;' #tips='ngModel' type="text" id='input-tips' placeholder="Tips" class="form-control" [(ngModel)]="newViewPoint.tips"
+            <textarea style='resize: none;' #tips='ngModel' type="text" id='input-tips' placeholder="Tips" class="form-control" [(ngModel)]="newEntity.tips"
               name='tips'>
             </textarea>
           </div>
           <div class="form-group">
             <label for="input-description">Description</label>
             <textarea style='height: 180px;resize: none;' #description='ngModel' placeholder="Description" type="text" id='input-description'
-              class="form-control" [(ngModel)]="newViewPoint.description" name='description'>
+              class="form-control" [(ngModel)]="newEntity.description" name='description'>
             </textarea>
           </div>
         </nb-tab>

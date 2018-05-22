@@ -74,7 +74,6 @@ export class StoreModule {
         ).then((value) =>
             this._tokenService.setRaw(value)
         ).then(() => {
-            // this._dataFlushService.stateRestored();
             this._masterDataService.fetch();
         });
     }

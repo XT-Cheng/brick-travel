@@ -15,6 +15,7 @@ export abstract class EntityFormComponent<T extends IEntity, U extends IBiz> {
     private _newEntity: U;
     private _originalEntity: U;
     private _filesMap: Map<string, FileUploader> = new Map<string, FileUploader>();
+
     //#endregion
 
     //#region Public member
@@ -47,20 +48,6 @@ export abstract class EntityFormComponent<T extends IEntity, U extends IBiz> {
     constructor(protected _service: EntityService<T, U>, protected _errorService: ErrorService,
         protected _toasterService: ToasterService,
         protected _activeModal: NgbActiveModal) {
-
-        // this._cityService.all$.pipe(
-        //   filter((cities) => !!(cities.find((city) => city.id === this._newCity.id)))
-        // ).subscribe(() => {
-        //   this.toasterService.pop('success', 'Success', `City ${this._newCity.name} created`);
-        //   this.activeModal.close();
-        // });
-
-        // this._errorService.lastError$.pipe(
-        //   filter((error) => !!(error))
-        // ).subscribe(() => {
-        //   this.toasterService.pop('error', 'Error', `Can't create city, pls try later`);
-        //   this.activeModal.close();
-        // });
     }
 
     //#endregion

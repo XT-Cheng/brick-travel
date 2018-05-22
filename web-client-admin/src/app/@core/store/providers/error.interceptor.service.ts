@@ -12,7 +12,6 @@ export class ErrorInterceptorService implements HttpInterceptor {
     constructor(private injector: Injector) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        console.log(req);
         return next.handle(req).pipe(
             catchError((errResponse: any) => {
                 let err: IError;

@@ -1,5 +1,5 @@
 <div class="row">
-  <nb-card *ngFor='let vp of (viewPoints$ | async)' class='vp-card' >
+  <nb-card *ngFor='let vp of (_viewPointService.all$ | async)' class='vp-card' >
     <nb-card-body>
       <img [src]="vp.thumbnail" />
       <div class="card-title">{{vp.name}}</div>

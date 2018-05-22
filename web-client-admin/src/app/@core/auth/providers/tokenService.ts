@@ -25,8 +25,7 @@ export class TokenService {
   tokenChange(): Observable<AuthToken> {
     return this.token$
       .pipe(
-        filter(value => !!value),
-        share(),
+        filter(value => !!value)
       );
   }
 

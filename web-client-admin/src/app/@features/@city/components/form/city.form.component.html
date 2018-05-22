@@ -7,7 +7,7 @@
       <div class="form-group">
         <label for="input-name">City Name</label>
         <input #name='ngModel' type="text" id='input-name' placeholder="Name" class="form-control" [(ngModel)]="newEntity.name" name='name'
-          required [autofocus]='true' [class.form-control-danger]="name.invalid && name.touched" />
+          required btAutofocus [class.form-control-danger]="name.invalid && name.touched" />
         <small class="form-text error" *ngIf="name.invalid && name.touched && name?.errors?.required">
           Name is required!
         </small>

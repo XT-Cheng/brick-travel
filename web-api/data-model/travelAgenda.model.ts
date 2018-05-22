@@ -1,12 +1,6 @@
 import { arrayProp, ModelType, prop, Ref, staticMethod, Typegoose } from '../typegoose/typegoose';
 import { ViewPoint } from './viewPoint.model';
-
-export enum TransportationCategory {
-    Walking,
-    SmallBus,
-    BigBus,
-    SelfDrive
-}
+import { TransportationCategory } from './transportationCategory.model';
 
 export class TravelViewPoint extends Typegoose{
     @prop()
@@ -18,8 +12,8 @@ export class TravelViewPoint extends Typegoose{
     set id(value) {
         this._id = value;
     }
-    @prop({ enum: TransportationCategory })
-    transportationToNext: TransportationCategory;
+    @prop({ref: TransportationCategory,idType: 'String'})
+    transportationToNext: Ref<TransportationCategory>;
     @prop({ref: ViewPoint,idType: 'String'})
     viewPoint: Ref<ViewPoint>;
 }

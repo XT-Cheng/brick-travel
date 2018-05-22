@@ -1,5 +1,6 @@
 import { IBiz } from '../biz.model';
 import { ICityBiz } from './city.biz.model';
+import { ObjectID } from 'bson';
 
 export interface IViewPointCategoryBiz extends IBiz {
     name: string;
@@ -30,4 +31,25 @@ export interface IViewPointCommentBiz extends IBiz {
     publishedAt: Date;
     images: string[];
     rate: number;
+}
+
+export function newViewPoint(): IViewPointBiz {
+    return {
+        id: new ObjectID().toHexString(),
+        name: '',
+        city: null,
+        description: '',
+        tips: '',
+        timeNeeded: '',
+        thumbnail: '',
+        address: '',
+        latitude: null,
+        longtitude: null,
+        category: null,
+        rank: 0,
+        countOfComments: 0,
+        images: [],
+        tags: [],
+        comments: []
+        };
 }

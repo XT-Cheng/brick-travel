@@ -10,6 +10,7 @@ import { CityService } from '../../../../@core/store/providers/city.service';
 import { ErrorService } from '../../../../@core/store/providers/error.service';
 import { WEBAPI_HOST } from '../../../../@core/utils/constants';
 import { EntityFormComponent } from '../../../entity.form.component';
+import { EntityFormMode } from '../../../../page.component';
 
 @Component({
   selector: 'bt-city-form',
@@ -72,11 +73,21 @@ export class CityFormComponent extends EntityFormComponent<ICity, ICityBiz> {
   }
 
   createOrUpdate() {
+    let successMsg, failMsg;
+
+    if (this.mode === EntityFormMode.create) {
+      successMsg = `City ${this.newEntity.name} created`;
+      failMsg = `Can't create city, pls try later`;
+    } else {
+      successMsg = `City ${this.newEntity.name} updated`;
+      failMsg = `Can't change city, pls try later`;
+    }
+    
     this.action().then((ret) => {
-      this._toasterService.pop('success', 'Success', `City ${this.newEntity.name} created`);
+      this._toasterService.pop('success', 'Success', successMsg);
       this.close();
     }, (err) => {
-      this._toasterService.pop('error', 'Error', `Can't create city, pls try later`);
+      this._toasterService.pop('error', 'Error', failMsg);
     });
   }
   //#endregion

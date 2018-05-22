@@ -1,5 +1,5 @@
 <div class="row">
-  <nb-card *ngFor='let ta of (_travelAgendas$ | async)' class='ta-card'>
+  <nb-card *ngFor='let ta of (_travelAgendaService.all$ | async)' class='ta-card'>
     <nb-card-body>
       <img [src]="ta.cover" />
       <div class="card-title">{{ta.name}}</div>

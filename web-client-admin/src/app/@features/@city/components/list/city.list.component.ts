@@ -41,7 +41,7 @@ export class CityListComponent extends EntityListComponent<ICity, ICityBiz> {
     return newCity();
   }
 
-  protected get entityType(): string {
+  protected get entityDescription(): string {
     return 'City';
   }
 

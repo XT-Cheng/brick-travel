@@ -92,7 +92,7 @@ export class AMapComponent implements AfterViewInit, OnDestroy {
   protected set city(city: ICityBiz) {
     if (city) {
       this._city = city;
-      if (this._map == null && this._markers.size > 0) { return; }
+      if (this._map == null || this._markers.size > 0) { return; }
 
       this._map.setCity(this._city.addressCode);
     }

@@ -40,7 +40,7 @@ export abstract class EntityListComponent<T extends IEntity, U extends IBiz> imp
 
     //#region Protected property
 
-    protected abstract get entityType(): string;
+    protected abstract get entityDescription(): string;
     protected abstract get componentType(): any;
     protected abstract get newEntity(): U;
 
@@ -63,7 +63,7 @@ export abstract class EntityListComponent<T extends IEntity, U extends IBiz> imp
         const activeModal = this._modalService.open(this.componentType, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
         activeModal.componentInstance.mode = EntityFormMode.edit;
         activeModal.componentInstance.originalEntity = entity;
-        activeModal.componentInstance.title = `Edit ${this.entityType} ${name}`;
+        activeModal.componentInstance.title = `Edit ${this.entityDescription} ${name}`;
         activeModal.componentInstance.mode = EntityFormMode.edit;
     }
 
@@ -84,7 +84,7 @@ export abstract class EntityListComponent<T extends IEntity, U extends IBiz> imp
         const activeModal = this._modalService.open(this.componentType, { backdrop: 'static', size: 'lg', container: 'nb-layout' });
         activeModal.componentInstance.mode = EntityFormMode.create;
         activeModal.componentInstance.originalEntity = this.newEntity;
-        activeModal.componentInstance.title = `Create ${this.entityType}`;
+        activeModal.componentInstance.title = `Create ${this.entityDescription}`;
     }
 
     //#endregion
