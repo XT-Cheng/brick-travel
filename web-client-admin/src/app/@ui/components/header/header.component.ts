@@ -1,6 +1,5 @@
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NbSidebarService } from '@nebular/theme';
 
 import { IUserBiz } from '../../../@core/store/bizModel/model/user.biz.model';
 import { UserService } from '../../../@core/store/providers/user.service';
@@ -21,8 +20,7 @@ export class HeaderComponent implements OnInit {
 
   userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
-  constructor(private _sidebarService: NbSidebarService,
-    private _renderer: Renderer2,
+  constructor(private _renderer: Renderer2,
     public _userService: UserService,
     private _searchService: SearchService,
     protected _router: Router) {
@@ -44,12 +42,12 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleSidebar(): boolean {
-    this._sidebarService.toggle(true, 'menu-sidebar');
+    // this._sidebarService.toggle(true, 'menu-sidebar');
     return false;
   }
 
   toggleSettings(): boolean {
-    this._sidebarService.toggle(false, 'settings-sidebar');
+    // this._sidebarService.toggle(false, 'settings-sidebar');
     return false;
   }
 }

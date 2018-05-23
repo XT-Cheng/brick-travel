@@ -57,7 +57,7 @@ export interface AuthSocialLink {
         </div>
 
         <div class="form-group accept-group col-sm-12">
-          <nb-checkbox name="rememberMe" [(ngModel)]="user.rememberMe">Remember me</nb-checkbox>
+          <label nz-checkbox [(ngModel)]="user.rememberMe">Remember me</label>
           <a class="forgot-password" routerLink="../request-password">Forgot Password?</a>
         </div>
 

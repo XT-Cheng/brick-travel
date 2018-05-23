@@ -5,24 +5,25 @@ import { Component } from '@angular/core';
   selector: 'bt-two-columns-layout',
   styleUrls: ['./two-columns.layout.scss'],
   template: `
-    <nb-layout [withScroll]='true'>
-      <nb-layout-header fixed>
+    <nz-layout>
+      <nz-header fixed>
         <bt-header></bt-header>
-      </nb-layout-header>
+      </nz-header>
 
-      <nb-sidebar class="menu-sidebar" tag="menu-sidebar" responsive >
-        <ng-content select="nb-menu"></ng-content>
-      </nb-sidebar>
+      <nz-layout>
+        <nz-sider class="menu-sidebar" tag="menu-sidebar" responsive >
+          <ng-content select="nb-menu"></ng-content>
+        </nz-sider>
 
-      <nb-layout-column class="ext-small">
-        <ng-content></ng-content>
-      </nb-layout-column>
+        <nz-content>
+          <ng-content select="router-outlet"></ng-content>
+        </nz-content>
+      </nz-layout>
 
-      <nb-layout-column left>
-        <ng-content select="router-outlet"></ng-content>
-      </nb-layout-column>
-
-    </nb-layout>
+      <nz-footer>
+        <bt-footer></bt-footer>
+      </nz-footer>
+    </nz-layout>
   `,
 })
 export class TwoColumnsLayoutComponent {

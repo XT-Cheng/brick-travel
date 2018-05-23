@@ -2,20 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import {
-  NbActionsModule,
-  NbCardModule,
-  NbCheckboxModule,
-  NbContextMenuModule,
-  NbLayoutModule,
-  NbMenuModule,
-  NbRouteTabsetModule,
-  NbSearchModule,
-  NbSidebarModule,
-  NbTabsetModule,
-  NbThemeModule,
-  NbUserModule,
-} from '@nebular/theme';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterModule } from 'angular2-toaster';
 
@@ -39,23 +25,14 @@ import { COSMIC_THEME } from './styles/theme.cosmic';
 import { DEFAULT_THEME } from './styles/theme.default';
 import { TravelAgendaComponent } from './components/travelAgenda/travelAgenda.component';
 import { DragulaDirective } from './directives/dragula.directive';
+import { NgZorroAntdModule } from 'ng-zorro-antd';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule, RouterModule];
 
-const NB_MODULES = [
-  NbCardModule,
-  NbLayoutModule,
-  NbTabsetModule,
-  NbRouteTabsetModule,
-  NbMenuModule,
-  NbUserModule,
-  NbActionsModule,
-  NbSearchModule,
-  NbSidebarModule,
-  NbCheckboxModule,
-  NbContextMenuModule,
+const ADDON_MODULES = [
   NgbModule,
-  ToasterModule
+  ToasterModule,
+  NgZorroAntdModule
 ];
 
 const COMPONENTS = [
@@ -85,15 +62,8 @@ const PIPES = [
 ];
 
 const PROVIDERS = [
-  ...NbThemeModule.forRoot(
-    {
-      name: 'default',
-    },
-    [DEFAULT_THEME, COSMIC_THEME],
-  ).providers,
-  ...NbSidebarModule.forRoot().providers,
-  ...NbMenuModule.forRoot().providers,
   ...ToasterModule.forRoot().providers,
+  ...NgZorroAntdModule.forRoot().providers,
   SearchService
 ];
 
@@ -108,8 +78,8 @@ const ENTRY_COMPONENTS = [
 ];
 
 @NgModule({
-  imports: [...BASE_MODULES, ...NB_MODULES],
-  exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
+  imports: [...BASE_MODULES, ...ADDON_MODULES],
+  exports: [...BASE_MODULES, ...ADDON_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
   entryComponents: [...ENTRY_COMPONENTS]
 })

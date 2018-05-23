@@ -11,7 +11,6 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NbThemeService } from '@nebular/theme';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import { of as observableOf } from 'rxjs/observable/of';
@@ -68,7 +67,6 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private routerSubscription: Subscription;
 
   constructor(private searchService: SearchService,
-    private themeService: NbThemeService,
     private router: Router) {
   }
 
@@ -103,10 +101,10 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(([componentRef, data]: [ComponentRef<any>, any]) => {
         this.showSearch = true;
 
-        this.themeService.appendLayoutClass(this.searchType);
-        observableOf(null).pipe(delay(0)).subscribe(() => {
-          this.themeService.appendLayoutClass('with-search');
-        });
+        // this.themeService.appendLayoutClass(this.searchType);
+        // observableOf(null).pipe(delay(0)).subscribe(() => {
+        //   this.themeService.appendLayoutClass('with-search');
+        // });
         componentRef.instance.showSearch = true;
         componentRef.instance.inputElement.nativeElement.value = this.searchService.currentSearchKey;
         componentRef.instance.inputElement.nativeElement.focus();
@@ -129,18 +127,18 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
         componentRef.instance.inputElement.nativeElement.blur();
         componentRef.changeDetectorRef.detectChanges();
 
-        this.themeService.removeLayoutClass('with-search');
-        observableOf(null).pipe(delay(500)).subscribe(() => {
-          this.themeService.removeLayoutClass(this.searchType);
-        });
+        // this.themeService.removeLayoutClass('with-search');
+        // observableOf(null).pipe(delay(500)).subscribe(() => {
+        //   this.themeService.removeLayoutClass(this.searchType);
+        // });
       });
   }
 
   ngAfterViewInit() {
-    this.themeService.appendToLayoutTop(SearchInputComponent)
-      .subscribe((componentRef: ComponentRef<any>) => {
-        this.connectToSearchField(componentRef);
-      });
+    // this.themeService.appendToLayoutTop(SearchInputComponent)
+    //   .subscribe((componentRef: ComponentRef<any>) => {
+    //     this.connectToSearchField(componentRef);
+    //   });
   }
 
   openSearch() {
