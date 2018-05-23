@@ -3,49 +3,45 @@
   "project": {
     "name": "web-client-admin"
   },
-  "apps": [
-    {
-      "root": "src",
-      "outDir": "dist",
-      "assets": [
-        "assets",
-        "favicon.ico",
-        "manifest.json"
-      ],
-      "index": "index.html",
-      "main": "main.ts",
-      "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "tsconfig": "tsconfig.app.json",
-      "testTsconfig": "tsconfig.spec.json",
-      "prefix": "bt",
-      "styles": [
-        "styles.css",
-        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
-        "../node_modules/nebular-icons/scss/nebular-icons.scss",
-        "../node_modules/@nebular/theme/styles/prebuilt/default.css",
-        "../node_modules/angular2-toaster/toaster.min.css",
-        "./app/@ui/styles/styles.scss",
-        "./app/@ui/styles/iconfont.css"
-      ],
-      "scripts": [
-        "./app/@ui/styles/iconfont.js"
-      ],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      },
-      "serviceWorker": true
-    }
-  ],
+  "apps": [{
+    "root": "src",
+    "outDir": "dist",
+    "assets": [
+      "assets",
+      "favicon.ico",
+      "manifest.json"
+    ],
+    "index": "index.html",
+    "main": "main.ts",
+    "polyfills": "polyfills.ts",
+    "test": "test.ts",
+    "tsconfig": "tsconfig.app.json",
+    "testTsconfig": "tsconfig.spec.json",
+    "prefix": "bt",
+    "styles": [
+      "styles.css",
+      "../node_modules/ng-zorro-antd/src/ng-zorro-antd.less",
+      "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "../node_modules/angular2-toaster/toaster.min.css",
+      "./app/@ui/styles/styles.scss",
+      "./app/@ui/styles/iconfont.css"
+    ],
+    "scripts": [
+      "./app/@ui/styles/iconfont.js"
+    ],
+    "environmentSource": "environments/environment.ts",
+    "environments": {
+      "dev": "environments/environment.ts",
+      "prod": "environments/environment.prod.ts"
+    },
+    "serviceWorker": true
+  }],
   "e2e": {
     "protractor": {
       "config": "./protractor.conf.js"
     }
   },
-  "lint": [
-    {
+  "lint": [{
       "project": "src/tsconfig.app.json",
       "exclude": "**/node_modules/**"
     },

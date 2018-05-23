@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { NbMenuItem } from '@nebular/theme';
 import { ToasterConfig } from 'angular2-toaster';
 
 import { CityService } from './@core/store/providers/city.service';
 
+// import { NbMenuItem } from '@nebular/theme';
 export interface ComponentType {
   createEntity();
 }
@@ -13,24 +13,33 @@ export enum EntityFormMode {
   edit
 }
 
+// <bt-two-columns-layout>
+//     <nb-menu [items]="menu"></nb-menu>
+//     <toaster-container [toasterconfig]="config"></toaster-container>
+//     <router-outlet (activate)="onActivate($event)"></router-outlet>
+//     <div style='position: fixed;'>
+//       <nb-card class='action-buttons-card'>
+//         <nb-card-body>
+//             <div class='action-buttons-div'>
+//                 <button type="button" (click)='newEntity()' class="btn btn-primary btn-icon">
+//                   <i class="nb-plus"></i>
+//                 </button>
+//               </div>
+//         </nb-card-body>
+//       </nb-card>
+//       </div>
+//   </bt-two-columns-layout>
+
 @Component({
   selector: 'bt-page',
   template: `
     <bt-two-columns-layout>
-    <nb-menu [items]="menu"></nb-menu>
+
     <toaster-container [toasterconfig]="config"></toaster-container>
     <router-outlet (activate)="onActivate($event)"></router-outlet>
     <div style='position: fixed;'>
-      <nb-card class='action-buttons-card'>
-        <nb-card-body>
-            <div class='action-buttons-div'>
-                <button type="button" (click)='newEntity()' class="btn btn-primary btn-icon">
-                  <i class="nb-plus"></i>
-                </button>
-              </div>
-        </nb-card-body>
-      </nb-card>
-      </div>
+
+    </div>
   </bt-two-columns-layout>
 `,
   styleUrls: [`./page.component.scss`]
@@ -67,7 +76,7 @@ export class PageComponent {
 
   //#region Public members
 
-  menu: NbMenuItem[] = [this.testMenuItem, this.cityMenuItem, this.viewPointMenuItem, this.travelAgendaMenuItem];
+  // menu: NbMenuItem[] = [this.testMenuItem, this.cityMenuItem, this.viewPointMenuItem, this.travelAgendaMenuItem];
 
   config: ToasterConfig = new ToasterConfig({
     positionClass: 'toast-top-right',

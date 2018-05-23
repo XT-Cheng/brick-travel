@@ -1,22 +1,20 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild, ViewChildren } from '@angular/core';
-import { NbContextMenuDirective, NbMenuItem, NbMenuService } from '@nebular/theme';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'angular2-toaster';
-import { ObjectID } from 'bson';
 
 import { FileItem } from '../../../../@core/fileUpload/providers/file-item';
 import { FileUploader } from '../../../../@core/fileUpload/providers/file-uploader';
 import { IViewPointBiz } from '../../../../@core/store/bizModel/model/viewPoint.biz.model';
+import { IViewPoint } from '../../../../@core/store/entity/model/viewPoint.model';
 import { CityService } from '../../../../@core/store/providers/city.service';
+import { ErrorService } from '../../../../@core/store/providers/error.service';
 import { ViewPointService } from '../../../../@core/store/providers/viewPoint.service';
 import { ViewPointUIService } from '../../../../@core/store/providers/viewPoint.ui.service';
 import { ViewPointCategoryService } from '../../../../@core/store/providers/viewPointCategory.service';
 import { WEBAPI_HOST } from '../../../../@core/utils/constants';
 import { EntityFormMode } from '../../../../page.component';
-import { MapModalComponent } from '../mapModal.component';
 import { EntityFormComponent } from '../../../entity.form.component';
-import { IViewPoint } from '../../../../@core/store/entity/model/viewPoint.model';
-import { ErrorService } from '../../../../@core/store/providers/error.service';
+import { MapModalComponent } from '../mapModal.component';
 
 @Component({
   selector: 'bt-vp-form',
@@ -24,8 +22,8 @@ import { ErrorService } from '../../../../@core/store/providers/error.service';
   styleUrls: ['./viewPoint.form.component.scss']
 })
 export class ViewPointFormComponent extends EntityFormComponent<IViewPoint, IViewPointBiz> {
-   //#region Private member
-   private _imagesFiles: Map<string, FileItem> = new Map<string, FileItem>();
+  //#region Private member
+  private _imagesFiles: Map<string, FileItem> = new Map<string, FileItem>();
   //#endregion
 
   //#region Public member
@@ -46,7 +44,7 @@ export class ViewPointFormComponent extends EntityFormComponent<IViewPoint, IVie
 
   @ViewChild('name', { read: ElementRef }) nameInput: ElementRef;
 
-  @ViewChildren(NbContextMenuDirective) contextMenus;
+  // @ViewChildren(NbContextMenuDirective) contextMenus;
 
   //#endregion
 
@@ -55,7 +53,7 @@ export class ViewPointFormComponent extends EntityFormComponent<IViewPoint, IVie
   constructor(public _viewPointService: ViewPointService, private _modalService: NgbModal, private _element: ElementRef,
     public _viewPointUIService: ViewPointUIService, public _viewPointCategoryService: ViewPointCategoryService,
     public _cityService: CityService, protected _errorService: ErrorService,
-    protected _toasterService: ToasterService, private _menuService: NbMenuService,
+    protected _toasterService: ToasterService, // private _menuService: NbMenuService,
     protected _activeModal: NgbActiveModal) {
     super(_viewPointService, _errorService, _toasterService, _activeModal);
 
@@ -68,25 +66,25 @@ export class ViewPointFormComponent extends EntityFormComponent<IViewPoint, IVie
     this.addFile('images', this.imagesUploader);
     this.addFile('thumbnail', this.thumbnailUploader);
 
-    this._menuService.onItemClick().subscribe(menuBag => {
-      if (this.newEntity == null) { return; }
+    // this._menuService.onItemClick().subscribe(menuBag => {
+    //   if (this.newEntity == null) { return; }
 
-      const { file, source } = menuBag.item.data;
+    //   const { file, source } = menuBag.item.data;
 
-      if (file) {
-        this.imagesUploader.removeFromQueue(file);
-      }
-      const index = this.newEntity.images.findIndex((img) => {
-        return img === source;
-      });
-      if (index !== -1) {
-        this.newEntity.images.splice(index, 1);
-      }
+    //   if (file) {
+    //     this.imagesUploader.removeFromQueue(file);
+    //   }
+    //   const index = this.newEntity.images.findIndex((img) => {
+    //     return img === source;
+    //   });
+    //   if (index !== -1) {
+    //     this.newEntity.images.splice(index, 1);
+    //   }
 
-      this.contextMenus.forEach(item => {
-        item.hide();
-      });
-    });
+    //   this.contextMenus.forEach(item => {
+    //     item.hide();
+    //   });
+    // });
   }
 
   //#endregion
@@ -96,13 +94,13 @@ export class ViewPointFormComponent extends EntityFormComponent<IViewPoint, IVie
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 
-  getMenuItem(img: string): NbMenuItem[] {
-    const fileItem = this._imagesFiles.get(img);
+  getMenuItem(img: string) /*: NbMenuItem[] */ {
+    // const fileItem = this._imagesFiles.get(img);
 
-    return [{
-      title: 'Delete',
-      data: { file: fileItem, source: img }
-    }];
+    // return [{
+    //   title: 'Delete',
+    //   data: { file: fileItem, source: img }
+    // }];
   }
 
   getClientHeight() {

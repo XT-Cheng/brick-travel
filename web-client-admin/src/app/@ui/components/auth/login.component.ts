@@ -37,7 +37,7 @@ export interface AuthSocialLink {
         <div class="form-group">
           <label for="input-username" class="sr-only">User name</label>
           <input name="username" [(ngModel)]="user.username" id="input-username"
-                 class="form-control" placeholder="User name" #username="ngModel"
+                 class="form-control" placeholder="User name" #username="ngModel"  autocomplete='username'
                  [class.form-control-danger]="username.invalid && username.touched" bt-autofocus
                  required>
           <small class="form-text error" *ngIf="username.invalid && username.touched && username?.errors?.required">
@@ -48,7 +48,7 @@ export interface AuthSocialLink {
         <div class="form-group">
           <label for="input-password" class="sr-only">Password</label>
           <input name="password" [(ngModel)]="user.password" type="password" id="input-password"
-                 class="form-control" placeholder="Password" #password="ngModel"
+                 class="form-control" placeholder="Password" #password="ngModel" autocomplete='current-password'
                  [class.form-control-danger]="password.invalid && password.touched"
                  required>
           <small class="form-text error" *ngIf="password.invalid && password.touched && password?.errors?.required">
@@ -57,7 +57,7 @@ export interface AuthSocialLink {
         </div>
 
         <div class="form-group accept-group col-sm-12">
-          <label nz-checkbox [(ngModel)]="user.rememberMe">Remember me</label>
+          <label nz-checkbox name='rememberMe' [(ngModel)]="user.rememberMe">Remember me</label>
           <a class="forgot-password" routerLink="../request-password">Forgot Password?</a>
         </div>
 
