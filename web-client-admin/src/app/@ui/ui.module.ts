@@ -37,6 +37,8 @@ import { CapitalizePipe, PluralPipe, RoundPipe, TimingPipe } from './pipes';
 import { SearchService } from './providers/search.service';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { DEFAULT_THEME } from './styles/theme.default';
+import { TravelAgendaComponent } from './components/travelAgenda/travelAgenda.component';
+import { DragulaDirective } from './directives/dragula.directive';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule, RouterModule];
 
@@ -70,7 +72,9 @@ const COMPONENTS = [
   AMapComponent,
   InformationWindowComponent,
   RateComponent,
-  ViewPointMarkerComponent
+  ViewPointMarkerComponent,
+  TravelAgendaComponent,
+  DragulaDirective
 ];
 
 const PIPES = [
