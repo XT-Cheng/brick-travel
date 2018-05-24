@@ -19,8 +19,7 @@
     "testTsconfig": "tsconfig.spec.json",
     "prefix": "bt",
     "styles": [
-      "styles.css",
-      "../node_modules/ng-zorro-antd/src/ng-zorro-antd.less",
+      "styles.less",
       "../node_modules/bootstrap/dist/css/bootstrap.min.css",
       "../node_modules/angular2-toaster/toaster.min.css",
       "./app/@ui/styles/styles.scss",

@@ -1,13 +1,23 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
+import { Injectable, Inject } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { map, take } from 'rxjs/operators';
+import { map, take, filter } from 'rxjs/operators';
+import { DOCUMENT } from '@angular/common';
 
 import { AuthService } from './@core/auth/providers/authService';
 
 @Injectable()
 export class PageRoutingGuard implements CanActivate, CanActivateChild {
-  constructor(private _authService: AuthService, private _router: Router) { }
+  private _selector = 'nb-global-spinner';
+
+  constructor(private _authService: AuthService, private _router: Router, @Inject(DOCUMENT) private _document ) {
+    this._router.events.pipe(
+      filter((event) => event instanceof NavigationEnd)
+    ).subscribe((event) => {
+      console.log(event);
+      this.hideSpinner();
+    });
+   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     const url: string = state.url;
@@ -31,5 +41,16 @@ export class PageRoutingGuard implements CanActivate, CanActivateChild {
         }
       })
     );
+  }
+
+  private hideSpinner(): void {
+    const el = this.getSpinnerElement();
+    if (el) {
+      el.style['display'] = 'none';
+    }
+  }
+
+  private getSpinnerElement() {
+    return this._document.getElementById(this._selector);
   }
 }
