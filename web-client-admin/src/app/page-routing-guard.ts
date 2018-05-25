@@ -5,6 +5,7 @@ import { map, take, filter } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
 
 import { AuthService } from './@core/auth/providers/authService';
+import { of } from 'rxjs/observable/of';
 
 @Injectable()
 export class PageRoutingGuard implements CanActivate, CanActivateChild {
@@ -14,7 +15,6 @@ export class PageRoutingGuard implements CanActivate, CanActivateChild {
     this._router.events.pipe(
       filter((event) => event instanceof NavigationEnd)
     ).subscribe((event) => {
-      console.log(event);
       this.hideSpinner();
     });
    }
@@ -30,17 +30,18 @@ export class PageRoutingGuard implements CanActivate, CanActivateChild {
   }
 
   checkLogin(url: string): Observable<boolean> {
-    return this._authService.onTokenChange().pipe(
-      take(1),
-      map((authToken) => {
-        if (authToken.isValid()) {
-          return true;
-        } else {
-          this._router.navigate(['/auth/login']);
-          return false;
-        }
-      })
-    );
+    return of(true);
+    // return this._authService.onTokenChange().pipe(
+    //   take(1),
+    //   map((authToken) => {
+    //     if (authToken.isValid()) {
+    //       return true;
+    //     } else {
+    //       this._router.navigate(['/auth/login']);
+    //       return false;
+    //     }
+    //   })
+    // );
   }
 
   private hideSpinner(): void {

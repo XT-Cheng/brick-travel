@@ -26,6 +26,7 @@ import { DEFAULT_THEME } from './styles/theme.default';
 import { TravelAgendaComponent } from './components/travelAgenda/travelAgenda.component';
 import { DragulaDirective } from './directives/dragula.directive';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule, RouterModule];
 
@@ -41,6 +42,7 @@ const COMPONENTS = [
   LoginComponent,
   HeaderComponent,
   FooterComponent,
+  SidebarComponent,
   SearchInputComponent,
   SearchComponent,
   TwoColumnsLayoutComponent,
